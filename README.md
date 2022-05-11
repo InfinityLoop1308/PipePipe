@@ -1,4 +1,4 @@
-# NewPipeWithMoreServices
+# NewPipeEnhanced
 
 An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming to provide more services.
 
