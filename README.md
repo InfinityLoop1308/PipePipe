@@ -29,6 +29,6 @@ it.
 
 ## Special Thanks
 
-[SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) for providing API lists.
+[SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) for providing BiliBili API lists.
 
-[AioiLight](https://github.com/AioiLight) for providing most of the NicoNico service.
+[AioiLight](https://github.com/AioiLight) for providing most of the code of NicoNico service.
