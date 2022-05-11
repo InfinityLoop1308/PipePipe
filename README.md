@@ -15,7 +15,7 @@ An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming t
 - media.ccc
 - bandcamp
 - Peertube
-- 
+
 ## Contribute
 
 Any service is welcome as they don't contain R-18G things. Feel free to make your PR!
