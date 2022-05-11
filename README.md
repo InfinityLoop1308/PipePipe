@@ -1,6 +1,11 @@
 # NewPipeEnhanced
 
-An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming to provide more services.
+An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming to provide more services and more client features.
+
+## New Client Features:
+
+- One-click starting a shuffled playlist
+- Click-to-play at playlist page
 
 ## Current Extra Services List:
 
@@ -18,7 +23,7 @@ An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming t
 
 ## Contribute
 
-Any service is welcome as they don't contain R-18G things. Feel free to make your PR!
+Any service not contain R-18G things, and any new features making user experience more comfortable are welcomed. Feel free to make your PR!
 
 ## Note
 
