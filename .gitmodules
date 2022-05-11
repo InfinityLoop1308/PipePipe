@@ -1,8 +1,8 @@
 [submodule "NewPipeWithMoreServices-client"]
 	path = NewPipeWithMoreServices-client
 	url = git@github.com:InfinityLoop1309/NewPipeWithMoreServices-client.git
-    branch = dev
+	branch = dev
 [submodule "NewPipeExtractor"]
 	path = NewPipeExtractor
 	url = git@github.com:InfinityLoop1309/NewPipeExtractor.git
-    branch = main
+	branch = main
