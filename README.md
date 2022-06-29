@@ -27,7 +27,7 @@ Any service not contain R-18G things, and any new features making user experienc
 
 ## Note
 
-This repo exists because BiliBili servive is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging to upstream in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
+This repo exists because BiliBili service is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging to upstream in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
 
 This repo is **NOT** the orginal repo of Newpipe, and will **NOT** always keep up with the latest version of the original repo.
 
