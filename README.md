@@ -2,6 +2,29 @@
 
 An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming to provide more services and more client features.
 
+## Screenshots
+
+
+[<img src="https://i.imgur.com/vPyz70Y.png" width=160>](https://i.imgur.com/vPyz70Y.png)
+[<img src="https://i.imgur.com/SKVUJuA.png" width=160>](https://i.imgur.com/SKVUJuA.png)
+[<img src="https://i.imgur.com/Kqy0n7n.png" width=160>](https://i.imgur.com/Kqy0n7n.png)
+[<img src="https://i.imgur.com/RPShLqM.png" width=160>](https://i.imgur.com/RPShLqM.png)
+[<img src="https://i.imgur.com/ytyGnvu.png" width=160>](https://i.imgur.com/ytyGnvu.png)
+<br/>
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_01.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_01.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_02.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_02.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_03.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_03.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_04.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_04.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_05.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_05.png)
+<br/>
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_06.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_06.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_07.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_07.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_08.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_08.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_09.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_09.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_10.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_10.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/tenInchScreenshots/shot_11.png" width=405>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/tenInchScreenshots/shot_11.png)
+[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/tenInchScreenshots/shot_12.png" width=405>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/tenInchScreenshots/shot_12.png)
+
 ## New Client Features:
 
 - One-click starting a shuffled playlist
