@@ -46,7 +46,11 @@ An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming t
 
 ## Contribute
 
-Any service not contain R-18G things, and any new features making user experience more comfortable are welcomed. Feel free to make your PR!
+Unfortunately this repo will not accept issue anymore. This is just a fun project, and I have no time solving issues.
+
+If you have questions, please see the code and figure out it yourself.
+
+PRs are still welcome. Any service not contain R-18G things, and any new features making user experience more comfortable are welcomed. 
 
 ## Note
 
