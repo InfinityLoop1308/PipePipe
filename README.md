@@ -46,7 +46,7 @@ An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming t
 
 ## Contribute
 
-Unfortunately this repo will not accept issue anymore. This is just a fun project, and I have no time solving issues.
+Unfortunately this repo will not accept new issues from non-contributers anymore. This is just a fun project, and I have no time solving issues.
 
 If you have questions, please see the code and figure out it yourself.
 
