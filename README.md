@@ -64,7 +64,7 @@ it.
 
 ## My other projects
 
-[Collector](https://github.com/InfinityLoop1309/Collector) An Android universal information stream reader aiming to replace RSS. 
+[InfinityLoop1309/Collector](https://github.com/InfinityLoop1309/Collector)  An Android universal information stream reader aiming to replace RSS.
 
 ## Special Thanks
 
