@@ -2,6 +2,20 @@
 
 An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming to provide more services and more client features.
 
+## Current Extra Services List:
+
+- Bilibili
+
+- Niconico
+
+## Original Services List:
+
+- Youtube
+- SoundCloud
+- media.ccc
+- bandcamp
+- Peertube
+
 ## Screenshots
 
 
@@ -29,20 +43,7 @@ An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming t
 
 - One-click starting a shuffled playlist
 - Click-to-play at playlist page
-
-## Current Extra Services List:
-
-- Bilibili
-
-- Niconico
-
-## Original Services List:
-
-- Youtube
-- SoundCloud
-- media.ccc
-- bandcamp
-- Peertube
+- Show comments
 
 ## Contribute
 
