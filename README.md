@@ -4,9 +4,9 @@ An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming t
 
 ## Current Extra Services List:
 
-- Bilibili
+- BiliBili
 
-- Niconico
+- NicoNico
 
 ## Original Services List:
 
@@ -61,6 +61,10 @@ This repo is **NOT** the orginal repo of Newpipe, and will **NOT** always keep u
 
 This repo can **NOT** ensure every extra service is available. If a service fails to work, it will stay failing until a kind (or maybe new) maintainer repairs
 it.
+
+## My other projects
+
+[Collector](https://github.com/InfinityLoop1309/Collector) An Android universal information stream reader aiming to replace RSS. 
 
 ## Special Thanks
 
