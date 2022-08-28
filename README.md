@@ -2,6 +2,20 @@
 
 An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming to provide more services and more client features.
 
+## Current Extra Services List:
+
+- BiliBili
+
+- NicoNico
+
+## Original Services List:
+
+- Youtube
+- SoundCloud
+- media.ccc
+- bandcamp
+- Peertube
+
 ## Screenshots
 
 
@@ -29,20 +43,7 @@ An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming t
 
 - One-click starting a shuffled playlist
 - Click-to-play at playlist page
-
-## Current Extra Services List:
-
-- Bilibili
-
-- Niconico
-
-## Original Services List:
-
-- Youtube
-- SoundCloud
-- media.ccc
-- bandcamp
-- Peertube
+- Show comments
 
 ## Contribute
 
@@ -60,6 +61,10 @@ This repo is **NOT** the orginal repo of Newpipe, and will **NOT** always keep u
 
 This repo can **NOT** ensure every extra service is available. If a service fails to work, it will stay failing until a kind (or maybe new) maintainer repairs
 it.
+
+## My other projects
+
+[InfinityLoop1309/Collector](https://github.com/InfinityLoop1309/Collector)  An Android universal reader for BiliBiliSpace, Twitter, RSS and more.
 
 ## Special Thanks
 
