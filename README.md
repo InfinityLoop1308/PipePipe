@@ -1,20 +1,20 @@
-# NewPipeEnhanced
+# AnimePipe
 
-An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming to provide more services and more client features.
+An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming to provide more services (mostly related to otaku culture) and more client features.
 
 ## Current Extra Services List:
 
-- BiliBili
+- BiliBili (Actively maintained)
 
-- NicoNico
+- NicoNico (Actively maintained)
 
 ## Original Services List:
 
-- Youtube
-- SoundCloud
-- media.ccc
-- bandcamp
-- Peertube
+- Youtube (Only significant updates will be merged from upstream)
+- SoundCloud (Not maintained)
+- media.ccc  (Not maintained)
+- bandcamp   (Not maintained)
+- Peertube   (Not maintained)
 
 ## Screenshots
 
@@ -43,24 +43,19 @@ An unofficial fork of [NewPipe](https://github.com/TeamNewPipe/NewPipe) aiming t
 
 - One-click starting a shuffled playlist
 - Click-to-play at playlist page
-- Show comments
+- Show comments of replies
 
 ## Contribute
 
-Unfortunately this repo will not accept new issues from non-contributers anymore. This is just a fun project, and I have no time solving issues.
-
-If you have questions, please see the code and figure out it yourself.
-
-PRs are still welcome. Any service not contain R-18G things, and any new features making user experience more comfortable are welcomed. 
+Issues and PRs are welcomed. Any service related to otaku culture, and any new features making user experience more comfortable are welcomed. 
 
 ## Note
 
-This repo exists because BiliBili service is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging to upstream in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
+This repo exists originally because BiliBili service is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging to upstream in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
 
 This repo is **NOT** the orginal repo of Newpipe, and will **NOT** always keep up with the latest version of the original repo.
 
-This repo can **NOT** ensure every extra service is available. If a service fails to work, it will stay failing until a kind (or maybe new) maintainer repairs
-it.
+This repo can **NOT** ensure every service is available. PeerTube, Bandcamp, SoundCloud and media.ccc.de are not maintained as I don't use them and they are not related to otaku culture. Youtube is still maintained, though only significant updates will be merged from upstream. For the best user experience browsering Youtube, please check the upstream[NewPipe](https://github.com/TeamNewPipe/NewPipe) or another fork [NewPipe x SponsorBlock](https://github.com/polymorphicshade/NewPipe)
 
 ## My other projects
 
