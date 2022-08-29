@@ -57,7 +57,7 @@ This repo exists originally because BiliBili service is rejected by the team due
 
 This repo is **NOT** the orginal repo of Newpipe, and will **NOT** always keep up with the latest version of the original repo.
 
-This repo can **NOT** ensure every service is available. PeerTube, Bandcamp, SoundCloud and media.ccc.de are not maintained as I don't use them and they are not related to otaku culture. Youtube is still maintained, though only significant updates will be merged from upstream. For the best user experience browsering Youtube, please check the upstream[NewPipe](https://github.com/TeamNewPipe/NewPipe) or another fork [NewPipe x SponsorBlock](https://github.com/polymorphicshade/NewPipe)
+This repo can **NOT** ensure every service is available. PeerTube, Bandcamp, SoundCloud and media.ccc.de are not maintained as I don't use them and they are not related to otaku culture. Youtube is still maintained, though only significant updates will be merged from upstream. For the best user experience browsering Youtube, please check the upstream [NewPipe](https://github.com/TeamNewPipe/NewPipe) or another fork [NewPipe x SponsorBlock](https://github.com/polymorphicshade/NewPipe)
 
 ## My other projects
 
