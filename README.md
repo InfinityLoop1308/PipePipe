@@ -2,6 +2,7 @@
 <h2 align="center"><b>AnimePipe</b></h2>
 <h4 align="center">
 An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> aiming to provide more services (mostly related to anime-related things) and more client features.</h4>
+<hr>
 
 ## Current Extra Services List:
 
