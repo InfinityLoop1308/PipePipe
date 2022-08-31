@@ -1,6 +1,6 @@
 An unofficial fork of NewPipe aiming to provide more services (mostly related to otaku culture) and more client features.
 
-## Services List:
+**Services List**:
 
 * BiliBili (Actively maintained)
 * NicoNico (Actively maintained)
@@ -10,7 +10,7 @@ An unofficial fork of NewPipe aiming to provide more services (mostly related to
 * bandcamp   (Not maintained)
 * Peertube   (Not maintained)
 
-## New Client Features:
+**New Client Features**:
 
 * One-click starting a shuffled playlist
 * Click-to-play at playlist page
