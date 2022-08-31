@@ -1,51 +1,42 @@
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>AnimePipe</b></h2>
 <h4 align="center">
-An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> aiming to provide more services (mostly related to anime-related things) and more client features.</h4>
+An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> aiming to provide more services (mostly related to otaku culture) and more client features.</h4>
+<p align="center"><a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
 
-## Current Extra Services List:
+## Services List:
 
-- BiliBili (Actively maintained)
-
-- NicoNico (Actively maintained)
-
-## Original Services List:
-
-- Youtube (Only significant updates will be merged from upstream)
-- SoundCloud (Not maintained)
-- media.ccc  (Not maintained)
-- bandcamp   (Not maintained)
-- Peertube   (Not maintained)
+* BiliBili (Actively maintained)
+* NicoNico (Actively maintained)
+* Youtube (Only significant updates will be merged from upstream)
+* SoundCloud (Not maintained)
+* media.ccc  (Not maintained)
+* bandcamp   (Not maintained)
+* Peertube   (Not maintained)
 
 ## Screenshots
 
 
-[<img src="https://i.imgur.com/vPyz70Y.png" width=160>](https://i.imgur.com/vPyz70Y.png)
-[<img src="https://i.imgur.com/SKVUJuA.png" width=160>](https://i.imgur.com/SKVUJuA.png)
-[<img src="https://i.imgur.com/Kqy0n7n.png" width=160>](https://i.imgur.com/Kqy0n7n.png)
-[<img src="https://i.imgur.com/RPShLqM.png" width=160>](https://i.imgur.com/RPShLqM.png)
-[<img src="https://i.imgur.com/ytyGnvu.png" width=160>](https://i.imgur.com/ytyGnvu.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/01.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/03.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/04.png)
 <br/>
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_01.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_01.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_02.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_02.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_03.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_03.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_04.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_04.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_05.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_05.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/05.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/06.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/07.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/07.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/08.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/08.png)
 <br/>
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_06.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_06.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_07.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_07.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_08.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_08.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_09.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_09.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_10.png" width=160>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/phoneScreenshots/shot_10.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/tenInchScreenshots/shot_11.png" width=405>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/tenInchScreenshots/shot_11.png)
-[<img src="https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/tenInchScreenshots/shot_12.png" width=405>](https://github.com/TeamNewPipe/NewPipe/raw/dev/fastlane/metadata/android/en-US/images/tenInchScreenshots/shot_12.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/09.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/09.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/10.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11.png)
 
 ## New Client Features:
 
-- One-click starting a shuffled playlist
-- Click-to-play at playlist page
-- Show comments of replies
+* One-click starting a shuffled playlist
+* Click-to-play at playlist page
+* Show comments of replies
 
 ## Contribute
 

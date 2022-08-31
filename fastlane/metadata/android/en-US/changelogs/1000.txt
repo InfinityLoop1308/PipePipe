@@ -1,0 +1,3 @@
+* Rename to AnimePipe and update things from NewPipe to avoid misleading (You can now direct raise an issue in-app!)
+* Partially merge upstream pr #8153 "Support delivery methods other than progressive HTTP" to significantly improve the performance of Youtube service
+* Merge upstream #920 to fix no trending on Youtube
