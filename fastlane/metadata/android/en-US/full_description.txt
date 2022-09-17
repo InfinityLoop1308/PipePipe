@@ -15,3 +15,4 @@ An unofficial fork of NewPipe aiming to provide more services (mostly related to
 * One-click starting a shuffled playlist
 * Click-to-play at playlist page
 * Show comments of replies
+* Search Filters
