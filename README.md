@@ -37,6 +37,7 @@ An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</
 * One-click starting a shuffled playlist
 * Click-to-play at playlist page
 * Show comments of replies
+* Search filters
 
 ## Contribute
 
