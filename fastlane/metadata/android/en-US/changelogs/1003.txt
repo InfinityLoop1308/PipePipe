@@ -1,0 +1,2 @@
+feat: support sort playlists.(from upstream PR #8221)
+feat: support removal of duplicates from local playlists.(from upstream PR #7703)
