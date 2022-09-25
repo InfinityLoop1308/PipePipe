@@ -38,6 +38,8 @@ An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</
 * Click-to-play at playlist page
 * Show comments of replies
 * Search filters
+* Sort playlists
+* Remove duplicate items of local playlists
 
 ## Contribute
 
@@ -59,4 +61,4 @@ This repo can **NOT** ensure every service is available. PeerTube, Bandcamp, Sou
 
 [SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) for providing BiliBili API lists.
 
-[AioiLight](https://github.com/AioiLight) for providing most of the code of NicoNico service.
+[AioiLight](https://github.com/AioiLight) for providing some of the code of NicoNico service.
