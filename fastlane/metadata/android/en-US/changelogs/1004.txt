@@ -1,0 +1,1 @@
+fix: crash when using search filter and then use full screen
