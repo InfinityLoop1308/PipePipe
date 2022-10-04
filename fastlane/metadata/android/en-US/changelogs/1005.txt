@@ -1,0 +1,2 @@
+feat: support of open NicoNico play list via URL
+fix: crash in certain situations related to full screen
