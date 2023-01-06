@@ -1,0 +1,29 @@
+Happy 2023! After hundreds of hours' work, 2.0.0 is finally released!🎉🎉🎉
+This version includes many features, fixes and changes, and it is MUCH BETTER than previous versions. As a result, it is recommended for everyone using this app to upgrade to 2.0.0 for the best user experience.
+
+Major updates in this version
+
+• feat: support bullet comments/live chats for all maintained services(i.e. Youtube, BiliBili, NicoNico). SuperChats are also supported and have different appearances. Note that only lives and live replays have live chats on Youtube.
+• feat: apply new styled channel tabs for all maintained services, enabling show other type of contents like live replays and playlists.
+• feat: directly seek to the timestamp when opening timestamps in comments, rather than open it in the popup player.
+• feat: add more kiosks for all maintained services, including Recommended Lives kiosk.
+• feat: remove the related items tab/ comments tab if it is not supported in the current stream instead of show "Comments are disabled" and "No videos".
+• feat: show more specified error message, for example "Live not started" rather than just say "Could not fetch stream".
+• feat: support search, open and play livestreams on NicoNico.
+• feat: support open channels and play contents from channels on NicoNico.
+• feat: support search, open and play Bangumis(animes, movies and TV series) on BiliBili.
+• feat: support round-play live streams on BiliBili.
+• feat: support captions on BiliBili.
+• feat: support open timestamps on BiliBili.
+• feat: if auto-enqueuing is enabled and multi-P video is being played, the next P will be enqueued on BiliBili.
+• feat: support using fallback URLs to prevent failed loadings on BiliBili.
+• feat: support more resolutions for BiliBili videos.
+
+• fix: player loads infinitely sometimes
+• fix: a single failed stream will crash the whole playlist
+• fix: Play/Pause buttons and loading indicator are not centered in the fullscreen mode.
+• fix: stream wrongly seeks to the beginning sometimes
+• fix: search has weird behaviour
+• fix: all the live streams except Youtube Dash lives don't have correct current play position
+
+...and many minor fixes, refactors, UI changes and behaviour changes. Also performance is improved.
