@@ -1,4 +1,4 @@
-An unofficial fork of NewPipe aiming to provide more services (mostly related to otaku culture) and more client features.
+A fork of NewPipe with more services, client features and bug fixes.
 
 **Services List**:
 
@@ -7,12 +7,16 @@ An unofficial fork of NewPipe aiming to provide more services (mostly related to
 * Youtube (Only significant updates will be merged from upstream)
 * SoundCloud (Not maintained)
 * media.ccc  (Not maintained)
-* bandcamp   (Not maintained)
+* Bandcamp   (Not maintained)
 * Peertube   (Not maintained)
 
 **New Client Features**:
 
+* Bullet comments/Live Chats
 * One-click starting a shuffled playlist
 * Click-to-play at playlist page
 * Show comments of replies
 * Search filters
+* Sort playlists
+* Remove duplicate items of local playlists
+* Open timestamp in the main player

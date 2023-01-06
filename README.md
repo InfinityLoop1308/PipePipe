@@ -1,7 +1,7 @@
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>AnimePipe</b></h2>
 <h4 align="center">
-An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> aiming to provide more services (mostly related to otaku culture) and more client features.</h4>
+A fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more services, client features and bug fixes.</h4>
 <p align="center"><a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
 
@@ -12,11 +12,12 @@ An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</
 * Youtube (Only significant updates will be merged from upstream)
 * SoundCloud (Not maintained)
 * media.ccc  (Not maintained)
-* bandcamp   (Not maintained)
+* Bandcamp   (Not maintained)
 * Peertube   (Not maintained)
 
 ## Screenshots
 
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/00.png" width=640>](fastlane/metadata/android/en-US/images/phoneScreenshots/00.png)
 
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/01.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02.png)
@@ -31,23 +32,31 @@ An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/09.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/09.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/10.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/12.png)
 
 ## New Client Features:
 
+* Bullet comments/Live Chats
 * One-click starting a shuffled playlist
 * Click-to-play at playlist page
 * Show comments of replies
 * Search filters
 * Sort playlists
 * Remove duplicate items of local playlists
+* Open timestamp in the main player
 
 ## Contribute
 
-Issues and PRs are welcomed. Any service related to otaku culture, and any new features making user experience more comfortable are welcomed. 
+Issues and PRs are welcomed. Any service related to otaku culture, and any new features making user experience more comfortable are welcomed.
+⚠️Warning: This fork is already far from the main repo. You may have to spend a considerable amount of time resolving conflicts.
 
 ## Note
 
 This repo exists originally because BiliBili service is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging to upstream in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
+
+About merging the new features and fixes to upstream: My coding style is very casual and self-centered. I don't want to do any modification to fit other projects or ask for others to accept my merge request. If you want that, *DO NOT* raise any issue in this repo. *DO IT YOURSELF*.
+
+This project is mainly for my personal use. If you raise an issue I won't encounter, I may not make any fixes.
 
 This repo is **NOT** the orginal repo of Newpipe, and will **NOT** always keep up with the latest version of the original repo.
 
