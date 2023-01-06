@@ -48,13 +48,14 @@ A fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more
 ## Contribute
 
 Issues and PRs are welcomed. Any service related to otaku culture, and any new features making user experience more comfortable are welcomed.
+
 ⚠️Warning: This fork is already far from the main repo. You may have to spend a considerable amount of time resolving conflicts.
 
 ## Note
 
-This repo exists originally because BiliBili service is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging to upstream in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
+This repo exists originally because BiliBili service is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging new services to upstream in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
 
-About merging the new features and fixes to upstream: My coding style is very casual and self-centered. I don't want to do any modification to fit other projects or ask for others to accept my merge request. If you want that, *DO NOT* raise any issue in this repo. *DO IT YOURSELF*.
+About merging the new features and fixes to upstream: My coding style is very casual and self-centered. I don't want to do any modification to fit other projects or ask for others to accept my merge request. If you want that, **DO NOT** raise any issue in this repo. **DO IT YOURSELF**.
 
 This project is mainly for my personal use. If you raise an issue I won't encounter, I may not make any fixes.
 
