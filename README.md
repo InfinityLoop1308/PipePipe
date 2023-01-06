@@ -17,6 +17,7 @@ An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</
 
 ## Screenshots
 
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/00.png" width=640>](fastlane/metadata/android/en-US/images/phoneScreenshots/00.png)
 
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/01.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02.png)
@@ -31,6 +32,7 @@ An unofficial fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/09.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/09.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/10.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/12.png)
 
 ## New Client Features:
 
