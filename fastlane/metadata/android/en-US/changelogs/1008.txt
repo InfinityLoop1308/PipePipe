@@ -20,4 +20,3 @@
 • fix: stream wrongly seeks to the beginning sometimes
 • fix: search has weird behaviour
 • fix: all the live streams except Youtube Dash lives don't have correct current play position
-
