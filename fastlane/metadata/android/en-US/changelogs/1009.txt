@@ -1,0 +1,1 @@
+fix: crash on reaching the end of some videos
