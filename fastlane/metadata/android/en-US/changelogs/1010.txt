@@ -1,0 +1,10 @@
+I am banned by GitHub, possibly because of DMCA. The project is now migrated to CodeBerg.
+
+**ChangeLog**
+
+feat: support change the duration of bullet comments
+
+fix: sometimes player crash when trying using fallback urls
+fix: crash when thumbnail is too large
+fix: unexpected seeking to start sometimes
+fix: bullet comments not working if auto-enqueuing is on
