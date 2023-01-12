@@ -17,22 +17,22 @@ A fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more
 
 ## Screenshots
 
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/00.png" width=640>](fastlane/metadata/android/en-US/images/phoneScreenshots/00.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/00-v1.png" width=640>](fastlane/metadata/android/en-US/images/phoneScreenshots/00-v1.png)
 
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/01.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03_new.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/03_new.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/04.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/01-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/03-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/04-v1.png)
 <br/>
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/05.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/06.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/07.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/07.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/08.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/08.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/05-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/06-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/07-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/07-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/08-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/08-v1.png)
 <br/>
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/09.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/09.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/10.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/12.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/09-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/09-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/10-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/12-v1.png)
 
 ## New Client Features:
 
