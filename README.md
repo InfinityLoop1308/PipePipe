@@ -1,5 +1,5 @@
-This project is migrated to CodeBerg. Say no to GitHub.
-
+This project has been migrated to CodeBerg. Who want a Microsoft-controled GitHub?
+<hr>
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>AnimePipe</b></h2>
 <h4 align="center">
