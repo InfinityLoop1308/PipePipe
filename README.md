@@ -53,6 +53,8 @@ Issues and PRs are welcomed. Any service related to otaku culture, and any new f
 
 ⚠️Warning: This fork is already far from the main repo. You may have to spend a considerable amount of time resolving conflicts.
 
+If you want to contribute your translation, see [TRANSLATION.md](TRANSLATION.md).
+
 ## Note
 
 This repo exists originally because BiliBili service is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging new services to upstream in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
