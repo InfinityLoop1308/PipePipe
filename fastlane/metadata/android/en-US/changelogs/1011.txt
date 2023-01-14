@@ -1,0 +1,10 @@
+feat: support full-featured comment reply support. Now it is able to fetch all the replies rather than just the first page, as well as a new prettier UI is introduced.
+feat: added Language suffix for subtitle downloads
+feat: Added option to download items in the queue
+
+fix: unexpected crash on specific scenarios
+fix: wrong view count
+
+UI: remove download button to avoid misleading for BiliBili
+UI: remove misleading untranslated strings
+UI: Update Simplified Chinese translation
