@@ -22,8 +22,8 @@ A fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/00-v1.png" width=640>](fastlane/metadata/android/en-US/images/phoneScreenshots/00-v1.png)
 
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/01-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/03-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02-v2.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/03-v2.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/04-v1.png)
 <br/>
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/05-v1.png)
