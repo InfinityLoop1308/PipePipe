@@ -1,8 +1,8 @@
 [submodule "NewPipeExtractor"]
 	path = AnimePipeExtractor
-	url = git@codeberg.org:NullPointerException/AnimePipeExtractor.git
+	url = https://codeberg.org/NullPointerException/AnimePipeExtractor.git
 	branch = main
 [submodule "NewPipeEnhanced-client"]
 	path = AnimePipeClient
-	url = git@codeberg.org:NullPointerException/AnimePipeClient.git
+	url = https://codeberg.org/NullPointerException/AnimePipeClient.git
 	branch = dev
