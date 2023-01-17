@@ -1,1 +1,1 @@
-Alternative Android streaming front-end of Bilibili, NicoNico, Youtube and more.
+An alternative Android streaming front-end of Bilibili, NicoNico, Youtube & more
