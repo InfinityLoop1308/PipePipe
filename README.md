@@ -39,13 +39,16 @@ A fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more
 ## New Client Features:
 
 * Bullet comments/Live Chats
-* One-click starting a shuffled playlist
-* Click-to-play at playlist page
 * Show comments of replies
 * Search filters
+* Filter items in local playlists
+* One-click starting a shuffled playlist
+* Click-to-play at playlist page
 * Sort playlists
 * Remove duplicate items of local playlists
 * Open timestamp in the main player
+* Long click to append all related items to playlist
+* Fetch all the items in the online playlist
 
 ## Contribute
 
