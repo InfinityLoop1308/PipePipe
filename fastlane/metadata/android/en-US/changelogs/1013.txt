@@ -1,0 +1,13 @@
+** New **
+feat: support filter items in local playlists
+feat: fetch all the items in the online playlist on start, so we can add them all to a local playlist
+feat: long click to append all related items to playlist
+
+UI: do not exit full screen after video ends.
+
+fix: wrong bullet comments are fetched when auto-enqueueing is open (BiliBili)
+fix: premium bullet comments are not parsed correctly (BiliBili)
+fix: unexpected crash sometimes, especially when background playing
+fix: can not load any captions
+
+perf: slightly improve loading speed by not converting captions(BiliBili)
