@@ -33,7 +33,7 @@ A fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more
 <br/>
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/09-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/09-v1.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/10-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11-v2.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/12-v1.png)
 
 ## New Client Features:
