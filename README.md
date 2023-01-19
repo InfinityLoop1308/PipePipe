@@ -1,4 +1,4 @@
-This project has been migrated to CodeBerg. Who want a Microsoft-controled GitHub?
+This project has been migrated to [NullPointerException/AnimePipe](https://codeberg.org/NullPointerException/AnimePipe), but releases, README and assets are still synced on [GitHub](https://github.com/InfinityLoop1309/AnimePipe). It is preferred to raise issue on CodeBerg but it is OK if you raise it on GitHub.
 <hr>
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>AnimePipe</b></h2>
