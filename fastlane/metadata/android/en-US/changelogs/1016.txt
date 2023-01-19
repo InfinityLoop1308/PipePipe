@@ -1,0 +1,2 @@
+fix: no thumbnail shown on search results(NicoNico) 
+chore: change default load_interval to 1KB to avoid slow loading on YouTube 
