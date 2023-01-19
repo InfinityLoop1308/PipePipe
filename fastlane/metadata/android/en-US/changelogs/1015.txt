@@ -1,0 +1,4 @@
+fix: Tab text disappears when switching between channel tabs #4
+fix: progress loop does not disappear if the initial list is smaller than a page
+fix: can not delete item from playlist when filtering
+fix: error thrown when channel has an empty playlist(BiliBili)
