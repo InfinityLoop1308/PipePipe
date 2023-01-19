@@ -70,6 +70,10 @@ This repo is **NOT** the orginal repo of Newpipe, and will **NOT** always keep u
 
 This repo can **NOT** ensure every service is available. PeerTube, Bandcamp, SoundCloud and media.ccc.de are not maintained as I don't use them and they are not related to otaku culture. Youtube is still maintained, though only significant updates will be merged from upstream. For the best user experience browsering Youtube, please check the upstream [NewPipe](https://github.com/TeamNewPipe/NewPipe) or another fork [NewPipe x SponsorBlock](https://github.com/polymorphicshade/NewPipe)
 
+## My other projects
+
+[InfinityLoop1309/Collector](https://github.com/InfinityLoop1309/Collector)  An Android universal reader for BiliBiliSpace, Twitter, RSS and more.
+
 ## Special Thanks
 
 [SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) for providing BiliBili API lists.
