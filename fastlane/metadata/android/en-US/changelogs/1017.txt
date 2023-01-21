@@ -1,0 +1,2 @@
+UI: add outline to make bullet comments easier to see #6 
+fix: Unable to open "https://www.nicovideo.jp/series/ if system language is not english #7
