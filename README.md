@@ -4,7 +4,8 @@ This project has been migrated to [NullPointerException/AnimePipe](https://codeb
 <h2 align="center"><b>AnimePipe</b></h2>
 <h4 align="center">
 A fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more services, client features and bug fixes.</h4>
-<p align="center"><a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
+<p align="center"><a href="https://f-droid.org/packages/InfinityLoop1309.NewPipeEnhanced/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height=80/></a>
+<a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
 
 ## Services List:
