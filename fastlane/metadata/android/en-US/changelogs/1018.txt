@@ -1,0 +1,6 @@
+fix: series are not correctly fetched (NicoNico)
+fix: can not view the uploader page from the playlist(NicoNico)
+fix: top lives not working(NicoNico)
+
+UI: Update Simplified Chinese
+
