@@ -1,0 +1,6 @@
+fix: workaround of UI crash because of thumbnails loading
+fix: App crashes when viewing videos in playlist opened in channel tab in full screen mode #15 
+fix: strange search behaviour because of low quality code
+fix: crash if using the search filter in LocalPlaylist and click back button
+
+UI: Simplified Chinese correction (#3)
