@@ -1,5 +1,6 @@
 build: change compileSdk and targetSdk to 33
 UI: use Android 13's media control for Android 13 devices
+UI: show toast when no updates are available
 fix: crash when open a video with too many related items and then minimize the app
 fix: random background playing is not started from the first
 fix: can not change playback load interval
