@@ -1,0 +1,9 @@
+build: change compileSdk and targetSdk to 33
+UI: use Android 13's media control for Android 13 devices
+fix: crash when open a video with too many related items and then minimize the app
+fix: random background playing is not started from the first
+fix: can not change playback load interval
+behavior: urls in descriptions will always be treated as url, instead of trying to handle it internally first
+perf: significantly improve the initial loading speed(Youtube)
+
+Please note a large amount of upstream commits has been applied, so it may not be stable. Feel free to report any bug you met.
