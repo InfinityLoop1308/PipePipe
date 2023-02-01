@@ -1,0 +1,2 @@
+feat: Handle duplicate streams in the "Add to playlist" dialog
+fix: add POST_NOTIFICATIONS permission to fix #16
