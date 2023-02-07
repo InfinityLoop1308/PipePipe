@@ -1,0 +1,7 @@
+feat: support filtering play histories
+feat: support searching playlists(NicoNico)
+fix: add consent header for every YouTube request to possibly fix #14
+fix: under specific situations app crash on start forever
+fix: search icon is not visible in light mode
+behaviour: improve url handling in descriptions and comments to fix #64
+UI: show single P name at first for multi-P videos(BiliBili)
