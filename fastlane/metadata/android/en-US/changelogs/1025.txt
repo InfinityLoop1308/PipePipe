@@ -1,0 +1,18 @@
+feat: Implement customized color scheme for BiliBili and NicoNico instead of using the default YouTube color(GitHub #74) 
+feat: Introduce support for making a fixed, eye-friendly color as the global theme
+
+fix: live failed every 50s sometimes(NicoNico) 
+fix: bullet comments are not refreshed if auto-play is enabled 
+fix: App crash after Youtube video ended with Danmaku on (GitHub #70) 
+fix: crash when filtering history and click back button
+fix: Danmaku not synchronized on Youtube (GitHub #68)
+fix: [Bug] Exported database file default name starts with "NewPipeData" (GitHub #73) 
+Fix: Timestamps not functioning correctly on certain occasions.
+fix: search filters are not working as expected 
+fix: subtitle downloading not working
+fix: can not fetch viewers in recommended live kiosk(NicoNico)
+fix: bullet comments are not showing sometimes(NicoNico) 
+fix: improve notification if round play streams are not available(BiliBili) 
+fix: Unable to fetch mp4 only streams(BiliBili) <CodeBerg #25>
+fix: live streams not working(BiliBili)
+fix: live comments not working(BiliBili)
