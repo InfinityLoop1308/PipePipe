@@ -1,0 +1,9 @@
+fix: can not watch any stream if not login(NicoNico)
+
+v2.5.0:
+feat: support using premium account to watch lives(NicoNico)
+feat: support changing resolutions of videos(NicoNico)
+feat: support watching premium videos(NicoNico)
+
+fix: crash when importing existed backups
+
