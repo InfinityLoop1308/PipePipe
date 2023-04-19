@@ -1,0 +1,11 @@
+feat: support login for BiliBili
+feat: Add download option to long-press menu
+feat: [YouTube] Improve download speed
+feat: support up to 3x playback speed [GitHub #86]
+feat: support more play modes [CodeBerg #29]
+
+fix: can not fetch trending of lives(YouTube)
+fix: can not some of the b23.tv short links for BiliBili [GitHub #93]
+fix: wrong subtitles for multi-P videos(BiliBili) [GitHub #75]
+fix: crash when open a video and then turn it to full screen from a filtered history
+fix: exception on selecting the quality for some streams [CodeBerg #30]
