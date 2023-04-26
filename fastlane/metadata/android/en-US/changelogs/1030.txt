@@ -1,0 +1,7 @@
+<2.6.2>
+feat: support customize fonts of bullet comments and make LXGW WenKai Screen the default font[CodeBerg #17]
+feat: support controling the display of streams that have not yet started.
+feat: support controling automatic background playback when clicking an item in a local playlist
+<2.6.1>
+fix: Unable to view Bilibili user space (BiliBili) [GitHub #97]
+fix: weird crash when using search filters on specific devices
