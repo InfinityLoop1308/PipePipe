@@ -1,10 +1,10 @@
-A fork of NewPipe with more services, client features and bug fixes.
+An INDEPENDENT fork of NewPipe with more services, client features and bug fixes.
 
 **Services List**:
 
-* BiliBili (Actively maintained)
-* NicoNico (Actively maintained)
-* Youtube (Only significant updates will be merged from upstream)
+* BiliBili
+* NicoNico
+* YouTube
 * SoundCloud (Not maintained)
 * media.ccc  (Not maintained)
 * Bandcamp   (Not maintained)
@@ -13,10 +13,14 @@ A fork of NewPipe with more services, client features and bug fixes.
 **New Client Features**:
 
 * Bullet comments/Live Chats
-* One-click starting a shuffled playlist
-* Click-to-play at playlist page
 * Show comments of replies
 * Search filters
+* Filter items in local playlists
+* Android 13 support
+* Musci player mode
 * Sort playlists
 * Remove duplicate items of local playlists
 * Open timestamp in the main player
+* Long click to append all related items to playlist
+* Fetch all the items in the online playlist
+* ...
