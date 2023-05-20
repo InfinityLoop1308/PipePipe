@@ -1,0 +1,14 @@
+feat: support download (BiliBili)
+feat: h265 codec is selected by default(BiliBili)
+feat: support Hi-res(BiliBili)
+feat: support and prefer dolby(BiliBili)
+
+feat: copy all URLs in a playlist to clipboard(which can then be used to download)
+feat: show what's new on new version
+feat: add support to piped.video 
+
+fix: channel tabs status are not saved 
+fix: bullet comments are not updated sometimes
+fix: crash when filtering and then clicking a channel
+fix: update notification is not clickable
+fix: best resolution not works on BiliBili
