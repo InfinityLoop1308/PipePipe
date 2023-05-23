@@ -1,0 +1,12 @@
+## Bug fixes
+
+- Can not extract any channels(BiliBili) [CodeBerg #36]
+- Audio qualities are wrongly shown as tiny(YouTube)
+- *bilibili.com not showing up on "Open by default" Settings page
+- Some series can not be extracted (NicoNico)
+- Search results can not be directly added to playlist (NicoNico) 
+- Updater can not selete corresponding apk correctly
+
+## Changes
+
+- Only generate .tmp when downloading BiliBili videos
