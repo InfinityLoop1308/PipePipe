@@ -17,7 +17,7 @@ An INDEPENDENT fork of NewPipe with more services, client features and bug fixes
 * Search filters
 * Filter items in local playlists
 * Android 13 support
-* Musci player mode
+* Music player mode
 * Sort playlists
 * Remove duplicate items of local playlists
 * Open timestamp in the main player
