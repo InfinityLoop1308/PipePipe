@@ -46,7 +46,7 @@ An INDEPENDENT fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe<
 * Search filters
 * Filter items in local playlists
 * Android 13 support
-* Musci player mode
+* Music player mode
 * Sort playlists
 * Remove duplicate items of local playlists
 * Open timestamp in the main player
