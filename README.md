@@ -1,11 +1,11 @@
-The project is hosted on both [CodeBerg](https://codeberg.org/NullPointerException/PipePipe) and [GitHub](https://github.com/InfinityLoop1308/PipePipe). It is preferred to raise issue on CodeBerg but it is OK if you raise it on GitHub.
+The project is hosted on both [CodeBerg](https://codeberg.org/NullPointerException/PipePipe) and [GitHub](https://github.com/InfinityLoop1308/PipePipe). It is preferred to open issue on CodeBerg but it is OK if you open it on GitHub.
 
-Please star this repo if you like it. It is a great motivation for me to continue maintaining this fork.
+Please star this repo if you like it. 
 <hr>
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>PipePipe</b></h2>
 <h4 align="center">
-An INDEPENDENT fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more services, client features and bug fixes.</h4>
+A DIVERGED fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more services, client features and bug fixes.</h4>
 <p align="center"><a href="https://f-droid.org/packages/InfinityLoop1309.NewPipeEnhanced/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height=80/></a>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
@@ -56,7 +56,7 @@ An INDEPENDENT fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe<
 
 ## Contribute
 
-Issues and PRs are welcomed. Please not that I will **NOT** accept service requests due to my limited time. Maintaining the current three services is already a significant workload for me as a part-time developer, and there are still several issues that need to be addressed. Therefore, I must commit my time to maintaining the existing services.
+Issues and PRs are welcomed. Please note that I will **NOT** accept service requests due to my limited time. 
 
 Anyone interested in creating their own service is encouraged to fork this repository.
 
@@ -66,15 +66,11 @@ If you want to contribute your translation, see [TRANSLATION.md](TRANSLATION.md)
 
 ## Note
 
-This repo exists **originally** because BiliBili service is rejected by the team due to censorship concerns. Please **DO NOT** raise any issue about merging NicoNico/BiliBili to NewPipe in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/). It is **MEANINGLESS** and a **WASTE OF TIME** for the maintainers.
+Please **DO NOT** open any issue about merging NicoNico/BiliBili to NewPipe in this repo, [TeamNewPipe/NewPipe](https://github.com/TeamNewPipe/NewPipe), or [TeamNewPipe/NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor/).
 
-About merging the new features and fixes to NewPipe: I don't want to do any modification to fit other projects or ask for others to accept my merge request. If you want that, **DO NOT** raise any issue in this repo. **DO IT YOURSELF**.
+This project is for my personal use. If you open an issue I won't encounter, most likely I will not make any fixes.
 
-This project is mainly for my personal use. If you raise an issue I won't encounter, I may not make any fixes.
-
-This repo will **NOT** always keep up with the latest version of the original repo.
-
-This repo can **NOT** ensure every service is available. PeerTube, Bandcamp, SoundCloud and media.ccc.de are not maintained. You may also want to check [NewPipe](https://github.com/TeamNewPipe/NewPipe) or another fork [NewPipe x SponsorBlock](https://github.com/polymorphicshade/NewPipe)
+You may also want to check [NewPipe](https://github.com/TeamNewPipe/NewPipe) or [NewPipe x SponsorBlock](https://github.com/polymorphicshade/NewPipe)
 
 ## Special Thanks
 
