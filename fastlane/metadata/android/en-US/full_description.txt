@@ -1,4 +1,4 @@
-An INDEPENDENT fork of NewPipe with more services, client features and bug fixes.
+A DIVERGED fork of NewPipe with more services, client features and bug fixes.
 
 **Services List**:
 
