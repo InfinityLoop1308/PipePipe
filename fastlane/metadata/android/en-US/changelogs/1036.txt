@@ -1,0 +1,21 @@
+3.1.3
+
+- Fix: Some videos can't be fully loaded (YouTube)
+
+3.1.2
+### New features
+
+- Support viewing pinned comments and comments hearted by uploader(BiliBili)
+- Show image URLs in comments(BiliBili)
+
+### Bug fixes
+
+- Can not load full replies(BiliBili)
+- No cover is shown for saved remote playlists(BiliBili)
+- HTML strings in comments are not decoded (BiliBili)
+- Resolutions is not correctly sorted(NicoNico) 
+
+### Others
+
+- Improve Simplified Chinese translation
+
