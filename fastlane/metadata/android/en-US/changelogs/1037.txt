@@ -1,0 +1,10 @@
+### New Features:
+
+- Allow migration from NewPipe 0.25.0+ 
+
+### Bug Fixes:
+
+- 'Account' Icon Incorrect Colour with Dark Theme Enabled [GitHub #142]
+- Icon of bullet comment status is not showed correctly
+- Unable to view multi-p video (BiliBili) [GitHub #148]
+
