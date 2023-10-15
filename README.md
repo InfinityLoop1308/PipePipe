@@ -5,7 +5,7 @@ Please star this repo if you like it.
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>PipePipe</b></h2>
 <h4 align="center">
-A DIVERGED fork of <a href="https://github.com/TeamNewPipe/NewPipe">NewPipe</a> with more services, client features and bug fixes.</h4>
+Alternative Android streaming front-end of BiliBili, NicoNico, YouTube and more. </h4>
 <p align="center"><a href="https://f-droid.org/packages/InfinityLoop1309.NewPipeEnhanced/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height=80/></a>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
