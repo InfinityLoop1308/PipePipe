@@ -1,0 +1,17 @@
+### New Features:
+
+- Allow adjusting ExoPlayer's preferences to avoid crash on some devices [GitHub #162]
+- Change the min system requirement to Android 5.0 (SDK 21) [GitHub #160]
+- Add translations for Cantonese and Brazilian Portuguese
+
+### Bug Fixes:
+
+- User/Channel page randomly broken due to anti-crawler mechanism (BiliBili) [CodeBerg #70, GitHub #137, #68, #60]
+- Search suggestions are not working and causing crash (BiliBili) [GitHub #163]
+- HTML strings in titles are not decoded (BiliBili)
+
+### Performances
+
+- Making "show channel details" slightly faster
+- Improve the speed for searching (BiliBili)
+
