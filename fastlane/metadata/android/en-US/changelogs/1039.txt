@@ -1,0 +1,10 @@
+### Bug Fixes:
+
+- Related videos not working(NicoNico) [GitHub #141]
+- Could not recognize video URLs with /? (BiliBili)
+- Many search filters are broken (YouTube - Duration Filter, Upload Date Filter; BiliBili - Duration Filter; NicoNico - Tags, Lives, Playlists) [GitHub #141, CodeBerg #71]
+- Unexpected error when internet disconnected but the video is not playing
+
+### UI changes:
+
+- update service icons [GitHub #159]
