@@ -1,0 +1,12 @@
+### New Features:
+
+- Support controlling the usage of the cookies(BiliBili)
+- Re-support captions for logged users(BiliBili) [GitHub #153]
+
+### Bug Fixes:
+
+- Background playing will start at wrong index if duplicate items exists in the playlist.
+- Error is always shown when opening videos(NicoNico)
+- Sometimes channel videos are empty(BiliBili) [GitHub #169] [CodeBerg #86, #87, #88]
+- Captions can not be downloaded (BiliBili) [GitHub #133]
+- Old devices can not use all the search filters (YouTube) [CodeBerg #14]
