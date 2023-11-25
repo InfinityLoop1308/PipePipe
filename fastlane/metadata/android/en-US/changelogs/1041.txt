@@ -1,0 +1,4 @@
+### Bug Fixes:
+
+- Failed to load Channel videos due to anti-crawler mechanism (BiliBili) [GitHub #169, CodeBerg #93] 
+- Some devices still can not use all the search filters (YouTube) [CodeBerg #14, #92]
