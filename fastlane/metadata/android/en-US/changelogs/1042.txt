@@ -1,0 +1,6 @@
+### Bug Fixes:
+
+- Bullet comments not working (NicoNico) [GitHub #179]
+- Errors popping up when opening top lives page (NicoNico)
+- Update request method to avoid risk control (BiliBili)
+- Can not fetch like count (YouTube)
