@@ -1,0 +1,4 @@
+### Bug Fixes:
+
+- Origin audio track is not selected for videos with multi audio tracks (YouTube) [GitHub #143, CodeBerg #79, #102]
+- Update request method to avoid risk control (BiliBili) [CodeBerg #97]
