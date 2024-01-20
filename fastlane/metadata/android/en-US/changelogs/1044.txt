@@ -1,0 +1,26 @@
+### New Features:
+
+- Support downloading the whole playlist (beta, only for < 50 items playlists)
+- Support show images in comments
+- Support navigate to the filtered item when filtering local playlists
+- Support sorting local playlists
+- Support SponsorBlock (YouTube) [GitHub #38, CodeBerg #39]
+- Support fetching the stream size before download (BiliBili)
+- Support download video concurrently (BiliBili)
+- Support display Staff List for cooperation videos (BiliBili)
+- Support showing more stream statistics (BiliBili)
+
+
+### Bug Fixes:
+
+- Feeds can not be fetched under specific circumstances [CodeBerg #113]
+- Resolution settings not working on non-YouTube services [GitHub #88, #125, #158, #189, CodeBerg #19, #50]
+- App not working on Samsung OneUI Android 14 [CodeBerg #110, #118, GitHub #176, #178]
+- Bullet comments not work as expected (YouTube) [GitHub #118, #111]
+- Partitions are enqueued even if a playlist is playing (BiliBili)
+
+
+### Others:
+
+- Update some desciptions
+- Provide translations for zh-cn, zh-tw, and jp
