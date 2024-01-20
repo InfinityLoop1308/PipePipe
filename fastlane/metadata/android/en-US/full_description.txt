@@ -1,4 +1,4 @@
-A DIVERGED fork of NewPipe with more services, client features and bug fixes.
+An FLOSS Android app to let you browse YouTube, NicoNico and BiliBili freely.
 
 **Services List**:
 
@@ -10,17 +10,17 @@ A DIVERGED fork of NewPipe with more services, client features and bug fixes.
 * Bandcamp   (Not maintained)
 * Peertube   (Not maintained)
 
-**New Client Features**:
+**Features**:
 
 * Bullet comments/Live Chats
 * Show comments of replies
 * Search filters
 * Filter items in local playlists
-* Android 13 support
-* Music player mode
+* Android 14 support
+* Music player mode & Background playing
+* Built-in popup player
 * Sort playlists
-* Remove duplicate items of local playlists
-* Open timestamp in the main player
-* Long click to append all related items to playlist
-* Fetch all the items in the online playlist
+* SponsorBlock
+* Timestamp support
+* Everything is downloadable
 * ...
