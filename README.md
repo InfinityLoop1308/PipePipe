@@ -5,7 +5,7 @@ If you like it, please consider [donating](https://ko-fi.com/pipepipe) to suppor
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>PipePipe</b></h2>
 <h4 align="center">
-An FLOSS Android app to let you browse YouTube, NicoNico and BiliBili freely. </h4>
+A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili freely. </h4>
 <p align="center"><a href="https://f-droid.org/packages/InfinityLoop1309.NewPipeEnhanced/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height=80/></a>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
