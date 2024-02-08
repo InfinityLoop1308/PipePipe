@@ -1,0 +1,16 @@
+### Bug Fixes:
+
+- Update checker not working sometimes
+- Some channel infos are incorrectly set as not available when fetching for updates(YouTube)
+- Unexpected error when viewing users(NicoNico)
+- Unable to parse some videos(BiliBili)
+- Unable to get channel videos due to update of anti-riskcontrol(BiliBili)
+- Unexpected crash under specific circumstances (BiliBili)
+- Some images from comments can not be loaded due to http issue(BiliBili)
+- Auto-enqueue not working as expected(BiliBili)
+
+
+### Others:
+
+- Enable SponsorBlock by default
+
