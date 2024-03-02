@@ -1,0 +1,9 @@
+### New Features
+
+- Support up to 10x playback speed
+- Support downloading videos and audios separately (NicoNico)
+
+### Bug Fixes:
+
+- Can not watch videos uploaded after 2.20 (NicoNico)
+- Seekbar thumbnails got scale down on big screens [https://github.com/InfinityLoop1308/PipePipe/issues/215]
