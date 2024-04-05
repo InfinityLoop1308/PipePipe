@@ -1,4 +1,5 @@
 A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili freely.
+NewPipe, but better.
 
 **Services List**:
 
