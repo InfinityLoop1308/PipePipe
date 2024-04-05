@@ -1,0 +1,25 @@
+### New Features
+
+- Support sleep timer
+- Support automatically error help from wiki
+- Support sort items in local playlists by name
+- Support sort bookmarked playlists reversely
+- Support preventing long videos being added to play queue when auto queueing
+
+### Bug Fixes
+
+- Too large error parcel crashes the crash report
+- Many different kinds of unexpected crash under certain circumstances
+- Images resolution become low (YouTube)
+- Comments not loads (YouTube)
+- Some videos not load (YouTube)
+- Images resolution become low (NicoNico)
+- Can not watch streams if the uploader account was removed (NicoNico)
+- Livestreams have no cover(NicoNico)
+- Round play lives are always shown in feed (BiliBili)
+
+### Others
+
+- Fix a bug which makes UI laggy and drains the battery
+- Improve the speed of network requests
+
