@@ -1,0 +1,15 @@
+### Performance improvement
+
+- Significantly improve the performance of loading and playing (YouTube)
+- Set a timeout for sponsorblock to avoid waiting(YouTube)
+- Improve the loading speed of thumbnails(YouTube)
+- Unexpected large amount network requests are sent if the video has no live comments replay or paused by users(YouTube)
+
+### Bug Fixes
+
+- Search not working (NicoNico)
+- No cover for live search results(NicoNico)
+- Unexpected expection when searching for lives(NicoNico)
+- No bullet comments for lives(BiliBili)
+
+...And all the new features, fixes from 3.4.0 if you haven't upgraded yet :)
