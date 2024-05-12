@@ -1,27 +1,19 @@
-A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili freely.
-NewPipe, but better.
+NewPipe, but better - browse the most popular streaming platforms throughout the world.
 
-**Services List**:
+**Original Features**
 
-* BiliBili
-* NicoNico
-* YouTube
-* SoundCloud (Not maintained)
-* media.ccc  (Not maintained)
-* Bandcamp   (Not maintained)
-* Peertube   (Not maintained)
-
-**Features**:
-
-* Bullet comments/Live Chats
-* Show comments of replies
-* Search filters
-* Filter items in local playlists
-* Android 14 support
-* Music player mode & Background playing
+* Local subscription / playlists / history
+* Comments & replies
 * Built-in popup player
-* Sort playlists
+* Download video / audio / caption
+
+**Beyond NewPipe**
+
+* Bullet comments / Live Chats
+* Search filters
+* Filter & sort local playlists
+* Music player mode & Background playing
 * SponsorBlock
 * Timestamp support
-* Everything is downloadable
-* ...
+* Sleep timer
+* ... and many minor improvements

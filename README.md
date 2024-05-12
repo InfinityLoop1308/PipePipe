@@ -1,26 +1,37 @@
 The project is hosted on both [CodeBerg](https://codeberg.org/NullPointerException/PipePipe) and [GitHub](https://github.com/InfinityLoop1308/PipePipe). Check both before you open an issue.
 
-If you like it, please consider [donating](https://ko-fi.com/pipepipe) to support the development.
+If you're enjoying PipePipe, please help share it with your friends. Every bit of support means a lot to us!
+
 <hr>
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>PipePipe</b></h2>
 <h4 align="center">
-A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili freely. </h4>
+A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili without accounts. </h4>
 <h4 align="center">
-NewPipe, but better. </h4>
+NewPipe, but better - browse the most popular streaming platforms throughout the world.</h4>
 <p align="center"><a href="https://f-droid.org/packages/InfinityLoop1309.NewPipeEnhanced/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height=80/></a>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
 
-## Services List:
+## Features:
 
-* BiliBili 
-* NicoNico 
-* YouTube
-* SoundCloud (Not maintained)
-* media.ccc  (Not maintained)
-* Bandcamp   (Not maintained)
-* PeerTube   (Not maintained)
+### Original
+
+* Local subscription / playlists / history
+* Comments & replies
+* Built-in popup player
+* Download video / audio / caption
+
+### Beyond NewPipe
+
+* Bullet comments / Live Chats
+* Search filters
+* Filter & sort local playlists
+* Music player mode & Background playing
+* SponsorBlock
+* Timestamp support
+* Sleep timer
+* ... and many minor improvements
 
 ## Screenshots
 
@@ -41,28 +52,13 @@ NewPipe, but better. </h4>
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11-v2.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/12-v1.png)
 
-## Features:
-
-* Bullet comments/Live Chats
-* Show comments of replies
-* Search filters
-* Filter items in local playlists
-* Android 14 support
-* Music player mode & Background playing
-* Built-in popup player
-* Sort playlists
-* SponsorBlock
-* Timestamp support
-* Everything is downloadable
-* ...
-
 ## Contribute
 
 Issues and PRs are welcomed. Please note that I will **NOT** accept service requests due to my limited time. 
 
 Anyone interested in creating their own service is encouraged to fork this repository.
 
-PipePipe is a HARD fork of NewPipe and the codebase is very different from NewPipe. Please do not open "why not merge NewPipe's xx feature" issues.
+PipePipe is a HARD fork of NewPipe and the codebase is very different from NewPipe. 
 
 ## Donation
 
