@@ -1,0 +1,15 @@
+### Bug Fixes
+
+- Notification thumbnail is blurry on Android 13+
+- Wrong icon on TVs
+- Delete from local playlist not working sometimes
+- Unexpected crash on Android 5 & 6 devices
+- Unexpected error when parsing comments in some video (YouTube)
+- Name, avatar and banner of channels can't be loaded sometimes(YouTube)
+- Search filters doesn't work(NicoNico)
+
+### New Features
+
+- Make show future preference also work for feeds
+- Support open background queue by long pressing the play/pause button in the bottom play bar
+- Support duration filters(NicoNico) 
