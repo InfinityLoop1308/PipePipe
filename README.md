@@ -62,7 +62,9 @@ PipePipe is a HARD fork of NewPipe and the codebase is very different from NewPi
 
 ## Donation
 
-PipePipe is free and open source software. It is developed in my spare time. If you like it, please consider donating to support the development. With sufficient donations, I can dedicate more time to developing the project.
+PipePipe is free and open source software. It is developed in my spare time. If you like it, please consider donating to support the development. With sufficient donations, I can dedicate more time to developing the project:)
+
+Liberapay: https://liberapay.com/PipePipe
 
 Ko-fi: https://ko-fi.com/pipepipe
 
