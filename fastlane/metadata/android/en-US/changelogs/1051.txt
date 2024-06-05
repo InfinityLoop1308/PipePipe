@@ -1,0 +1,10 @@
+### Bug Fixes
+
+- Unexpected crash on Android 13+
+- Local playlists can not be deleted
+- Default search filter not working (NicoNico)
+- Failed to open some videos (BiliBili)
+
+### New Features
+
+- Support random playing when using Music Player Mode
