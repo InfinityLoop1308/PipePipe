@@ -1,1 +1,15 @@
-v3.5.0
+### New Features
+
+- Support long-press to speeding the playback
+
+### Bug Fixes
+
+- Videos can not be played (YouTube)
+- Crash when searching specific words (YouTube)
+- Unable to export subscriptions sometimes (YouTube)
+- Download post-processing failed sometimes(BiliBili)
+- Incorrect playlist order under certain conditions
+
+### Performance
+
+- Disable auto-fallback to avoid long buffer time
