@@ -1,0 +1,18 @@
+### New Features
+
+- Enhance the stability when viewing channel details (BiliBili)
+
+### Bug Fixes
+
+- Random 403 error at 1 min (YouTube)
+- Errors are thrown if the channel doesn't have a banner (YouTube)
+- Live status is always shown as "投稿视频轮播" (BiliBili)
+- No thumbnail on some old android devices
+- Full screen button don't rotate the screen to landscape on tablets
+- Some unexpected error under certain circumstances
+
+### UI
+
+- Add a play queue button for easier access to background queue
+- Show the last update time of the error solution
+- Update tv banner
