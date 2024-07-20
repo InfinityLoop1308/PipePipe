@@ -1,0 +1,11 @@
+### New Features
+
+- Support ReturnYouTubeDislike (YouTube)
+- Update notification icon
+
+### Bug Fixes
+
+- Playback error occurs randomly (YouTube)
+- Some spaces are replaced to &nbsp; in comments (YouTube)
+- Unable to parse URLs shared from official client with timestamp (BiliBili)
+- Unable to fetch comments of some videos(BiliBili)

@@ -9,11 +9,11 @@ NewPipe, but better - browse the most popular streaming platforms throughout the
 
 **Beyond NewPipe**
 
+* SponsorBlock & ReturnYouTubeDislike
 * Bullet comments / Live Chats
 * Search filters
 * Filter & sort local playlists
 * Music player mode & Background playing
-* SponsorBlock
 * Timestamp support
 * Sleep timer
 * ... and many minor improvements
