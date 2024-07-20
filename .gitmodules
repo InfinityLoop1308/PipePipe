@@ -6,3 +6,7 @@
 	path = PipePipeClient
 	url = https://codeberg.org/NullPointerException/PipePipeClient.git
 	branch = dev
+[submodule "PipePipe.wiki"]
+    path = PipePipe.wiki
+    url = git@github.com:InfinityLoop1308/PipePipe.wiki.git
+    branch = main
