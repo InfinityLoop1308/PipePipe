@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Checklist**
+**Checklist (Your issue will be automatically closed if you delete this part)**
 - [ ] No "Found a solution for the error you encountered" notification was shown when opening the error report.
 - [ ] I make sure that there are no *existing issues* - open or closed - which I could contribute my information to.
 - [ ] I am able to reproduce the bug with the latest version given here: [CLICK THIS LINK](https://github.com/InfinityLoop1308/PipePipe/releases/latest).

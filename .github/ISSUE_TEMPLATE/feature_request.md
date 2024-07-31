@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Checklist**
-- [ ] I make sure that there are no *existing issues* - open or closed in both [GitHub](https://github.com/InfinityLoop1308/PipePipe) and [CodeBerg](https://codeberg.org/NullPointerException/PipePipe)- which I could contribute my information to.
+**Checklist (Your issue will be automatically closed if you delete this part)**
+- [ ] I make sure that there are no *existing issues* - open or closed - which I could contribute my information to.
 
 <hr>
