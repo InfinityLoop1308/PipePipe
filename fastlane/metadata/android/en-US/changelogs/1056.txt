@@ -1,0 +1,13 @@
+### New Features
+
+- Support fetch lives & other tabs in feed (YouTube)
+
+### Bug Fixes
+
+- Unable to watch new live replays (YouTube)
+- Wrong channel names (YouTube)
+
+### Others
+
+- Improve stability for YouTube
+- Support new NicoNico (not including NicoLive)
