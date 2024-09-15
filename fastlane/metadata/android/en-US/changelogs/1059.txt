@@ -1,0 +1,15 @@
+### New Features
+
+- Support YouTube-style fullscreen gestures
+
+### Bug Fixes
+
+- Some feeds failed to load (YouTube)
+- Shorts not showing in channels (YouTube)
+- Unable to get user series (NicoNico)
+- Comments are limited (BiliBili)
+- Several bugs that make the app crash under certain situations
+
+### Others
+
+- Improve stability 
