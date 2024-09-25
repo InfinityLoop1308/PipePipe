@@ -1,7 +1,3 @@
-The project is hosted on both [CodeBerg](https://codeberg.org/NullPointerException/PipePipe) and [GitHub](https://github.com/InfinityLoop1308/PipePipe). Check both before you open an issue.
-
-If you're enjoying PipePipe, please help share it with your friends. Every bit of support means a lot to us!
-
 <hr>
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>PipePipe</b></h2>
@@ -31,6 +27,7 @@ NewPipe, but better - browse the most popular streaming platforms throughout the
 * Music player mode & Background playing
 * Timestamp support
 * Sleep timer
+* Fullscreen gestures
 * ... and many minor improvements
 
 ## Screenshots
