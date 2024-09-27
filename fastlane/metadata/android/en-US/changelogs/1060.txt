@@ -1,0 +1,12 @@
+### New Features
+
+- Support sign in to avoid being blocked (YouTube)
+
+### Bug Fixes
+
+- Channel subscription list / video list keeps scrolled back to top when backing to last page
+- Language of the audio track does not match Content Language in preferences (YouTube)
+
+### Others
+
+- Improve stability 
