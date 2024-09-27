@@ -1,4 +1,4 @@
-NewPipe, but better - browse the most popular streaming platforms throughout the world.
+A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili without accounts.
 
 **Original Features**
 
@@ -9,11 +9,14 @@ NewPipe, but better - browse the most popular streaming platforms throughout the
 
 **Beyond NewPipe**
 
+* New Services (BiliBili / NicoNico)
 * SponsorBlock & ReturnYouTubeDislike
+* Sign in to watch restricted contents
 * Bullet comments / Live Chats
 * Search filters
 * Filter & sort local playlists
 * Music player mode & Background playing
 * Timestamp support
 * Sleep timer
+* Fullscreen gestures
 * ... and many minor improvements
