@@ -7,7 +7,7 @@ A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili without acc
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
 
-## Features:
+## Features
 
 ### Original
 
