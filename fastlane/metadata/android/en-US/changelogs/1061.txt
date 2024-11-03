@@ -1,0 +1,25 @@
+### New Features
+
+- Add a preference to control whether to enable full-screen gestures
+- Improve watching experience of bullet comments / live chats
+- Support moving playlist elements in reverse sorting mode
+- Support play audio along with other app
+- Support auto-translate captions for all videos (YouTube)
+- Support new NicoNico live (NicoNico)
+
+### Bug Fixes
+
+- Now the current item will not be removed from the play queue if there is network issue. Instead, PipePipe will stop the playback.
+- Can not get video streams for some video (YouTube)
+- The best audio track should always be selected when downloading video (YouTube)
+- High quality audio & video are not available  (YouTube)
+- Can not get replies of a comment (BiliBili)
+- Bullet comments are not sync with the official client (BiliBili)
+- Do not show vote bullet comments (BiliBili)
+- Recommended lives have no item (BiliBili)
+- Bullet comments not working properly when playing a multi-video list (BiliBili)
+
+### Others
+
+- Improve stability 
+- Fix some bug that affect performance under certain scenarios
