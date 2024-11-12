@@ -28,6 +28,7 @@ A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili without acc
 * Timestamp support
 * Sleep timer
 * Fullscreen gestures
+* Auto-translation captions
 * ... and many minor improvements
 
 ## Screenshots
