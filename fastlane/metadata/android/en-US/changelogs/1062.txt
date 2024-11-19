@@ -1,0 +1,15 @@
+### Performance
+
+- Significantly improve video loading speed
+- Increase the speed of loading comment replies
+- Optimize memory usage, significantly improving smoothness on devices with limited memory
+
+### Bug Fixes
+
+- Can't access high quality videos after login (YouTube)
+- Playlist not working (YouTube)
+- Incorrect upload time in channel page (BiliBili)
+
+### Others
+
+- Improve stability 
