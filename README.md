@@ -2,23 +2,16 @@
 <p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
 <h2 align="center"><b>PipePipe</b></h2>
 <h4 align="center">
-A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili without accounts. </h4>
+NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 <p align="center"><a href="https://f-droid.org/packages/InfinityLoop1309.NewPipeEnhanced/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height=80/></a>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a></p>
 <hr>
 
 ## Features
 
-### Original
-
-* Local subscription / playlists / history
-* Comments & replies
-* Built-in popup player
-* Download video / audio / caption
-
 ### Beyond NewPipe
 
-* New Services (BiliBili / NicoNico)
+* Login to watch restricted / premium contents
 * SponsorBlock & ReturnYouTubeDislike
 * Sign in to watch restricted contents
 * Bullet comments / Live Chats
@@ -30,6 +23,13 @@ A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili without acc
 * Fullscreen gestures
 * Auto-translation captions
 * ... and many minor improvements
+
+### Original
+
+* Local subscription / playlists / history
+* Comments & replies
+* Built-in popup player
+* Download video / audio / caption
 
 ## Screenshots
 

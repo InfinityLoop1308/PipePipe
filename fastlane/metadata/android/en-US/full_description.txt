@@ -1,15 +1,8 @@
-A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili without accounts.
-
-**Original Features**
-
-* Local subscription / playlists / history
-* Comments & replies
-* Built-in popup player
-* Download video / audio / caption
+NewPipe, reimagined: faster, more stable, and packed with more features.
 
 **Beyond NewPipe**
 
-* New Services (BiliBili / NicoNico)
+* Login to watch restricted / premium contents
 * SponsorBlock & ReturnYouTubeDislike
 * Sign in to watch restricted contents
 * Bullet comments / Live Chats
@@ -21,3 +14,10 @@ A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili without acc
 * Fullscreen gestures
 * Auto-translation captions
 * ... and many minor improvements
+
+**Original Features**
+
+* Local subscription / playlists / history
+* Comments & replies
+* Built-in popup player
+* Download video / audio / caption
