@@ -1,0 +1,16 @@
+### New Features
+
+- Redesign the settings to make them clearer
+- Support more languages: fr, de, it, es
+
+### Bug Fixes
+
+- Sign in and out does not take effect immediately
+- Just ended streams can not be viewed (YouTube)
+- Sign in does not work due to new blocking (YouTube)
+- Live chat not available (YouTube)
+- Trending not available for ip outside japan (NicoNico)
+
+### Others
+
+- Improve stability 
