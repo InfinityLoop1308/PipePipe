@@ -14,6 +14,10 @@ assignees: ''
 
 **Describe the bug**
 
+**Frequency**
+
+
+
 **Steps to reproduce the bug**
 
 **Device (e.g. Pixel 9 Pro)**
