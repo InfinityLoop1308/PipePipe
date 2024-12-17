@@ -1,0 +1,23 @@
+### New Features
+
+- Support make video position fixed when scrolling comments
+
+### Bug Fixes
+
+- Lag and errors when watching videos (YouTube)
+- Wrong audio track for multi-language videos (YouTube)
+- Unable to load video information under specific network conditions (YouTube)
+- No thumbnail for albums (YT Music)
+- Some trending videos are not correctly parsed (NicoNico)
+
+### Behavior changes
+
+- Use MP4 as the default format to avoid compatibility issues
+- Add a preference to use advanced formats
+- Add a separate preference to specify the preferred audio language
+- Loading times over 10 seconds will no longer be automatically cancelled and throw an error
+- Videos will no longer attempt to use other resolutions as fallback when loading fails
+
+### Others
+
+- Improve stability 
