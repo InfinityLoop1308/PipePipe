@@ -22,7 +22,7 @@ NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 * Sleep timer
 * Fullscreen gestures
 * Auto-translation captions
-* ... and many minor improvements
+* ... and many other improvements
 
 ### Original
 
@@ -70,6 +70,12 @@ For YouTube, the cookie will only be used when retrieving playback streams.
 Issues and PRs are welcomed. Please note that I will **NOT** accept service requests. 
 
 Anyone interested in creating their own service is encouraged to fork this repository.
+
+## About Latest Build
+
+Sometimes, for a known issue, PipePipe may already have a fix in place, but a new version has not yet been officially released. In such cases, you can check the continuous integration (CI) system to obtain the latest build. This allows you to access the most recent updates and fixes before they are included in the next official release. 
+
+Check https://github.com/InfinityLoop1308/PipePipe/actions/workflows/ci.yml , select the latest, and download the debug apk.
 
 
 ## Donation
