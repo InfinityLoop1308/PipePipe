@@ -1,0 +1,28 @@
+### New Features
+
+- Support content filters: filter out unwanted items everywhere by keywords and channel names 
+
+### Bug Fixes
+
+- Videos failed to play: 403 errors (YouTube)
+- Random crash when switching videos (YouTube)
+- Blurry channel banner images (YouTube)
+- New comments/related items/desc are not updated when resuming to app from background playing
+- Error messages are not displayed correctly
+- Comments got cut when inner scroll is enabled
+- Search terms are not added to history records under certain conditions
+- Related item isn't auto-enqueue randomly
+- Some channels have incomplete video lists(NicoNico)
+- Can not play paid video (BiliBili)
+
+
+### Behavior changes
+
+- Don't open video detail page when playing local playlist with music mode enabled
+- Show a toast when login success
+- Use new extraction method to avoid being blocked by YouTube
+
+
+### Others
+
+- Improve stability 
