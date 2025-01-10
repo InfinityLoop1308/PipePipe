@@ -13,23 +13,15 @@ NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 
 * Login to watch restricted / premium contents
 * SponsorBlock & ReturnYouTubeDislike
-* Sign in to watch restricted contents
 * Bullet comments / Live Chats
 * Search filters
-* Filter & sort local playlists
+* Search & sort in local playlists
+* Filter out unwanted items by keywords/channels/...
 * Music player mode & Background playing
-* Timestamp support
 * Sleep timer
 * Fullscreen gestures
 * Auto-translation captions
-* ... and many other improvements
-
-### Original
-
-* Local subscription / playlists / history
-* Comments & replies
-* Built-in popup player
-* Download video / audio / caption
+* ... and many minor improvements
 
 ## Screenshots
 
