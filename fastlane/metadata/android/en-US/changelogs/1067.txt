@@ -1,0 +1,7 @@
+### Bug Fixes
+
+- Slow loading speed start from 4.1.0 (YouTube)
+- Random fail when loading videos (YouTube)
+- Missing subtitle, segment, live chat(YouTube)
+- Player error after switching network (YouTube)
+
