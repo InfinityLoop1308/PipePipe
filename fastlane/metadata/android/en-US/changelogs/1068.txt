@@ -1,0 +1,8 @@
+### Bug Fixes
+
+- [4.1.3] Ask for login frequently (YouTube)
+- Slow loading speed start from 4.1.0 (YouTube)
+- Random fail when loading videos (YouTube)
+- Missing subtitle, segment, live chat(YouTube)
+- Player error after switching network (YouTube)
+
