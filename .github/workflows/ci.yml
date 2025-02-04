@@ -55,7 +55,7 @@ jobs:
           ./gradlew assembleDebug lintDebug --stacktrace -DskipFormatKtlint
 
       - name: Upload APKs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: all-apks-in-one(intermediates)
           retention-days: 1
@@ -89,12 +89,14 @@ jobs:
         file: ${{ fromJson(needs.build-client.outputs.files) }}
     steps:
       - name: Download APKs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: all-apks-in-one(intermediates)
+          path: apks
+          merge-multiple: true
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.file }}
-          path: ${{ matrix.file }}
+          path: apks/${{ matrix.file }}
