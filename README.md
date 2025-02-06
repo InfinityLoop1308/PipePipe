@@ -23,28 +23,6 @@ NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 * Login to watch restricted / premium contents
 * ... and many minor improvements
 
-### Origin
-
-* Watch videos at resolutions up to 8K
-* Listen to audio in the background, only loading the audio stream to save data
-* Popup mode (floating player, aka Picture-in-Picture)
-* Watch live streams
-* Show/hide subtitles/closed captions
-* Search videos and audios (on YouTube, you can specify the content language as well)
-* Enqueue videos (and optionally save them as local playlists)
-* Show/hide general information about videos (such as description and tags)
-* Show/hide next/related videos
-* Show/hide comments
-* Search videos, audios, channels, playlists and albums
-* Browse videos and audios within a channel
-* Subscribe to channels (yes, without logging into any account!)
-* Get notifications about new videos from channels you're subscribed to
-* Create and edit channel groups (for easier browsing and management)
-* Browse video feeds generated from your channel groups
-* View and search your watch history
-* Search and watch playlists (these are remote playlists, which means they're fetched from the service you're browsing)
-* Create and edit local playlists (these are created and saved within the app, and have nothing to do with any service)
-* Download videos/audios/subtitles (closed captions)
 
 ## Screenshots
 
