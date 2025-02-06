@@ -11,8 +11,8 @@ NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 
 ### Beyond NewPipe
 
-* Login to watch restricted / premium contents
-* SponsorBlock & ReturnYouTubeDislike
+* SponsorBlock (YouTube & BiliBili)
+* ReturnYouTubeDislike
 * Bullet comments / Live Chats
 * Search filters
 * Search & sort in local playlists
@@ -20,27 +20,50 @@ NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 * Music player mode & Background playing
 * Sleep timer
 * Fullscreen gestures
-* Auto-translation captions
+* Login to watch restricted / premium contents
 * ... and many minor improvements
+
+### Origin
+
+* Watch videos at resolutions up to 8K
+* Listen to audio in the background, only loading the audio stream to save data
+* Popup mode (floating player, aka Picture-in-Picture)
+* Watch live streams
+* Show/hide subtitles/closed captions
+* Search videos and audios (on YouTube, you can specify the content language as well)
+* Enqueue videos (and optionally save them as local playlists)
+* Show/hide general information about videos (such as description and tags)
+* Show/hide next/related videos
+* Show/hide comments
+* Search videos, audios, channels, playlists and albums
+* Browse videos and audios within a channel
+* Subscribe to channels (yes, without logging into any account!)
+* Get notifications about new videos from channels you're subscribed to
+* Create and edit channel groups (for easier browsing and management)
+* Browse video feeds generated from your channel groups
+* View and search your watch history
+* Search and watch playlists (these are remote playlists, which means they're fetched from the service you're browsing)
+* Create and edit local playlists (these are created and saved within the app, and have nothing to do with any service)
+* Download videos/audios/subtitles (closed captions)
 
 ## Screenshots
 
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/00-v2.png" width=640>](fastlane/metadata/android/en-US/images/phoneScreenshots/00-v1.png)
 
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/01-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02-v2.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/03-v2.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/04-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/01-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/02-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/03-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/04-v3.png)
 <br/>
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/05-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/06-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/07-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/07-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/08-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/08-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/05-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/06-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/07-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/07-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/08-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/08-v3.png)
 <br/>
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/09-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/09-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10-v1.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/10-v1.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11-v2.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12-v2.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/12-v1.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/09-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/09-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/10-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/11-v3.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12-v3.png" width=160>](fastlane/metadata/android/en-US/images/phoneScreenshots/12-v3.png)
 
 
 ## About this fork
