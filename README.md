@@ -1,5 +1,5 @@
 <hr>
-<p align="center"><img src="https://i.imgur.com/Q7R0xTU.png" width="150"></p> 
+<p align="center"><img src="assets/logo.png" width="346"></p> 
 <h2 align="center"><b>PipePipe</b></h2>
 <h4 align="center">
 NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
