@@ -1,21 +1,14 @@
 Thanks for your interest in contributing to the translation!
 
-## If you know how to use git to clone, modify and then make a pull request
+We use AI to support translation in the following languages:
+Simplified Chinese, Traditional Chinese, Japanese, Vietnamese, French, German, Italian, Spanish
 
-Just clone the client, open `app/src/main/res/values/strings.xml` and find the untranslated strings. The string is like that:
-```agsl
-<string name="title_activity_about">About PipePipe</string>
-```
-there the name is the key, and the content is the value. Copy this line and paste it to the end of the your language's file, which can be found in the same directory. Then translate the value. 
+DO NOT modify \n, " and other "strange" symbols - they are used for formatting. Only change the text part, unless you know what you are doing!
 
-For example, if you are translating to Simplified Chinese, you should paste the line to the end of `app/src/main/res/values-b+zh+HANS+CN/strings.xml`. Then translate the value to Chinese. The result should be like this:
-```agsl
-<string name="title_activity_about">关于PipePipe</string>
-```
-When you finish your translation you can make a pull request.
+If you want to modify a translation already supported by AI:
+1. Find the translation file corresponding to your language, for example, Japanese is [app/src/main/res/values-ja/strings.xml](https://github.com/InfinityLoop1308/PipePipeClient/blob/dev/app/src/main/res/values-ja/strings.xml).
+2. Click "Fork and edit this file"
+3. Make sure to only change the translation of problematic entries, keep other entries unchanged, and do not change the order of entries.
+4. Save & make a pull request (will be done automatically)
 
-## If you don't know how to use git
-
-You can just ignore the clone step and open string.xml [online](https://codeberg.org/NullPointerException/PipePipeClient/src/branch/dev/app/src/main/res/values/strings.xml)
-then follow the same steps above. You can also modify your language's file online, and then it will automatically make a pull request.
-For example, the link to the Simplified Chinese file is [here](https://codeberg.org/NullPointerException/PipePipeClient/src/branch/dev/app/src/main/res/values-b+zh+HANS+CN/strings.xml).
+If you want to modify a translation not supported by AI, please use `translator.py` for an initial translation and then polish it to ensure the correctness of the format and order. It is recommended to open an issue and contact me before deciding on the translation.
