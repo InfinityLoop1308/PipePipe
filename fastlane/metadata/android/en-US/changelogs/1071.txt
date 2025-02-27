@@ -1,0 +1,22 @@
+### New Features
+
+- Support use uploader name to search in playlist
+
+### Bug Fixes
+
+- Update checker not working as expected
+- Not working under android 8 
+- Bad performance when full screen with inner scroll enabled
+- Comments not shown sometimes
+- Soft keyboard not hide when a local playlist search finished 
+- "Open in browser" on user page doesn't work (NicoNico)
+- some minor bug fixes
+
+### UI
+
+- Update jp and es translation
+
+### Others
+
+- Improve stability
+
