@@ -9,9 +9,7 @@ on:
       - 'README.md'
       - 'fastlane/**'
       - 'assets/**'
-      - '.github/**/*.md'
-      - '.github/FUNDING.yml'
-      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/**'
   push:
     branches:
       - main
@@ -19,9 +17,7 @@ on:
       - 'README.md'
       - 'fastlane/**'
       - 'assets/**'
-      - '.github/**/*.md'
-      - '.github/FUNDING.yml'
-      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/**'
 
 jobs:
   build-client:

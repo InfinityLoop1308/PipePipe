@@ -1,0 +1,74 @@
+name: Build FFmpeg-Kit LTS for Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      extra_options:
+        description: '额外构建选项'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 设置 Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 安装依赖包
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake libtool pkg-config curl git doxygen nasm cmake gcc gperf texinfo yasm bison autogen wget autopoint meson ninja-build ragel groff gtk-doc-tools libtasn1-6-dev libtasn1-bin libgnutls28-dev libunistring-dev
+
+      - name: 设置 Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: 构建 FFmpeg-Kit LTS
+        run: |
+          
+          git clone https://github.com/InfinityLoop1308/ffmpeg-kit.git
+          cd ffmpeg-kit
+          
+          # 构建 LTS 版本，并启用 gmp 和 gnutls 外部库
+          BUILD_OPTIONS="--lts --enable-gmp --enable-openssl --enable-android-media-codec --enable-android-zlib --disable-x86 --disable-arm-v7a --disable-arm-v7a-neon"
+          
+          # 添加额外的构建选项
+          if [[ -n "${{ github.event.inputs.extra_options }}" ]]; then
+            BUILD_OPTIONS="${BUILD_OPTIONS} ${{ github.event.inputs.extra_options }}"
+          fi
+          
+          # 执行构建脚本
+          ./android.sh ${BUILD_OPTIONS}
+
+      - name: 打印构建日志
+        if: ${{ failure() }}  # 无论成功或失败都执行
+        run: |
+          cd ffmpeg-kit
+          if [[ -f build.log ]]; then
+            tail -500  build.log
+          else
+            echo "build.log 文件不存在"
+          fi
+
+
+      - name: 上传 LTS AAR 文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-kit-android-lts-aar
+          path: ffmpeg-kit/bundle-android-aar-lts/*.aar
+          if-no-files-found: warn
+
+      - name: 上传预编译库
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-kit-prebuilt-lts
+          path: ffmpeg-kit/prebuilt/
+          if-no-files-found: warn
