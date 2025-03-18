@@ -1,0 +1,18 @@
+### New Features
+
+- Support filter out short videos (YouTube)
+- Support add channel to blocking list from long-click menu
+- Explicitly mark paid videos in results lists
+- Automatically filter out paid videos in Feeds
+- Add an option to share local playlist URLs 
+- Allow change the loading timeout for users with slow network
+
+### Bug Fixes
+
+- Content filter not working if there are leading spaces
+- 403 error when logged in (YouTube)
+
+### UI
+
+- Update Spanish translation
+
