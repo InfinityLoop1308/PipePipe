@@ -1,0 +1,14 @@
+### New Features
+
+- Support Podcast Tab (YouTube)
+- Support "Always start playback from beginning" setting
+- Add a switch to control whether loading full page of playlists
+
+### Bug Fixes
+
+- Videos failed to load if logged in (YouTube)
+- Set preferred 'open' action to "add to playlist" not working 
+
+### UI
+
+- Show queue button even if there is only 1 item in play queue
