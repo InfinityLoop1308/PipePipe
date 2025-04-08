@@ -1,0 +1,3 @@
+### Bug Fixes
+
+- Some users unable to play YouTube videos (IP blocked / 403 error)update code
