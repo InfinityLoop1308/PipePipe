@@ -1,0 +1,24 @@
+### New Features
+
+- Support card mode
+- Support search(filter) local channels
+- Show download date of downloaded contents
+
+### Bug Fixes
+
+- Some videos doesn't load (YouTube)
+- Search doesn't start automatically under certain conditions
+- App stuck in portrait mode if using gesture to exit full screen with autorotation on.
+- Channel Filter does not affect channels with leading/trailing spaces
+- Keyword Filters are not case-insensitive
+- Last playback progress bar doesn't work (BiliBili)
+- Trending not working (NicoNico)
+
+### UI
+
+- Update "ip blocked" error text to avoid misleading
+
+### Behavior
+
+- Always select the first related items for auto-enqueuing for YouTube videos
+- Now background button will only shuffle when playing a local playlist
