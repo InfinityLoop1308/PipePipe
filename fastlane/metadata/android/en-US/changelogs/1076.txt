@@ -1,0 +1,5 @@
+### Bug Fixes
+
+- Cannot import data from NewPipe 
+- Missing subtitles translations (YouTube)
+- Unexpected crash under certain conditions (YouTube)
