@@ -1,0 +1,26 @@
+# Important Note: Please don't login at this time, doing so may get you the all video 360p problem, see #900. We are still looking for a way to fix it.
+
+### New Features
+
+- Support download full local playlist without limit
+- Improve download stability
+- Add a setting to control whether to show full titles and comments by default
+
+### Bug Fixes
+
+- Titles are always translated to English (YouTube)
+- Live tabs are not enabled when migrated from NewPipe
+- Import from NewPipe failed under certain conditions 
+- Batch download failed for audios (NicoNico)
+- Unexpected crash when download videos under certain conditions (BiliBili)
+- Note replies are not correctly parsed sometimes (BiliBili)
+
+### UI
+
+- Revert the change in 4.3.0 that use a larger grid item size on tablets
+- Improve comment reply UI 
+- Remove "Recommended Podcasts"
+
+### Behavior
+
+- Disable bullet comments/live chats by default
