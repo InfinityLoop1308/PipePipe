@@ -1,0 +1,17 @@
+### New Features
+
+- Make timestamp detection in comments and descriptions more smart
+- Improve quality menu to make things more clear
+
+### Bug Fixes
+
+- Links in comments not working 
+- "No app on your device can open this" toast is shown even with suitable apps 
+- Playlists only load first 100 videos (YouTube)
+- Download fails under certain conditions (YouTube)
+- Some video has no audio under certain conditions(YouTube)
+- Failed to parse some channels (YouTube) 
+- Suicide/self-harm contents won't load (YouTube)
+- Some meta info are not parsed correctly (YouTube)
+- Error parsing some comments(BiliBili) 
+
