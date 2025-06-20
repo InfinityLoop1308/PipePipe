@@ -1,0 +1,26 @@
+### New Features
+
+- Update the extractor to avoid most 403 issues (YouTube)
+- Add a separate screen for showing channels of a Channel Group
+- Support setting channel group feed as a main page tab
+- Support keyword search in channel group feeds 
+- Support large grid layout
+- Support always use list mode for bookmarks
+- Support display channel group list in Subscription page as a grid
+- Allow limiting the max rows of bullet comments
+- Support playing feeds as playlists
+- Enable vp9 and hevc as default
+- Prefer advanced format when playing 
+- Add confirmation dialog before exiting app
+- Improve Image Viewer for Images Attached in Comments (BiliBili)
+
+### Bug Fixes
+
+- All videos are played only on 360p if logged in (YouTube)
+- Thumbnails in Shorts tab are low resolution (YouTube)
+- Cannot download subtitles if downloading from a shared link
+- "no app installed to play this file" under certain conditions
+
+### Behavior
+
+- Make the background button behavior controlled by the "Random Order" Setting 
