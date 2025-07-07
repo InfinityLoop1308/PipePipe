@@ -1,0 +1,30 @@
+name: Feature Request
+description: Suggest an idea for this project
+title: "[Feature request] "
+labels: ["feature-request"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new feature! Please fill out this form to help us understand your request.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Please confirm the following before submitting your feature request
+      options:
+        - label: I have searched for existing issues (open and closed) and confirmed this feature hasn't been requested before
+          required: true
+        - label: I believe this feature request will benefit more than 10% of users, not just myself
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Please provide a clear and detailed description of the feature you'd like to see added
+      placeholder: Describe your feature request here...
+    validations:
+      required: true
