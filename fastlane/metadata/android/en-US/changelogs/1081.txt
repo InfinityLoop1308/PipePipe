@@ -1,0 +1,28 @@
+### New Features
+
+- Support add channel to feed groups in channel page 
+- Use feed group icon as tab icon when adding to main screen (need to re-add to see changes) 
+- Support disable pull to refresh in feed 
+- Add swipe to seek gesture
+- Display video titles in content language instead of English across channels, feeds, trending, and remote playlists
+- Support watch sensitive videos for logged users (NicoNico)
+
+### Bug Fixes
+
+- No related items (YouTube) 
+- Advanced formats are not preferred correctly 
+- Unfinished downloads disappear from the download list after app get killed 
+- Fullscreen gesture not working as expected in vertical videos
+- Failed to fetch feeds (NicoNico) 
+- SoundCloud service not working (SoundCloud)
+- Some UI error
+
+### Behavior
+
+- Use a pref to control whether to enable exit app confirmation
+- Improve logging procedure to make it more clear
+- Disable music player mode in feeds 
+
+### Others
+
+- Update some translations
