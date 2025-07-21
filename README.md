@@ -68,7 +68,7 @@ Anyone interested in creating their own service is encouraged to fork this repos
 
 Sometimes, for a known issue, PipePipe may already have a fix in place, but a new version has not yet been officially released. In such cases, you can check the continuous integration (CI) system to obtain the latest build. This allows you to access the most recent updates and fixes before they are included in the next official release. 
 
-Check https://github.com/InfinityLoop1308/PipePipe/actions/workflows/ci.yml , select the latest, and download the debug apk.
+Click [here](https://nightly.pipepipe.dev) to download the latest APK. You need to log in to access the builds.
 
 
 ## Donation
