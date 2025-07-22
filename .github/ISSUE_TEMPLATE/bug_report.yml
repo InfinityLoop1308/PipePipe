@@ -15,14 +15,14 @@ body:
     attributes:
       label: Checklist
       options:
-        - label: I make sure that there are no existing issues - open or closed - which I could contribute my information to
+        - label: I make sure that the issue is NOT a duplicate of pinned issues
+          required: true
+        - label: I make sure I am using the LATEST version - check [here](https://github.com/InfinityLoop1308/PipePipe/releases)
           required: true
         - label: I understand that issues with limited impact, such as those occurring on specific devices or under specific network conditions, will not be fixed
           required: true
-        - label: I am able to reproduce the bug with the latest version given here - [CLICK THIS LINK](https://github.com/InfinityLoop1308/PipePipe/releases/latest)
-          required: true
         - label: I have attached the error report in the issue
-          required: true
+          required: false
 
   - type: textarea
     id: bug-description
