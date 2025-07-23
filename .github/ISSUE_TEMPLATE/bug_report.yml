@@ -70,16 +70,6 @@ body:
       required: false
 
   - type: textarea
-    id: error-report
-    attributes:
-      label: Error report
-      description: Please paste the full error report here
-      placeholder: Paste your error report here
-      render: text
-    validations:
-      required: false
-
-  - type: textarea
     id: additional-context
     attributes:
       label: Additional context
