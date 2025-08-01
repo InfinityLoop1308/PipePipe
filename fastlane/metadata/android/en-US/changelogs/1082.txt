@@ -1,0 +1,13 @@
+### New Features
+
+- Support clear webview cookies to use different accounts
+
+### Bug Fixes
+
+- Player crash under certain conditions
+- Search in history button disappear in History tab
+- App crash if doing operation on filtered histories
+- Drag speed too high in local playlists
+- Memory leak under certain conditions
+- Cannot submit new SponsorBlock segments(YouTube)
+- Filters not working on Trending page (YouTube) 
