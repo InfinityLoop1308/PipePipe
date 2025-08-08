@@ -4,6 +4,7 @@
 <h4 align="center">
 NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 <p align="center"><a href="https://f-droid.org/packages/InfinityLoop1309.NewPipeEnhanced/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid"  width="207" /></a>
+<a href="https://github.com/InfinityLoop1308/PipePipe/releases/latest"><img src="assets/GitHub.png" alt="Get it on GitHub" width="207" /></a></p>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" width="207" /></a></p>
 <hr>
 
@@ -11,17 +12,32 @@ NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 
 ### Beyond NewPipe
 
-* SponsorBlock (YouTube & BiliBili)
-* ReturnYouTubeDislike
-* Bullet comments / Live Chats
-* Search filters
-* Search & sort in local playlists
-* Filter out unwanted items by keywords/channels/...
-* Music player mode & Background playing
-* Sleep timer
-* Fullscreen gestures
-* Login to watch restricted / premium contents
-* ... and many minor improvements
+#### YouTube Enhancements
+* Integrate SponsorBlock for skipping sponsored segments (YouTube & BiliBili) 
+* Restore YouTube dislikes with ReturnYouTubeDislike 
+* Show original titles on YouTube (non-localized) 
+* Log in to access restricted or premium content 
+
+#### Media Features
+* Display live chats in danmaku-style overlays
+* Support AV1 and VP9 codecs for efficient, high-quality playback 
+* Enable music player mode with background playback 
+
+#### Filtering
+* Apply advanced search filters for better discovery 
+* Filter out unwanted items by keywords or channels 
+* Block shorts and paid videos for a cleaner feed 
+
+#### Playback Controls
+* Use swipe-to-seek and fullscreen gestures for intuitive navigation 
+* Long-press to speed up playback 
+* Set a sleep timer for bedtime listening 
+
+#### Enhanced Playlists
+* Download full playlists at once 
+* Search and sort within local playlists and histories
+
+... and many more improvements!
 
 
 ## Screenshots
@@ -63,13 +79,6 @@ For YouTube, the cookie will only be used when retrieving playback streams.
 Issues and PRs are welcomed. Please note that I will **NOT** accept service requests. 
 
 Anyone interested in creating their own service is encouraged to fork this repository.
-
-## About Latest Build
-
-Sometimes, for a known issue, PipePipe may already have a fix in place, but a new version has not yet been officially released. In such cases, you can check the continuous integration (CI) system to obtain the latest build. This allows you to access the most recent updates and fixes before they are included in the next official release. 
-
-Click [here](https://nightly.pipepipe.dev) to download the latest APK. You need to log in to access the builds.
-
 
 ## Donation
 
