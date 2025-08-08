@@ -4,7 +4,6 @@
 <h4 align="center">
 NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 <p align="center"><a href="https://f-droid.org/packages/InfinityLoop1309.NewPipeEnhanced/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid"  width="207" /></a>
-<a href="https://github.com/InfinityLoop1308/PipePipe/releases/latest"><img src="assets/GitHub.png" alt="Get it on GitHub" width="207" /></a></p>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" width="207" /></a></p>
 <hr>
 
@@ -79,6 +78,10 @@ For YouTube, the cookie will only be used when retrieving playback streams.
 Issues and PRs are welcomed. Please note that I will **NOT** accept service requests. 
 
 Anyone interested in creating their own service is encouraged to fork this repository.
+
+## Getting Nightly Builds
+
+Visit https://nightly.pipepipe.dev to download the latest nightly builds. These give you access to the most recent updates and fixes before they're included in the next official release.
 
 ## Donation
 
