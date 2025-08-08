@@ -7,9 +7,7 @@ NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/InfinityLoop1309.NewPipeEnhanced"><img src="assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" width="207" /></a></p>
 <hr>
 
-## Features
-
-### Beyond NewPipe
+## Beyond NewPipe
 
 #### YouTube Enhancements
 * Integrate SponsorBlock for skipping sponsored segments (YouTube & BiliBili) 
