@@ -1,0 +1,22 @@
+### New Features
+
+- Support Android Auto
+- Support customize the action of right swiping in local playlists: delete, enqueue or disabled
+- Support import URLs from txt file to playlist 
+- Support add all items in local playlist to another local playlist
+- Support filter out paid videos
+- Add a preference to control whether to enable auto-translation in YouTube 
+- Support storyboard preview (BiliBili) 
+
+### Bug Fixes
+
+- App crash under certain conditions after updating to 4.6.1
+- Update checker sometimes take 3 days to notify the update
+- Delete in filtered local playlist will not delete the correct item if there are duplicates
+-Subtitles are displayed/downloaded incorrectly under certain conditions (YouTube) 
+- Playlist cover lost if importing a backup from NewPipe
+- Content filters don't work properly in feeds with YouTube Fast Mode enabled
+
+### Others
+
+- Improve stability
