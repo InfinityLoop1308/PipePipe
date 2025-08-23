@@ -1,0 +1,17 @@
+### Bug Fixes
+
+- Mini player is not shown if start playback in background/popup
+- Playback not stopping when closing out video under certain conditions
+- Shuffle/Repeat mode in notification is not correctly working under certain conditions
+- Channel playlists only load 1 page (YouTube)
+- Search not working (NicoNico) 
+- Unexpected crasg under certain conditions
+
+### Behavior
+
+- Make the video playback able to recover from 403 error (YouTube) 
+- Add a switch to control android auto, and disable android auto on android 12 and earlier versions by default
+- Show auto translated subtitles by default
+- Improve the speed when navigating in a large local playlist
+- Try additional 3 page if all the items in current search page is filtered
+
