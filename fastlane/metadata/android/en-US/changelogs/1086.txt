@@ -1,0 +1,7 @@
+### Bug Fixes
+
+- Can not play any streams if logged in (YouTube)
+- Frequently "Something went wrong" in trending page (YouTube)
+- Comments only 1 page (BiliBili)
+
+YouTube has recently implemented complex encryption in its logged-in state extractor, causing PipePipe to malfunction under logged-in conditions. Fortunately, we've discovered a workaround that keeps the login feature operational for the time being. We're collaborating with other open-source YouTube tool communities to develop a more stable decryption solution.
