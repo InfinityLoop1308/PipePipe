@@ -1,0 +1,30 @@
+// 在 Groovy DSL 中，为了使用 RepositoriesMode 枚举，最好先导入它
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex 'com\\.android.*'
+                includeGroupByRegex 'com\\.google.*'
+                includeGroupByRegex 'androidx.*'
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    // 在 Groovy 中，使用等号进行属性赋值，而不是 .set() 方法
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'client'
+
+includeBuild '../shared'
+includeBuild '../extractor'

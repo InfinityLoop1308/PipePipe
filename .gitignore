@@ -1,3 +1,45 @@
 /.idea
 /web
 /nightly
+build/
+
+# Gradle build outputs
+**/build/
+**/bin/
+**/.gradle/
+**/.kotlin/
+
+# Android build outputs
+**/intermediates/
+**/generated/
+**/outputs/
+**/tmp/
+**/captures/
+
+# IDE files
+**/*.iml
+**/.idea/caches/
+**/.idea/libraries/
+**/.idea/modules.xml
+**/.idea/workspace.xml
+**/.idea/navEditor.xml
+**/.idea/assetWizardSettings.xml
+
+# Local configuration files
+**/local.properties
+
+# Test reports and results
+**/reports/
+**/test-results/
+
+# Kotlin metadata
+**/kotlinProjectStructureMetadata/
+**/kotlinToolingMetadata/
+
+# Native build
+**/.externalNativeBuild/
+**/.cxx/
+
+# OS generated files
+**/.DS_Store
+**/Thumbs.db

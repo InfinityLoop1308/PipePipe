@@ -1,0 +1,596 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
+package project.pipepipe.app.ui.screens.videodetail
+
+import android.app.Activity
+import android.content.ComponentName
+import android.content.pm.ActivityInfo
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.automirrored.filled.QueueMusic
+import androidx.compose.material.icons.filled.ArtTrack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import coil.compose.AsyncImage
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import project.pipepipe.app.mediasource.toMediaItem
+import project.pipepipe.app.service.PlaybackService
+import project.pipepipe.app.service.playFromStreamInfo
+
+import project.pipepipe.app.service.setPlaybackMode
+import project.pipepipe.app.service.stopService
+import project.pipepipe.shared.PlaybackMode
+import project.pipepipe.shared.SharedContext
+import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.shared.uistate.VideoDetailPageState
+import project.pipepipe.app.ui.component.ActionButtons
+import project.pipepipe.app.ui.component.ErrorComponent
+import project.pipepipe.app.ui.component.ErrorState
+import project.pipepipe.app.ui.component.player.PlayerGestureSettings
+import project.pipepipe.app.ui.component.PlaylistSelectorPopup
+import project.pipepipe.app.ui.component.VideoDetailSection
+import project.pipepipe.app.ui.component.player.VideoPlayer
+import project.pipepipe.app.ui.component.VideoTitleSection
+import kotlin.math.min
+
+@androidx.annotation.OptIn(UnstableApi::class)
+@Composable
+fun VideoDetailScreen(modifier: Modifier) {
+    val viewModel = SharedContext.sharedVideoDetailViewModel
+    val uiState by SharedContext.sharedVideoDetailViewModel.uiState.collectAsState()
+    val streamInfo = uiState.currentStreamInfo
+    val context = LocalContext.current
+    val activity = context as? Activity
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+
+    var mediaController by remember { mutableStateOf<MediaController?>(null) }
+    var controllerFuture by remember { mutableStateOf<ListenableFuture<MediaController>?>(null) }
+    val scope = rememberCoroutineScope()
+
+    val showAsBottomTask = {
+        SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
+        if (mediaController?.mediaItemCount == 0 && streamInfo != null) {
+            mediaController?.setMediaItem(
+                streamInfo.toMediaItem(),
+                runBlocking{ DatabaseOperations.getStreamProgress(streamInfo.url) } ?:0)
+        }
+    }
+
+    var showPlaylistPopup by remember { mutableStateOf(false) }
+
+    val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
+    val bottomSheetContentHeight = 64.dp
+    val bottomSheetContentHeightPx = with(density) { bottomSheetContentHeight.toPx() }
+    val navBarHeightPx = WindowInsets.navigationBars.getBottom(density)
+    val listState = rememberLazyListState()
+
+    val nestedScrollConnection1 = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (available.y < 0) {
+                    val consumed = min(-available.y, listState.layoutInfo.visibleItemsInfo.last().offset.toFloat())
+                    scope.launch {
+                        listState.scrollBy(consumed)
+                    }
+                    return Offset(0f, if(consumed > 0)available.y else 0f)
+                } else {
+                    return Offset.Zero
+                }
+            }
+        }
+    }
+
+    val draggableState = remember(uiState.pageState) {
+        AnchoredDraggableState(
+            initialValue = uiState.pageState,
+            anchors = DraggableAnchors {
+                VideoDetailPageState.DETAIL_PAGE at 0f
+                VideoDetailPageState.BOTTOM_PLAYER at screenHeight - bottomSheetContentHeightPx - navBarHeightPx
+            }
+        )
+    }
+
+    var layoutHeightPx by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(layoutHeightPx, draggableState) {
+        if (layoutHeightPx > 0f) {
+            val newAnchors = DraggableAnchors {
+                VideoDetailPageState.DETAIL_PAGE at 0f
+                VideoDetailPageState.BOTTOM_PLAYER at layoutHeightPx - navBarHeightPx - bottomSheetContentHeightPx
+            }
+            draggableState.updateAnchors(newAnchors)
+        }
+    }
+
+    LaunchedEffect(draggableState.currentValue) {
+        if (draggableState.currentValue != uiState.pageState &&
+            uiState.pageState != VideoDetailPageState.FULLSCREEN_PLAYER) {
+            viewModel.setPageState(draggableState.currentValue)
+            if (draggableState.currentValue == VideoDetailPageState.BOTTOM_PLAYER) {
+                showAsBottomTask()
+            }
+        }
+    }
+    LaunchedEffect(Unit) {
+        val sessionToken = SessionToken(context, ComponentName(context, PlaybackService::class.java))
+        controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+
+        controllerFuture?.addListener({
+            mediaController = controllerFuture?.get()
+        }, MoreExecutors.directExecutor())
+    }
+
+    val view = LocalView.current
+    LaunchedEffect(uiState.pageState) {
+        activity?.let { act ->
+            val insetsController = WindowCompat.getInsetsController(act.window, view)
+            if (uiState.pageState == VideoDetailPageState.FULLSCREEN_PLAYER) {
+                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                insetsController.hide(WindowInsetsCompat.Type.systemBars())
+                insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            } else {
+                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                insetsController.show(WindowInsetsCompat.Type.systemBars())
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            controllerFuture?.let { future ->
+                MediaController.releaseFuture(future)
+            }
+        }
+    }
+
+
+
+    data class TabConfig(
+        val title: String,
+        val icon: ImageVector,
+        val isAvailable: Boolean,
+        val content: @Composable () -> Unit
+    )
+
+    val allTabs = listOf(
+        TabConfig(
+            title = "Comments",
+            icon = Icons.AutoMirrored.Filled.Comment,
+            isAvailable = streamInfo?.commentInfo != null,
+            content = {
+                streamInfo?.commentInfo?.let { CommentSection() }
+            }
+        ),
+        TabConfig(
+            title = "Related Videos",
+            icon = Icons.Default.ArtTrack,
+            isAvailable = streamInfo?.relatedItemInfo != null,
+            content = { RelatedItemSection() }
+        ),
+        TabConfig(
+            title = "SponsorBlock",
+            icon = Icons.Default.Shield, // 或使用其他合适的图标
+            isAvailable = streamInfo?.sponsorblockUrl != null,
+            content = {
+                val sponsorBlockState = uiState.currentSponsorBlock
+                if (sponsorBlockState.common.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    SponsorBlockSection(
+                        segments = sponsorBlockState.segments,
+                        modifier = Modifier.fillMaxSize(),
+                        onStart = { mediaController?.currentPosition },
+                        onEnd = { mediaController?.currentPosition },
+                    )
+                }
+            }
+        )
+//        TabConfig(
+//            title = "Description",
+//            isAvailable = false,
+//            content = {
+//                Text(
+//                    "Video Description Area\n(To be implemented)",
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant
+//                )
+//            }
+//        ),
+//        TabConfig(
+//            title = "More",
+//            isAvailable = false,
+//            content = {
+//                Text(
+//                    "More Info Area\n(To be implemented)",
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant
+//                )
+//            }
+//        )
+    )
+
+    val availableTabs = allTabs.filter { it.isAvailable }
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { availableTabs.size }
+    )
+    when (uiState.pageState) {
+        VideoDetailPageState.HIDDEN -> {}
+        VideoDetailPageState.FULLSCREEN_PLAYER -> {
+            if (streamInfo != null && mediaController != null) {
+                BackHandler {
+                    viewModel.toggleFullscreenPlayer()
+                }
+                VideoPlayer(
+                    mediaController = mediaController!!,
+                    streamInfo = streamInfo,
+                    onFullScreenClicked = { viewModel.toggleFullscreenPlayer() },
+                    modifier = Modifier.fillMaxSize(),
+                    danmakuPool = uiState.currentDanmaku,
+                    gestureSettings = PlayerGestureSettings(
+                        swipeSeekEnabled = false,
+                        volumeGestureEnabled = SharedContext.settingsManager.getBoolean("volume_gesture_control_key", true),
+                        brightnessGestureEnabled = SharedContext.settingsManager.getBoolean("brightness_gesture_control_key", true),
+                        fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean("fullscreen_gesture_control_key", true)
+                    ),
+                    danmakuEnabled = uiState.danmakuEnabled,
+                    onToggleDanmaku = { viewModel.toggleDanmaku() },
+                    sponsorBlockSegments = uiState.currentSponsorBlock.segments
+                )
+            }
+        }
+        VideoDetailPageState.BOTTOM_PLAYER, VideoDetailPageState.DETAIL_PAGE -> {
+            if (uiState.pageState == VideoDetailPageState.DETAIL_PAGE) {
+                BackHandler {
+                    if (!viewModel.navigateBack()) {
+                        viewModel.showAsBottomPlayer()
+                        showAsBottomTask()
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .onSizeChanged { size ->
+                        layoutHeightPx = size.height.toFloat()
+                    }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    when (draggableState.currentValue) {
+                        VideoDetailPageState.DETAIL_PAGE -> {
+                            Column(
+                                modifier = modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .statusBarsPadding()
+                            ) {
+                                if (!uiState.common.isLoading && streamInfo != null && mediaController != null) {
+                                    Box(
+                                        modifier = Modifier
+                                            .aspectRatio(16f / 9f)
+                                            .anchoredDraggable(
+                                                state = draggableState,
+                                                orientation = Orientation.Vertical,
+                                            )
+                                            .then(
+                                                if (draggableState.currentValue == VideoDetailPageState.BOTTOM_PLAYER) {
+                                                    Modifier.zIndex(1f)
+                                                } else Modifier
+                                            )
+                                    ) {
+                                        VideoPlayer(
+                                            mediaController = mediaController!!,
+                                            streamInfo = streamInfo,
+                                            onFullScreenClicked = { viewModel.toggleFullscreenPlayer() },
+                                            modifier = Modifier.fillMaxSize(),
+                                            danmakuPool = uiState.currentDanmaku,
+                                            gestureSettings = PlayerGestureSettings(
+                                                swipeSeekEnabled = false,
+                                                volumeGestureEnabled = SharedContext.settingsManager.getBoolean("volume_gesture_control_key"),
+                                                brightnessGestureEnabled = SharedContext.settingsManager.getBoolean("brightness_gesture_control_key"),
+                                                fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean("fullscreen_gesture_control_key")
+                                            ),
+                                            danmakuEnabled = uiState.danmakuEnabled,
+                                            onToggleDanmaku = { viewModel.toggleDanmaku() },
+                                            sponsorBlockSegments = uiState.currentSponsorBlock.segments
+                                        )
+                                    }
+                                }
+
+                                if (uiState.common.error != null) {
+                                    ErrorComponent(
+                                        error = uiState.common.error!!,
+                                        onRetry = {
+                                            scope.launch {
+                                                val errorRow = DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
+                                                viewModel.loadVideoDetails(errorRow!!.request!!)
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } else {
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .nestedScroll(nestedScrollConnection1),
+                                        state = listState
+                                    ) {
+                                        if (streamInfo == null || uiState.common.isLoading) {
+                                            item {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(vertical = 32.dp),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    CircularProgressIndicator()
+                                                }
+                                            }
+                                        } else {
+                                            item { VideoTitleSection(name = streamInfo.name) }
+                                            item { VideoDetailSection(streamInfo = streamInfo) }
+                                            item {
+                                                ActionButtons(
+                                                    onPlayAudioClick = {
+                                                        mediaController?.let { controller ->
+                                                            controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+                                                            if (controller.getCurrentMediaItem()?.mediaId != streamInfo.url) {
+                                                                controller.playFromStreamInfo(streamInfo)
+                                                            } else if (!controller.isPlaying) {
+                                                                controller.play()
+                                                            }
+                                                        }
+                                                    },
+                                                    onAddToPlaylistClick = { showPlaylistPopup = true }
+                                                )
+                                            }
+                                            item {
+                                                HorizontalPager(
+                                                    state = pagerState,
+                                                    modifier = Modifier
+                                                        .fillParentMaxHeight()
+                                                        .padding(horizontal = 16.dp)
+                                                        .padding(top = 8.dp),
+                                                    beyondViewportPageCount = 4
+                                                ) { page ->
+                                                    availableTabs[page].content()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if(availableTabs.isNotEmpty()) {
+                                    TabRow(
+                                        selectedTabIndex = pagerState.currentPage,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    ) {
+                                        availableTabs.forEachIndexed { index, tab ->
+                                            Tab(
+                                                selected = pagerState.currentPage == index,
+                                                onClick = {
+                                                    scope.launch {
+                                                        pagerState.animateScrollToPage(index)
+                                                    }
+                                                },
+                                                icon = {
+                                                    Icon(
+                                                        imageVector = tab.icon,
+                                                        contentDescription = tab.title,
+                                                        modifier = Modifier.size(22.dp)
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        VideoDetailPageState.BOTTOM_PLAYER -> {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .navigationBarsPadding()) {
+                                BottomSheetContent(
+                                    mediaController = mediaController
+                                )
+                            }
+                        }
+                        else -> {
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (showPlaylistPopup && streamInfo != null) {
+        PlaylistSelectorPopup(
+            streamInfo = streamInfo,
+            onDismiss = {
+                showPlaylistPopup = false
+            },
+            onPlaylistSelected = {
+                showPlaylistPopup = false
+            }
+        )
+    }
+}
+
+@Composable
+private fun BottomSheetContent(
+    mediaController: MediaController?
+) {
+    var isPlaying by remember { mutableStateOf(false) }
+    var currentMediaItem by remember { mutableStateOf<MediaItem?>(null) }
+
+    DisposableEffect(mediaController) {
+        val listener = object : Player.Listener {
+            override fun onEvents(player: Player, events: Player.Events) {
+                // 检查播放状态变化
+                if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+                    isPlaying = player.isPlaying
+                }
+
+                // 检查媒体项变化
+                if (events.contains(Player.EVENT_TIMELINE_CHANGED) ||
+                    events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)) {
+                    currentMediaItem = player.currentMediaItem
+                }
+            }
+        }
+
+        mediaController?.let { controller ->
+            controller.addListener(listener)
+            // 初始化当前状态
+            isPlaying = controller.isPlaying
+            currentMediaItem = controller.currentMediaItem
+        }
+
+        onDispose {
+            mediaController?.removeListener(listener)
+        }
+    }
+
+    if (currentMediaItem == null) {
+        SharedContext.sharedVideoDetailViewModel.hide()
+        return
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .clickable { SharedContext.sharedVideoDetailViewModel.loadVideoDetails(currentMediaItem!!.mediaId, null) }
+            .padding(start = 20.dp, end = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = currentMediaItem?.mediaMetadata?.artworkUri,
+            contentDescription = null,
+            modifier = Modifier
+                .size(width = 64.dp, height = 36.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = currentMediaItem?.mediaMetadata?.title.toString(),
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = currentMediaItem?.mediaMetadata?.artist.toString(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.QueueMusic,
+            contentDescription = "Add to queue",
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .clickable { SharedContext.toggleShowPlayQueueVisibility() }
+                .padding(8.dp)
+        )
+
+        Icon(
+            imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+            contentDescription = if (isPlaying) "Pause" else "Play",
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .clickable {
+                    mediaController?.let { controller ->
+                        if (controller.isPlaying) {
+                            controller.pause()
+                        } else {
+                            controller.play()
+                        }
+                    }
+                }
+                .padding(8.dp)
+        )
+
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = "Close",
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .clickable {
+                    mediaController?.stopService()
+                    SharedContext.sharedVideoDetailViewModel.hide()
+                }
+                .padding(8.dp)
+        )
+    }
+}
