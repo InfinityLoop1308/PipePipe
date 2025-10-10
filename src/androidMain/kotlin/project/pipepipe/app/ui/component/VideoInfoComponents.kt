@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.app.ui.theme.AppDimens
+
 import java.text.NumberFormat
 import java.util.*
 import project.pipepipe.shared.formatCount
