@@ -2,6 +2,8 @@ package project.pipepipe.app.ui.component.player
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 import project.pipepipe.app.ui.component.sanitizeHexColorInput
@@ -49,6 +51,27 @@ object SponsorBlockUtils {
         ) ?: defaultColor
 
         return parseHexColor(hexColor)
+    }
+
+    /**
+     * Get the localized name for a specific SponsorBlock category
+     * @param category The SponsorBlock category
+     * @return The localized category name
+     */
+    @Composable
+    fun getCategoryName(category: SponsorBlockCategory): String {
+        return when (category) {
+            SponsorBlockCategory.SPONSOR -> stringResource(MR.strings.sponsor_block_category_sponsor)
+            SponsorBlockCategory.INTRO -> stringResource(MR.strings.sponsor_block_category_intro)
+            SponsorBlockCategory.OUTRO -> stringResource(MR.strings.sponsor_block_category_outro)
+            SponsorBlockCategory.INTERACTION -> stringResource(MR.strings.sponsor_block_category_interaction)
+            SponsorBlockCategory.HIGHLIGHT -> stringResource(MR.strings.sponsor_block_category_highlight)
+            SponsorBlockCategory.SELF_PROMO -> stringResource(MR.strings.sponsor_block_category_self_promo)
+            SponsorBlockCategory.NON_MUSIC -> stringResource(MR.strings.sponsor_block_category_non_music)
+            SponsorBlockCategory.PREVIEW -> stringResource(MR.strings.sponsor_block_category_preview)
+            SponsorBlockCategory.FILLER -> stringResource(MR.strings.sponsor_block_category_filler)
+            SponsorBlockCategory.PENDING -> stringResource(MR.strings.sponsor_block_category_pending)
+        }
     }
 
     /**

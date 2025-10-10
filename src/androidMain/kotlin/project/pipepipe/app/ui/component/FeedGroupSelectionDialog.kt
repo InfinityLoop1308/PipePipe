@@ -9,6 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.shared.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.ChannelInfo
 
@@ -26,7 +28,7 @@ fun FeedGroupSelectionDialog(
     LaunchedEffect(channelInfo.url) {
         scope.launch {
             val groups = DatabaseOperations.getAllFeedGroups()
-                .map { it.uid to (it.name ?: "Unnamed Group") }
+                .map { it.uid to it.name }
             feedGroups = groups
 
             // Load current selections
@@ -40,7 +42,7 @@ fun FeedGroupSelectionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add to Feed Groups") },
+        title = { Text(stringResource(MR.strings.feed_group_add_title)) },
         text = {
             if (isLoading) {
                 Box(
@@ -85,12 +87,12 @@ fun FeedGroupSelectionDialog(
                 },
                 enabled = !isLoading
             ) {
-                Text("OK")
+                Text(stringResource(MR.strings.common_ok))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(MR.strings.common_cancel))
             }
         }
     )

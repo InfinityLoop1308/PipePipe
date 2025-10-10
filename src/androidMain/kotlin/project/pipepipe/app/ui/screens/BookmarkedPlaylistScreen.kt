@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.app.ui.item.DisplayType
 import project.pipepipe.app.ui.item.MediaListItem
 import project.pipepipe.app.ui.viewmodel.BookmarkedPlaylistViewModel
@@ -49,7 +51,7 @@ fun BookmarkedPlaylistScreen(navController: NavController) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No bookmarked playlists found",
+                        text = stringResource(MR.strings.no_bookmarked_playlists),
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

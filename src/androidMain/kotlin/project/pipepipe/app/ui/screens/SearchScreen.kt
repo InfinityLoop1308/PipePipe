@@ -49,12 +49,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import project.pipepipe.app.MR
 import project.pipepipe.app.dataStore
 import project.pipepipe.database.AppDatabaseQueries
 import project.pipepipe.database.Search_history
@@ -171,7 +173,7 @@ fun SearchScreen(navController: NavController) {
                         textFieldValue = newValue
                         viewModel.updateSearchQuery(newValue.text)
                     },
-                    placeholder = { Text(text = "Search", style = TextStyle(
+                    placeholder = { Text(text = stringResource(MR.strings.search), style = TextStyle(
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false
                         )
@@ -202,16 +204,16 @@ fun SearchScreen(navController: NavController) {
                 Row(horizontalArrangement = Arrangement.spacedBy((-10).dp)) {
                     if (uiState.searchQuery.isNotEmpty()) {
                         IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear")
+                            Icon(Icons.Default.Clear, contentDescription = stringResource(MR.strings.clear))
                         }
                     }
                     IconButton(onClick = { showFilterDialog = true }) {
-                        Icon(Icons.Default.FilterList, contentDescription = "Filter")
+                        Icon(Icons.Default.FilterList, contentDescription = stringResource(MR.strings.filter))
                     }
                     IconButton(onClick = {
                         performSearch()
                     }) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+                        Icon(Icons.Default.Search, contentDescription = stringResource(MR.strings.search))
                     }
                 }
             }
@@ -302,7 +304,7 @@ fun SearchScreen(navController: NavController) {
                         ) {
                             Icon(
                                 if (suggestion.isLocal)Icons.Default.History else Icons.Default.Search,
-                                contentDescription = if (suggestion.isLocal) "History" else "Search",
+                                contentDescription = if (suggestion.isLocal) stringResource(MR.strings.history) else stringResource(MR.strings.search),
                                 modifier = Modifier.size(22.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -318,7 +320,7 @@ fun SearchScreen(navController: NavController) {
                             )
                             Icon(
                                 Icons.Default.NorthWest,
-                                contentDescription = "Fill search",
+                                contentDescription = stringResource(MR.strings.fill_search),
                                 modifier = Modifier
                                     .size(21.dp)
                                     .clickable {
@@ -452,7 +454,7 @@ fun FilterCard(
                     horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
                 ) {
                     OutlinedButton(onClick = onReset) {
-                        Text("Reset")
+                        Text(stringResource(MR.strings.reset))
                     }
                     FilledTonalButton(onClick = {
                         if (searchQuery.isNotEmpty()) {
@@ -460,7 +462,7 @@ fun FilterCard(
                         }
                         onDismiss()
                     }) {
-                        Text(if (searchQuery.isEmpty()) "Done" else "Perform Search")
+                        Text(if (searchQuery.isEmpty()) stringResource(MR.strings.done) else stringResource(MR.strings.perform_search))
                     }
                 }
             }
@@ -500,7 +502,7 @@ fun IntegratedServiceHeader(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = selectedService?.serviceId ?: "Select Service",
+                        text = selectedService?.serviceId ?: stringResource(MR.strings.select_service),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -548,7 +550,7 @@ fun FilterContent(
         // Search Type Selection
         service.availableSearchTypes?.let { searchTypes ->
             Text(
-                text = "Search Type",
+                text = stringResource(MR.strings.search_type),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -617,7 +619,7 @@ fun FilterContent(
                     )
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = if (isExpanded) "Collapse" else "Expand",
+                        contentDescription = if (isExpanded) stringResource(MR.strings.collapse) else stringResource(MR.strings.expand),
                         modifier = Modifier.rotate(if (isExpanded) 180f else 0f),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )

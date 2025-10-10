@@ -15,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.shared.database.DatabaseOperations
 import project.pipepipe.shared.database.DatabaseOperations.getAllLocalPlaylists
 import project.pipepipe.shared.infoitem.PlaylistInfo
@@ -62,7 +64,7 @@ fun PlaylistSelectorPopup(
                     }
                     errorMessage != null -> {
                         Text(
-                            text = "Error: $errorMessage",
+                            text = stringResource(MR.strings.general_error) + ": $errorMessage",
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(16.dp)
                         )
@@ -96,7 +98,7 @@ fun PlaylistSelectorPopup(
                                         )
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Text(
-                                            text = "Create New Playlist",
+                                            text = stringResource(MR.strings.create_playlist),
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Medium,
                                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -136,7 +138,7 @@ fun PlaylistSelectorPopup(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "No playlists found. Create your first playlist!",
+                                            text = stringResource(MR.strings.playlist_selector_empty),
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -173,12 +175,12 @@ private fun NewPlaylistDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Create New Playlist") },
+        title = { Text(stringResource(MR.strings.create_playlist)) },
         text = {
             OutlinedTextField(
                 value = playlistName,
                 onValueChange = { playlistName = it },
-                label = { Text("Playlist Name") },
+                label = { Text(stringResource(MR.strings.playlist_rename_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -192,12 +194,12 @@ private fun NewPlaylistDialog(
                 },
                 enabled = playlistName.isNotBlank()
             ) {
-                Text("Create")
+                Text(stringResource(MR.strings.create))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(MR.strings.common_cancel))
             }
         }
     )

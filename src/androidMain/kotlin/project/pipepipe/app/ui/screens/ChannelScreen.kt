@@ -61,7 +61,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.distinctUntilChanged
+import project.pipepipe.app.MR
 import kotlinx.coroutines.launch
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.formatCount
@@ -131,7 +133,7 @@ fun ChannelScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         CustomTopBar(
-            defaultTitleText = uiState.channelInfo?.name ?: "Channel",
+            defaultTitleText = uiState.channelInfo?.name ?: stringResource(MR.strings.channel),
             defaultNavigationOnClick = { navController.popBackStack() },
             actions = {
                 IconButton(onClick = { }) {
@@ -318,7 +320,7 @@ private fun ChannelHeader(
                 Spacer(modifier = Modifier.height(3.dp))
                 info.subscriberCount?.let {
                     Text(
-                        text = "${formatCount(it)} subscribers",
+                        text = "${formatCount(it)} ${stringResource(MR.strings.subscribers_text)}",
                         style = TextStyle(
                             platformStyle = PlatformTextStyle(
                                 includeFontPadding = false
@@ -338,7 +340,7 @@ private fun ChannelHeader(
                 IconButton(onClick = onAddToGroupClick) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add to group",
+                        contentDescription = stringResource(MR.strings.add_to_group),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
@@ -354,7 +356,7 @@ private fun ChannelHeader(
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
                 ) {
                     Text(
-                        text = if (isSubscribed) "SUBSCRIBED" else "SUBSCRIBE",
+                        text = if (isSubscribed) stringResource(MR.strings.subscribed) else stringResource(MR.strings.subscribe),
                         style = MaterialTheme.typography.labelMedium,
                         letterSpacing = 0.5.sp
                     )

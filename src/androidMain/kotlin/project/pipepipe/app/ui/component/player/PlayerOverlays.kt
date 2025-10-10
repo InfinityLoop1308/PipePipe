@@ -39,6 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.fontscaling.MathUtils.lerp
 import androidx.compose.ui.unit.sp
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import kotlin.math.absoluteValue
 import kotlin.math.min
 
@@ -148,7 +150,6 @@ private fun FastSeekIndicator(
         viewportWidth = 20f,
         viewportHeight = 20f
     ).apply {
-        // 左边是直角，右边是尖角，完全铺满 viewport
         path(
             fill = SolidColor(Color(0xFF000000)),
             fillAlpha = 1f,
@@ -340,7 +341,7 @@ fun VolumeOverlay(
         )
         Icon(
             icon,
-            contentDescription = "Volume",
+            contentDescription = stringResource(MR.strings.player_volume),
             tint = Color.White,
             modifier = Modifier.size(70.dp)
         )
@@ -373,7 +374,7 @@ fun BrightnessOverlay(
         )
         Icon(
             icon,
-            contentDescription = "Brightness",
+            contentDescription = stringResource(MR.strings.player_brightness),
             tint = Color.White,
             modifier = Modifier.size(70.dp)
         )

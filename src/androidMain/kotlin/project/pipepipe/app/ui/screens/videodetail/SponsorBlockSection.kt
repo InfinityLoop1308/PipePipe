@@ -50,6 +50,11 @@ fun SponsorBlockSection(
     }
 
     val scope = rememberCoroutineScope()
+    
+    val skipMarkedSegmentsLabel = stringResource(MR.strings.sponsor_block_skip_marked_segments)
+    val noSponsorSegmentsText = stringResource(MR.strings.no_sponsor_segments)
+    val alreadyVotedText = stringResource(MR.strings.already_voted)
+    val successText = stringResource(MR.strings.success)
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -104,7 +109,7 @@ fun SponsorBlockSection(
 
         item {
             ToggleRow(
-                label = stringResource(MR.strings.sponsor_block_skip_marked_segments),
+                label = skipMarkedSegmentsLabel,
                 checked = skipMarked.value,
                 onCheckedChange = { skipMarked.value = it }
             )
@@ -131,7 +136,7 @@ fun SponsorBlockSection(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(MR.strings.no_sponsor_segments),
+                        text = noSponsorSegmentsText,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -143,7 +148,7 @@ fun SponsorBlockSection(
                     segment = segment,
                     onThumbUp = {
                         if (segment.hasVoted) {
-                            ToastManager.show("Already voted")
+                            ToastManager.show(alreadyVotedText)
                         } else {
                             scope.launch {
                                 viewModel.voteSponsorBlockSegment(
@@ -153,12 +158,12 @@ fun SponsorBlockSection(
                                 )
                             }
                             segment.hasVoted = true
-                            ToastManager.show("Success")
+                            ToastManager.show(successText)
                         }
                     },
                     onThumbDown = {
                         if (segment.hasVoted) {
-                            ToastManager.show("Already voted")
+                            ToastManager.show(alreadyVotedText)
                         } else {
                             scope.launch {
                                 viewModel.voteSponsorBlockSegment(
@@ -168,7 +173,7 @@ fun SponsorBlockSection(
                                 )
                             }
                             segment.hasVoted = true
-                            ToastManager.show("Success")
+                            ToastManager.show(successText)
                         }
                     }
                 )
@@ -202,19 +207,19 @@ private fun ControlRow(
                 IconButton(onClick = onStart) {
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
-                        contentDescription = "Start"
+                        contentDescription = stringResource(MR.strings.start)
                     )
                 }
-                Text("Start", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(MR.strings.start), style = MaterialTheme.typography.labelMedium)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(onClick = onEnd) {
                     Icon(
                         imageVector = Icons.Filled.ChevronLeft,
-                        contentDescription = "End"
+                        contentDescription = stringResource(MR.strings.end)
                     )
                 }
-                Text("End", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(MR.strings.end), style = MaterialTheme.typography.labelMedium)
             }
         }
         Text(
@@ -243,7 +248,7 @@ private fun ControlRow(
                 ) {
                     SponsorBlockCategory.values().filter { it != SponsorBlockCategory.PENDING }.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text(getCategoryName(category)) },
+                            text = { Text(SponsorBlockUtils.getCategoryName(category)) },
                             onClick = { onCategorySelected(category) }
                         )
                     }
@@ -281,7 +286,7 @@ private fun SegmentRow(
     onThumbDown: () -> Unit
 ) {
     val categoryColor = getCategoryColor(segment.category)
-    val categoryName = getCategoryName(segment.category)
+    val categoryName = SponsorBlockUtils.getCategoryName(segment.category)
 
     Row(
         modifier = Modifier
@@ -328,22 +333,6 @@ private fun SegmentRow(
 @Composable
 private fun getCategoryColor(category: SponsorBlockCategory): Color {
     return SponsorBlockUtils.getCategoryColor(category)
-}
-
-@Composable
-private fun getCategoryName(category: SponsorBlockCategory): String {
-    return when (category) {
-        SponsorBlockCategory.SPONSOR -> stringResource(MR.strings.sponsor_block_category_sponsor)
-        SponsorBlockCategory.INTRO -> stringResource(MR.strings.sponsor_block_category_intro)
-        SponsorBlockCategory.OUTRO -> stringResource(MR.strings.sponsor_block_category_outro)
-        SponsorBlockCategory.INTERACTION -> stringResource(MR.strings.sponsor_block_category_interaction)
-        SponsorBlockCategory.HIGHLIGHT -> stringResource(MR.strings.sponsor_block_category_highlight)
-        SponsorBlockCategory.SELF_PROMO -> stringResource(MR.strings.sponsor_block_category_self_promo)
-        SponsorBlockCategory.NON_MUSIC -> stringResource(MR.strings.sponsor_block_category_non_music)
-        SponsorBlockCategory.PREVIEW -> stringResource(MR.strings.sponsor_block_category_preview)
-        SponsorBlockCategory.FILLER -> stringResource(MR.strings.sponsor_block_category_filler)
-        SponsorBlockCategory.PENDING -> stringResource(MR.strings.sponsor_block_category_pending)
-    }
 }
 
 private fun formatSegmentRange(segment: SponsorBlockSegmentInfo): String {

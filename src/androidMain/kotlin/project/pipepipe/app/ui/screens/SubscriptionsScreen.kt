@@ -58,6 +58,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.database.Feed_group
 import project.pipepipe.database.Subscriptions
 import project.pipepipe.shared.formatCount
@@ -136,7 +138,7 @@ private fun SubscriptionsContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Feed groups",
+                            text = stringResource(MR.strings.feed_groups),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.weight(1f)
@@ -144,7 +146,7 @@ private fun SubscriptionsContent(
 
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Create feed group",
+                            contentDescription = stringResource(MR.strings.create_feed_group),
                             modifier = Modifier.clickable{ showCreateFeedGroupDialog = true }
                         )
 
@@ -193,7 +195,7 @@ private fun SubscriptionsContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No subscriptions found",
+                            text = stringResource(MR.strings.no_subscriptions_found),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -239,7 +241,7 @@ fun ChannelGroupsRow(
         if (showAll) {
             item(key = "all") {
                 ChannelGroupCard(
-                    title = "All",
+                    title = stringResource(MR.strings.all),
                     iconId = 0,
                     onClick = onAllGroupsClick
                 )
@@ -317,7 +319,7 @@ private fun SubscriptionsHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Subscriptions",
+            text = stringResource(MR.strings.tab_subscriptions),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.weight(1f)
@@ -325,7 +327,7 @@ private fun SubscriptionsHeader(
         IconButton(onClick = onSearchClick) {
             Icon(
                 imageVector = Icons.Outlined.Search,
-                contentDescription = "Search subscriptions"
+                contentDescription = stringResource(MR.strings.search_subscriptions)
             )
         }
     }
@@ -338,7 +340,7 @@ private fun SubscriptionRow(
 ) {
     val subscribersLabel = subscription.subscriber_count
         ?.takeIf { it > 0 }
-        ?.let { "${formatCount(it)} subscribers" }
+        ?.let { "${formatCount(it)} ${stringResource(MR.strings.subscribers_text)}" }
 
     Row(
         modifier = Modifier
@@ -350,7 +352,7 @@ private fun SubscriptionRow(
     ) {
         AsyncImage(
             model = subscription.avatar_url,
-            contentDescription = "${subscription.name ?: subscription.url ?: "Subscription"} avatar",
+            contentDescription = "${subscription.name ?: subscription.url ?: stringResource(MR.strings.subscription)} avatar",
             modifier = Modifier
                 .size(40.dp)
                 .clip(RoundedCornerShape(20.dp))
@@ -359,7 +361,7 @@ private fun SubscriptionRow(
         Spacer(modifier = Modifier.width(18.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = subscription.name ?: subscription.url ?: "Subscription",
+                text = subscription.name ?: subscription.url ?: stringResource(MR.strings.subscription),
                 fontSize = 15.sp,
                 style = TextStyle(
                     platformStyle = PlatformTextStyle(
@@ -396,7 +398,7 @@ private fun CreateFeedGroupDialog(
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text(text = "New feed group") },
+        title = { Text(text = stringResource(MR.strings.new_feed_group)) },
         text = {
             Column(
                 modifier = Modifier
@@ -406,13 +408,13 @@ private fun CreateFeedGroupDialog(
                 OutlinedTextField(
                     value = groupName,
                     onValueChange = { groupName = it },
-                    label = { Text("Group name") },
+                    label = { Text(stringResource(MR.strings.group_name)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Icon",
+                    text = stringResource(MR.strings.icon),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -465,12 +467,12 @@ private fun CreateFeedGroupDialog(
                 onClick = { onCreate(groupName.trim(), selectedIconId) },
                 enabled = groupName.isNotBlank()
             ) {
-                Text("Create")
+                Text(stringResource(MR.strings.create))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
+                Text(stringResource(MR.strings.cancel))
             }
         }
     )

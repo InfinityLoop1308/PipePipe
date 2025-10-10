@@ -1,5 +1,8 @@
 package project.pipepipe.app.ui.component.player
 
+import androidx.compose.runtime.Composable
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 
@@ -57,18 +60,4 @@ object SponsorBlockHelper {
         return mode == SponsorBlockSkipMode.MANUAL
     }
 
-    fun getCategoryDisplayName(category: String): String {
-        return when (category) {
-            "sponsor" -> "Sponsor"
-            "intro" -> "Intro"
-            "outro" -> "Outro"
-            "interaction" -> "Interaction"
-            "self_promo" -> "Self Promotion"
-            "non_music" -> "Non-Music"
-            "preview" -> "Preview"
-            "filler" -> "Filler"
-            "highlight" -> "Highlight"
-            else -> category.replaceFirstChar { it.uppercase() }
-        }
-    }
 }

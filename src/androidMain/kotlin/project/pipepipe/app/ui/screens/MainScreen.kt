@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import project.pipepipe.app.database.DatabaseImporter
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.shared.SharedContext
 
 import java.net.URLEncoder
@@ -46,7 +48,7 @@ fun MainScreen(navController: NavController) {
         Button(onClick = {
             SharedContext.sharedVideoDetailViewModel.loadVideoDetails("https://www.bilibili.com/video/BV1SB4y1y7GQ?p=1", "BILIBILI")
         }) {
-            Text("Go to Video Detail")
+            Text(stringResource(MR.strings.go_to_video_detail))
         }
         
         Button(
@@ -55,7 +57,7 @@ fun MainScreen(navController: NavController) {
             },
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            Text("Import Database")
+            Text(stringResource(MR.strings.import_database))
         }
         
         Button(
@@ -64,7 +66,7 @@ fun MainScreen(navController: NavController) {
             },
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            Text("Bookmarked Playlists")
+            Text(stringResource(MR.strings.tab_bookmarks))
         }
         
         Button(
@@ -73,7 +75,7 @@ fun MainScreen(navController: NavController) {
             },
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            Text("Play Queue")
+            Text(stringResource(MR.strings.play_queue))
         }
 
         Button(
@@ -82,7 +84,7 @@ fun MainScreen(navController: NavController) {
             },
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            Text("History")
+            Text(stringResource(MR.strings.history))
         }
         Button(
             onClick = {
@@ -93,7 +95,7 @@ fun MainScreen(navController: NavController) {
             },
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            Text("Channel")
+            Text(stringResource(MR.strings.channel))
         }
     }
 }

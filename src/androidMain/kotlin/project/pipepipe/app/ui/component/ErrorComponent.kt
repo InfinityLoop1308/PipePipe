@@ -11,12 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material.icons.outlined.SentimentDissatisfied
-import androidx.compose.material.icons.outlined.CloudOff
-import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,15 +24,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import project.pipepipe.shared.database.DatabaseOperations
-import project.pipepipe.shared.job.ErrorDetail
-import project.pipepipe.shared.uistate.ErrorInfo
+import project.pipepipe.app.MR
 import project.pipepipe.app.ui.screens.settings.copyLogToClipboard
+import project.pipepipe.shared.SharedContext
+import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.shared.uistate.ErrorInfo
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * 错误类型枚举
@@ -60,13 +57,6 @@ data class ErrorState(
     val showDetails: Boolean = false
 )
 
-/**
- * 错误组件
- *
- * @param errorState 错误状态
- * @param onRetry 重试回调
- * @param modifier 修饰符
- */
 @Composable
 fun ErrorComponent(
     error: ErrorInfo,
@@ -78,19 +68,31 @@ fun ErrorComponent(
     var isRetrying by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val formattedTime = remember {
+        SimpleDateFormat("HH:mm", SharedContext.appLocale).format(Date())
+    }
 
-    // 动画效果
     val alpha by animateFloatAsState(
         targetValue = if (isRetrying) 0.5f else 1f,
         animationSpec = tween(300),
         label = "alpha"
     )
-
     val scale by animateFloatAsState(
         targetValue = if (isRetrying) 0.95f else 1f,
         animationSpec = tween(300),
         label = "scale"
     )
+
+    val titleText = stringResource(MR.strings.error_title_generic)
+    val messageText = stringResource(MR.strings.error_message_generic)
+    val retryText = stringResource(MR.strings.error_retry)
+    val feedbackText = stringResource(MR.strings.error_feedback)
+    val showMoreText = stringResource(MR.strings.error_show_more)
+    val showLessText = stringResource(MR.strings.error_show_less)
+    val detailsTitle = stringResource(MR.strings.error_details_title)
+    val statusIconCd = stringResource(MR.strings.error_status_icon_cd)
+    val retryIconCd = stringResource(MR.strings.error_retry_button_cd)
+    val feedbackIconCd = stringResource(MR.strings.error_feedback_button_cd)
 
     Box(
         modifier = modifier
@@ -115,18 +117,15 @@ fun ErrorComponent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // 友好的图标
             Surface(
                 modifier = Modifier.size(96.dp),
                 shape = RoundedCornerShape(48.dp),
                 color = getErrorColor(errorState.type).copy(alpha = 0.08f)
             ) {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = getErrorIcon(errorState.type),
-                        contentDescription = "Status Icon",
+                        contentDescription = statusIconCd,
                         modifier = Modifier.size(56.dp),
                         tint = getErrorColor(errorState.type)
                     )
@@ -135,9 +134,8 @@ fun ErrorComponent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 友好的标题
             Text(
-                text = errorState.title,
+                text = titleText,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -146,16 +144,14 @@ fun ErrorComponent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 友好的消息
             Text(
-                text = errorState.message,
+                text = messageText,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 lineHeight = 24.sp
             )
 
-            // 错误代码（如果有）- 更低调的样式
             errorState.errorCode?.let { code ->
                 Spacer(modifier = Modifier.height(12.dp))
                 Surface(
@@ -163,28 +159,24 @@ fun ErrorComponent(
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                 ) {
                     Text(
-                        text = "参考代码: $code",
+                        text = stringResource(MR.strings.error_reference_code, code),
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        fontWeight = FontWeight.Normal
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-// 操作按钮 - 改为竖排
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // 重试按钮 - 使用柔和的颜色
                 Button(
                     onClick = {
                         isRetrying = true
                         onRetry()
-                        // 模拟重试动画
                         kotlinx.coroutines.GlobalScope.launch {
                             kotlinx.coroutines.delay(500)
                             isRetrying = false
@@ -199,19 +191,19 @@ fun ErrorComponent(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Refresh,
-                        contentDescription = "Retry",
+                        contentDescription = retryIconCd,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("再试一次", fontWeight = FontWeight.Medium)
+                    Text(retryText, fontWeight = FontWeight.Medium)
                 }
 
-                // 反馈按钮
                 OutlinedButton(
                     onClick = {
                         scope.launch {
-                            val row = DatabaseOperations.getErrorLogById(error.errorId)
-                            copyLogToClipboard(context, row!!)
+                            DatabaseOperations.getErrorLogById(error.errorId)?.let {
+                                copyLogToClipboard(context, it)
+                            }
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -223,30 +215,27 @@ fun ErrorComponent(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.BugReport,
-                        contentDescription = "Report",
+                        contentDescription = feedbackIconCd,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("反馈问题", fontWeight = FontWeight.Medium)
+                    Text(feedbackText, fontWeight = FontWeight.Medium)
                 }
             }
 
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 详情切换按钮
             TextButton(
                 onClick = { showDetails = !showDetails },
                 enabled = !isRetrying
             ) {
                 Text(
-                    text = if (showDetails) "收起详情" else "了解更多",
+                    text = if (showDetails) showLessText else showMoreText,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
                 )
             }
 
-            // 详情内容
             AnimatedVisibility(
                 visible = showDetails,
                 enter = fadeIn(),
@@ -259,18 +248,19 @@ fun ErrorComponent(
                     shape = RoundedCornerShape(16.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp)
-                    ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
                         Text(
-                            text = "💡 可能的原因",
+                            text = detailsTitle,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = buildFriendlyDetails(errorState),
+                            text = buildFriendlyDetails(
+                                errorState = errorState,
+                                formattedTime = formattedTime
+                            ),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
                             lineHeight = 22.sp
@@ -280,6 +270,43 @@ fun ErrorComponent(
             }
         }
     }
+}
+
+@Composable
+private fun buildFriendlyDetails(
+    errorState: ErrorState,
+    formattedTime: String
+): String {
+    val lines = when (errorState.type) {
+        ErrorType.NETWORK -> listOf(
+            stringResource(MR.strings.error_details_network_line_1),
+            stringResource(MR.strings.error_details_network_line_2),
+            stringResource(MR.strings.error_details_network_line_3)
+        )
+        ErrorType.SERVER -> listOf(
+            stringResource(MR.strings.error_details_server_line_1),
+            stringResource(MR.strings.error_details_server_line_2),
+            stringResource(MR.strings.error_details_server_line_3)
+        )
+        ErrorType.PERMISSION -> listOf(
+            stringResource(MR.strings.error_details_permission_line_1),
+            stringResource(MR.strings.error_details_permission_line_2),
+            stringResource(MR.strings.error_details_permission_line_3)
+        )
+        ErrorType.UNKNOWN -> listOf(
+            stringResource(MR.strings.error_details_unknown_line_1),
+            stringResource(MR.strings.error_details_unknown_line_2),
+            stringResource(MR.strings.error_details_unknown_line_3)
+        )
+    }.toMutableList()
+
+    errorState.errorCode?.let {
+        lines += stringResource(MR.strings.error_reference_code, it)
+    }
+
+    lines += stringResource(MR.strings.error_occurred_at, formattedTime)
+
+    return lines.joinToString("\n")
 }
 
 /**
@@ -305,39 +332,5 @@ private fun getErrorColor(type: ErrorType): Color {
         ErrorType.SERVER -> Color(0xFFEF5350) // 柔和的红色
         ErrorType.PERMISSION -> Color(0xFFAB47BC) // 柔和的紫色
         ErrorType.UNKNOWN -> Color(0xFF78909C) // 柔和的灰蓝色
-    }
-}
-
-/**
- * 构建友好的错误详情文本
- */
-private fun buildFriendlyDetails(errorState: ErrorState): String {
-    return buildString {
-        when (errorState.type) {
-            ErrorType.NETWORK -> {
-                appendLine("• 网络连接可能不稳定")
-                appendLine("• 可以尝试切换到其他网络")
-                appendLine("• 检查一下路由器或WiFi设置")
-            }
-            ErrorType.SERVER -> {
-                appendLine("• 服务器可能正在维护中")
-                appendLine("• 稍等几分钟后再试试")
-                appendLine("• 如果问题持续，我们会尽快修复")
-            }
-            ErrorType.PERMISSION -> {
-                appendLine("• 需要开启相关权限才能使用")
-                appendLine("• 可以在设置中重新授权")
-                appendLine("• 我们会保护您的隐私安全")
-            }
-            ErrorType.UNKNOWN -> {
-                appendLine("• 这可能是临时的小故障")
-                appendLine("• 重启应用通常能解决问题")
-                appendLine("• 如果还是不行，欢迎联系我们")
-            }
-        }
-        errorState.errorCode?.let {
-            appendLine("\n参考代码: $it")
-        }
-        appendLine("发生时间: ${java.text.SimpleDateFormat("HH:mm").format(java.util.Date())}")
     }
 }

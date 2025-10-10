@@ -30,6 +30,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.MediaItem
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
@@ -154,7 +156,7 @@ fun PlayQueueScreen() {
 	) {
 		@OptIn(ExperimentalMaterial3Api::class)
         CustomTopBar(
-            defaultTitleText = "Play Queue",
+            defaultTitleText = stringResource(MR.strings.play_queue),
             defaultNavigationOnClick = { SharedContext.toggleShowPlayQueueVisibility() }
         )
 
@@ -251,7 +253,7 @@ fun PlayQueueItem(
             Box() {
                 AsyncImage(
                     model = mediaItem.mediaMetadata.artworkUri,
-                    contentDescription = "Thumbnail",
+                    contentDescription = stringResource(MR.strings.thumbnail),
                     modifier = Modifier
                         .height(45.dp)
                         .width(80.dp)
@@ -281,7 +283,7 @@ fun PlayQueueItem(
                     .padding(end = 8.dp)
 			) {
 				Text(
-					text = mediaItem.mediaMetadata.title?.toString() ?: "Unknown Title",
+					text = mediaItem.mediaMetadata.title?.toString() ?: stringResource(MR.strings.unknown_title),
 					style = TextStyle(
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false
@@ -304,7 +306,7 @@ fun PlayQueueItem(
 
             Icon(
                 imageVector = Icons.Default.DragHandle,
-                contentDescription = "Drag to reorder",
+                contentDescription = stringResource(MR.strings.detail_drag_description),
                 modifier = dragHandleModifier
                     .align(Alignment.CenterVertically)
                     .padding(8.dp),
@@ -348,7 +350,7 @@ fun PlayQueueFooter(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = mediaItem.mediaMetadata.title?.toString() ?: "Unknown Title",
+                            text = mediaItem.mediaMetadata.title?.toString() ?: stringResource(MR.strings.unknown_title),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -425,7 +427,7 @@ fun PlayQueueFooter(
                             Player.REPEAT_MODE_ALL -> Icons.Default.Repeat
                             else -> Icons.Default.Repeat
                         },
-                        contentDescription = "Repeat mode",
+                        contentDescription = stringResource(MR.strings.repeat_mode),
                         tint = when (repeatMode) {
                             Player.REPEAT_MODE_OFF -> MaterialTheme.colorScheme.onSurfaceVariant
                             else -> MaterialTheme.colorScheme.primary
@@ -436,7 +438,7 @@ fun PlayQueueFooter(
                 IconButton(onClick = onPrevious) {
                     Icon(
                         imageVector = Icons.Default.SkipPrevious,
-                        contentDescription = "Previous",
+                        contentDescription = stringResource(MR.strings.player_previous),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -444,7 +446,7 @@ fun PlayQueueFooter(
                 IconButton(onClick = onRewind) {
                     Icon(
                         imageVector = Icons.Default.Replay10,
-                        contentDescription = "Rewind",
+                        contentDescription = stringResource(MR.strings.rewind),
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -455,7 +457,7 @@ fun PlayQueueFooter(
                 ) {
                     Icon(
                         imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = if (isPlaying) "Pause" else "Play",
+                        contentDescription = if (isPlaying) stringResource(MR.strings.pause) else stringResource(MR.strings.player_play),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -463,7 +465,7 @@ fun PlayQueueFooter(
                 IconButton(onClick = onFastForward) {
                     Icon(
                         imageVector = Icons.Default.Forward10,
-                        contentDescription = "Fast forward",
+                        contentDescription = stringResource(MR.strings.player_fast_forward),
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -471,7 +473,7 @@ fun PlayQueueFooter(
                 IconButton(onClick = onNext) {
                     Icon(
                         imageVector = Icons.Default.SkipNext,
-                        contentDescription = "Next",
+                        contentDescription = stringResource(MR.strings.player_next),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -479,7 +481,7 @@ fun PlayQueueFooter(
                 IconButton(onClick = onShuffle) {
                     Icon(
                         imageVector = Icons.Default.Shuffle,
-                        contentDescription = "Shuffle",
+                        contentDescription = stringResource(MR.strings.shuffle),
                         tint = if (shuffleModeEnabled)
                             MaterialTheme.colorScheme.primary
                         else

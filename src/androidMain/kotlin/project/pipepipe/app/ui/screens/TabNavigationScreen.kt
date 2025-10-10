@@ -33,6 +33,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import kotlinx.coroutines.launch
 
 private data class TabItem(
@@ -44,9 +46,9 @@ private data class TabItem(
 @Composable
 fun TabNavigationScreen(navController: NavController) {
     val tabs = listOf(
-        TabItem("Dashboard", Icons.Default.SpaceDashboard),
-        TabItem("Subscriptions", Icons.Default.Subscriptions),
-        TabItem("Bookmarked Playlists", Icons.Default.Bookmark)
+        TabItem(stringResource(MR.strings.dashboard), Icons.Default.SpaceDashboard),
+        TabItem(stringResource(MR.strings.tab_subscriptions), Icons.Default.Subscriptions),
+        TabItem(stringResource(MR.strings.tab_bookmarks), Icons.Default.Bookmark)
     )
     val pagerState = rememberPagerState(pageCount = { tabs.size })
     val scope = rememberCoroutineScope()
@@ -69,7 +71,7 @@ fun TabNavigationScreen(navController: NavController) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings"
+                    contentDescription = stringResource(MR.strings.settings)
                 )
             }
 
@@ -82,7 +84,7 @@ fun TabNavigationScreen(navController: NavController) {
             IconButton(onClick = { navController.navigate(Screen.Search.route) }) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
+                    contentDescription = stringResource(MR.strings.search)
                 )
             }
         }

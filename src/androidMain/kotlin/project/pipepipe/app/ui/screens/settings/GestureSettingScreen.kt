@@ -47,13 +47,14 @@ fun GestureSettingScreen(
             "30000"
         )
     }
-    val speedingPlaybackEntries = remember {
+    val disableLabel = stringResource(MR.strings.disabled)
+    val speedingPlaybackEntries = remember(disableLabel) {
         listOf(
             "0.1x",
             "0.3x",
             "0.5x",
             "0.75x",
-            "Disable",
+            disableLabel,
             "1.25x",
             "1.5x",
             "1.75x",

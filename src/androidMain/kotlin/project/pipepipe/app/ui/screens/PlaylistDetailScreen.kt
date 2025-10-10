@@ -643,7 +643,7 @@ fun PlaylistDetailScreen(
                                             } else {
                                                 Icon(
                                                     imageVector = Icons.Default.Refresh,
-                                                    contentDescription = "Refresh feed"
+                                                    contentDescription = stringResource(MR.strings.refresh_feed)
                                                 )
                                             }
                                         }

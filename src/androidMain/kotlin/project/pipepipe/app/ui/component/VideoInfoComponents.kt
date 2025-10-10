@@ -27,6 +27,8 @@ import java.text.NumberFormat
 import java.util.*
 import project.pipepipe.shared.formatCount
 import project.pipepipe.shared.infoitem.StreamType
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 
 @Composable
 fun VideoTitleSection(name: String?) {
@@ -37,7 +39,7 @@ fun VideoTitleSection(name: String?) {
             .padding(start = 16.dp, end = 4.dp)
     ) {
         Text(
-            text = name ?: "Loading title...",
+            text = name ?: stringResource(MR.strings.video_info_loading_title),
             fontSize = 14.sp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,12 +76,12 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = streamInfo.uploaderAvatarUrl, // 假设这是你的图片URL字段
-                contentDescription = "Uploader Avatar", // 用于无障碍功能
+                model = streamInfo.uploaderAvatarUrl,
+                contentDescription = stringResource(MR.strings.detail_uploader_thumbnail_view_description),
                 modifier = Modifier
                     .size(32.dp)
-                    .clip(CircleShape), // 使用 clip 将图片裁剪成圆形
-                contentScale = ContentScale.Crop // 确保图片填满圆形区域，不会变形
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -89,7 +91,7 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = streamInfo.uploaderName ?: "Channel",
+                    text = streamInfo.uploaderName ?: stringResource(MR.strings.video_info_channel),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -101,7 +103,7 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
                 )
                 streamInfo.uploaderSubscriberCount?.let {
                     Text(
-                        text = formatCount(streamInfo.uploaderSubscriberCount) + " Subscribers",
+                        text = formatCount(streamInfo.uploaderSubscriberCount) + " " + stringResource(MR.strings.video_info_subscribers),
                         fontSize = 12.sp,
                         maxLines = 1,
                         style = TextStyle(
@@ -123,7 +125,7 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "${NumberFormat.getNumberInstance(Locale.US).format(streamInfo.viewCount ?: 0)} ${if (!isLive)"views" else "watching"}",
+                text = "${NumberFormat.getNumberInstance(Locale.US).format(streamInfo.viewCount ?: 0)} ${if (!isLive) stringResource(MR.strings.video_info_views) else stringResource(MR.strings.video_info_watching)}",
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
@@ -141,7 +143,7 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
             ) {
                 Icon(
                     imageVector = Icons.Default.ThumbUp,
-                    contentDescription = "Likes",
+                    contentDescription = stringResource(MR.strings.detail_likes_img_view_description),
                     modifier =  Modifier.size(16.dp)
                 )
                 Text(
@@ -160,7 +162,7 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
 
                     Icon(
                         imageVector = Icons.Default.ThumbDown,
-                        contentDescription = "Dislikes",
+                        contentDescription = stringResource(MR.strings.detail_dislikes_img_view_description),
                         modifier = Modifier.size(16.dp)
                     )
                     Text(

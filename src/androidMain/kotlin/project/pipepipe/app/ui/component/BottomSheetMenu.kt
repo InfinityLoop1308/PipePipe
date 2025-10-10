@@ -33,6 +33,7 @@ import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.MR
 import project.pipepipe.shared.PlaybackMode
 import project.pipepipe.shared.database.DatabaseOperations
+import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
@@ -105,17 +106,17 @@ fun BottomSheetMenu(
                 )
             }
             else -> {
-                Text("Menu for: ${content}", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(MR.strings.bottom_sheet_menu_title, content.toString()), style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.height(16.dp))
-                Text("Play next", modifier = Modifier
+                Text(stringResource(MR.strings.enqueue_next_stream), modifier = Modifier
                     .fillMaxWidth()
                     .clickable { /* TODO */ onDismiss() }
                     .padding(vertical = 8.dp))
-                Text("Add to queue", modifier = Modifier
+                Text(stringResource(MR.strings.enqueue_stream), modifier = Modifier
                     .fillMaxWidth()
                     .clickable { /* TODO */ onDismiss() }
                     .padding(vertical = 8.dp))
-                Text("Download", modifier = Modifier
+                Text(stringResource(MR.strings.download), modifier = Modifier
                     .fillMaxWidth()
                     .clickable { /* TODO */ onDismiss() }
                     .padding(vertical = 8.dp))
@@ -182,14 +183,14 @@ private fun StreamInfoMenuItems(
     val context = LocalContext.current
 
     val menuItems = buildList {
-        add(Triple(Icons.Default.PlayCircle, "Background play") {
+        add(Triple(Icons.Default.PlayCircle, stringResource(MR.strings.bottom_sheet_background_play)) {
             mediaController?.let { controller ->
                 controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
                 controller.playFromStreamInfo(streamInfo)
             }
             onDismiss()
         })
-        add(Triple(Icons.Default.Queue, "Enqueue") {
+        add(Triple(Icons.Default.Queue, stringResource(MR.strings.enqueue_stream)) {
             mediaController?.let { controller ->
                 controller.addMediaItem(streamInfo.toMediaItem())
                 if (controller.mediaItemCount == 1) {
@@ -198,10 +199,10 @@ private fun StreamInfoMenuItems(
             }
             onDismiss()
         })
-        add(Triple(Icons.AutoMirrored.Filled.PlaylistAdd, "Add to playlist") {
+        add(Triple(Icons.AutoMirrored.Filled.PlaylistAdd, stringResource(MR.strings.add_to_playlist)) {
             showPlaylistPopup = true
         })
-        add(Triple(Icons.Default.Share, "Share") {
+        add(Triple(Icons.Default.Share, stringResource(MR.strings.share)) {
             val sendIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, streamInfo.url)
@@ -213,17 +214,17 @@ private fun StreamInfoMenuItems(
             onDismiss()
         })
         if (streamInfo.uploaderUrl != null) {
-            add(Triple(Icons.Default.Person, "Show channel details") {
+            add(Triple(Icons.Default.Person, stringResource(MR.strings.show_channel_details)) {
                 onOpenChannel()
                 onDismiss()
             })
-            add(Triple(Icons.Default.Subscriptions, "Subscribe to channel") {
+            add(Triple(Icons.Default.Subscriptions, stringResource(MR.strings.bottom_sheet_subscribe_channel)) {
                 GlobalScope.launch {
                     streamInfo.uploaderUrl?.let { url ->
                         DatabaseOperations.insertOrUpdateSubscription(ChannelInfo(
                             serviceId = streamInfo.serviceId,
                             url = url,
-                            name = streamInfo.uploaderName ?: "Unknown channel",
+                            name = streamInfo.uploaderName ?: context.getString(MR.strings.bottom_sheet_unknown_channel.resourceId),
                             thumbnailUrl = null,
                             subscriberCount = null
                         ))
@@ -231,17 +232,17 @@ private fun StreamInfoMenuItems(
                 }
                 onDismiss()
             })
-            add(Triple(Icons.Default.Block, "Block channel") { /* TODO */ onDismiss() })
+            add(Triple(Icons.Default.Block, stringResource(MR.strings.bottom_sheet_block_channel)) { /* TODO */ onDismiss() })
         }
 
         if (onNavigateTo != null) {
-            add(Triple(Icons.Default.Start, "Navigate to") {
+            add(Triple(Icons.Default.Start, stringResource(MR.strings.navigate_to)) {
                 onNavigateTo()
                 onDismiss()
             })
         }
         if (onDelete != null) {
-            add(Triple(Icons.Default.Delete, "Delete") {
+            add(Triple(Icons.Default.Delete, stringResource(MR.strings.delete)) {
                 onDelete()
                 onDismiss()
             })

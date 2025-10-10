@@ -352,7 +352,7 @@ fun FilterByKeywordsScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "No items",
+                                text = stringResource(MR.strings.no_items),
                                 fontSize = 16.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -444,7 +444,7 @@ private fun SwipeToDeleteItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(MR.strings.delete),
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
@@ -479,24 +479,24 @@ private fun AddKeywordDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("添加关键词") },
+        title = { Text(stringResource(MR.strings.add_keyword)) },
         text = {
             OutlinedTextField(
                 value = keywordText,
                 onValueChange = { keywordText = it },
-                placeholder = { Text("请输入关键词") },
+                placeholder = { Text(stringResource(MR.strings.enter_keyword)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(keywordText) }) {
-                Text("确定")
+                Text(stringResource(MR.strings.confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("取消")
+                Text(stringResource(MR.strings.cancel))
             }
         }
     )

@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 
 
 @Composable
@@ -28,31 +30,31 @@ fun ActionButtons(
     ) {
         ActionControlButton(
             icon = Icons.AutoMirrored.Filled.PlaylistAdd,
-            text = "Add to",
+            text = stringResource(MR.strings.action_add_to),
             onClick = onAddToPlaylistClick,
             modifier = Modifier.weight(1f)
         )
         ActionControlButton(
             icon = Icons.Default.Headset,
-            text = "Background",
+            text = stringResource(MR.strings.action_background),
             onClick = onPlayAudioClick,
             modifier = Modifier.weight(1f)
         )
         ActionControlButton(
             icon = Icons.Default.PictureInPicture,
-            text = "Popup",
+            text = stringResource(MR.strings.action_popup),
             onClick = { },
             modifier = Modifier.weight(1f)
         )
 //        ActionControlButton(
 //            icon = Icons.Default.Share,
-//            text = "Share",
+//            text = stringResource(MR.strings.share),
 //            onClick = { },
 //            modifier = Modifier.weight(1f)
 //        )
         ActionControlButton(
             icon = Icons.Default.Download,
-            text = "Download",
+            text = stringResource(MR.strings.download),
             onClick = { },
             modifier = Modifier.weight(1f)
         )

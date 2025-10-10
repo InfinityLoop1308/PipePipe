@@ -28,6 +28,8 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import project.pipepipe.shared.database.DatabaseOperations
 import project.pipepipe.shared.helper.ToastManager
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.app.ui.component.CustomTopBar
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,7 +59,7 @@ fun LogSettingScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
         CustomTopBar(
-            defaultTitleText = "Log",
+            defaultTitleText = stringResource(MR.strings.log),
             defaultNavigationOnClick = { navController.popBackStack() }
         )
 
@@ -74,7 +76,7 @@ fun LogSettingScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "No error logs",
+                    text = stringResource(MR.strings.no_error_logs),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -176,7 +178,7 @@ private fun ErrorLogItem(
                 IconButton(onClick = onCopy) {
                     Icon(
                         imageVector = Icons.Default.ContentCopy,
-                        contentDescription = "Copy",
+                        contentDescription = stringResource(MR.strings.copy),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -186,7 +188,7 @@ private fun ErrorLogItem(
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(MR.strings.delete),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }

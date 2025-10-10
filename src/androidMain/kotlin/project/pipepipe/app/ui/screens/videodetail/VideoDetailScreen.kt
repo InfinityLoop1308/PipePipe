@@ -75,6 +75,8 @@ import project.pipepipe.app.ui.component.PlaylistSelectorPopup
 import project.pipepipe.app.ui.component.VideoDetailSection
 import project.pipepipe.app.ui.component.player.VideoPlayer
 import project.pipepipe.app.ui.component.VideoTitleSection
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import kotlin.math.min
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -199,7 +201,7 @@ fun VideoDetailScreen(modifier: Modifier) {
 
     val allTabs = listOf(
         TabConfig(
-            title = "Comments",
+            title = stringResource(MR.strings.comments),
             icon = Icons.AutoMirrored.Filled.Comment,
             isAvailable = streamInfo?.commentInfo != null,
             content = {
@@ -207,13 +209,13 @@ fun VideoDetailScreen(modifier: Modifier) {
             }
         ),
         TabConfig(
-            title = "Related Videos",
+            title = stringResource(MR.strings.related_videos),
             icon = Icons.Default.ArtTrack,
             isAvailable = streamInfo?.relatedItemInfo != null,
             content = { RelatedItemSection() }
         ),
         TabConfig(
-            title = "SponsorBlock",
+            title = stringResource(MR.strings.sponsor_block),
             icon = Icons.Default.Shield, // 或使用其他合适的图标
             isAvailable = streamInfo?.sponsorblockUrl != null,
             content = {
@@ -554,7 +556,7 @@ private fun BottomSheetContent(
 
         Icon(
             imageVector = Icons.AutoMirrored.Filled.QueueMusic,
-            contentDescription = "Add to queue",
+            contentDescription = stringResource(MR.strings.add_to_queue),
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
@@ -564,7 +566,7 @@ private fun BottomSheetContent(
 
         Icon(
             imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-            contentDescription = if (isPlaying) "Pause" else "Play",
+            contentDescription = if (isPlaying) stringResource(MR.strings.pause) else stringResource(MR.strings.player_play),
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
@@ -582,7 +584,7 @@ private fun BottomSheetContent(
 
         Icon(
             imageVector = Icons.Default.Close,
-            contentDescription = "Close",
+            contentDescription = stringResource(MR.strings.close),
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)

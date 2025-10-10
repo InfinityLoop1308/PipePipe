@@ -26,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 
 @Composable
 fun SpeedPitchDialog(
@@ -78,7 +80,7 @@ fun SpeedPitchDialog(
                 // Tempo Section
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Speed: ${String.format("%.2fx", tempSpeed)}",
+                        text = stringResource(MR.strings.speed_pitch_speed_label, String.format("%.2fx", tempSpeed)),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
@@ -121,7 +123,7 @@ fun SpeedPitchDialog(
                 // Pitch Section
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Pitch: ${(tempPitch * 100).toInt()}%",
+                        text = stringResource(MR.strings.speed_pitch_pitch_label, "${(tempPitch * 100).toInt()}%"),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
@@ -199,13 +201,13 @@ fun SpeedPitchDialog(
                             tempPitch = 1.0f
                         }
                     ) {
-                        Text("Reset", fontSize = 14.sp)
+                        Text(stringResource(MR.strings.playback_reset), fontSize = 14.sp)
                     }
 
                     // Cancel and OK buttons on the right
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", fontSize = 14.sp)
+                            Text(stringResource(MR.strings.common_cancel), fontSize = 14.sp)
                         }
 
                         TextButton(
@@ -214,7 +216,7 @@ fun SpeedPitchDialog(
                                 onDismiss()
                             }
                         ) {
-                            Text("OK", fontSize = 14.sp)
+                            Text(stringResource(MR.strings.common_ok), fontSize = 14.sp)
                         }
                     }
                 }

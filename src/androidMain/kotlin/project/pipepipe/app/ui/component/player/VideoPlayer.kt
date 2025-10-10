@@ -11,7 +11,6 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -37,14 +36,17 @@ import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import coil.compose.AsyncImage
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import project.pipepipe.app.MR
 import project.pipepipe.app.service.playFromStreamInfo
 import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.service.stopService
 import project.pipepipe.shared.PlaybackMode
 import project.pipepipe.shared.SharedContext
+import project.pipepipe.shared.helper.ToastManager
 import project.pipepipe.shared.infoitem.DanmakuInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
@@ -118,6 +120,17 @@ fun VideoPlayer(
     var lastSkippedSegment by remember { mutableStateOf<SponsorBlockSegmentInfo?>(null) }
     var skippedSegments by remember { mutableStateOf<Set<String>>(emptySet()) }
     var unskipButtonJob by remember { mutableStateOf<Job?>(null) }
+
+    // Pre-compute display names for all segments to avoid calling @Composable from non-Composable context
+    val segmentDisplayNames = sponsorBlockSegments.associate { segment ->
+        segment.uuid to SponsorBlockUtils.getCategoryName(segment.category)
+    }
+
+    // Pre-fetch string resources for notifications and track labels
+    val playerSkippedText = stringResource(MR.strings.player_skipped_category)
+    val playerUnskippedText = stringResource(MR.strings.player_unskipped)
+    val audioLanguageDefault = stringResource(MR.strings.player_audio_language_default)
+    val subtitleLanguageUnknown = stringResource(MR.strings.player_subtitle_language_unknown)
 
 
     fun hasVideoOverride(): Boolean = availableResolutions.count { it.isSelected } == 1
@@ -343,6 +356,7 @@ fun VideoPlayer(
     }
 
     // Check current segment for SponsorBlock
+
     fun checkCurrentSegment(position: Long) {
         if (!SponsorBlockHelper.isEnabled()) {
             currentSegmentToSkip = null
@@ -365,12 +379,8 @@ fun VideoPlayer(
 
                 // Show notification
                 if (SponsorBlockHelper.isNotificationsEnabled()) {
-                    val categoryName = SponsorBlockHelper.getCategoryDisplayName(currentSegment.category.apiName)
-                    Toast.makeText(
-                        context,
-                        "Skipped $categoryName",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    val categoryName = segmentDisplayNames[currentSegment.uuid] ?: ""
+                    ToastManager.show(playerSkippedText.replace("%s", categoryName))
                 }
             }
             // Show manual skip button
@@ -407,12 +417,8 @@ fun VideoPlayer(
 
             // Show notification
             if (SponsorBlockHelper.isNotificationsEnabled()) {
-                val categoryName = SponsorBlockHelper.getCategoryDisplayName(segment.category.apiName)
-                Toast.makeText(
-                    context,
-                    "Skipped $categoryName",
-                    Toast.LENGTH_SHORT
-                ).show()
+                val categoryName = segmentDisplayNames[segment.uuid] ?: ""
+                ToastManager.show(playerSkippedText.replace("%s", categoryName))
             }
         }
     }
@@ -429,11 +435,7 @@ fun VideoPlayer(
 
             // Show notification
             if (SponsorBlockHelper.isNotificationsEnabled()) {
-                Toast.makeText(
-                    context,
-                    "Unskipped",
-                    Toast.LENGTH_SHORT
-                ).show()
+                ToastManager.show(playerUnskippedText)
             }
         }
     }
@@ -476,7 +478,7 @@ fun VideoPlayer(
         val languages = mutableSetOf<Pair<String, Boolean>>()
         currentTracks.groups.filter { it.type == C.TRACK_TYPE_AUDIO }.forEach { audioGroup ->
             audioGroup?.forEachIndexed { index, format ->
-                val languageName = format.language ?: "Default"
+                val languageName = format.language ?: audioLanguageDefault
                 languages.add(Pair(languageName, languageName.contains("Original")))
                 if (audioGroup.isTrackSelected(index)) {
                     currentLanguage = languageName
@@ -488,7 +490,7 @@ fun VideoPlayer(
         val subtitles = mutableListOf<SubtitleInfo>()
         currentTracks.groups.filter { it.type == C.TRACK_TYPE_TEXT }.forEach { textGroup ->
             textGroup?.forEachIndexed { index, format ->
-                val language = format.language ?: "Unknown"
+                val language = format.language ?: subtitleLanguageUnknown
                 subtitles.add(
                     SubtitleInfo(
                         language = language,
@@ -639,7 +641,7 @@ fun VideoPlayer(
             )
             Icon(
                 imageVector = Icons.Default.PlayArrow,
-                contentDescription = "Play video",
+                contentDescription = stringResource(MR.strings.player_play_video),
                 tint = Color.White,
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -766,12 +768,12 @@ fun VideoPlayer(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Skip",
+                                text = stringResource(MR.strings.player_skip),
                                 fontWeight = FontWeight.Bold
                             )
                             Icon(
                                 imageVector = Icons.Default.SkipNext,
-                                contentDescription = "Skip segment"
+                                contentDescription = stringResource(MR.strings.player_skip_segment)
                             )
                         }
                     }
@@ -798,10 +800,10 @@ fun VideoPlayer(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Undo,
-                                contentDescription = "Unskip segment"
+                                contentDescription = stringResource(MR.strings.player_unskip_segment)
                             )
                             Text(
-                                text = "Unskip",
+                                text = stringResource(MR.strings.player_unskip),
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -848,7 +850,7 @@ fun VideoPlayer(
                                         }) {
                                             Icon(
                                                 Icons.Default.Close,
-                                                contentDescription = "Close",
+                                                contentDescription = stringResource(MR.strings.player_close),
                                                 tint = Color.White
                                             )
                                         }
@@ -900,7 +902,7 @@ fun VideoPlayer(
                                         Box {
                                             TextButton(onClick = { showResolutionMenu = true }) {
                                                 Text(
-                                                    text = if (hasVideoOverride()) availableResolutions.first { it.isSelected }.displayLabel else "Auto",
+                                                    text = if (hasVideoOverride()) availableResolutions.first { it.isSelected }.displayLabel else stringResource(MR.strings.player_resolution_auto),
                                                     color = Color.White,
                                                     fontWeight = FontWeight.Bold
                                                 )
@@ -912,7 +914,7 @@ fun VideoPlayer(
                                                 DropdownMenuItem(
                                                     text = {
                                                         Text(
-                                                            text = "Auto",
+                                                            text = stringResource(MR.strings.player_resolution_auto),
                                                             color = if (!hasVideoOverride())
                                                                 MaterialTheme.colorScheme.primary
                                                             else
@@ -1007,9 +1009,9 @@ fun VideoPlayer(
 
                                                             Text(
                                                                 text = if (danmakuEnabled) {
-                                                                    "Disable danmaku"
+                                                                    stringResource(MR.strings.player_disable_danmaku)
                                                                 } else {
-                                                                    "Enable danmaku"
+                                                                    stringResource(MR.strings.player_enable_danmaku)
                                                                 }
                                                             )
 
@@ -1040,7 +1042,7 @@ fun VideoPlayer(
                                                                 tint = MaterialTheme.colorScheme.onSurface,
                                                                 modifier = Modifier.size(20.dp)
                                                             )
-                                                            Text("Captions")
+                                                            Text(stringResource(MR.strings.player_captions))
                                                         }
                                                     },
                                                     onClick = {
@@ -1065,7 +1067,7 @@ fun VideoPlayer(
                                                                 tint = MaterialTheme.colorScheme.onSurface,
                                                                 modifier = Modifier.size(20.dp)
                                                             )
-                                                            Text("Audio language")
+                                                            Text(stringResource(MR.strings.player_audio_language))
                                                         }
                                                     },
                                                     onClick = {
@@ -1089,7 +1091,7 @@ fun VideoPlayer(
                                                             tint = MaterialTheme.colorScheme.onSurface,
                                                             modifier = Modifier.size(20.dp)
                                                         )
-                                                        Text("Sleep timer")
+                                                        Text(stringResource(MR.strings.player_sleep_timer))
                                                     }
                                                 },
                                                 onClick = {
@@ -1105,7 +1107,7 @@ fun VideoPlayer(
                                                 DropdownMenuItem(
                                                     text = {
                                                         Text(
-                                                            text = language.first + if (language.second) " (Original)" else "",
+                                                            text = language.first + if (language.second) " (${stringResource(MR.strings.player_original_audio)})" else "",
                                                             color = if (currentLanguage == language.first)
                                                                 MaterialTheme.colorScheme.primary
                                                             else
@@ -1131,7 +1133,7 @@ fun VideoPlayer(
                                             DropdownMenuItem(
                                                 text = {
                                                     Text(
-                                                        text = "Disable",
+                                                        text = stringResource(MR.strings.player_disable_subtitle),
                                                         color = if (availableSubtitles.find { it.isSelected } == null)
                                                             MaterialTheme.colorScheme.primary
                                                         else
@@ -1198,7 +1200,7 @@ fun VideoPlayer(
                                 ) {
                                     Icon(
                                         Icons.Default.SkipPrevious,
-                                        contentDescription = "Previous",
+                                        contentDescription = stringResource(MR.strings.player_previous),
                                         tint = Color.White,
                                         modifier = Modifier.size(32.dp)
                                     )
@@ -1216,7 +1218,7 @@ fun VideoPlayer(
                             ) {
                                 Icon(
                                     if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                    contentDescription = if (isPlaying) "Pause" else "Play",
+                                    contentDescription = if (isPlaying) stringResource(MR.strings.player_pause) else stringResource(MR.strings.player_play),
                                     tint = Color.White,
                                     modifier = Modifier.size(48.dp)
                                 )
@@ -1231,7 +1233,7 @@ fun VideoPlayer(
                                 ) {
                                     Icon(
                                         Icons.Default.SkipNext,
-                                        contentDescription = "Next",
+                                        contentDescription = stringResource(MR.strings.player_next),
                                         tint = Color.White,
                                         modifier = Modifier.size(32.dp)
                                     )
@@ -1273,7 +1275,7 @@ fun VideoPlayer(
                             IconButton(onClick = onFullScreenClicked) {
                                 Icon(
                                     Icons.Default.Fullscreen,
-                                    contentDescription = "Rotate Screen",
+                                    contentDescription = stringResource(MR.strings.player_rotate_screen),
                                     tint = Color.White
                                 )
                             }
@@ -1297,7 +1299,7 @@ fun VideoPlayer(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.FastForward,
-                                contentDescription = "Fast forward",
+                                contentDescription = stringResource(MR.strings.player_fast_forward),
                                 tint = Color.White,
                                 modifier = Modifier.size(32.dp)
                             )

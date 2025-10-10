@@ -82,7 +82,7 @@ fun DashboardScreen(navController: NavController) {
                 .padding(horizontal = 16.dp, vertical = 16.dp)
         ) {
             Text(
-                text = "Pinned feed groups",
+                text = stringResource(MR.strings.pinned_feed_groups),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -109,7 +109,7 @@ fun DashboardScreen(navController: NavController) {
                 .padding(horizontal = 16.dp, vertical = 16.dp)
         ) {
             Text(
-                text = "Pinned Playlists",
+                text = stringResource(MR.strings.pinned_playlists),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -239,7 +239,7 @@ private fun HistoryCard(
             when {
                 isLive -> {
                     Text(
-                        text = "LIVE",
+                        text = stringResource(MR.strings.live),
                         color = Color.White,
                         fontSize = 10.sp,
                         lineHeight = 18.sp,
