@@ -2,23 +2,16 @@
 
 package project.pipepipe.app.service
 
-import android.R
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.OptIn
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
+import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.*
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -33,15 +26,71 @@ import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.uistate.VideoDetailPageState
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import androidx.media3.ui.R as Media3UiR
+import com.google.android.material.R as MaterialR
+import project.pipepipe.app.R as AppR
 
 @UnstableApi
 class PlaybackService : MediaLibraryService() {
 
-    private lateinit var player: ExoPlayer
+    private lateinit var player: Player
     private var session: MediaLibrarySession? = null
 
     private lateinit var sessionCallbackExecutor: ExecutorService
-    private var repeatMode: Int = Player.REPEAT_MODE_OFF
+    private var playbackButtonState = PlaybackButtonState.ALL_OFF
+
+    private enum class PlaybackButtonState(
+        val repeatMode: Int,
+        val shuffleEnabled: Boolean,
+        val displayName: String,
+        val iconResId: Int
+    ) {
+        ALL_OFF(
+            Player.REPEAT_MODE_OFF,
+            false,
+            "Repeat Off",
+            Media3UiR.drawable.exo_icon_repeat_off
+        ),
+        SHUFFLE_ON(
+            Player.REPEAT_MODE_OFF,
+            true,
+            "Shuffle On",
+            Media3UiR.drawable.exo_icon_shuffle_on
+        ),
+        REPEAT_ONE(
+            Player.REPEAT_MODE_ONE,
+            false,
+            "Repeat One",
+            Media3UiR.drawable.exo_icon_repeat_one
+        ),
+        REPEAT_ALL(
+            Player.REPEAT_MODE_ALL,
+            false,
+            "Repeat All",
+            Media3UiR.drawable.exo_icon_repeat_all
+        );
+
+        fun next(): PlaybackButtonState = when (this) {
+            ALL_OFF -> SHUFFLE_ON
+            SHUFFLE_ON -> REPEAT_ONE
+            REPEAT_ONE -> REPEAT_ALL
+            REPEAT_ALL -> ALL_OFF
+        }
+
+        companion object {
+            fun fromPlayer(repeatMode: Int, shuffleEnabled: Boolean): PlaybackButtonState {
+                return if (shuffleEnabled) {
+                    SHUFFLE_ON
+                } else {
+                    when (repeatMode) {
+                        Player.REPEAT_MODE_ONE -> REPEAT_ONE
+                        Player.REPEAT_MODE_ALL -> REPEAT_ALL
+                        else -> ALL_OFF
+                    }
+                }
+            }
+        }
+    }
 
     object CustomCommands {
         const val ACTION_SET_PLAYBACK_MODE = "project.pipepipe.app.action.SET_PLAYBACK_MODE"
@@ -61,13 +110,20 @@ class PlaybackService : MediaLibraryService() {
     override fun onCreate() {
         super.onCreate()
 
+        val notificationProvider = DefaultMediaNotificationProvider.Builder(this)
+            .build().apply {
+                setSmallIcon(AppR.drawable.ic_pipepipe)
+            }
+
+        setMediaNotificationProvider(notificationProvider)
+
         sessionCallbackExecutor = Executors.newSingleThreadExecutor { r ->
             Thread(r, "PlaybackService-SessionCallback").apply { isDaemon = true }
         }
 
         val mediaSourceFactory = CustomMediaSourceFactory()
 
-        player = ExoPlayer.Builder(this)
+        val actualPlayer = ExoPlayer.Builder(this)
             .setMediaSourceFactory(mediaSourceFactory)
             .build()
             .apply {
@@ -83,6 +139,30 @@ class PlaybackService : MediaLibraryService() {
                 shuffleModeEnabled = false
                 addListener(createPlayerListener())
             }
+
+        player = object : ForwardingPlayer(actualPlayer) {
+            override fun getAvailableCommands(): Player.Commands {
+                return Player.Commands.Builder()
+                    .addAll(super.getAvailableCommands())
+                    .add(COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+                    .add(COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+                    .add(COMMAND_SEEK_TO_PREVIOUS)
+                    .add(COMMAND_SEEK_TO_NEXT)
+                    .build()
+            }
+
+            override fun isCommandAvailable(command: Int): Boolean {
+                return when (command) {
+                    COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM,
+                    COMMAND_SEEK_TO_NEXT_MEDIA_ITEM,
+                    COMMAND_SEEK_TO_PREVIOUS,
+                    COMMAND_SEEK_TO_NEXT -> true
+                    else -> super.isCommandAvailable(command)
+                }
+            }
+        }
+
+        playbackButtonState = PlaybackButtonState.fromPlayer(player.repeatMode, player.shuffleModeEnabled)
 
         val sessionActivity = buildSessionActivity()
 
@@ -147,13 +227,12 @@ class PlaybackService : MediaLibraryService() {
             CommandButton.Builder()
                 .setDisplayName(getRepeatModeDisplayName())
                 .setSessionCommand(CustomCommands.CHANGE_REPEAT_MODE_COMMAND)
-                .setIconResId(R.drawable.ic_menu_rotate)
+                .setIconResId(playbackButtonState.iconResId)
                 .build(),
-
             CommandButton.Builder()
                 .setDisplayName("Stop")
                 .setSessionCommand(CustomCommands.STOP_SERVICE_COMMAND)
-                .setIconResId(R.drawable.ic_menu_close_clear_cancel)
+                .setIconResId(MaterialR.drawable.material_ic_clear_black_24dp)
                 .build()
         )
 
@@ -167,12 +246,7 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun getRepeatModeDisplayName(): String {
-        return when (repeatMode) {
-            Player.REPEAT_MODE_OFF -> "Repeat None"
-            Player.REPEAT_MODE_ONE -> "Repeat One"
-            Player.REPEAT_MODE_ALL -> "Repeat All"
-            else -> "Repeat"
-        }
+        return playbackButtonState.displayName
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? {
@@ -226,13 +300,14 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun changeRepeatMode() {
-        repeatMode = when (repeatMode) {
-            Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL
-            Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
-            Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_OFF
-            else -> Player.REPEAT_MODE_OFF
-        }
-        player.repeatMode = repeatMode
+        val nextState = playbackButtonState.next()
+        playbackButtonState = nextState
+        applyPlaybackButtonState(nextState)
+    }
+
+    private fun applyPlaybackButtonState(state: PlaybackButtonState) {
+        player.repeatMode = state.repeatMode
+        player.shuffleModeEnabled = state.shuffleEnabled
     }
 
     private fun updateMediaButtonPreferences() {
@@ -240,16 +315,23 @@ class PlaybackService : MediaLibraryService() {
             CommandButton.Builder()
                 .setDisplayName(getRepeatModeDisplayName())
                 .setSessionCommand(CustomCommands.CHANGE_REPEAT_MODE_COMMAND)
-                .setIconResId(R.drawable.ic_menu_rotate)
+                .setIconResId(playbackButtonState.iconResId)
                 .build(),
-
             CommandButton.Builder()
                 .setDisplayName("Stop")
                 .setSessionCommand(CustomCommands.STOP_SERVICE_COMMAND)
-                .setIconResId(R.drawable.ic_menu_close_clear_cancel)
+                .setIconResId(MaterialR.drawable.material_ic_clear_black_24dp)
                 .build()
         )
         session?.setMediaButtonPreferences(updatedMediaButtonPreferences)
+    }
+
+    private fun syncPlaybackButtonStateWithPlayer() {
+        val newState = PlaybackButtonState.fromPlayer(player.repeatMode, player.shuffleModeEnabled)
+        if (newState != playbackButtonState) {
+            playbackButtonState = newState
+            updateMediaButtonPreferences()
+        }
     }
 
     private fun applyPlaybackMode(mode: PlaybackMode) {
@@ -280,11 +362,17 @@ class PlaybackService : MediaLibraryService() {
                 }
             }
 
+            override fun onRepeatModeChanged(repeatMode: Int) {
+                syncPlaybackButtonStateWithPlayer()
+            }
+
+            override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+                syncPlaybackButtonStateWithPlayer()
+            }
+
             override fun onPlaybackStateChanged(playbackState: Int) {
-                when (playbackState) {
-                    Player.STATE_ENDED -> {
-                        saveCurrentProgress()
-                    }
+                if (playbackState == Player.STATE_ENDED) {
+                    saveCurrentProgress()
                 }
             }
 
@@ -295,7 +383,7 @@ class PlaybackService : MediaLibraryService() {
             }
 
             override fun onPlayerError(error: PlaybackException) {
-                MainScope().launch{
+                GlobalScope.launch {
                     DatabaseOperations.insertErrorLog(
                         stacktrace = error.stackTraceToString(),
                         request = player.currentMediaItem?.mediaId,
@@ -312,7 +400,7 @@ class PlaybackService : MediaLibraryService() {
         val currentPosition = player.currentPosition
 
         if (currentMediaItem != null && currentPosition > 0) {
-            CoroutineScope(Dispatchers.IO).launch {
+            GlobalScope.launch {
                 DatabaseOperations.updateStreamProgress(currentMediaItem.mediaId, currentPosition)
             }
         }
