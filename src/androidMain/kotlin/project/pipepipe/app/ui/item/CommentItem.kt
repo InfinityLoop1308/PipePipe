@@ -160,7 +160,9 @@ fun CommentItem(
                                 modifier = Modifier.clickable { onReplyButtonClick() }
                             )
                         }
-                        Spacer(modifier = Modifier.weight(1f))
+                        if (commentInfo.replyInfo != null && (commentInfo.images?.size ?: 0) > 0) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
                         val imageCount = commentInfo.images?.size ?: 0
                         if (imageCount > 0) {
                             Row(
@@ -189,28 +191,3 @@ fun CommentItem(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun CommentItemPreview() {
-//    MaterialTheme {
-//        CommentItem(
-//            commentInfo = CommentInfo(
-//                authorName = "未来龙皇冼衣龙女",
-//                content = "整部剧对于五个人羁绊的塑造不如一句技能描述[笑哭]",
-//                likeCount = 907,
-//                replyCount = 13,
-//                isPinned = null,
-//                isHeartedByUploader = false,
-//                authorAvatarUrl = "https://i2.hdslb.com/bfs/face/3f6fa50c25c4fb5d6ec83329a1c6db974300259e.jpg",
-//                url = "https://api.bilibili.com/x/v2/reply/reply?type=1&ps=10&pn=1&web_location=333.788&oid=115132453683540&root=274856640352",
-//                authorUrl = "https://space.bilibili.com/3546697194015143",
-//                authorVerified = null,
-//                uploadDate = 1756783356000,
-//                replyEndPoint = EndPoint("https://api.bilibili.com/x/v2/reply/reply?type=1&ps=10&pn=1&web_location=333.788&oid=115132453683540&root=274856640352"),
-//                images = listOf("http://i0.hdslb.com/bfs/new_dyn/49099d776eb9e40ce6992de46d17b7e53546697194015143.jpg"),
-//                serviceId = null
-//            )
-//        )
-//    }
-//}
