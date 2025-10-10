@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.component.player
 
+import android.annotation.SuppressLint
 import android.view.View.GONE
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
@@ -24,7 +25,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.SubtitleView
-import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.infoitem.DanmakuInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
@@ -143,6 +143,7 @@ fun VideoSurface(
         }
     }
 }
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun VideoProgressBar(
     currentPosition: Long,
@@ -268,39 +269,5 @@ fun VideoProgressBar(
 
 @Composable
 private fun getSponsorBlockColor(category: SponsorBlockCategory): Color {
-    val settingsManager = SharedContext.settingsManager
-
-    val colorHex = when (category) {
-        SponsorBlockCategory.SPONSOR ->
-            settingsManager.getString("sponsor_block_category_sponsor_color_key", "#00D400")
-        SponsorBlockCategory.INTRO ->
-            settingsManager.getString("sponsor_block_category_intro_color_key", "#00FFFF")
-        SponsorBlockCategory.OUTRO ->
-            settingsManager.getString("sponsor_block_category_outro_color_key", "#0202ED")
-        SponsorBlockCategory.INTERACTION ->
-            settingsManager.getString("sponsor_block_category_interaction_color_key", "#CC00FF")
-        SponsorBlockCategory.HIGHLIGHT ->
-            settingsManager.getString("sponsor_block_category_highlight_color_key", "#FF1983")
-        SponsorBlockCategory.SELF_PROMO ->
-            settingsManager.getString("sponsor_block_category_self_promo_color_key", "#FFFF00")
-        SponsorBlockCategory.NON_MUSIC ->
-            settingsManager.getString("sponsor_block_category_non_music_color_key", "#FF9900")
-        SponsorBlockCategory.PREVIEW ->
-            settingsManager.getString("sponsor_block_category_preview_color_key", "#008FD6")
-        SponsorBlockCategory.FILLER ->
-            settingsManager.getString("sponsor_block_category_filler_color_key", "#7300FF")
-        else -> "#FFFFFF"
-    }
-
-    return parseHexColor(colorHex)
-}
-
-private fun parseHexColor(hex: String): Color {
-    return try {
-        val cleanHex = hex.removePrefix("#")
-        val colorInt = cleanHex.toLong(16).toInt()
-        Color(colorInt or 0xFF000000.toInt())
-    } catch (e: Exception) {
-        Color.White
-    }
+    return SponsorBlockUtils.getCategoryColor(category)
 }

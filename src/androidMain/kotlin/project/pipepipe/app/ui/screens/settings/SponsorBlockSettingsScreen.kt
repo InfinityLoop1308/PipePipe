@@ -26,18 +26,20 @@ import project.pipepipe.app.ui.component.ListPreference
 import project.pipepipe.app.ui.component.SwitchPreference
 import project.pipepipe.app.ui.component.sanitizeHexColorInput
 import project.pipepipe.app.ui.screens.Screen.SponsorBlockCategorySettings
+import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import kotlin.collections.buildList
 
-private const val COLOR_SPONSOR_DEFAULT = "#00D400"
-private const val COLOR_INTRO_DEFAULT = "#00FFFF"
-private const val COLOR_OUTRO_DEFAULT = "#0202ED"
-private const val COLOR_INTERACTION_DEFAULT = "#CC00FF"
-private const val COLOR_HIGHLIGHT_DEFAULT = "#FF1983"
-private const val COLOR_SELF_PROMO_DEFAULT = "#FFFF00"
-private const val COLOR_NON_MUSIC_DEFAULT = "#FF9900"
-private const val COLOR_PREVIEW_DEFAULT = "#008FD6"
-private const val COLOR_FILLER_DEFAULT = "#7300FF"
-private const val COLOR_PENDING_DEFAULT = "#FFFFFF"
+// Use constants from SponsorBlockUtils
+private const val COLOR_SPONSOR_DEFAULT = SponsorBlockUtils.COLOR_SPONSOR_DEFAULT
+private const val COLOR_INTRO_DEFAULT = SponsorBlockUtils.COLOR_INTRO_DEFAULT
+private const val COLOR_OUTRO_DEFAULT = SponsorBlockUtils.COLOR_OUTRO_DEFAULT
+private const val COLOR_INTERACTION_DEFAULT = SponsorBlockUtils.COLOR_INTERACTION_DEFAULT
+private const val COLOR_HIGHLIGHT_DEFAULT = SponsorBlockUtils.COLOR_HIGHLIGHT_DEFAULT
+private const val COLOR_SELF_PROMO_DEFAULT = SponsorBlockUtils.COLOR_SELF_PROMO_DEFAULT
+private const val COLOR_NON_MUSIC_DEFAULT = SponsorBlockUtils.COLOR_NON_MUSIC_DEFAULT
+private const val COLOR_PREVIEW_DEFAULT = SponsorBlockUtils.COLOR_PREVIEW_DEFAULT
+private const val COLOR_FILLER_DEFAULT = SponsorBlockUtils.COLOR_FILLER_DEFAULT
+private const val COLOR_PENDING_DEFAULT = SponsorBlockUtils.COLOR_PENDING_DEFAULT
 
 @Composable
 fun SponsorBlockSettingsScreen(

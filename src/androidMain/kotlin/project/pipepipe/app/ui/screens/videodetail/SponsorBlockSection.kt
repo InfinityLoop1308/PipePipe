@@ -25,7 +25,7 @@ import project.pipepipe.shared.helper.ToastManager
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 import project.pipepipe.shared.toText
-import project.pipepipe.app.ui.component.sanitizeHexColorInput
+import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import java.util.UUID
 
 @Composable
@@ -327,26 +327,7 @@ private fun SegmentRow(
 
 @Composable
 private fun getCategoryColor(category: SponsorBlockCategory): Color {
-    val settingsManager = SharedContext.settingsManager
-
-    val (colorKey, defaultColor) = when (category) {
-        SponsorBlockCategory.SPONSOR -> "sponsor_block_category_sponsor_color_key" to "#00D400"
-        SponsorBlockCategory.INTRO -> "sponsor_block_category_intro_color_key" to "#00FFFF"
-        SponsorBlockCategory.OUTRO -> "sponsor_block_category_outro_color_key" to "#0202ED"
-        SponsorBlockCategory.INTERACTION -> "sponsor_block_category_interaction_color_key" to "#CC00FF"
-        SponsorBlockCategory.HIGHLIGHT -> "sponsor_block_category_highlight_color_key" to "#FF1983"
-        SponsorBlockCategory.SELF_PROMO -> "sponsor_block_category_self_promo_color_key" to "#FFFF00"
-        SponsorBlockCategory.NON_MUSIC -> "sponsor_block_category_non_music_color_key" to "#FF9900"
-        SponsorBlockCategory.PREVIEW -> "sponsor_block_category_preview_color_key" to "#008FD6"
-        SponsorBlockCategory.FILLER -> "sponsor_block_category_filler_color_key" to "#7300FF"
-        SponsorBlockCategory.PENDING -> "sponsor_block_category_pending_color_key" to "#FFFFFF"
-    }
-
-    val hexColor = sanitizeHexColorInput(
-        settingsManager.getString(colorKey, defaultColor)
-    ) ?: defaultColor
-
-    return parseHexColor(hexColor)
+    return SponsorBlockUtils.getCategoryColor(category)
 }
 
 @Composable
@@ -362,15 +343,6 @@ private fun getCategoryName(category: SponsorBlockCategory): String {
         SponsorBlockCategory.PREVIEW -> stringResource(MR.strings.sponsor_block_category_preview)
         SponsorBlockCategory.FILLER -> stringResource(MR.strings.sponsor_block_category_filler)
         SponsorBlockCategory.PENDING -> stringResource(MR.strings.sponsor_block_category_pending)
-    }
-}
-
-private fun parseHexColor(hex: String): Color {
-    val cleanHex = hex.removePrefix("#")
-    return try {
-        Color(android.graphics.Color.parseColor("#$cleanHex"))
-    } catch (e: Exception) {
-        Color.Gray
     }
 }
 
