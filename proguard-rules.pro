@@ -1,21 +1,34 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+-dontwarn io.micrometer.context.**
+-dontwarn javax.enterprise.inject.spi.**
+-dontwarn okhttp3.internal.**
+-dontwarn org.apache.log4j.**
+-dontwarn org.apache.logging.log4j.**
+-dontwarn reactor.blockhound.**
+-dontwarn io.netty.util.internal.logging.**
+-dontwarn io.lettuce.core.support.**
+-dontwarn java.lang.management.**
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Kotlin Serialization
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Ktor
+-keep class io.ktor.** { *; }
+-keepclassmembers class io.ktor.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Kotlinx Serialization
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# Keep serializers
+-keep,includedescriptorclasses class project.pipepipe.**$$serializer { *; }
+-keepclassmembers class project.pipepipe.** {
+    *** Companion;
+}
+-keepclasseswithmembers class project.pipepipe.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}

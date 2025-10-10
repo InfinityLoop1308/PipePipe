@@ -34,6 +34,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
             isMinifyEnabled = false
@@ -55,6 +56,13 @@ android {
         resources {
             excludes += "/META-INF/INDEX.LIST"
             excludes += "/META-INF/io.netty.versions.properties"
+        }
+    }
+
+    applicationVariants.all {
+        outputs.all {
+            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
+                "PipePipe-${versionName}-${buildType.name}.apk"
         }
     }
 }
