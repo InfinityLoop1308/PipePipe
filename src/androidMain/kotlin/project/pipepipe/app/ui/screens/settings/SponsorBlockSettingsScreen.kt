@@ -545,31 +545,6 @@ fun SponsorBlockCategoriesSettingsScreen(
             skipModeValues = skipModeValues,
             skipModeDefault = skipModeDefault
         )
-
-        add(
-            PreferenceItem.CategoryPref(
-                key = "sponsor_block_category_header_pending",
-                title = stringResource(MR.strings.missions_header_pending)
-            )
-        )
-        add(
-            PreferenceItem.ClickablePref(
-                key = "sponsor_block_category_pending_summary_pref",
-                title = stringResource(MR.strings.settings_category_sponsor_block_category_pending_summary),
-                enabled = false,
-                onClick = {}
-            )
-        )
-        add(
-            PreferenceItem.ColorPref(
-                key = "sponsor_block_category_pending_color_key",
-                title = categoryColorTitle,
-                currentColor = pendingColorState.value,
-                defaultColor = COLOR_PENDING_DEFAULT,
-                summary = pendingColorState.value,
-                onColorChange = { pendingColorState.value = it }
-            )
-        )
     }
 
     Column {
@@ -636,15 +611,8 @@ private fun MutableList<PreferenceItem>.addSponsorBlockCategory(
     add(
         PreferenceItem.CategoryPref(
             key = headerKey,
-            title = headerTitle
-        )
-    )
-    add(
-        PreferenceItem.ClickablePref(
-            key = summaryKey,
-            title = summaryText,
-            enabled = false,
-            onClick = {}
+            title = headerTitle,
+            summary = summaryText
         )
     )
 

@@ -265,14 +265,25 @@ fun CategoryPreference(
     item: PreferenceItem.CategoryPref,
     modifier: Modifier = Modifier
 ) {
-    Text(
-        text = item.title,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
-    )
+    ) {
+        Text(
+            text = item.title,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        item.summary?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = it,
+                style = MaterialTheme.typography.bodySmall,
+                color = supportingTextColor()
+            )
+        }
+    }
 }
 
 @Composable
