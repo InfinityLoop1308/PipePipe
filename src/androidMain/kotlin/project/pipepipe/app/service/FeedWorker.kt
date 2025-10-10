@@ -1,20 +1,20 @@
 package project.pipepipe.app.service
 
 import android.content.Context
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
-import androidx.work.ForegroundInfo
 import androidx.core.app.NotificationCompat
-import project.pipepipe.app.MR
-import dev.icerock.moko.resources.desc.desc
+import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
+import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import project.pipepipe.app.MR
 import project.pipepipe.shared.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.shared.job.executeJobFlow
+import project.pipepipe.app.R as AppR
 
 class FeedWorker(
     context: Context,
@@ -103,7 +103,7 @@ class FeedWorker(
             .setContentTitle(MR.strings.feed_notification_loading.desc().toString(applicationContext))
             .setContentText(contentText)
             .setProgress(100, progress, progress == 0)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(AppR.drawable.ic_pipepipe)
             .setOngoing(true)
             .build()
 
