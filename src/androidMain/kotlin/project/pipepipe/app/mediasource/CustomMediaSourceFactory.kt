@@ -195,7 +195,7 @@ class LazyUrlMediaSource(
                         serviceId
                     ).info as StreamInfo
                 }
-                DatabaseOperations.insertOrUpdateStream(streamInfo)
+                DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
                 actualMediaSource = mediaSourceFactory.createActualMediaSource(
                     mediaItem,
                     streamInfo.dashManifest,
