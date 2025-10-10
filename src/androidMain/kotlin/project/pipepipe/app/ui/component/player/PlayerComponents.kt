@@ -28,8 +28,6 @@ import androidx.media3.ui.SubtitleView
 import project.pipepipe.shared.infoitem.DanmakuInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
-import project.pipepipe.app.ui.component.DanmakuOverlay
-import project.pipepipe.app.ui.component.DanmakuState
 
 @Composable
 fun rememberPlaybackTimeMs(player: Player): State<Long> {

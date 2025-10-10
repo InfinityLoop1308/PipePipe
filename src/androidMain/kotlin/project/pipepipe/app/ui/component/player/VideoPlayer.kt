@@ -56,7 +56,6 @@ import project.pipepipe.app.ui.component.player.PlayerHelper.ResolutionInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.SubtitleInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.applyDefaultResolution
 import project.pipepipe.app.ui.component.player.PlayerHelper.forEachIndexed
-import project.pipepipe.app.ui.component.rememberDanmakuState
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt

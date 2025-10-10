@@ -1,9 +1,8 @@
-package project.pipepipe.app.ui.component
+package project.pipepipe.app.ui.component.player
 
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.SystemClock
-import androidx.annotation.FontRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
