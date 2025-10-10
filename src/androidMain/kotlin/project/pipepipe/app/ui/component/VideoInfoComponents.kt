@@ -77,12 +77,12 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
                 model = streamInfo.uploaderAvatarUrl, // 假设这是你的图片URL字段
                 contentDescription = "Uploader Avatar", // 用于无障碍功能
                 modifier = Modifier
-                    .size(AppDimens.video_item_detail_uploader_image_size)
+                    .size(32.dp)
                     .clip(CircleShape), // 使用 clip 将图片裁剪成圆形
                 contentScale = ContentScale.Crop // 确保图片填满圆形区域，不会变形
             )
 
-            Spacer(modifier = Modifier.width(AppDimens.margin_small))
+            Spacer(modifier = Modifier.width(8.dp))
 
             Column(
                 modifier = Modifier.fillMaxHeight().padding(top = 2.dp),
