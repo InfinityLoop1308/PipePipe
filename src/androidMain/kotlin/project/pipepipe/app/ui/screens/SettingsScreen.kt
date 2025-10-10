@@ -33,7 +33,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val sections = remember {
         listOf(
-            SettingsSection(Icons.Default.PlayCircleFilled, MR.strings.settings_section_player.desc().toString(context = context), Screen.PlayerSettings),
+            SettingsSection(Icons.Default.PlayCircleFilled, MR.strings.settings_category_player_title.desc().toString(context = context), Screen.PlayerSettings),
             SettingsSection(Icons.Default.TouchApp, MR.strings.settings_section_gesture.desc().toString(context = context), Screen.GestureSettings),
 //            SettingsSection(Icons.Default.Download, "Download"),
 //            SettingsSection(Icons.Default.Palette, "Appearance"),
@@ -55,7 +55,7 @@ fun SettingsScreen(
                 defaultNavigationOnClick = {
                     navController.popBackStack()
                 },
-                defaultTitleText = stringResource(MR.strings.settings_title)
+                defaultTitleText = stringResource(MR.strings.settings)
             )
         }
     ) { padding ->

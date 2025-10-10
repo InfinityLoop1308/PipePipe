@@ -103,7 +103,7 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
                 )
                 streamInfo.uploaderSubscriberCount?.let {
                     Text(
-                        text = formatCount(streamInfo.uploaderSubscriberCount) + " " + stringResource(MR.strings.video_info_subscribers),
+                        text = formatCount(streamInfo.uploaderSubscriberCount) + " " + stringResource(MR.strings.metadata_subscribers),
                         fontSize = 12.sp,
                         maxLines = 1,
                         style = TextStyle(

@@ -3,6 +3,7 @@
 /nightly
 build/
 release/
+temp/
 
 # Gradle build outputs
 **/build/

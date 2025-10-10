@@ -322,7 +322,7 @@ fun FilterByKeywordsScreen(
                             }) {
                                 Icon(
                                     Icons.Default.Clear,
-                                    contentDescription = stringResource(MR.strings.playlist_action_clear)
+                                    contentDescription = stringResource(MR.strings.clear)
                                 )
                             }
                         }
@@ -333,7 +333,7 @@ fun FilterByKeywordsScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Search,
-                                    contentDescription = stringResource(MR.strings.playlist_action_search)
+                                    contentDescription = stringResource(MR.strings.search)
                                 )
                             }
                         }

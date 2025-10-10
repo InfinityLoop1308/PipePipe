@@ -87,19 +87,19 @@ fun GestureSettingScreen(
         listOf(
             PreferenceItem.SwitchPref(
                 key = "volume_gesture_control_key",
-                title = MR.strings.settings_gesture_volume_title.desc().toString(context),
+                title = MR.strings.volume_gesture_control_title.desc().toString(context),
                 summary = MR.strings.settings_gesture_volume_summary.desc().toString(context),
                 defaultValue = true
             ),
             PreferenceItem.SwitchPref(
                 key = "brightness_gesture_control_key",
-                title = MR.strings.settings_gesture_brightness_title.desc().toString(context),
+                title = MR.strings.brightness_gesture_control_title.desc().toString(context),
                 summary = MR.strings.settings_gesture_brightness_summary.desc().toString(context),
                 defaultValue = true
             ),
             PreferenceItem.SwitchPref(
                 key = "fullscreen_gesture_control_key",
-                title = MR.strings.settings_gesture_fullscreen_title.desc().toString(context),
+                title = MR.strings.fullscreen_gesture_control_title.desc().toString(context),
                 summary = MR.strings.settings_gesture_fullscreen_summary.desc().toString(context),
                 defaultValue = true
             ),

@@ -549,7 +549,7 @@ fun SponsorBlockCategoriesSettingsScreen(
         add(
             PreferenceItem.CategoryPref(
                 key = "sponsor_block_category_header_pending",
-                title = stringResource(MR.strings.sponsor_block_category_pending)
+                title = stringResource(MR.strings.missions_header_pending)
             )
         )
         add(

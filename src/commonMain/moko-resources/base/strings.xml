@@ -1,41 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:ns0="http://schemas.android.com/tools" ns0:ignore="MissingTranslation">
 
-<!--    new strings start from here-->
-    <string name="history">History</string>
-    <string name="settings_title">Settings</string>
 
-    <!-- Action Components -->
+    <string name="title_activity_history">History</string>
+    <string name="settings">Settings</string>
+
+    
     <string name="action_add_to">Add to</string>
-    <string name="action_background">Background</string>
-    <string name="action_popup">Popup</string>
+    <string name="controls_background_title">Background</string>
+    <string name="controls_popup_title">Popup</string>
 
-    <!-- Feed Group -->
+    
     <string name="feed_group_unnamed">Unnamed Group</string>
     <string name="feed_group_add_title">Add to Feed Groups</string>
 
-    <!-- Playlist Selector -->
+    
     <string name="playlist_selector_empty">No playlists found. Create your first playlist!</string>
 
-    <!-- Video Info Components -->
+    
     <string name="video_info_loading_title">Loading title...</string>
     <string name="video_info_channel">Channel</string>
-    <string name="video_info_subscribers">Subscribers</string>
+    <string name="metadata_subscribers">Subscribers</string>
     <string name="video_info_views">views</string>
     <string name="video_info_watching">watching</string>
 
-    <!-- Speed Pitch Dialog -->
+    
     <string name="speed_pitch_speed_label">Speed: %s</string>
     <string name="speed_pitch_pitch_label">Pitch: %s</string>
 
-    <!-- Bottom Sheet Menu -->
+    
     <string name="bottom_sheet_menu_title">Menu for: %s</string>
     <string name="bottom_sheet_background_play">Background play</string>
     <string name="bottom_sheet_subscribe_channel">Subscribe to channel</string>
     <string name="bottom_sheet_unknown_channel">Unknown channel</string>
     <string name="bottom_sheet_block_channel">Block channel</string>
 
-    <!-- Error Component -->
+    
     <string name="error_component_title">Oops!</string>
     <string name="error_component_message">Something went wrong</string>
     <string name="error_component_status_icon">Status Icon</string>
@@ -43,87 +43,83 @@
     <string name="error_component_retry_button">Try again</string>
     <string name="error_component_report_button">Report issue</string>
     <string name="settings_section_gesture">Gesture</string>
-    <string name="settings_section_player">Player</string>
+    <string name="settings_category_player_title">Player</string>
     <string name="settings_section_filter">Filter</string>
     <string name="settings_section_import_export">Import &amp; Export</string>
-    <string name="settings_player_default_resolution_title">Default resolution</string>
-    <string name="settings_player_resolution_auto">Auto</string>
+    <string name="default_resolution_title">Default resolution</string>
+    <string name="auto">Auto</string>
     <string name="settings_player_resolution_best">Best available</string>
     <string name="settings_player_resolution_datasaver">Data saver (lowest)</string>
     <string name="settings_player_resolution_1080p">1080p</string>
     <string name="settings_player_resolution_720p">720p</string>
     <string name="settings_player_resolution_480p">480p</string>
     <string name="settings_player_resolution_360p">360p</string>
-    <string name="settings_player_music_mode_title">Music Player Mode</string>
-    <string name="settings_player_music_mode_summary">Play in background automatically when clicking an item in a local playlist</string>
+    <string name="auto_background_play_title">Music Player Mode</string>
+    <string name="auto_background_play_summary">Play in background automatically when clicking an item in a local playlist</string>
     <string name="settings_player_music_random_title">Random playback order</string>
     <string name="settings_player_music_random_summary">Shuffle local playlist playback when Music Player Mode is enabled</string>
     <string name="settings_player_music_random_disabled_summary">Enable Music Player Mode to use random order</string>
-    <string name="common_ok">OK</string>
-    <string name="settings_gesture_volume_title">Volume gesture control</string>
+    <string name="ok">OK</string>
+    <string name="volume_gesture_control_title">Volume gesture control</string>
     <string name="settings_gesture_volume_summary">Toggle volume control gestures</string>
-    <string name="settings_gesture_brightness_title">Brightness gesture control</string>
+    <string name="brightness_gesture_control_title">Brightness gesture control</string>
     <string name="settings_gesture_brightness_summary">Toggle brightness control gestures</string>
-    <string name="settings_gesture_fullscreen_title">Fullscreen gesture control</string>
+    <string name="fullscreen_gesture_control_title">Fullscreen gesture control</string>
     <string name="settings_gesture_fullscreen_summary">Toggle fullscreen control gestures</string>
     <string name="settings_gesture_swipe_seek_title">Swipe seek gesture control</string>
     <string name="settings_gesture_swipe_seek_summary">Toggle swipe-to-seek gestures</string>
     <string name="settings_gesture_seek_duration_title">Seek duration</string>
     <string name="settings_gesture_playback_speed_title">Playback speed gesture</string>
     <string name="common_seconds">seconds</string>
-    <string name="settings_import_export_backup_category">Backup</string>
+    <string name="settings_category_backup_title">Backup</string>
     <string name="settings_import_export_export_title">Export backup</string>
     <string name="settings_import_export_export_summary">Create a ZIP archive containing your database and settings</string>
     <string name="settings_import_export_import_title">Import backup</string>
     <string name="settings_import_export_import_summary">Restore data from a previously exported backup</string>
     <string name="settings_import_export_dialog_message">Select which parts of the backup you want to restore. Importing will overwrite current data.</string>
     <string name="settings_import_export_choice_database">Database (pipepipe.db)</string>
-    <string name="settings_import_export_choice_settings">Settings</string>
-    <string name="settings_import_export_dialog_confirm">Import</string>
-    <string name="common_cancel">Cancel</string>
-    <string name="common_ok">OK</string>
+    <string name="import_title">Import</string>
+    <string name="cancel">Cancel</string>
     <string name="settings_import_export_filename_prefix">PipePipeBackup</string>
-    <!-- Playlist screen -->
+    
     <string name="playlist_title_default">Playlist</string>
-    <string name="playlist_search_hint">Search</string>
-
-    <!-- Playlist actions -->
-    <string name="playlist_action_clear">Clear</string>
-    <string name="playlist_action_search">Search</string>
-    <string name="playlist_action_sort">Sort</string>
+    <string name="search">Search</string>
+    <string name="duration_live">Live</string>
+    
+    <string name="clear">Clear</string>
+    <string name="sort">Sort</string>
     <string name="playlist_action_more">More</string>
-    <string name="playlist_action_play_all">Play All</string>
+    <string name="play_all">Play All</string>
 
-    <!-- Playlist sort options -->
-    <string name="playlist_sort_original">Original</string>
-    <string name="playlist_sort_original_reverse">Original (Reverse)</string>
+    
+    <string name="sort_origin">Original</string>
+    <string name="sort_origin_reverse">Original (Reverse)</string>
 
-    <!-- Playlist menu items -->
+    
     <string name="playlist_menu_rename">Rename Playlist</string>
     <string name="playlist_menu_delete">Delete Playlist</string>
     <string name="playlist_menu_pin">Pin to Top</string>
     <string name="playlist_menu_unpin">Unpin</string>
 
-    <!-- Playlist empty states -->
+    
     <string name="playlist_empty_search_result">No results found for \"%s\"</string>
     <string name="playlist_empty_no_streams">No streams found in this playlist</string>
 
-    <!-- Playlist info -->
+    
     <string name="playlist_info_summary">%s videos • %s</string>
 
-    <!-- Dialog related -->
+    
     <string name="dialog_confirm">Confirm</string>
-    <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_delete">Delete</string>
+    <string name="delete">Delete</string>
 
-    <!-- Playlist rename -->
+    
     <string name="playlist_rename_label">Playlist name</string>
 
-    <!-- Playlist delete -->
+    
     <string name="playlist_delete_title">Delete playlist</string>
     <string name="playlist_delete_message">Are you sure you want to delete playlist "%s"? This action cannot be undone.</string>
 
-    <!-- Database Import/Export -->
+    
     <string name="backup_nothing_selected_export">Nothing selected to export</string>
     <string name="backup_export_success">Backup exported successfully</string>
     <string name="backup_export_failed">Failed to export backup: %s</string>
@@ -167,7 +163,7 @@
     <string name="error_retry_button_cd">Retry the action</string>
     <string name="error_feedback_button_cd">Open issue report</string>
 
-    <!-- Player Component Strings -->
+    
     <string name="player_volume">Volume</string>
     <string name="player_brightness">Brightness</string>
     <string name="player_unskipped">Unskipped</string>
@@ -175,32 +171,30 @@
     <string name="player_audio_language_default">Default</string>
     <string name="player_subtitle_language_unknown">Unknown</string>
     <string name="player_play_video">Play video</string>
-    <string name="player_skip">Skip</string>
+    <string name="sponsor_block_manual_skip_button">Skip</string>
     <string name="player_skip_segment">Skip segment</string>
     <string name="player_unskip_segment">Unskip segment</string>
     <string name="player_unskip">Unskip</string>
-    <string name="player_close">Close</string>
-    <string name="player_resolution_auto">Auto</string>
-    <string name="player_captions">Captions</string>
+    <string name="close">Close</string>
+    <string name="caption_setting_title">Captions</string>
     <string name="player_audio_language">Audio language</string>
     <string name="player_sleep_timer">Sleep timer</string>
-    <string name="player_original_audio">Original</string>
     <string name="player_disable_subtitle">Disable</string>
-    <string name="player_previous">Previous</string>
+    <string name="previous">Previous</string>
     <string name="player_play">Play</string>
-    <string name="player_pause">Pause</string>
-    <string name="player_next">Next</string>
+    <string name="pause">Pause</string>
+    <string name="next">Next</string>
     <string name="player_rotate_screen">Rotate Screen</string>
     <string name="player_fast_forward">Fast forward</string>
     <string name="player_disable_danmaku">Disable danmaku</string>
     <string name="player_enable_danmaku">Enable danmaku</string>
 
 
-    <!-- Dashboard & Navigation -->
+    
     <string name="dashboard">Dashboard</string>
     <string name="no_bookmarked_playlists">No bookmarked playlists found</string>
 
-    <!-- Subscriptions -->
+    
     <string name="feed_groups">Feed groups</string>
     <string name="create_feed_group">Create feed group</string>
     <string name="no_subscriptions_found">No subscriptions found</string>
@@ -211,12 +205,12 @@
     <string name="group_name">Group name</string>
     <string name="icon">Icon</string>
 
-    <!-- Settings & Log -->
+    
     <string name="log">Log</string>
     <string name="filter">Filter</string>
     <string name="fill_search">Fill search</string>
-    <string name="reset">Reset</string>
-    <string name="done">Done</string>
+    <string name="playback_reset">Reset</string>
+    <string name="recaptcha_done_button">Done</string>
     <string name="perform_search">Perform Search</string>
     <string name="select_service">Select Service</string>
     <string name="search_type">Search Type</string>
@@ -227,35 +221,34 @@
     <string name="add_keyword">Add keyword</string>
     <string name="enter_keyword">Enter keyword</string>
     <string name="confirm">Confirm</string>
-    <string name="cancel_action">Cancel</string>
     <string name="no_items">No items</string>
 
-    <!-- Player & Queue -->
+    
     <string name="play_queue">Play Queue</string>
     <string name="thumbnail">Thumbnail</string>
     <string name="unknown_title">Unknown Title</string>
     <string name="repeat_mode">Repeat mode</string>
     <string name="rewind">Rewind</string>
-    <string name="shuffle">Shuffle</string>
+    <string name="notification_action_shuffle">Shuffle</string>
     <string name="go_to_video_detail">Go to Video Detail</string>
     <string name="import_database">Import Database</string>
 
-    <!-- Channel & Feed -->
+    
     <string name="channel">Channel</string>
     <string name="pinned_feed_groups">Pinned feed groups</string>
     <string name="pinned_playlists">Pinned Playlists</string>
-    <string name="live">LIVE</string>
+    <string name="channel_tab_livestreams">Live</string>
     <string name="add_to_group">Add to group</string>
-    <string name="subscribed">SUBSCRIBED</string>
-    <string name="subscribe">SUBSCRIBE</string>
+    <string name="subscribe_button_title">Subscribe</string>
+    <string name="subscribed_button_title">Subscribed</string>
     <string name="refresh_feed">Refresh feed</string>
 
-    <!-- Video Detail -->
-    <string name="comments">Comments</string>
+    
+    <string name="comments_tab_description">Comments</string>
     <string name="related_videos">Related Videos</string>
     <string name="add_to_queue">Add to queue</string>
 
-    <!-- SponsorBlock -->
+    
     <string name="already_voted">Already voted</string>
     <string name="sponsor_block">SponsorBlock</string>
     <string name="sponsor_block_category_sponsor">Sponsor</string>
@@ -267,7 +260,7 @@
     <string name="sponsor_block_category_non_music">Music: Non-Music Section</string>
     <string name="sponsor_block_category_preview">Preview/Recap</string>
     <string name="sponsor_block_category_filler">Filler Tangent/Jokes</string>
-    <string name="sponsor_block_category_pending">Pending</string>
+    <string name="missions_header_pending">Pending</string>
     <string name="settings_category_sponsor_block_categories_quick_actions">Quick Actions</string>
     <string name="settings_category_sponsor_block_categories_title">SponsorBlock Categories</string>
     <string name="settings_category_sponsor_block_categories_summary">Customize which video segments to skip, along with their color markings on the seek bar.</string>
@@ -288,16 +281,13 @@
     <string name="settings_category_sponsor_block_category_filler_summary">This is for tangential scenes added only for filler or humor that are not required to understand the main content of the video.</string>
     <string name="settings_category_sponsor_block_category_pending_summary">Represents a new segment ready to be submitted.</string>
 
-    <!-- Missing resources from legacy.xml -->
+    
     <string name="add_filter">Add Filter</string>
     <string name="add_to_playlist">Add to playlist</string>
     <string name="back">Back</string>
-    <string name="cancel">Cancel</string>
     <string name="channel_videos">Channel videos</string>
-    <string name="close">Close</string>
     <string name="create">Create</string>
     <string name="create_playlist">New Playlist</string>
-    <string name="delete">Delete</string>
     <string name="detail_dislikes_img_view_description">Dislikes</string>
     <string name="detail_drag_description">Drag to reorder</string>
     <string name="detail_likes_img_view_description">Likes</string>
@@ -321,13 +311,9 @@
     <string name="navigate_to">Navigate</string>
     <string name="never">Never</string>
     <string name="no_sponsor_segments">No sponsor segments</string>
-    <string name="pause">Pause</string>
-    <string name="playback_reset">Reset</string>
     <string name="recommended_videos">Recommended Videos</string>
     <string name="related_items_tab_description">Related items</string>
-    <string name="search">Search</string>
     <string name="search_result">Search results</string>
-    <string name="settings">Settings</string>
     <string name="settings_category_filter_title">Content Filter</string>
     <string name="share">Share</string>
     <string name="show_channel_details">Show channel details</string>
@@ -344,8 +330,6 @@
     <string name="tab_bookmarks">Bookmarked Playlists</string>
     <string name="tab_subscriptions">Subscriptions</string>
     <string name="start">Start</string>
-    <string name="pause">Pause</string>
     <string name="end">End</string>
     <string name="all">All</string>
-    <string name="clear">Clear</string>
-</resources>
+    </resources>

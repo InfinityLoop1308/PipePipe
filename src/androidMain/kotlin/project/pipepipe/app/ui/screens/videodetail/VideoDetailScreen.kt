@@ -201,7 +201,7 @@ fun VideoDetailScreen(modifier: Modifier) {
 
     val allTabs = listOf(
         TabConfig(
-            title = stringResource(MR.strings.comments),
+            title = stringResource(MR.strings.comments_tab_description),
             icon = Icons.AutoMirrored.Filled.Comment,
             isAvailable = streamInfo?.commentInfo != null,
             content = {

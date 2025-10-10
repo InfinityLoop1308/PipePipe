@@ -84,7 +84,7 @@ fun MainScreen(navController: NavController) {
             },
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            Text(stringResource(MR.strings.history))
+            Text(stringResource(MR.strings.title_activity_history))
         }
         Button(
             onClick = {

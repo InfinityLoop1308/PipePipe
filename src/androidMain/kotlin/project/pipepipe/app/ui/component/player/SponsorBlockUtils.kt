@@ -70,7 +70,7 @@ object SponsorBlockUtils {
             SponsorBlockCategory.NON_MUSIC -> stringResource(MR.strings.sponsor_block_category_non_music)
             SponsorBlockCategory.PREVIEW -> stringResource(MR.strings.sponsor_block_category_preview)
             SponsorBlockCategory.FILLER -> stringResource(MR.strings.sponsor_block_category_filler)
-            SponsorBlockCategory.PENDING -> stringResource(MR.strings.sponsor_block_category_pending)
+            SponsorBlockCategory.PENDING -> stringResource(MR.strings.missions_header_pending)
         }
     }
 

@@ -114,7 +114,7 @@ fun ListPreference(
             },
             confirmButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text(stringResource(MR.strings.common_cancel))
+                    Text(stringResource(MR.strings.cancel))
                 }
             }
         )
@@ -168,12 +168,12 @@ fun EditTextPreference(
                         showDialog = false
                     }
                 ) {
-                    Text(stringResource(MR.strings.common_ok))
+                    Text(stringResource(MR.strings.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text(stringResource(MR.strings.common_cancel))
+                    Text(stringResource(MR.strings.cancel))
                 }
             }
         )
@@ -356,12 +356,12 @@ fun MultiSelectPreference(
                         showDialog = false
                     }
                 ) {
-                    Text(stringResource(MR.strings.common_ok))
+                    Text(stringResource(MR.strings.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text(stringResource(MR.strings.common_cancel))
+                    Text(stringResource(MR.strings.cancel))
                 }
             }
         )
@@ -436,12 +436,12 @@ fun ColorPreference(
                     },
                     enabled = sanitizedInput != null
                 ) {
-                    Text(stringResource(MR.strings.common_ok))
+                    Text(stringResource(MR.strings.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text(stringResource(MR.strings.common_cancel))
+                    Text(stringResource(MR.strings.cancel))
                 }
             }
         )

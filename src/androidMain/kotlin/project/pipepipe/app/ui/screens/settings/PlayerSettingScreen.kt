@@ -33,7 +33,7 @@ fun PlayerSettingScreen(
         mutableStateOf(SharedContext.settingsManager.getBoolean("auto_background_play_key", false))
     }
 
-    val resolutionAuto = stringResource(MR.strings.settings_player_resolution_auto)
+    val resolutionAuto = stringResource(MR.strings.auto)
     val resolutionBest = stringResource(MR.strings.settings_player_resolution_best)
     val resolutionDataSaver = stringResource(MR.strings.settings_player_resolution_datasaver)
 
@@ -69,7 +69,7 @@ fun PlayerSettingScreen(
     val preferenceItems = listOf<PreferenceItem>(
         PreferenceItem.ListPref(
             key = "default_resolution_key",
-            title = stringResource(MR.strings.settings_player_default_resolution_title),
+            title = stringResource(MR.strings.default_resolution_title),
             summary = null,
             entries = resolutionEntries,
             entryValues = resolutionValues,
@@ -77,8 +77,8 @@ fun PlayerSettingScreen(
         ),
         PreferenceItem.SwitchPref(
             key = "auto_background_play_key",
-            title = stringResource(MR.strings.settings_player_music_mode_title),
-            summary = stringResource(MR.strings.settings_player_music_mode_summary),
+            title = stringResource(MR.strings.auto_background_play_title),
+            summary = stringResource(MR.strings.auto_background_play_summary),
             defaultValue = false,
             onValueChange = { enabled ->
                 musicModeEnabled = enabled
@@ -95,7 +95,7 @@ fun PlayerSettingScreen(
 
     Column {
         CustomTopBar(
-            defaultTitleText = stringResource(MR.strings.settings_section_player),
+            defaultTitleText = stringResource(MR.strings.settings_category_player_title),
             defaultNavigationOnClick = {
                 navController.popBackStack()
             }

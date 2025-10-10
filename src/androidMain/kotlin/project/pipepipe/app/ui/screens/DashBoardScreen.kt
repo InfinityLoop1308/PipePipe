@@ -145,7 +145,7 @@ fun DashboardScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stringResource(MR.strings.history),
+                    text = stringResource(MR.strings.title_activity_history),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -239,7 +239,7 @@ private fun HistoryCard(
             when {
                 isLive -> {
                     Text(
-                        text = stringResource(MR.strings.live),
+                        text = stringResource(MR.strings.duration_live),
                         color = Color.White,
                         fontSize = 10.sp,
                         lineHeight = 18.sp,

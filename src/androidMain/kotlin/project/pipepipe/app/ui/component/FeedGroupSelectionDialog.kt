@@ -87,12 +87,12 @@ fun FeedGroupSelectionDialog(
                 },
                 enabled = !isLoading
             ) {
-                Text(stringResource(MR.strings.common_ok))
+                Text(stringResource(MR.strings.ok))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(MR.strings.common_cancel))
+                Text(stringResource(MR.strings.cancel))
             }
         }
     )

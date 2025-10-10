@@ -304,7 +304,7 @@ fun SearchScreen(navController: NavController) {
                         ) {
                             Icon(
                                 if (suggestion.isLocal)Icons.Default.History else Icons.Default.Search,
-                                contentDescription = if (suggestion.isLocal) stringResource(MR.strings.history) else stringResource(MR.strings.search),
+                                contentDescription = if (suggestion.isLocal) stringResource(MR.strings.title_activity_history) else stringResource(MR.strings.search),
                                 modifier = Modifier.size(22.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -454,7 +454,7 @@ fun FilterCard(
                     horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
                 ) {
                     OutlinedButton(onClick = onReset) {
-                        Text(stringResource(MR.strings.reset))
+                        Text(stringResource(MR.strings.playback_reset))
                     }
                     FilledTonalButton(onClick = {
                         if (searchQuery.isNotEmpty()) {
@@ -462,7 +462,7 @@ fun FilterCard(
                         }
                         onDismiss()
                     }) {
-                        Text(if (searchQuery.isEmpty()) stringResource(MR.strings.done) else stringResource(MR.strings.perform_search))
+                        Text(if (searchQuery.isEmpty()) stringResource(MR.strings.recaptcha_done_button) else stringResource(MR.strings.perform_search))
                     }
                 }
             }

@@ -207,7 +207,7 @@ fun SpeedPitchDialog(
                     // Cancel and OK buttons on the right
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         TextButton(onClick = onDismiss) {
-                            Text(stringResource(MR.strings.common_cancel), fontSize = 14.sp)
+                            Text(stringResource(MR.strings.cancel), fontSize = 14.sp)
                         }
 
                         TextButton(
@@ -216,7 +216,7 @@ fun SpeedPitchDialog(
                                 onDismiss()
                             }
                         ) {
-                            Text(stringResource(MR.strings.common_ok), fontSize = 14.sp)
+                            Text(stringResource(MR.strings.ok), fontSize = 14.sp)
                         }
                     }
                 }

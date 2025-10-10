@@ -375,7 +375,7 @@ private fun PlaylistInfoMenuItems(
             },
             dismissButton = {
                 TextButton(onClick = { showRenameDialog = false }) {
-                    Text(MR.strings.dialog_cancel.desc().toString(context = context))
+                    Text(MR.strings.cancel.desc().toString(context = context))
                 }
             }
         )
@@ -407,12 +407,12 @@ private fun PlaylistInfoMenuItems(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text(MR.strings.dialog_delete.desc().toString(context = context))
+                    Text(MR.strings.delete.desc().toString(context = context))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text(MR.strings.dialog_cancel.desc().toString(context = context))
+                    Text(MR.strings.cancel.desc().toString(context = context))
                 }
             }
         )

@@ -438,7 +438,7 @@ fun PlayQueueFooter(
                 IconButton(onClick = onPrevious) {
                     Icon(
                         imageVector = Icons.Default.SkipPrevious,
-                        contentDescription = stringResource(MR.strings.player_previous),
+                        contentDescription = stringResource(MR.strings.previous),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -473,7 +473,7 @@ fun PlayQueueFooter(
                 IconButton(onClick = onNext) {
                     Icon(
                         imageVector = Icons.Default.SkipNext,
-                        contentDescription = stringResource(MR.strings.player_next),
+                        contentDescription = stringResource(MR.strings.next),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -481,7 +481,7 @@ fun PlayQueueFooter(
                 IconButton(onClick = onShuffle) {
                     Icon(
                         imageVector = Icons.Default.Shuffle,
-                        contentDescription = stringResource(MR.strings.shuffle),
+                        contentDescription = stringResource(MR.strings.notification_action_shuffle),
                         tint = if (shuffleModeEnabled)
                             MaterialTheme.colorScheme.primary
                         else

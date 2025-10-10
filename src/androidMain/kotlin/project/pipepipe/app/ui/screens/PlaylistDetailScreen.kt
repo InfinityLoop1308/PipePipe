@@ -226,7 +226,7 @@ fun PlaylistDetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showRenameDialog = false }) {
-                    Text(MR.strings.dialog_cancel.desc().toString(context = context))
+                    Text(MR.strings.cancel.desc().toString(context = context))
                 }
             }
         )
@@ -265,12 +265,12 @@ fun PlaylistDetailScreen(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text(MR.strings.dialog_delete.desc().toString(context = context))
+                    Text(MR.strings.delete.desc().toString(context = context))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text(MR.strings.dialog_cancel.desc().toString(context = context))
+                    Text(MR.strings.cancel.desc().toString(context = context))
                 }
             }
         )
@@ -303,7 +303,7 @@ fun PlaylistDetailScreen(
                         onValueChange = { viewModel.updateSearchQuery(it) },
                         placeholder = {
                             Text(
-                                text = MR.strings.playlist_search_hint.desc().toString(context = context),
+                                text = MR.strings.search.desc().toString(context = context),
                                 style = TextStyle(
                                     platformStyle = PlatformTextStyle(
                                         includeFontPadding = false
@@ -351,7 +351,7 @@ fun PlaylistDetailScreen(
                         }) {
                             Icon(
                                 Icons.Default.Clear,
-                                contentDescription = MR.strings.playlist_action_clear.desc().toString(context = context)
+                                contentDescription = MR.strings.clear.desc().toString(context = context)
                             )
                         }
                     }
@@ -362,7 +362,7 @@ fun PlaylistDetailScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Default.Sort,
-                                    contentDescription = MR.strings.playlist_action_sort.desc().toString(context = context)
+                                    contentDescription = MR.strings.sort.desc().toString(context = context)
                                 )
                             }
                             DropdownMenu(
@@ -370,7 +370,7 @@ fun PlaylistDetailScreen(
                                 onDismissRequest = { showSortMenu = false }
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text(MR.strings.playlist_sort_original.desc().toString(context = context)) },
+                                    text = { Text(MR.strings.sort_origin.desc().toString(context = context)) },
                                     onClick = {
                                         viewModel.updateSortMode(PlaylistSortMode.ORIGIN)
                                         showSortMenu = false
@@ -380,7 +380,7 @@ fun PlaylistDetailScreen(
                                     } else null
                                 )
                                 DropdownMenuItem(
-                                    text = { Text(MR.strings.playlist_sort_original_reverse.desc().toString(context = context)) },
+                                    text = { Text(MR.strings.sort_origin_reverse.desc().toString(context = context)) },
                                     onClick = {
                                         viewModel.updateSortMode(PlaylistSortMode.ORIGIN_REVERSE)
                                         showSortMenu = false
@@ -400,7 +400,7 @@ fun PlaylistDetailScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = MR.strings.playlist_action_search.desc().toString(context = context)
+                                contentDescription = MR.strings.search.desc().toString(context = context)
                             )
                         }
                     }
@@ -670,7 +670,7 @@ fun PlaylistDetailScreen(
                                                 modifier = Modifier.size(18.dp)
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
-                                            Text(MR.strings.playlist_action_play_all.desc().toString(context = context))
+                                            Text(MR.strings.play_all.desc().toString(context = context))
                                         }
                                     }
                                 }

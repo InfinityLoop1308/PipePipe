@@ -199,7 +199,7 @@ private fun NewPlaylistDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(MR.strings.common_cancel))
+                Text(stringResource(MR.strings.cancel))
             }
         }
     )

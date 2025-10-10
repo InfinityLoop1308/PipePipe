@@ -36,13 +36,13 @@ fun ActionButtons(
         )
         ActionControlButton(
             icon = Icons.Default.Headset,
-            text = stringResource(MR.strings.action_background),
+            text = stringResource(MR.strings.controls_background_title),
             onClick = onPlayAudioClick,
             modifier = Modifier.weight(1f)
         )
         ActionControlButton(
             icon = Icons.Default.PictureInPicture,
-            text = stringResource(MR.strings.action_popup),
+            text = stringResource(MR.strings.controls_popup_title),
             onClick = { },
             modifier = Modifier.weight(1f)
         )

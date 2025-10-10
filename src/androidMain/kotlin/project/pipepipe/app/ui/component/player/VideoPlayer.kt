@@ -768,7 +768,7 @@ fun VideoPlayer(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(MR.strings.player_skip),
+                                text = stringResource(MR.strings.sponsor_block_manual_skip_button),
                                 fontWeight = FontWeight.Bold
                             )
                             Icon(
@@ -850,7 +850,7 @@ fun VideoPlayer(
                                         }) {
                                             Icon(
                                                 Icons.Default.Close,
-                                                contentDescription = stringResource(MR.strings.player_close),
+                                                contentDescription = stringResource(MR.strings.close),
                                                 tint = Color.White
                                             )
                                         }
@@ -902,7 +902,7 @@ fun VideoPlayer(
                                         Box {
                                             TextButton(onClick = { showResolutionMenu = true }) {
                                                 Text(
-                                                    text = if (hasVideoOverride()) availableResolutions.first { it.isSelected }.displayLabel else stringResource(MR.strings.player_resolution_auto),
+                                                    text = if (hasVideoOverride()) availableResolutions.first { it.isSelected }.displayLabel else stringResource(MR.strings.auto),
                                                     color = Color.White,
                                                     fontWeight = FontWeight.Bold
                                                 )
@@ -914,7 +914,7 @@ fun VideoPlayer(
                                                 DropdownMenuItem(
                                                     text = {
                                                         Text(
-                                                            text = stringResource(MR.strings.player_resolution_auto),
+                                                            text = stringResource(MR.strings.auto),
                                                             color = if (!hasVideoOverride())
                                                                 MaterialTheme.colorScheme.primary
                                                             else
@@ -1042,7 +1042,7 @@ fun VideoPlayer(
                                                                 tint = MaterialTheme.colorScheme.onSurface,
                                                                 modifier = Modifier.size(20.dp)
                                                             )
-                                                            Text(stringResource(MR.strings.player_captions))
+                                                            Text(stringResource(MR.strings.caption_setting_title))
                                                         }
                                                     },
                                                     onClick = {
@@ -1107,7 +1107,7 @@ fun VideoPlayer(
                                                 DropdownMenuItem(
                                                     text = {
                                                         Text(
-                                                            text = language.first + if (language.second) " (${stringResource(MR.strings.player_original_audio)})" else "",
+                                                            text = language.first + if (language.second) " (${stringResource(MR.strings.sort_origin)})" else "",
                                                             color = if (currentLanguage == language.first)
                                                                 MaterialTheme.colorScheme.primary
                                                             else
@@ -1200,7 +1200,7 @@ fun VideoPlayer(
                                 ) {
                                     Icon(
                                         Icons.Default.SkipPrevious,
-                                        contentDescription = stringResource(MR.strings.player_previous),
+                                        contentDescription = stringResource(MR.strings.previous),
                                         tint = Color.White,
                                         modifier = Modifier.size(32.dp)
                                     )
@@ -1218,7 +1218,7 @@ fun VideoPlayer(
                             ) {
                                 Icon(
                                     if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                    contentDescription = if (isPlaying) stringResource(MR.strings.player_pause) else stringResource(MR.strings.player_play),
+                                    contentDescription = if (isPlaying) stringResource(MR.strings.pause) else stringResource(MR.strings.player_play),
                                     tint = Color.White,
                                     modifier = Modifier.size(48.dp)
                                 )
@@ -1233,7 +1233,7 @@ fun VideoPlayer(
                                 ) {
                                     Icon(
                                         Icons.Default.SkipNext,
-                                        contentDescription = stringResource(MR.strings.player_next),
+                                        contentDescription = stringResource(MR.strings.next),
                                         tint = Color.White,
                                         modifier = Modifier.size(32.dp)
                                     )

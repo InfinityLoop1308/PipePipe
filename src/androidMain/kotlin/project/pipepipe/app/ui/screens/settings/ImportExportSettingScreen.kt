@@ -85,7 +85,7 @@ fun ImportExportSettingScreen(
         listOf(
             PreferenceItem.CategoryPref(
                 key = "backup_category",
-                title = MR.strings.settings_import_export_backup_category.desc().toString(context)
+                title = MR.strings.settings_category_backup_title.desc().toString(context)
             ),
             PreferenceItem.ClickablePref(
                 key = "export_backup_pref",
@@ -147,7 +147,7 @@ fun ImportExportSettingScreen(
                         onCheckedChange = { importDatabaseSelected = it }
                     )
                     ImportChoiceRow(
-                        label = MR.strings.settings_import_export_choice_settings.desc().toString(context),
+                        label = MR.strings.settings.desc().toString(context),
                         checked = importSettingsSelected,
                         onCheckedChange = { importSettingsSelected = it }
                     )
@@ -169,7 +169,7 @@ fun ImportExportSettingScreen(
                     },
                     enabled = importDatabaseSelected || importSettingsSelected
                 ) {
-                    Text(MR.strings.settings_import_export_dialog_confirm.desc().toString(context))
+                    Text(MR.strings.import_title.desc().toString(context))
                 }
             },
             dismissButton = {
@@ -179,7 +179,7 @@ fun ImportExportSettingScreen(
                         pendingImportUri = null
                     }
                 ) {
-                    Text(MR.strings.common_cancel.desc().toString(context))
+                    Text(MR.strings.cancel.desc().toString(context))
                 }
             }
         )
