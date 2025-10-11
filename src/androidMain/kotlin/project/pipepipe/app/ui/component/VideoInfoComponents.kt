@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import project.pipepipe.shared.infoitem.StreamInfo
 
@@ -29,13 +30,15 @@ import project.pipepipe.shared.formatCount
 import project.pipepipe.shared.infoitem.StreamType
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.ui.screens.Screen
+import project.pipepipe.shared.SharedContext
 
 @Composable
 fun VideoTitleSection(name: String?) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {  }
+            .clickable { }
             .padding(start = 16.dp, end = 4.dp)
     ) {
         Text(
@@ -59,7 +62,7 @@ fun VideoTitleSection(name: String?) {
 }
 
 @Composable
-fun VideoDetailSection(streamInfo: StreamInfo) {
+fun VideoDetailSection(streamInfo: StreamInfo, navController: NavController) {
     val isLive = streamInfo.streamType == StreamType.LIVE_STREAM
     Row(
         modifier = Modifier
@@ -72,7 +75,12 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .clickable { },
+                .clickable {
+                    streamInfo.uploaderUrl?.let {
+                        navController.navigate(Screen.Channel.createRoute(it, streamInfo.serviceId))
+                        SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+                    }
+               },
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -87,7 +95,9 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
             Spacer(modifier = Modifier.width(8.dp))
 
             Column(
-                modifier = Modifier.fillMaxHeight().padding(top = 2.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(top = 2.dp),
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
@@ -178,22 +188,5 @@ fun VideoDetailSection(streamInfo: StreamInfo) {
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    MaterialTheme {
-        VideoDetailSection(StreamInfo(
-            duration = 320,
-            url = "abc.xyz",
-            serviceId = "BILIBILI",
-            name = "自动分配间距自动分配间距自动分配间距自动分配间距",
-            uploadDate = 1721913917,
-            viewCount = 72817,
-            uploaderName = "SUCCESSFUL",
-            uploaderSubscriberCount = 21391
-        ))
     }
 }

@@ -52,6 +52,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
@@ -69,7 +70,6 @@ import project.pipepipe.shared.database.DatabaseOperations
 import project.pipepipe.shared.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.ActionButtons
 import project.pipepipe.app.ui.component.ErrorComponent
-import project.pipepipe.app.ui.component.ErrorState
 import project.pipepipe.app.ui.component.player.PlayerGestureSettings
 import project.pipepipe.app.ui.component.PlaylistSelectorPopup
 import project.pipepipe.app.ui.component.VideoDetailSection
@@ -81,7 +81,7 @@ import kotlin.math.min
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-fun VideoDetailScreen(modifier: Modifier) {
+fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     val viewModel = SharedContext.sharedVideoDetailViewModel
     val uiState by SharedContext.sharedVideoDetailViewModel.uiState.collectAsState()
     val streamInfo = uiState.currentStreamInfo
@@ -385,7 +385,7 @@ fun VideoDetailScreen(modifier: Modifier) {
                                             }
                                         } else {
                                             item { VideoTitleSection(name = streamInfo.name) }
-                                            item { VideoDetailSection(streamInfo = streamInfo) }
+                                            item { VideoDetailSection(streamInfo = streamInfo, navController = navController) }
                                             item {
                                                 ActionButtons(
                                                     onPlayAudioClick = {

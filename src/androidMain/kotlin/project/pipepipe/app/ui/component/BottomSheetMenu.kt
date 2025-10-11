@@ -41,7 +41,9 @@ import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import project.pipepipe.app.ui.screens.Screen.Channel
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.GlobalScope
+import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.infoitem.ChannelInfo
+import project.pipepipe.shared.uistate.VideoDetailPageState
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -93,6 +95,9 @@ fun BottomSheetMenu(
                                     content.streamInfo.serviceId
                                 )
                             )
+                        }
+                        if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState != VideoDetailPageState.HIDDEN) {
+                            SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
                         }
                     }
                 )

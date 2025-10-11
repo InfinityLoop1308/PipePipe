@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
                                 .padding(bottom = animatedExtraPadding)
                         )
 
-                        VideoDetailScreen(modifier = Modifier.navigationBarsPadding())
+                        VideoDetailScreen(modifier = Modifier.navigationBarsPadding(), navController = navController)
                         if (showPlayQueue) {
                             PlayQueueScreen()
                         }
