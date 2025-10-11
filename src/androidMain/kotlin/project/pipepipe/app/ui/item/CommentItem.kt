@@ -26,7 +26,8 @@ fun CommentItem(
     commentInfo: CommentInfo,
     onItemClick: () -> Unit = {},
     onReplyButtonClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onChannelAvatarClick: () -> Unit?,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         modifier = modifier
@@ -46,7 +47,8 @@ fun CommentItem(
                 contentDescription = "User avatar",
                 modifier = Modifier
                     .size(42.dp)
-                    .clip(CircleShape),
+                    .clip(CircleShape)
+                    .clickable{ onChannelAvatarClick() },
                 contentScale = ContentScale.Crop,
 //                placeholder = painterResource(R.drawable.buddy),
 //                error = painterResource(R.drawable.buddy)

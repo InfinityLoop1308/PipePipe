@@ -1,7 +1,6 @@
 package project.pipepipe.app.ui.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,10 +17,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +29,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.distinctUntilChanged
 import project.pipepipe.shared.infoitem.CommentInfo
 import project.pipepipe.app.ui.item.CommentItem
+import project.pipepipe.app.ui.screens.Screen
+import project.pipepipe.shared.SharedContext
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -47,7 +47,8 @@ fun CommentList(
     showStickyHeader: Boolean = false,
     onBackClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    listState: LazyListState
+    listState: LazyListState,
+    navController: NavHostController
 ) {
     val uniqueItems = remember(comments) { comments.distinctBy { it.url } }
 
@@ -116,7 +117,13 @@ fun CommentList(
                 ) { comment ->
                     CommentItem(
                         commentInfo = comment,
-                        onReplyButtonClick = { onShowReplies(comment) }
+                        onReplyButtonClick = { onShowReplies(comment) },
+                        onChannelAvatarClick = {
+                            comment.authorUrl?.let {
+                                navController.navigate(Screen.Channel.createRoute(it, comment.serviceId!!))
+                                SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+                            }
+                        }
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                 }

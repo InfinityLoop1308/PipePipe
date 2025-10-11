@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -12,15 +11,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.app.ui.component.ErrorComponent
-import project.pipepipe.app.ui.component.ErrorState
 import project.pipepipe.app.ui.list.CommentList
 
 @Composable
 fun CommentSection(
     modifier: Modifier = Modifier,
+    navController: NavHostController,
 ) {
     val viewModel = SharedContext.sharedVideoDetailViewModel
     val uiState by viewModel.uiState.collectAsState()
@@ -87,7 +87,8 @@ fun CommentSection(
                         },
                         showStickyHeader = true,
                         onBackClick = { viewModel.backToCommentList() },
-                        listState = repliesListState
+                        listState = repliesListState,
+                        navController = navController
                     )
                     BackHandler() {
                         viewModel.backToCommentList()
@@ -112,9 +113,9 @@ fun CommentSection(
                                 }
                             }
                         },
-                        showStickyHeader = false,
                         onBackClick = { },
-                        listState = commentsListState
+                        listState = commentsListState,
+                        navController = navController
                     )
                 }
             }

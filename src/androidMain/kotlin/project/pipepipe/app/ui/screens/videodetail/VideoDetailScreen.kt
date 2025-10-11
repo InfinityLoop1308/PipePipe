@@ -205,7 +205,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             icon = Icons.AutoMirrored.Filled.Comment,
             isAvailable = streamInfo?.commentInfo != null,
             content = {
-                streamInfo?.commentInfo?.let { CommentSection() }
+                streamInfo?.commentInfo?.let { CommentSection(navController = navController) }
             }
         ),
         TabConfig(
