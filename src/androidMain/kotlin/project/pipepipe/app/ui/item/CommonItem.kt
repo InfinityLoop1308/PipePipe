@@ -38,6 +38,7 @@ import project.pipepipe.shared.toText
 import project.pipepipe.shared.formatRelativeTime
 import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.app.ui.theme.supportingTextColor
+import project.pipepipe.shared.formatAbsoluteTime
 
 enum class DisplayType{
     ORIGIN,
@@ -102,7 +103,7 @@ fun MediaListItem(
                 if (item.localLastViewDate != null && item.localRepeatCount != null) {
                     append(" • ")
                 }
-                item.localLastViewDate?.let { append(formatRelativeTime(it)) }
+                item.localLastViewDate?.let { append(formatAbsoluteTime(it)) }
             }
             DisplayType.NAME_ONLY -> {}
         }
