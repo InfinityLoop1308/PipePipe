@@ -19,12 +19,12 @@ import coil.compose.AsyncImage
 import project.pipepipe.shared.infoitem.CommentInfo
 import project.pipepipe.shared.formatRelativeTime
 import project.pipepipe.app.ui.theme.supportingTextColor
+import project.pipepipe.shared.SharedContext
 
 @Composable
 fun CommentItem(
     commentInfo: CommentInfo,
     onItemClick: () -> Unit = {},
-    onPictureButtonClick: () -> Unit = {},
     onReplyButtonClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -168,7 +168,9 @@ fun CommentItem(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start,
-                                modifier = Modifier.clickable { onPictureButtonClick() }
+                                modifier = Modifier.clickable {
+                                    SharedContext.showImageViewer(commentInfo.images!!, 0)
+                                }
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Image,

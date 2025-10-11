@@ -332,4 +332,8 @@
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="all">All</string>
+
+    <string name="image_viewer_failed_to_load">Failed to load image</string>
+    <string name="retry">Retry</string>
+    <string name="open_in_browser">Open in browser</string>
     </resources>

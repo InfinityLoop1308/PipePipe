@@ -116,6 +116,7 @@ kotlin {
                 implementation("dev.icerock.moko:resources-compose:0.25.1")
                 implementation("app.cash.sqldelight:android-driver:2.0.2")
                 implementation("sh.calvin.reorderable:reorderable:3.0.0")
+                implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3:1.4.0")
             }
         }
     }

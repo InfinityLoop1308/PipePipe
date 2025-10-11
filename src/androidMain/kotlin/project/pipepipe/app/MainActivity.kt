@@ -24,6 +24,7 @@ import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.helper.ToastManager
 import project.pipepipe.shared.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.BottomSheetMenu
+import project.pipepipe.app.ui.component.ImageViewer
 import project.pipepipe.app.ui.component.Toast
 import project.pipepipe.app.ui.navigation.NavGraph
 import project.pipepipe.app.ui.screens.PlayQueueScreen
@@ -75,6 +76,8 @@ class MainActivity : ComponentActivity() {
                         if (showPlayQueue) {
                             PlayQueueScreen()
                         }
+
+                        ImageViewer()
 
                         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                         if (bottomMenuContent != null) {
