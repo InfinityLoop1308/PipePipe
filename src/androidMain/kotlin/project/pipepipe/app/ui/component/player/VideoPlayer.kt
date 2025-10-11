@@ -35,7 +35,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

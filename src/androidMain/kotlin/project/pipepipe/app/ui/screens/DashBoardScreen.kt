@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import project.pipepipe.database.Feed_group
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo

@@ -15,7 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import project.pipepipe.shared.infoitem.CommentInfo
 import project.pipepipe.shared.formatRelativeTime
 import project.pipepipe.app.ui.theme.supportingTextColor
