@@ -47,7 +47,7 @@ fun ImageViewer() {
             )
         ) {
             ImageViewerContent(
-                urls = imageViewerState.urls,
+                urls = imageViewerState.urls.map { it.replace("http://", "https://") },
                 initialPage = imageViewerState.initialPage
             )
         }
@@ -63,7 +63,6 @@ private fun ImageViewerContent(
         initialPage = initialPage.coerceIn(0, urls.size - 1),
         pageCount = { urls.size }
     )
-    val context = LocalContext.current
     var controlsVisible by remember { mutableStateOf(true) }
 
     Box(
@@ -83,10 +82,28 @@ private fun ImageViewerContent(
             )
         }
 
-        // Top Controls
+        // Top Controls - 只保留关闭按钮
         androidx.compose.animation.AnimatedVisibility(
             visible = controlsVisible,
             modifier = Modifier.align(Alignment.TopEnd)
+        ) {
+            IconButton(
+                onClick = { SharedContext.hideImageViewer() },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(MR.strings.close),
+                    tint = Color.White
+                )
+            }
+        }
+
+        androidx.compose.animation.AnimatedVisibility(
+            visible = controlsVisible,
+            modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             Row(
                 modifier = Modifier
@@ -95,7 +112,6 @@ private fun ImageViewerContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Page Indicator
                 Text(
                     text = "${pagerState.currentPage + 1} / ${urls.size}",
                     color = Color.White,
@@ -105,71 +121,52 @@ private fun ImageViewerContent(
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 )
 
-                // Close Button
-                IconButton(
-                    onClick = { SharedContext.hideImageViewer() },
+                Row(
                     modifier = Modifier
-                        .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                        .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(24.dp))
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(MR.strings.close),
-                        tint = Color.White
-                    )
-                }
-            }
-        }
+                    val currentUrl = urls[pagerState.currentPage]
 
-        // Bottom Actions
-        androidx.compose.animation.AnimatedVisibility(
-            visible = controlsVisible,
-            modifier = Modifier.align(Alignment.BottomEnd)
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(24.dp))
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val currentUrl = urls[pagerState.currentPage]
-
-                // Share Button
-                IconButton(onClick = {
+                    // Share Button
+                    IconButton(onClick = {
 //                    ShareUtils.shareText(context, currentUrl, currentUrl)
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = stringResource(MR.strings.share),
-                        tint = Color.White
-                    )
-                }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = stringResource(MR.strings.share),
+                            tint = Color.White
+                        )
+                    }
 
-                // Open in Browser Button
-                IconButton(onClick = {
+                    // Open in Browser Button
+                    IconButton(onClick = {
 //                    ShareUtils.openUrlInBrowser(context, currentUrl)
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.OpenInBrowser,
-                        contentDescription = stringResource(MR.strings.open_in_browser),
-                        tint = Color.White
-                    )
-                }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.OpenInBrowser,
+                            contentDescription = stringResource(MR.strings.open_in_browser),
+                            tint = Color.White
+                        )
+                    }
 
-                // Download Button
-                IconButton(onClick = {
-                    // TODO: Implement download functionality
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Download,
-                        contentDescription = stringResource(MR.strings.download),
-                        tint = Color.White
-                    )
+                    // Download Button
+                    IconButton(onClick = {
+                        // TODO: Implement download functionality
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Download,
+                            contentDescription = stringResource(MR.strings.download),
+                            tint = Color.White
+                        )
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun ZoomableImage(
