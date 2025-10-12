@@ -593,7 +593,7 @@ private fun MoreMenu(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = if (danmakuEnabled) {
+                                imageVector = if (!danmakuEnabled) {
                                     Icons.Default.Visibility
                                 } else {
                                     Icons.Default.VisibilityOff
