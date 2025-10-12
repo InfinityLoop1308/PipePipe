@@ -209,7 +209,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     insetsController.systemBarsBehavior =
                         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-                    if (act.requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+                    if (act.resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
                         act.requestedOrientation = if(streamInfo.isPortrait) {
                             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                         } else {
