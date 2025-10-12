@@ -94,6 +94,8 @@ fun VideoPlayer(
     var showMoreMenu by remember { mutableStateOf(false) }
     var showAudioLanguageMenu by remember { mutableStateOf(false) }
 
+    val isInPipMode by SharedContext.isInPipMode.collectAsState()
+
     var isPlaying by remember { mutableStateOf(mediaController.isPlaying) }
     var currentPosition by remember { mutableLongStateOf(mediaController.currentPosition) }
     var duration by remember { mutableLongStateOf(mediaController.duration.coerceAtLeast(0)) }
@@ -739,182 +741,402 @@ fun VideoPlayer(
                     danmakuState = danmakuState,
                     danmakuEnabled = danmakuEnabled
                 )
-                if (isControlsVisible) {
-                    Box(
+                if (!isInPipMode) {
+                    if (isControlsVisible) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.3f))
+                        )
+                    }
+
+                    // SponsorBlock Skip button (right side)
+                    AnimatedVisibility(
+                        visible = showSkipButton && currentSegmentToSkip != null,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.3f))
-                    )
-                }
-
-                // SponsorBlock Skip button (right side)
-                AnimatedVisibility(
-                    visible = showSkipButton && currentSegmentToSkip != null,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 16.dp)
-                ) {
-                    FloatingActionButton(
-                        onClick = { skipCurrentSegment() },
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            .align(Alignment.CenterEnd)
+                            .padding(end = 16.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = stringResource(MR.strings.sponsor_block_manual_skip_button),
-                                fontWeight = FontWeight.Bold
-                            )
-                            Icon(
-                                imageVector = Icons.Default.SkipNext,
-                                contentDescription = stringResource(MR.strings.player_skip_segment)
-                            )
-                        }
-                    }
-                }
-
-                // SponsorBlock Unskip button (left side)
-                AnimatedVisibility(
-                    visible = showUnskipButton && lastSkippedSegment != null,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(start = 16.dp)
-                ) {
-                    FloatingActionButton(
-                        onClick = { unskipLastSegment() },
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Undo,
-                                contentDescription = stringResource(MR.strings.player_unskip_segment)
-                            )
-                            Text(
-                                text = stringResource(MR.strings.player_unskip),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-
-                // Player Controls
-                AnimatedVisibility(
-                    visibleState = controlsTransition,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Box(
-                        modifier = modifier
-                            .fillMaxSize()
-                            .windowInsetsPadding(
-                                WindowInsets.systemBarsIgnoringVisibility
-                                    .only(WindowInsetsSides.Horizontal)
-                            )
-                            .windowInsetsPadding(WindowInsets.safeDrawing)
-                    ) {
-                        // top
-                        Column(
-                            modifier = modifier.then(
-                                if (isFullscreenMode) {
-                                    Modifier.statusBarsPadding()
-                                } else {
-                                    Modifier
-                                }
-                            )
+                        FloatingActionButton(
+                            onClick = { skipCurrentSegment() },
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ) {
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.Top
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(MR.strings.sponsor_block_manual_skip_button),
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.SkipNext,
+                                    contentDescription = stringResource(MR.strings.player_skip_segment)
+                                )
+                            }
+                        }
+                    }
+
+                    // SponsorBlock Unskip button (left side)
+                    AnimatedVisibility(
+                        visible = showUnskipButton && lastSkippedSegment != null,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(start = 16.dp)
+                    ) {
+                        FloatingActionButton(
+                            onClick = { unskipLastSegment() },
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Undo,
+                                    contentDescription = stringResource(MR.strings.player_unskip_segment)
+                                )
+                                Text(
+                                    text = stringResource(MR.strings.player_unskip),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+
+                    // Player Controls
+                    AnimatedVisibility(
+                        visibleState = controlsTransition,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Box(
+                            modifier = modifier
+                                .fillMaxSize()
+                                .windowInsetsPadding(
+                                    WindowInsets.systemBarsIgnoringVisibility
+                                        .only(WindowInsetsSides.Horizontal)
+                                )
+                                .windowInsetsPadding(WindowInsets.safeDrawing)
+                        ) {
+                            // top
+                            Column(
+                                modifier = modifier.then(
+                                    if (isFullscreenMode) {
+                                        Modifier.statusBarsPadding()
+                                    } else {
+                                        Modifier
+                                    }
+                                )
                             ) {
                                 Row(
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.Top
                                 ) {
-                                    if (!isFullscreenMode) {
-                                        IconButton(onClick = {
-                                            mediaController.stopService()
-                                            SharedContext.sharedVideoDetailViewModel.hide()
-                                        }) {
-                                            Icon(
-                                                Icons.Default.Close,
-                                                contentDescription = stringResource(MR.strings.close),
-                                                tint = Color.White
-                                            )
-                                        }
-                                    }
-
-                                    if (isFullscreenMode) {
-                                        Column(
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .padding(horizontal = 8.dp, vertical = 12.dp)
-                                        ) {
-                                            Text(
-                                                text = streamInfo.name ?: "",
-                                                color = Color.White,
-                                                fontSize = 15.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                maxLines = 1,
-                                                modifier = Modifier.basicMarquee(),
-                                                style = TextStyle(
-                                                    platformStyle = PlatformTextStyle(
-                                                        includeFontPadding = false
-                                                    )
+                                    Row(
+                                        modifier = Modifier.weight(1f),
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        if (!isFullscreenMode) {
+                                            IconButton(onClick = {
+                                                mediaController.stopService()
+                                                SharedContext.sharedVideoDetailViewModel.hide()
+                                            }) {
+                                                Icon(
+                                                    Icons.Default.Close,
+                                                    contentDescription = stringResource(MR.strings.close),
+                                                    tint = Color.White
                                                 )
-                                            )
-                                            streamInfo.uploaderName?.let {
+                                            }
+                                        }
+
+                                        if (isFullscreenMode) {
+                                            Column(
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .padding(horizontal = 8.dp, vertical = 12.dp)
+                                            ) {
                                                 Text(
-                                                    text = it,
+                                                    text = streamInfo.name ?: "",
                                                     color = Color.White,
-                                                    fontSize = 12.sp,
+                                                    fontSize = 15.sp,
+                                                    fontWeight = FontWeight.Bold,
                                                     maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis,
+                                                    modifier = Modifier.basicMarquee(),
                                                     style = TextStyle(
                                                         platformStyle = PlatformTextStyle(
                                                             includeFontPadding = false
                                                         )
-                                                    ),
-                                                    modifier = Modifier.padding(top = 2.dp)
+                                                    )
                                                 )
+                                                streamInfo.uploaderName?.let {
+                                                    Text(
+                                                        text = it,
+                                                        color = Color.White,
+                                                        fontSize = 12.sp,
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis,
+                                                        style = TextStyle(
+                                                            platformStyle = PlatformTextStyle(
+                                                                includeFontPadding = false
+                                                            )
+                                                        ),
+                                                        modifier = Modifier.padding(top = 2.dp)
+                                                    )
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                Row(
-                                    verticalAlignment = Alignment.Top,
-                                    horizontalArrangement = Arrangement.spacedBy((-6).dp)
-                                ) {
-                                    // Resolution button
-                                    if (availableResolutions.isNotEmpty()) {
+                                    Row(
+                                        verticalAlignment = Alignment.Top,
+                                        horizontalArrangement = Arrangement.spacedBy((-6).dp)
+                                    ) {
+                                        // Resolution button
+                                        if (availableResolutions.isNotEmpty()) {
+                                            Box {
+                                                TextButton(onClick = { showResolutionMenu = true }) {
+                                                    Text(
+                                                        text = if (hasVideoOverride()) availableResolutions.first { it.isSelected }.displayLabel else stringResource(MR.strings.auto),
+                                                        color = Color.White,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                }
+                                                DropdownMenu(
+                                                    expanded = showResolutionMenu,
+                                                    onDismissRequest = { showResolutionMenu = false }
+                                                ) {
+                                                    DropdownMenuItem(
+                                                        text = {
+                                                            Text(
+                                                                text = stringResource(MR.strings.auto),
+                                                                color = if (!hasVideoOverride())
+                                                                    MaterialTheme.colorScheme.primary
+                                                                else
+                                                                    MaterialTheme.colorScheme.onSurface
+                                                            )
+                                                        },
+                                                        onClick = {
+                                                            val params = mediaController.trackSelectionParameters
+                                                                .buildUpon()
+                                                                .clearOverridesOfType(C.TRACK_TYPE_VIDEO)
+                                                                .build()
+                                                            mediaController.trackSelectionParameters = params
+                                                            showResolutionMenu = false
+                                                        }
+                                                    )
+                                                    availableResolutions.forEach { resolution ->
+                                                        DropdownMenuItem(
+                                                            text = {
+                                                                Text(
+                                                                    text = resolution.displayLabel,
+                                                                    color = if (resolution.isSelected && hasVideoOverride())
+                                                                        MaterialTheme.colorScheme.primary
+                                                                    else
+                                                                        MaterialTheme.colorScheme.onSurface
+                                                                )
+                                                            },
+                                                            onClick = {
+                                                                val params = mediaController.trackSelectionParameters
+                                                                    .buildUpon()
+                                                                    .setOverrideForType(
+                                                                        TrackSelectionOverride(
+                                                                            resolution.trackGroup,
+                                                                            resolution.trackIndex
+                                                                        )
+                                                                    )
+                                                                    .build()
+                                                                mediaController.trackSelectionParameters = params
+                                                                showResolutionMenu = false
+                                                            }
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // Speed button
+                                        TextButton(
+                                            onClick = { showSpeedPitchDialog = true }
+                                        ) {
+                                            Text(
+                                                text = if (currentSpeed == 1f) "1x" else String.format(
+                                                    "%.1fx",
+                                                    currentSpeed
+                                                ),
+                                                color = Color.White,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+
+                                        // More button - structured exactly like the resolution button
                                         Box {
-                                            TextButton(onClick = { showResolutionMenu = true }) {
-                                                Text(
-                                                    text = if (hasVideoOverride()) availableResolutions.first { it.isSelected }.displayLabel else stringResource(MR.strings.auto),
-                                                    color = Color.White,
-                                                    fontWeight = FontWeight.Bold
+                                            TextButton(onClick = { showMoreMenu = true }) {
+                                                Icon(
+                                                    imageVector = Icons.Default.MoreVert,
+                                                    contentDescription = "More options",
+                                                    tint = Color.White,
+                                                    modifier = Modifier.size(20.dp)
                                                 )
                                             }
                                             DropdownMenu(
-                                                expanded = showResolutionMenu,
-                                                onDismissRequest = { showResolutionMenu = false }
+                                                expanded = showMoreMenu,
+                                                onDismissRequest = { showMoreMenu = false }
                                             ) {
+                                                streamInfo.danmakuUrl?.let{
+                                                    DropdownMenuItem(
+                                                        modifier = Modifier.height(44.dp),
+                                                        text = {
+                                                            Row(
+                                                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                                                verticalAlignment = Alignment.CenterVertically
+                                                            ) {
+                                                                Icon(
+                                                                    imageVector = if (danmakuEnabled) {
+                                                                        Icons.Default.Visibility
+                                                                    } else {
+                                                                        Icons.Default.VisibilityOff
+                                                                    },
+                                                                    contentDescription = null,
+                                                                    tint = MaterialTheme.colorScheme.onSurface,
+                                                                    modifier = Modifier.size(20.dp)
+                                                                )
+
+                                                                Text(
+                                                                    text = if (danmakuEnabled) {
+                                                                        stringResource(MR.strings.player_disable_danmaku)
+                                                                    } else {
+                                                                        stringResource(MR.strings.player_enable_danmaku)
+                                                                    }
+                                                                )
+
+                                                            }
+                                                        },
+                                                        onClick = {
+                                                            onToggleDanmaku()
+                                                            if (!danmakuEnabled) {
+                                                                danmakuState.clear()
+                                                            }
+                                                            showMoreMenu = false
+                                                        }
+
+                                                    )
+                                                }
+
+                                                if (availableSubtitles.isNotEmpty()) {
+                                                    DropdownMenuItem(
+                                                        modifier = Modifier.height(44.dp),
+                                                        text = {
+                                                            Row(
+                                                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                                                verticalAlignment = Alignment.CenterVertically
+                                                            ) {
+                                                                Icon(
+                                                                    imageVector = Icons.Default.ClosedCaption,
+                                                                    contentDescription = null,
+                                                                    tint = MaterialTheme.colorScheme.onSurface,
+                                                                    modifier = Modifier.size(20.dp)
+                                                                )
+                                                                Text(stringResource(MR.strings.caption_setting_title))
+                                                            }
+                                                        },
+                                                        onClick = {
+                                                            showMoreMenu = false
+                                                            showSubtitleMenu = true
+                                                        }
+                                                    )
+                                                }
+
+
+                                                if (availableLanguages.size > 1) {
+                                                    DropdownMenuItem(
+                                                        modifier = Modifier.height(44.dp),
+                                                        text = {
+                                                            Row(
+                                                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                                                verticalAlignment = Alignment.CenterVertically
+                                                            ) {
+                                                                Icon(
+                                                                    imageVector = Icons.Default.SpatialAudioOff,
+                                                                    contentDescription = null,
+                                                                    tint = MaterialTheme.colorScheme.onSurface,
+                                                                    modifier = Modifier.size(20.dp)
+                                                                )
+                                                                Text(stringResource(MR.strings.player_audio_language))
+                                                            }
+                                                        },
+                                                        onClick = {
+                                                            showMoreMenu = false
+                                                            showAudioLanguageMenu = true
+                                                        }
+                                                    )
+                                                }
+
+
+                                                DropdownMenuItem(
+                                                    modifier = Modifier.height(44.dp),
+                                                    text = {
+                                                        Row(
+                                                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            Icon(
+                                                                imageVector = Icons.Default.Timer,
+                                                                contentDescription = null,
+                                                                tint = MaterialTheme.colorScheme.onSurface,
+                                                                modifier = Modifier.size(20.dp)
+                                                            )
+                                                            Text(stringResource(MR.strings.player_sleep_timer))
+                                                        }
+                                                    },
+                                                    onClick = {
+                                                        showMoreMenu = false
+                                                    }
+                                                )
+                                            }
+                                            DropdownMenu(
+                                                expanded = showAudioLanguageMenu,
+                                                onDismissRequest = { showAudioLanguageMenu = false }
+                                            ) {
+                                                availableLanguages.forEach { language ->
+                                                    DropdownMenuItem(
+                                                        text = {
+                                                            Text(
+                                                                text = language.first + if (language.second) " (${stringResource(MR.strings.sort_origin)})" else "",
+                                                                color = if (currentLanguage == language.first)
+                                                                    MaterialTheme.colorScheme.primary
+                                                                else
+                                                                    MaterialTheme.colorScheme.onSurface
+                                                            )
+                                                        },
+                                                        onClick = {
+                                                            val params = mediaController.trackSelectionParameters
+                                                                .buildUpon()
+                                                                .setPreferredAudioLanguage(language.first)
+                                                                .build()
+                                                            mediaController.trackSelectionParameters = params
+                                                            showAudioLanguageMenu = false
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                            DropdownMenu(
+                                                expanded = showSubtitleMenu,
+                                                onDismissRequest = { showSubtitleMenu = false }
+                                            ) {
+                                                // Add "Disable" option first
                                                 DropdownMenuItem(
                                                     text = {
                                                         Text(
-                                                            text = stringResource(MR.strings.auto),
-                                                            color = if (!hasVideoOverride())
+                                                            text = stringResource(MR.strings.player_disable_subtitle),
+                                                            color = if (availableSubtitles.find { it.isSelected } == null)
                                                                 MaterialTheme.colorScheme.primary
                                                             else
                                                                 MaterialTheme.colorScheme.onSurface
@@ -923,18 +1145,20 @@ fun VideoPlayer(
                                                     onClick = {
                                                         val params = mediaController.trackSelectionParameters
                                                             .buildUpon()
-                                                            .clearOverridesOfType(C.TRACK_TYPE_VIDEO)
+                                                            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
                                                             .build()
                                                         mediaController.trackSelectionParameters = params
-                                                        showResolutionMenu = false
+                                                        showSubtitleMenu = false
                                                     }
                                                 )
-                                                availableResolutions.forEach { resolution ->
+
+                                                // Add available subtitle languages
+                                                availableSubtitles.forEach { subtitle ->
                                                     DropdownMenuItem(
                                                         text = {
                                                             Text(
-                                                                text = resolution.displayLabel,
-                                                                color = if (resolution.isSelected && hasVideoOverride())
+                                                                text = subtitle.language,
+                                                                color = if (subtitle.isSelected)
                                                                     MaterialTheme.colorScheme.primary
                                                                 else
                                                                     MaterialTheme.colorScheme.onSurface
@@ -945,383 +1169,162 @@ fun VideoPlayer(
                                                                 .buildUpon()
                                                                 .setOverrideForType(
                                                                     TrackSelectionOverride(
-                                                                        resolution.trackGroup,
-                                                                        resolution.trackIndex
+                                                                        subtitle.trackGroup,
+                                                                        subtitle.trackIndex
                                                                     )
                                                                 )
+                                                                .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
                                                                 .build()
                                                             mediaController.trackSelectionParameters = params
-                                                            showResolutionMenu = false
+                                                            showSubtitleMenu = false
                                                         }
                                                     )
                                                 }
                                             }
+
                                         }
                                     }
+                                }
+                            }
 
-                                    // Speed button
-                                    TextButton(
-                                        onClick = { showSpeedPitchDialog = true }
+                            // Center Play Controls
+                            Row(
+                                modifier = Modifier.align(Alignment.Center),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (timelineSize > 1 && currentTimelineIndex < timelineSize - 1) {
+                                    IconButton(
+                                        onClick = {
+                                            mediaController.seekToPrevious()
+                                        },
+                                        modifier = Modifier.size(40.dp)
                                     ) {
-                                        Text(
-                                            text = if (currentSpeed == 1f) "1x" else String.format(
-                                                "%.1fx",
-                                                currentSpeed
-                                            ),
-                                            color = Color.White,
-                                            fontWeight = FontWeight.Bold
+                                        Icon(
+                                            Icons.Default.SkipPrevious,
+                                            contentDescription = stringResource(MR.strings.previous),
+                                            tint = Color.White,
+                                            modifier = Modifier.size(32.dp)
                                         )
                                     }
-
-                                    // More button - structured exactly like the resolution button
-                                    Box {
-                                        TextButton(onClick = { showMoreMenu = true }) {
-                                            Icon(
-                                                imageVector = Icons.Default.MoreVert,
-                                                contentDescription = "More options",
-                                                tint = Color.White,
-                                                modifier = Modifier.size(20.dp)
-                                            )
+                                }
+                                IconButton(
+                                    onClick = {
+                                        if (isPlaying) {
+                                            mediaController.pause()
+                                        } else {
+                                            mediaController.play()
                                         }
-                                        DropdownMenu(
-                                            expanded = showMoreMenu,
-                                            onDismissRequest = { showMoreMenu = false }
-                                        ) {
-                                            streamInfo.danmakuUrl?.let{
-                                                DropdownMenuItem(
-                                                    modifier = Modifier.height(44.dp),
-                                                    text = {
-                                                        Row(
-                                                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                                            verticalAlignment = Alignment.CenterVertically
-                                                        ) {
-                                                            Icon(
-                                                                imageVector = if (danmakuEnabled) {
-                                                                    Icons.Default.Visibility
-                                                                } else {
-                                                                    Icons.Default.VisibilityOff
-                                                                },
-                                                                contentDescription = null,
-                                                                tint = MaterialTheme.colorScheme.onSurface,
-                                                                modifier = Modifier.size(20.dp)
-                                                            )
-
-                                                            Text(
-                                                                text = if (danmakuEnabled) {
-                                                                    stringResource(MR.strings.player_disable_danmaku)
-                                                                } else {
-                                                                    stringResource(MR.strings.player_enable_danmaku)
-                                                                }
-                                                            )
-
-                                                        }
-                                                    },
-                                                    onClick = {
-                                                        onToggleDanmaku()
-                                                        if (!danmakuEnabled) {
-                                                            danmakuState.clear()
-                                                        }
-                                                        showMoreMenu = false
-                                                    }
-
-                                                )
-                                            }
-
-                                            if (availableSubtitles.isNotEmpty()) {
-                                                DropdownMenuItem(
-                                                    modifier = Modifier.height(44.dp),
-                                                    text = {
-                                                        Row(
-                                                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                                            verticalAlignment = Alignment.CenterVertically
-                                                        ) {
-                                                            Icon(
-                                                                imageVector = Icons.Default.ClosedCaption,
-                                                                contentDescription = null,
-                                                                tint = MaterialTheme.colorScheme.onSurface,
-                                                                modifier = Modifier.size(20.dp)
-                                                            )
-                                                            Text(stringResource(MR.strings.caption_setting_title))
-                                                        }
-                                                    },
-                                                    onClick = {
-                                                        showMoreMenu = false
-                                                        showSubtitleMenu = true
-                                                    }
-                                                )
-                                            }
-
-
-                                            if (availableLanguages.size > 1) {
-                                                DropdownMenuItem(
-                                                    modifier = Modifier.height(44.dp),
-                                                    text = {
-                                                        Row(
-                                                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                                            verticalAlignment = Alignment.CenterVertically
-                                                        ) {
-                                                            Icon(
-                                                                imageVector = Icons.Default.SpatialAudioOff,
-                                                                contentDescription = null,
-                                                                tint = MaterialTheme.colorScheme.onSurface,
-                                                                modifier = Modifier.size(20.dp)
-                                                            )
-                                                            Text(stringResource(MR.strings.player_audio_language))
-                                                        }
-                                                    },
-                                                    onClick = {
-                                                        showMoreMenu = false
-                                                        showAudioLanguageMenu = true
-                                                    }
-                                                )
-                                            }
-
-
-                                            DropdownMenuItem(
-                                                modifier = Modifier.height(44.dp),
-                                                text = {
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        Icon(
-                                                            imageVector = Icons.Default.Timer,
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.onSurface,
-                                                            modifier = Modifier.size(20.dp)
-                                                        )
-                                                        Text(stringResource(MR.strings.player_sleep_timer))
-                                                    }
-                                                },
-                                                onClick = {
-                                                    showMoreMenu = false
-                                                }
-                                            )
-                                        }
-                                        DropdownMenu(
-                                            expanded = showAudioLanguageMenu,
-                                            onDismissRequest = { showAudioLanguageMenu = false }
-                                        ) {
-                                            availableLanguages.forEach { language ->
-                                                DropdownMenuItem(
-                                                    text = {
-                                                        Text(
-                                                            text = language.first + if (language.second) " (${stringResource(MR.strings.sort_origin)})" else "",
-                                                            color = if (currentLanguage == language.first)
-                                                                MaterialTheme.colorScheme.primary
-                                                            else
-                                                                MaterialTheme.colorScheme.onSurface
-                                                        )
-                                                    },
-                                                    onClick = {
-                                                        val params = mediaController.trackSelectionParameters
-                                                            .buildUpon()
-                                                            .setPreferredAudioLanguage(language.first)
-                                                            .build()
-                                                        mediaController.trackSelectionParameters = params
-                                                        showAudioLanguageMenu = false
-                                                    }
-                                                )
-                                            }
-                                        }
-                                        DropdownMenu(
-                                            expanded = showSubtitleMenu,
-                                            onDismissRequest = { showSubtitleMenu = false }
-                                        ) {
-                                            // Add "Disable" option first
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        text = stringResource(MR.strings.player_disable_subtitle),
-                                                        color = if (availableSubtitles.find { it.isSelected } == null)
-                                                            MaterialTheme.colorScheme.primary
-                                                        else
-                                                            MaterialTheme.colorScheme.onSurface
-                                                    )
-                                                },
-                                                onClick = {
-                                                    val params = mediaController.trackSelectionParameters
-                                                        .buildUpon()
-                                                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
-                                                        .build()
-                                                    mediaController.trackSelectionParameters = params
-                                                    showSubtitleMenu = false
-                                                }
-                                            )
-
-                                            // Add available subtitle languages
-                                            availableSubtitles.forEach { subtitle ->
-                                                DropdownMenuItem(
-                                                    text = {
-                                                        Text(
-                                                            text = subtitle.language,
-                                                            color = if (subtitle.isSelected)
-                                                                MaterialTheme.colorScheme.primary
-                                                            else
-                                                                MaterialTheme.colorScheme.onSurface
-                                                        )
-                                                    },
-                                                    onClick = {
-                                                        val params = mediaController.trackSelectionParameters
-                                                            .buildUpon()
-                                                            .setOverrideForType(
-                                                                TrackSelectionOverride(
-                                                                    subtitle.trackGroup,
-                                                                    subtitle.trackIndex
-                                                                )
-                                                            )
-                                                            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
-                                                            .build()
-                                                        mediaController.trackSelectionParameters = params
-                                                        showSubtitleMenu = false
-                                                    }
-                                                )
-                                            }
-                                        }
-
+                                    },
+                                    modifier = Modifier.size(60.dp)
+                                ) {
+                                    Icon(
+                                        if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                        contentDescription = if (isPlaying) stringResource(MR.strings.pause) else stringResource(MR.strings.player_play),
+                                        tint = Color.White,
+                                        modifier = Modifier.size(48.dp)
+                                    )
+                                }
+                                if (timelineSize > 1 && currentTimelineIndex < timelineSize - 1) {
+                                    IconButton(
+                                        onClick = {
+                                            mediaController.seekToNext()
+                                            SharedContext.sharedVideoDetailViewModel.loadVideoDetails(mediaController.currentMediaItem!!.mediaId)
+                                        },
+                                        modifier = Modifier.size(40.dp)
+                                    ) {
+                                        Icon(
+                                            Icons.Default.SkipNext,
+                                            contentDescription = stringResource(MR.strings.next),
+                                            tint = Color.White,
+                                            modifier = Modifier.size(32.dp)
+                                        )
                                     }
                                 }
                             }
-                        }
 
-                        // Center Play Controls
-                        Row(
-                            modifier = Modifier.align(Alignment.Center),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (timelineSize > 1 && currentTimelineIndex < timelineSize - 1) {
-                                IconButton(
-                                    onClick = {
-                                        mediaController.seekToPrevious()
+                            // bottom
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(start = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = currentPosition.toText(true),
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+
+                                VideoProgressBar(
+                                    currentPosition = currentPosition,
+                                    duration = duration,
+                                    bufferedPosition = bufferedPosition,
+                                    onSeek = { position ->
+                                        mediaController.seekTo(position)
                                     },
-                                    modifier = Modifier.size(40.dp)
-                                ) {
+                                    sponsorBlockSegments = sponsorBlockSegments,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 8.dp)
+                                )
+
+                                Text(
+                                    text = duration.toText(true),
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                                IconButton(onClick = onFullScreenClicked) {
                                     Icon(
-                                        Icons.Default.SkipPrevious,
-                                        contentDescription = stringResource(MR.strings.previous),
-                                        tint = Color.White,
-                                        modifier = Modifier.size(32.dp)
+                                        Icons.Default.Fullscreen,
+                                        contentDescription = stringResource(MR.strings.player_rotate_screen),
+                                        tint = Color.White
                                     )
                                 }
                             }
-                            IconButton(
-                                onClick = {
-                                    if (isPlaying) {
-                                        mediaController.pause()
-                                    } else {
-                                        mediaController.play()
-                                    }
-                                },
-                                modifier = Modifier.size(60.dp)
+                        }
+                    }
+                    if (isLongPressing) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 80.dp)
+                                .background(
+                                    Color.Black.copy(alpha = 0.6f),
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                    contentDescription = if (isPlaying) stringResource(MR.strings.pause) else stringResource(MR.strings.player_play),
+                                    imageVector = Icons.Default.FastForward,
+                                    contentDescription = stringResource(MR.strings.player_fast_forward),
                                     tint = Color.White,
-                                    modifier = Modifier.size(48.dp)
+                                    modifier = Modifier.size(32.dp)
                                 )
-                            }
-                            if (timelineSize > 1 && currentTimelineIndex < timelineSize - 1) {
-                                IconButton(
-                                    onClick = {
-                                        mediaController.seekToNext()
-                                        SharedContext.sharedVideoDetailViewModel.loadVideoDetails(mediaController.currentMediaItem!!.mediaId)
-                                    },
-                                    modifier = Modifier.size(40.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.SkipNext,
-                                        contentDescription = stringResource(MR.strings.next),
-                                        tint = Color.White,
-                                        modifier = Modifier.size(32.dp)
-                                    )
-                                }
-                            }
-                        }
-
-                        // bottom
-                        Row(
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(start = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = currentPosition.toText(true),
-                                color = Color.White,
-                                fontSize = 14.sp
-                            )
-
-                            VideoProgressBar(
-                                currentPosition = currentPosition,
-                                duration = duration,
-                                bufferedPosition = bufferedPosition,
-                                onSeek = { position ->
-                                    mediaController.seekTo(position)
-                                },
-                                sponsorBlockSegments = sponsorBlockSegments,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 8.dp)
-                            )
-
-                            Text(
-                                text = duration.toText(true),
-                                color = Color.White,
-                                fontSize = 14.sp
-                            )
-                            IconButton(onClick = onFullScreenClicked) {
-                                Icon(
-                                    Icons.Default.Fullscreen,
-                                    contentDescription = stringResource(MR.strings.player_rotate_screen),
-                                    tint = Color.White
+                                Text(
+                                    text = "${String.format("%.1f", originalSpeed * speedingPlaybackMultiplier)}x",
+                                    color = Color.White,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
                     }
+                    PlayerOverlays(
+                        isLoading = isLoading,
+                        showVolumeOverlay = showVolumeOverlay,
+                        volumeProgress = volumeOverlayProgress,
+                        showBrightnessOverlay = showBrightnessOverlay,
+                        brightnessProgress = brightnessOverlayProgress,
+                        doubleTapOverlayState = doubleTapOverlayState,
+                        swipeSeekState = swipeSeekState,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
-                if (isLongPressing) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(top = 80.dp)
-                            .background(
-                                Color.Black.copy(alpha = 0.6f),
-                                shape = MaterialTheme.shapes.small
-                            )
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FastForward,
-                                contentDescription = stringResource(MR.strings.player_fast_forward),
-                                tint = Color.White,
-                                modifier = Modifier.size(32.dp)
-                            )
-                            Text(
-                                text = "${String.format("%.1f", originalSpeed * speedingPlaybackMultiplier)}x",
-                                color = Color.White,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-                PlayerOverlays(
-                    isLoading = isLoading,
-                    showVolumeOverlay = showVolumeOverlay,
-                    volumeProgress = volumeOverlayProgress,
-                    showBrightnessOverlay = showBrightnessOverlay,
-                    brightnessProgress = brightnessOverlayProgress,
-                    doubleTapOverlayState = doubleTapOverlayState,
-                    swipeSeekState = swipeSeekState,
-                    modifier = Modifier.fillMaxSize()
-                )
-
             }
         }
         if (showSpeedPitchDialog) {

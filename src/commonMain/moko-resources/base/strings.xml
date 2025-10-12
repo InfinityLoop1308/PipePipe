@@ -185,6 +185,7 @@
     <string name="pause">Pause</string>
     <string name="next">Next</string>
     <string name="player_rotate_screen">Rotate Screen</string>
+    <string name="player_pip">Picture-in-Picture</string>
     <string name="player_fast_forward">Fast forward</string>
     <string name="player_disable_danmaku">Disable danmaku</string>
     <string name="player_enable_danmaku">Enable danmaku</string>

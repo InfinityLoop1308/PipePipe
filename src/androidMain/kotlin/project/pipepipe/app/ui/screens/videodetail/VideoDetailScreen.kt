@@ -5,6 +5,7 @@ package project.pipepipe.app.ui.screens.videodetail
 import android.app.Activity
 import android.content.ComponentName
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,7 +78,9 @@ import project.pipepipe.app.ui.component.VideoDetailSection
 import project.pipepipe.app.ui.component.player.VideoPlayer
 import project.pipepipe.app.ui.component.VideoTitleSection
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.delay
 import project.pipepipe.app.MR
+import project.pipepipe.app.MainActivity
 import kotlin.math.min
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -167,19 +171,63 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     }
 
     val view = LocalView.current
-    LaunchedEffect(uiState.pageState) {
-        activity?.let { act ->
-            val insetsController = WindowCompat.getInsetsController(act.window, view)
-            if (uiState.pageState == VideoDetailPageState.FULLSCREEN_PLAYER) {
-                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                insetsController.hide(WindowInsetsCompat.Type.systemBars())
-                insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            } else {
-                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                insetsController.show(WindowInsetsCompat.Type.systemBars())
+    var currentScreenOrientation by rememberSaveable { mutableIntStateOf(configuration.orientation) }
+
+    LaunchedEffect(configuration.orientation, streamInfo?.isPortrait) {
+        if (SharedContext.isInPipMode.value) {
+            return@LaunchedEffect
+        }
+        val newOrientation = configuration.orientation
+        val oldOrientation = currentScreenOrientation
+        currentScreenOrientation = newOrientation
+        if (uiState.pageState in listOf(VideoDetailPageState.DETAIL_PAGE, VideoDetailPageState.FULLSCREEN_PLAYER)) {
+
+            when (newOrientation) {
+                Configuration.ORIENTATION_LANDSCAPE if oldOrientation == Configuration.ORIENTATION_PORTRAIT &&
+                        uiState.pageState != VideoDetailPageState.FULLSCREEN_PLAYER -> {
+                    viewModel.setPageState(VideoDetailPageState.FULLSCREEN_PLAYER)
+                }
+
+                Configuration.ORIENTATION_PORTRAIT if oldOrientation == Configuration.ORIENTATION_LANDSCAPE &&
+                        uiState.pageState == VideoDetailPageState.FULLSCREEN_PLAYER -> {
+                    viewModel.setPageState(VideoDetailPageState.DETAIL_PAGE)
+                }
             }
         }
     }
+
+    LaunchedEffect(uiState.pageState, streamInfo?.isPortrait) {
+        if (streamInfo == null || SharedContext.isInPipMode.value) {
+            return@LaunchedEffect
+        }
+        activity?.let { act ->
+            val insetsController = WindowCompat.getInsetsController(act.window, view)
+
+            when (uiState.pageState) {
+                VideoDetailPageState.FULLSCREEN_PLAYER -> {
+                    insetsController.hide(WindowInsetsCompat.Type.systemBars())
+                    insetsController.systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+                    if (act.requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+                        act.requestedOrientation = if(streamInfo.isPortrait) {
+                            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        } else {
+                            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                        }
+                    }
+                }
+
+                else -> {
+                    act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    insetsController.show(WindowInsetsCompat.Type.systemBars())
+                }
+            }
+        }
+    }
+
+
+
 
     DisposableEffect(Unit) {
         onDispose {
@@ -399,6 +447,15 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                         }
                                                     },
                                                     onAddToPlaylistClick = { showPlaylistPopup = true },
+                                                    onPipClicked = {
+                                                        mediaController?.let{
+                                                            SharedContext.enterPipmode()
+                                                            it.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
+                                                            it.playFromStreamInfo(streamInfo)
+                                                            viewModel.setPageState(VideoDetailPageState.FULLSCREEN_PLAYER)
+                                                            (context as? MainActivity)?.enterPipMode(streamInfo.isPortrait)
+                                                        }
+                                                    },
                                                     streamInfo = streamInfo
                                                 )
                                             }

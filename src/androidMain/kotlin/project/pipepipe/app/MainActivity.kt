@@ -1,8 +1,11 @@
 package project.pipepipe.app
 
+import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Rational
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -119,6 +122,32 @@ class MainActivity : ComponentActivity() {
         if (intent.getBooleanExtra("open_play_queue", false) && !SharedContext.playQueueVisibility.value) {
             SharedContext.toggleShowPlayQueueVisibility()
         }
+    }
+
+    /**
+     * Enter Picture-in-Picture mode with the specified aspect ratio
+     */
+    fun enterPipMode(isPortrait: Boolean = false): Boolean {
+        val aspectRatio: Rational = if (!isPortrait)Rational(16, 9) else Rational(9, 16)
+        val params = PictureInPictureParams.Builder()
+            .setAspectRatio(aspectRatio)
+            .build()
+        return enterPictureInPictureMode(params)
+    }
+
+    override fun onPictureInPictureModeChanged(
+        isInPictureInPictureMode: Boolean,
+        newConfig: Configuration
+    ) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        if (!isInPictureInPictureMode) {
+            SharedContext.exitPipMode()
+            SharedContext.sharedVideoDetailViewModel.showAsDetailPage()
+        }
+        // TODO: Restore player state when exiting PIP mode
+        // - If entered from fullscreen, return to fullscreen
+        // - If entered from bottom player, return to bottom player
+        // - If user navigated away, stay on current screen
     }
 }
 

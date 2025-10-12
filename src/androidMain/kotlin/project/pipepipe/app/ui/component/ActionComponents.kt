@@ -23,6 +23,7 @@ import project.pipepipe.shared.infoitem.StreamInfo
 fun ActionButtons(
     onPlayAudioClick: () -> Unit = {},
     onAddToPlaylistClick: () -> Unit = {},
+    onPipClicked: () -> Unit = {},
     streamInfo: StreamInfo,
 ) {
     val context = LocalContext.current
@@ -49,7 +50,7 @@ fun ActionButtons(
         ActionControlButton(
             icon = Icons.Default.PictureInPicture,
             text = stringResource(MR.strings.controls_popup_title),
-            onClick = { },
+            onClick = onPipClicked,
             modifier = Modifier.weight(1f)
         )
 //        ActionControlButton(
