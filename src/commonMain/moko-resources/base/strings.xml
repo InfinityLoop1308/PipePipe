@@ -336,4 +336,12 @@
     <string name="image_viewer_failed_to_load">Failed to load image</string>
     <string name="retry">Retry</string>
     <string name="open_in_browser">Open in browser</string>
+
+    <!-- Download dialog -->
+    <string name="download_dialog_title">A More Focused Experience</string>
+    <string name="download_dialog_message">To deliver the best playback experience possible, we are moving away from the app\'s legacy downloader. This allows us to focus our efforts on core performance and stability.\n\nWe recommend using Seal—a trusted and powerful open-source downloader built on yt-dlp with over 22k stars on GitHub. Once installed, download requests will automatically route to it.</string>
+    <string name="download_dialog_seal_link">Get Seal on F-Droid</string>
+    <string name="download_dialog_footer">To learn more about our development philosophy, see the release notes.</string>
+    <string name="seal_not_detected">Seal not detected</string>
+    <string name="failed_to_open_seal">Failed to open Seal. Please share manually.</string>
     </resources>

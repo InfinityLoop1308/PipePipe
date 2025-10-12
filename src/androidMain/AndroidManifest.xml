@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
+    <queries>
+        <package android:name="com.junkfood.seal" />
+    </queries>
+
     <application
         android:name="project.pipepipe.app.PipePipeApplication"
         android:allowBackup="true"

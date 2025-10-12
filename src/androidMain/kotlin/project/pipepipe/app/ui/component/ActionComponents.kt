@@ -6,22 +6,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.shared.infoitem.StreamInfo
 
 
 @Composable
 fun ActionButtons(
     onPlayAudioClick: () -> Unit = {},
     onAddToPlaylistClick: () -> Unit = {},
+    streamInfo: StreamInfo,
 ) {
+    val context = LocalContext.current
+    var showDownloadDialog by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,8 +61,23 @@ fun ActionButtons(
         ActionControlButton(
             icon = Icons.Default.Download,
             text = stringResource(MR.strings.download),
-            onClick = { },
+            onClick = {
+                handleDownload(
+                    context = context,
+                    url = streamInfo.url,
+                    onShowDialog = { show ->
+                        showDownloadDialog = show
+                    }
+                )
+            },
             modifier = Modifier.weight(1f)
+        )
+    }
+
+    if (showDownloadDialog) {
+        DownloadInfoDialog(
+            url = streamInfo.url,
+            onDismiss = { showDownloadDialog = false }
         )
     }
 }
@@ -88,3 +109,4 @@ private fun ActionControlButton(
         )
     }
 }
+

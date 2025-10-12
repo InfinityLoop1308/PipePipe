@@ -398,7 +398,8 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                             }
                                                         }
                                                     },
-                                                    onAddToPlaylistClick = { showPlaylistPopup = true }
+                                                    onAddToPlaylistClick = { showPlaylistPopup = true },
+                                                    streamInfo = streamInfo
                                                 )
                                             }
                                             item {
