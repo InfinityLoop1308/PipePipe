@@ -1,3 +1,16 @@
+# ============ Disable Obfuscation ============
+-dontoptimize
+-dontobfuscate
+-dontpreverify
+
+# ============ Basic Attributes ============
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes Exceptions
+-keepattributes SourceFile,LineNumberTable
+-keepattributes RuntimeVisibleAnnotations
+
+# ============ Suppress Warnings ============
 -dontwarn io.micrometer.context.**
 -dontwarn javax.enterprise.inject.spi.**
 -dontwarn okhttp3.internal.**
@@ -8,27 +21,38 @@
 -dontwarn io.lettuce.core.support.**
 -dontwarn java.lang.management.**
 
-# Kotlin Serialization
--keepattributes *Annotation*, InnerClasses
--dontnote kotlinx.serialization.AnnotationsKt
+# ============ Kotlinx Serialization ============
+# Keep @Serializable classes structure
+-keep @kotlinx.serialization.Serializable class ** {
+    <fields>;
+    <init>(...);
+}
 
-# Ktor
--keep class io.ktor.** { *; }
--keepclassmembers class io.ktor.** { *; }
-
-# Kotlinx Serialization
--keepclassmembers class kotlinx.serialization.json.** {
+# Keep serialization metadata
+-keepclassmembers class ** {
     *** Companion;
 }
--keepclasseswithmembers class kotlinx.serialization.json.** {
+
+-keepclassmembers @kotlinx.serialization.Serializable class ** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 
-# Keep serializers
--keep,includedescriptorclasses class project.pipepipe.**$$serializer { *; }
--keepclassmembers class project.pipepipe.** {
-    *** Companion;
+-keep class project.pipepipe.** { *; }
+
+# ============ Enum Support ============
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
 }
--keepclasseswithmembers class project.pipepipe.** {
-    kotlinx.serialization.KSerializer serializer(...);
+
+# ============ Native Methods ============
+-keepclasseswithmembernames class * {
+    native <methods>;
 }
+
+# ============ R8 Optimization ============
+-allowaccessmodification
+
+# ============ Debugging (Optional) ============
+# -printconfiguration build/outputs/mapping/configuration.txt
+# -printusage build/outputs/mapping/usage.txt
