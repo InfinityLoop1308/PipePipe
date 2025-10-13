@@ -36,4 +36,5 @@ sealed class Screen(val route: String) {
     object SponsorBlockSettings: Screen("sponsorblock_settings")
     object SponsorBlockCategorySettings: Screen("sponsorblock_settings/category")
     object LogSettings: Screen("log_settings")
+    object AppearanceSettings: Screen("appearance_settings")
 }

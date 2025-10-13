@@ -36,7 +36,7 @@ fun SettingsScreen(
             SettingsSection(Icons.Default.PlayCircleFilled, MR.strings.settings_category_player_title.desc().toString(context = context), Screen.PlayerSettings),
             SettingsSection(Icons.Default.TouchApp, MR.strings.settings_section_gesture.desc().toString(context = context), Screen.GestureSettings),
 //            SettingsSection(Icons.Default.Download, "Download"),
-//            SettingsSection(Icons.Default.Palette, "Appearance"),
+            SettingsSection(Icons.Default.Palette, MR.strings.settings_section_appearance.desc().toString(context = context), Screen.AppearanceSettings),
 //            SettingsSection(Icons.Default.History, "History and cache"),
 //            SettingsSection(Icons.Default.Public, "Content"),
 //            SettingsSection(Icons.Default.Person, "Account"),

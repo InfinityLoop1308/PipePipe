@@ -36,6 +36,7 @@ import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.ui.screens.SearchScreen
 import project.pipepipe.app.ui.screens.SettingsScreen
 import project.pipepipe.app.ui.screens.TabNavigationScreen
+import project.pipepipe.app.ui.screens.settings.AppearanceSettingsScreen
 import project.pipepipe.app.ui.screens.settings.FilterByKeywordsScreen
 import project.pipepipe.app.ui.screens.settings.FilterSettingScreen
 import project.pipepipe.app.ui.screens.settings.GestureSettingScreen
@@ -103,6 +104,9 @@ fun NavGraph(
         }
         composable(Screen.LogSettings.route) {
             LogSettingScreen(navController = navController)
+        }
+        composable(Screen.AppearanceSettings.route) {
+            AppearanceSettingsScreen(navController = navController)
         }
         composable(Screen.Search.route) {
             SearchScreen(navController = navController)

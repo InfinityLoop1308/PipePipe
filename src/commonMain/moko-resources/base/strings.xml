@@ -355,4 +355,17 @@
     <string name="download_dialog_footer">To learn more about our development philosophy, see the release notes.</string>
     <string name="seal_not_detected">Seal not detected</string>
     <string name="failed_to_open_seal">Failed to open Seal. Please share manually.</string>
+
+    <!-- Appearance settings -->
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_appearance_theme_mode_title">Theme mode</string>
+    <string name="settings_appearance_theme_mode_system">Follow system</string>
+    <string name="settings_appearance_theme_mode_light">Light</string>
+    <string name="settings_appearance_theme_mode_dark">Dark</string>
+    <string name="settings_appearance_theme_color_title">Theme color</string>
+    <string name="settings_appearance_theme_color_summary">Customize the app\'s primary color</string>
+    <string name="settings_appearance_theme_color_disabled_summary">Disabled when Material You is enabled</string>
+    <string name="settings_appearance_material_you_title">Material You</string>
+    <string name="settings_appearance_material_you_summary">Use dynamic colors from your wallpaper</string>
+    <string name="settings_appearance_material_you_disabled_summary">Requires Android 12 or later</string>
     </resources>

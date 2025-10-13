@@ -85,6 +85,7 @@ kotlin {
                 implementation("dev.icerock.moko:resources:0.25.1")
                 implementation("io.github.darkokoa:datetime-wheel-picker:1.1.0-alpha05-compose1.9")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+                implementation("com.materialkolor:material-kolor:3.0.1")
             }
         }
 
