@@ -447,15 +447,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                         }
                                                     },
                                                     onAddToPlaylistClick = { showPlaylistPopup = true },
-                                                    onPipClicked = {
-                                                        mediaController?.let{
-                                                            SharedContext.enterPipmode()
-                                                            it.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
-                                                            it.playFromStreamInfo(streamInfo)
-                                                            viewModel.setPageState(VideoDetailPageState.FULLSCREEN_PLAYER)
-                                                            (context as? MainActivity)?.enterPipMode(streamInfo.isPortrait)
-                                                        }
-                                                    },
                                                     streamInfo = streamInfo
                                                 )
                                             }
