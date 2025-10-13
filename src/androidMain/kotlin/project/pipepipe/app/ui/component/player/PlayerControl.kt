@@ -144,6 +144,8 @@ fun PlayerControl(
     onAudioLanguageMenuChange: (Boolean) -> Unit,
     showSubtitleMenu: Boolean,
     onSubtitleMenuChange: (Boolean) -> Unit,
+    showSleepTimerDialog: Boolean,
+    onSleepTimerDialogChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -348,7 +350,11 @@ fun PlayerControl(
                                 },
                                 onAudioLanguageSelected = callbacks.onAudioLanguageSelected,
                                 onSubtitleSelected = callbacks.onSubtitleSelected,
-                                onSubtitleDisabled = callbacks.onSubtitleDisabled
+                                onSubtitleDisabled = callbacks.onSubtitleDisabled,
+                                onSleepTimerClick = {
+                                    onMoreMenuChange(false)
+                                    onSleepTimerDialogChange(true)
+                                }
                             )
                         }
                     }
@@ -568,7 +574,8 @@ private fun MoreMenu(
     onToggleDanmaku: () -> Unit,
     onAudioLanguageSelected: (String) -> Unit,
     onSubtitleSelected: (SubtitleInfo) -> Unit,
-    onSubtitleDisabled: () -> Unit
+    onSubtitleDisabled: () -> Unit,
+    onSleepTimerClick: () -> Unit
 ) {
     Box {
         TextButton(onClick = { onMenuChange(true) }) {
@@ -685,9 +692,7 @@ private fun MoreMenu(
                         Text(stringResource(MR.strings.player_sleep_timer))
                     }
                 },
-                onClick = {
-                    onMenuChange(false)
-                }
+                onClick = onSleepTimerClick
             )
         }
 

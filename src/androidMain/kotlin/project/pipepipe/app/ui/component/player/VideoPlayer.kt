@@ -41,6 +41,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
+import project.pipepipe.app.service.SleepTimerService
 import project.pipepipe.app.service.playFromStreamInfo
 import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.service.stopService
@@ -89,6 +90,7 @@ fun VideoPlayer(
     var isControlsVisible by remember { mutableStateOf(true) }
     var showResolutionMenu by remember { mutableStateOf(false) }
     var showSpeedPitchDialog by remember { mutableStateOf(false) }
+    var showSleepTimerDialog by remember { mutableStateOf(false) }
     var showVolumeOverlay by remember { mutableStateOf(false) }
     var showBrightnessOverlay by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
@@ -870,7 +872,9 @@ fun VideoPlayer(
                         showAudioLanguageMenu = showAudioLanguageMenu,
                         onAudioLanguageMenuChange = { showAudioLanguageMenu = it },
                         showSubtitleMenu = showSubtitleMenu,
-                        onSubtitleMenuChange = { showSubtitleMenu = it }
+                        onSubtitleMenuChange = { showSubtitleMenu = it },
+                        showSleepTimerDialog = showSleepTimerDialog,
+                        onSleepTimerDialogChange = { showSleepTimerDialog = it }
                     )
                 }
             }
@@ -887,6 +891,15 @@ fun VideoPlayer(
                     // Apply speed and pitch to the media controller
                     val params = PlaybackParameters(speed, pitch)
                     mediaController.playbackParameters = params
+                }
+            )
+        }
+
+        if (showSleepTimerDialog) {
+            SleepTimerDialog(
+                onDismiss = { showSleepTimerDialog = false },
+                onConfirm = { minutes ->
+                    SleepTimerService.startTimer(context, minutes)
                 }
             )
         }

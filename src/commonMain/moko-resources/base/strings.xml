@@ -189,9 +189,16 @@
     <string name="player_fast_forward">Fast forward</string>
     <string name="player_disable_danmaku">Disable danmaku</string>
     <string name="player_enable_danmaku">Enable danmaku</string>
+    <string name="sleep_timer_title">Sleep Timer</string>
+    <string name="sleep_timer_description">Playback will stop automatically after the selected time</string>
+    <string name="sleep_timer_hours_unit">Hours</string>
+    <string name="sleep_timer_minutes_unit">Minutes</string>
+    <string name="sleep_timer_quick_option_minutes">%1$d min</string>
+    <string name="sleep_timer_notification_channel_description">Shows the countdown for the sleep timer</string>
+    <string name="sleep_timer_notification_content">Playback will stop in %s</string>
 
 
-    
+
     <string name="dashboard">Dashboard</string>
     <string name="no_bookmarked_playlists">No bookmarked playlists found</string>
 

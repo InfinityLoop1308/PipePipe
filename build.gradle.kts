@@ -83,6 +83,8 @@ kotlin {
                 implementation("com.russhwolf:multiplatform-settings:1.3.0")
                 implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
                 implementation("dev.icerock.moko:resources:0.25.1")
+                implementation("io.github.darkokoa:datetime-wheel-picker:1.1.0-alpha05-compose1.9")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             }
         }
 

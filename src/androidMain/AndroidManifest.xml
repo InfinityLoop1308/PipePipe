@@ -46,6 +46,11 @@
                 <action android:name="androidx.media3.session.MediaLibraryService"/>
             </intent-filter>
         </service>
+        <service
+            android:name="project.pipepipe.app.service.SleepTimerService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>
