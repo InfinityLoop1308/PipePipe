@@ -198,7 +198,7 @@ fun MediaListItem(
             if (item is StreamInfo && item.isPaid) {
                 Text(
                     text = stringResource(MR.strings.paid_video).uppercase(),
-                    color = Color.Black,
+                    color = Color.White,
                     fontSize = 10.sp,
                     lineHeight = 18.sp,
                     modifier = Modifier
