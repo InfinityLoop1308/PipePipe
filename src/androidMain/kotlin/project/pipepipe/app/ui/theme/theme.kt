@@ -2,13 +2,19 @@ package project.pipepipe.app.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
@@ -19,6 +25,7 @@ import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.shared.SharedContext
 
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PipePipeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -28,17 +35,48 @@ fun PipePipeTheme(
     val settingsManager = SharedContext.settingsManager
 
     // Read appearance settings
-    val materialYouEnabled = remember {
-        settingsManager.getBoolean("material_you_enabled_key", false)
+    var materialYouEnabled by remember {
+        mutableStateOf(settingsManager.getBoolean("material_you_enabled_key", false))
     }
 
-    val themeMode = remember {
-        settingsManager.getString("theme_mode_key", "system")
+    var themeMode by remember {
+        mutableStateOf(settingsManager.getString("theme_mode_key", "system"))
     }
 
-    val themeColorHex = remember {
-        settingsManager.getString("theme_color_key", "#e53935")
+    var themeColorHex by remember {
+        mutableStateOf(settingsManager.getString("theme_color_key", "#e53935"))
     }
+
+    // Add listeners for settings changes
+    DisposableEffect(Unit) {
+        val materialYouListener = settingsManager.addBooleanListener(
+            "material_you_enabled_key",
+            false
+        ) { newValue ->
+            materialYouEnabled = newValue
+        }
+
+        val themeModeListener = settingsManager.addStringListener(
+            "theme_mode_key",
+            "system"
+        ) { newValue ->
+            themeMode = newValue
+        }
+
+        val themeColorListener = settingsManager.addStringListener(
+            "theme_color_key",
+            "#e53935"
+        ) { newValue ->
+            themeColorHex = newValue
+        }
+
+        onDispose {
+            materialYouListener?.deactivate()
+            themeModeListener?.deactivate()
+            themeColorListener?.deactivate()
+        }
+    }
+
 
     // Determine dark theme based on theme mode
     val isDarkTheme = when (themeMode) {
@@ -58,9 +96,9 @@ fun PipePipeTheme(
         }
         MaterialTheme(colorScheme = colorScheme, content = content)
     } else {
-        DynamicMaterialTheme(
+        DynamicMaterialExpressiveTheme(
             seedColor = customPrimaryColor,
-//            motionScheme = MotionScheme.expressive(),
+            motionScheme = MotionScheme.expressive(),
             isDark = isDarkTheme,
             content = content
         )
