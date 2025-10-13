@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PictureInPicture
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
@@ -146,6 +147,7 @@ fun PlayerControl(
     onSubtitleMenuChange: (Boolean) -> Unit,
     showSleepTimerDialog: Boolean,
     onSleepTimerDialogChange: (Boolean) -> Unit,
+    onPipClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -354,7 +356,8 @@ fun PlayerControl(
                                 onSleepTimerClick = {
                                     onMoreMenuChange(false)
                                     onSleepTimerDialogChange(true)
-                                }
+                                },
+                                onPipClick = onPipClick
                             )
                         }
                     }
@@ -575,7 +578,8 @@ private fun MoreMenu(
     onAudioLanguageSelected: (String) -> Unit,
     onSubtitleSelected: (SubtitleInfo) -> Unit,
     onSubtitleDisabled: () -> Unit,
-    onSleepTimerClick: () -> Unit
+    onSleepTimerClick: () -> Unit,
+    onPipClick: () -> Unit
 ) {
     Box {
         TextButton(onClick = { onMenuChange(true) }) {
@@ -590,6 +594,29 @@ private fun MoreMenu(
             expanded = showMenu,
             onDismissRequest = { onMenuChange(false) }
         ) {
+            // Picture-in-Picture
+            DropdownMenuItem(
+                modifier = Modifier.height(44.dp),
+                text = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PictureInPicture,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(stringResource(MR.strings.pip))
+                    }
+                },
+                onClick = {
+                    onPipClick()
+                    onMenuChange(false)
+                }
+            )
+
             // Danmaku toggle
             streamInfo.danmakuUrl?.let {
                 DropdownMenuItem(

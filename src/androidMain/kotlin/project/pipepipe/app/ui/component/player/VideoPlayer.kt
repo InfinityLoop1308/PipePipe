@@ -41,6 +41,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
+import project.pipepipe.app.MainActivity
+import project.pipepipe.app.global.PipHelper
 import project.pipepipe.app.service.SleepTimerService
 import project.pipepipe.app.service.playFromStreamInfo
 import project.pipepipe.app.service.setPlaybackMode
@@ -874,7 +876,10 @@ fun VideoPlayer(
                         showSubtitleMenu = showSubtitleMenu,
                         onSubtitleMenuChange = { showSubtitleMenu = it },
                         showSleepTimerDialog = showSleepTimerDialog,
-                        onSleepTimerDialogChange = { showSleepTimerDialog = it }
+                        onSleepTimerDialogChange = { showSleepTimerDialog = it },
+                        onPipClick = {
+                            PipHelper.enterPipMode(mediaController, streamInfo, context)
+                        }
                     )
                 }
             }

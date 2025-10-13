@@ -41,6 +41,7 @@ import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import project.pipepipe.app.ui.screens.Screen.Channel
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.GlobalScope
+import project.pipepipe.app.global.PipHelper
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.shared.uistate.VideoDetailPageState
@@ -205,6 +206,10 @@ private fun StreamInfoMenuItems(
             }
             onDismiss()
         })
+//        add(Triple(Icons.Default.PictureInPicture, stringResource(MR.strings.pip)) {
+//            mediaController?.let { PipHelper.enterPipMode(it, streamInfo, context) }
+//            onDismiss()
+//        })
         add(Triple(Icons.AutoMirrored.Filled.PlaylistAdd, stringResource(MR.strings.add_to_playlist)) {
             showPlaylistPopup = true
         })

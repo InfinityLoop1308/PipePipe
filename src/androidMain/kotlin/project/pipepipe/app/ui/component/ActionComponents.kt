@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.component
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -49,7 +50,16 @@ fun ActionButtons(
         ActionControlButton(
             icon = Icons.Default.Share,
             text = stringResource(MR.strings.share),
-            onClick = { },
+            onClick = {
+                val sendIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, streamInfo.url)
+                    putExtra(Intent.EXTRA_TITLE, streamInfo.name)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                context.startActivity(shareIntent)
+            },
             modifier = Modifier.weight(1f)
         )
         ActionControlButton(
