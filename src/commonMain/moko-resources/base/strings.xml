@@ -85,6 +85,7 @@
     <string name="playlist_title_default">Playlist</string>
     <string name="search">Search</string>
     <string name="duration_live">Live</string>
+    <string name="paid_video">Paid</string>
     
     <string name="clear">Clear</string>
     <string name="sort">Sort</string>

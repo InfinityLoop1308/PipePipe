@@ -239,7 +239,7 @@ private fun HistoryCard(
             when {
                 isLive -> {
                     Text(
-                        text = stringResource(MR.strings.duration_live),
+                        text = stringResource(MR.strings.duration_live).uppercase(),
                         color = Color.White,
                         fontSize = 10.sp,
                         lineHeight = 18.sp,

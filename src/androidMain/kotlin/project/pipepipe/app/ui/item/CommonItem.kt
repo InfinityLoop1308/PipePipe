@@ -23,11 +23,14 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.formatCount
 import project.pipepipe.shared.infoitem.Info
@@ -39,6 +42,8 @@ import project.pipepipe.shared.formatRelativeTime
 import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.shared.formatAbsoluteTime
+import java.util.Locale
+import java.util.Locale.getDefault
 
 enum class DisplayType{
     ORIGIN,
@@ -169,7 +174,7 @@ fun MediaListItem(
 
             if (isLive) {
                 Text(
-                    text = "LIVE",
+                    text = stringResource(MR.strings.duration_live).uppercase(),
                     color = Color.White,
                     fontSize = 10.sp,
                     lineHeight = 18.sp,
@@ -187,6 +192,18 @@ fun MediaListItem(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .background(Color(0x99000000), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 0.dp)
+                )
+            }
+            if (item is StreamInfo && item.isPaid) {
+                Text(
+                    text = stringResource(MR.strings.paid_video).uppercase(),
+                    color = Color.Black,
+                    fontSize = 10.sp,
+                    lineHeight = 18.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .background(Color.Yellow.copy(alpha = 0.9f), RoundedCornerShape(4.dp))
                         .padding(horizontal = 4.dp, vertical = 0.dp)
                 )
             }
