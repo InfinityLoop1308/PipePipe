@@ -12,6 +12,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import com.materialkolor.DynamicMaterialExpressiveTheme
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.PaletteStyle
@@ -35,8 +38,6 @@ private fun getCustomDarkColor(color: Color): Color {
     }
 }
 
-
-
 // 添加静态变量来存储当前主题状态
 private var currentMaterialYouEnabled = false
 private var currentCustomPrimaryColor = Color(0xFFFFFFFF)
@@ -49,6 +50,7 @@ fun PipePipeTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val view = LocalView.current
     val settingsManager = SharedContext.settingsManager
 
     // Read appearance settings
@@ -94,7 +96,6 @@ fun PipePipeTheme(
         }
     }
 
-
     // Determine dark theme based on theme mode
     isDarkTheme = when (themeMode) {
         "light" -> false
@@ -109,22 +110,41 @@ fun PipePipeTheme(
     currentMaterialYouEnabled = materialYouEnabled
     currentCustomPrimaryColor = customPrimaryColor
 
-    if (materialYouEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val colorScheme = if (isDarkTheme) {
+    val colorScheme = if (materialYouEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (isDarkTheme) {
             dynamicDarkColorScheme(context)
         } else {
             dynamicLightColorScheme(context)
         }
-        MaterialTheme(colorScheme = colorScheme, content = content)
     } else {
-        val colorScheme = if (isDarkTheme) {
+        if (isDarkTheme) {
             darkColorScheme()
         } else {
             lightColorScheme()
         }
-        MaterialTheme(colorScheme = colorScheme, content = content)
     }
 
+    SideEffect {
+        val window = (view.context as? android.app.Activity)?.window ?: return@SideEffect
+        val insetsController = WindowCompat.getInsetsController(window, view)
+
+        val topBarColor = if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
+            colorScheme.surface
+        } else {
+            if (isDarkTheme) {
+                getCustomDarkColor(currentCustomPrimaryColor)
+            } else {
+                currentCustomPrimaryColor
+            }
+        }
+
+        val useLightIcons = topBarColor.luminance() < 0.5f
+
+        insetsController.isAppearanceLightStatusBars = !useLightIcons
+        insetsController.isAppearanceLightNavigationBars = !isDarkTheme
+    }
+
+    MaterialTheme(colorScheme = colorScheme, content = content)
 }
 
 @Composable
@@ -159,7 +179,7 @@ fun onCustomTopBarColor(): Color {
 
 fun getContrastingColor(backgroundColor: Color): Color {
     val luminance = backgroundColor.luminance()
-    // WCAG 标准：亮度大于0.5使用深色文字，否则使用浅色文字
+    // WCAG 标准：亮度大于0.5使用深色文字,否则使用浅色文字
     return if (luminance > 0.5f) Color.Black.copy(alpha = 0.87f)
     else Color.White.copy(alpha = 0.95f)
 }
