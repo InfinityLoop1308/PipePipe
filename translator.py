@@ -60,7 +60,7 @@ class Translator:
     def translate(self, content, language):
         extra_note = ""
         response = self.client.chat.completions.create(
-            model="gpt-5",
+            model="gemini-2.5-flash",
             response_format={"type": "json_object"},
             messages=[
                 {
@@ -255,7 +255,7 @@ class StringTranslator:
     def translate_latest_updates_to_all(self, length, ignore_update=False):
         updates = self.base.load_strings_to_dict(tail_length=int(length))
         def translate_and_update_target(target):
-            result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
+            result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2])
             if ignore_update:
                 print(result)
                 return
@@ -273,7 +273,7 @@ class StringTranslator:
         data = self.base.load_strings_to_dict_by_part()
         for target in self.targets:
             for updates in data:
-                result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
+                result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2])
                 for key, value in result.items():
                     target.add_entry('resources', 'string', {'name': key}, escape(value))
             target.write_to_file()
@@ -282,7 +282,7 @@ class StringTranslator:
         updates = self.base.load_strings_to_dict().filter(lambda k, v: k in item_list)
 
         def translate_and_update_target(target):
-            result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
+            result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2])
             for key, value in result.items():
                 try :
                     target.update_entry(f'string[name="{key}"]', escape(value))
@@ -346,7 +346,7 @@ class StringTranslator:
         updates = {name: value}
 
         def translate_and_update(target):
-            result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
+            result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2])
             target.add_entry('resources', 'string', {'name': name}, escape(result[name]))
             target.write_to_file()
 
@@ -357,7 +357,7 @@ class StringTranslator:
     def translate_new_entries(self, item_list):
         updates = self.base.load_strings_to_dict().filter(lambda k, v: k in item_list)
         for target in self.targets:
-            result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
+            result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2])
             for key, value in result.items():
                 target.add_entry('resources', 'string', {'name': key}, escape(value))
             target.write_to_file()
@@ -439,7 +439,7 @@ class StringTranslator:
         def translate_and_update_target(target):
             try:
                 # Get translation for the target language
-                result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
+                result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2])
                 translated_value = result[name]
 
                 # Update or add the entry in the target XML

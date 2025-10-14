@@ -41,10 +41,10 @@ fun PlayerSettingScreen(
         listOf(
             resolutionAuto,
             resolutionBest,
-            MR.strings.settings_player_resolution_1080p.desc().toString(context = context),
-            MR.strings.settings_player_resolution_720p.desc().toString(context = context),
-            MR.strings.settings_player_resolution_480p.desc().toString(context = context),
-            MR.strings.settings_player_resolution_360p.desc().toString(context = context),
+            "1080P",
+            "720P",
+            "480P",
+            "360P",
             resolutionDataSaver
         )
     }
