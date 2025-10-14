@@ -58,6 +58,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import project.pipepipe.app.MR
 import project.pipepipe.app.dataStore
+import project.pipepipe.app.global.SearchHelper
 import project.pipepipe.database.AppDatabaseQueries
 import project.pipepipe.database.Search_history
 import project.pipepipe.shared.SharedContext
@@ -585,7 +586,7 @@ fun FilterContent(
                             modifier = Modifier.padding(0.dp)
                         )
                         Text(
-                            text = searchType.name,
+                            text = SearchHelper.getTranslatedFilterString(searchType.name),
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (isSelected)
                                 MaterialTheme.colorScheme.onPrimaryContainer
@@ -621,7 +622,7 @@ fun FilterContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = filterGroup.groupName,
+                        text = SearchHelper.getTranslatedFilterString(filterGroup.groupName),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -663,7 +664,7 @@ fun FilterContent(
                                         },
                                         label = {
                                             Text(
-                                                text = filterItem.name,
+                                                text = SearchHelper.getTranslatedFilterString(filterItem.name),
                                                 style = MaterialTheme.typography.bodyMedium
                                             )
                                         },
