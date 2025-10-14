@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -56,8 +55,7 @@ import project.pipepipe.shared.PlaybackMode
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.database.DatabaseOperations
 import project.pipepipe.shared.formatCount
-import project.pipepipe.shared.formatRelativeTime
-import project.pipepipe.shared.infoitem.PlaylistInfo
+import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.shared.toText
 import project.pipepipe.shared.uistate.PlaylistSortMode
 import project.pipepipe.shared.uistate.PlaylistType

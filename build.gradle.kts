@@ -121,6 +121,7 @@ kotlin {
                 implementation("app.cash.sqldelight:android-driver:2.0.2")
                 implementation("sh.calvin.reorderable:reorderable:3.0.0")
                 implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3:1.4.0")
+                implementation("org.ocpsoft.prettytime:prettytime:5.0.7.Final")
             }
         }
     }

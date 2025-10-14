@@ -45,7 +45,6 @@ class PipePipeApplication : Application() {
         SharedContext.cookieManager = CookieManager.getInstance(this)
         SharedContext.sessionManager = Cache4kSessionManager()
         SharedContext.sharedVideoDetailViewModel = VideoDetailViewModel(Router::execute)
-        SharedContext.appLocale = Locale.getDefault()
         SharedContext.serverRequestHandler = Router::execute
         SharedContext.settingsManager = SettingsManager()
 
@@ -55,7 +54,6 @@ class PipePipeApplication : Application() {
 
         // Initialize Database
         DataBaseDriverManager.initialize(this)
-
 
         // Async initialization
         applicationScope.launch {

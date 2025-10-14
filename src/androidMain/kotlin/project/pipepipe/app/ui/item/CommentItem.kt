@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import project.pipepipe.shared.infoitem.CommentInfo
-import project.pipepipe.shared.formatRelativeTime
+import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.shared.SharedContext
 
