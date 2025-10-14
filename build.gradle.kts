@@ -26,7 +26,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 2000
-        versionName = "5.0.0-alpha2"
+        versionName = "5.0.0-alpha3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -75,8 +75,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("project.pipepipe:shared:5.0.0-alpha1")
-                implementation("project.pipepipe:extractor:5.0.0-alpha1")
+                implementation("project.pipepipe:shared:5.0.0-alpha3")
+                implementation("project.pipepipe:extractor:5.0.0-alpha3")
 
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
                 implementation("io.ktor:ktor-client-core:3.2.3")
