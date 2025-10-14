@@ -4,6 +4,7 @@
 build/
 release/
 temp/
+config.py
 
 # Gradle build outputs
 **/build/
