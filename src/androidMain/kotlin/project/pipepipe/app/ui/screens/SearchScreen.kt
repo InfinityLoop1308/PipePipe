@@ -17,7 +17,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
@@ -58,9 +57,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import project.pipepipe.app.MR
 import project.pipepipe.app.dataStore
-import project.pipepipe.app.global.SearchHelper
-import project.pipepipe.database.AppDatabaseQueries
-import project.pipepipe.database.Search_history
+import project.pipepipe.app.global.StringResourceHelper
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.database.DatabaseOperations
 import project.pipepipe.shared.generateQueryUrl
@@ -72,7 +69,6 @@ import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.ui.item.MediaListItem
 import project.pipepipe.app.ui.theme.getContrastingColor
-import project.pipepipe.app.ui.theme.onCustomTopBarColor
 import project.pipepipe.app.ui.viewmodel.SearchViewModel
 import project.pipepipe.shared.infoitem.url
 import project.pipepipe.shared.infoitem.serviceId
@@ -618,7 +614,7 @@ fun FilterContent(
                             modifier = Modifier.padding(0.dp)
                         )
                         Text(
-                            text = SearchHelper.getTranslatedFilterString(searchType.name),
+                            text = StringResourceHelper.getTranslatedFilterString(searchType.name),
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (isSelected)
                                 MaterialTheme.colorScheme.onPrimaryContainer
@@ -654,7 +650,7 @@ fun FilterContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = SearchHelper.getTranslatedFilterString(filterGroup.groupName),
+                        text = StringResourceHelper.getTranslatedFilterString(filterGroup.groupName),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -696,7 +692,7 @@ fun FilterContent(
                                         },
                                         label = {
                                             Text(
-                                                text = SearchHelper.getTranslatedFilterString(filterItem.name),
+                                                text = StringResourceHelper.getTranslatedFilterString(filterItem.name),
                                                 style = MaterialTheme.typography.bodyMedium
                                             )
                                         },

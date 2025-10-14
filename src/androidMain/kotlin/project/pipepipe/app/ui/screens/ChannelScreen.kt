@@ -65,6 +65,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.distinctUntilChanged
 import project.pipepipe.app.MR
 import kotlinx.coroutines.launch
+import project.pipepipe.app.global.StringResourceHelper
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.formatCount
 import project.pipepipe.shared.infoitem.ChannelInfo
@@ -165,14 +166,14 @@ fun ChannelScreen(
                 )
             }
             TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier.height(44.dp)) {
-                tabTitles.forEachIndexed { index, title ->
+                tabTypes.forEachIndexed { index, item ->
                     Tab(
                         selected = pagerState.currentPage == index,
                         onClick = {
                             scope.launch { pagerState.animateScrollToPage(index) }
                         },
                         modifier = Modifier.height(44.dp),
-                        text = { Text(text = title) }
+                        text = { Text(text = StringResourceHelper.getTranslatedFilterString(item.name.lowercase()).uppercase()) }
                     )
                 }
             }

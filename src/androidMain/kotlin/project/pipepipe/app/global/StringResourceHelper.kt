@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 
-object SearchHelper {
+object StringResourceHelper {
     @Composable
     fun getTranslatedFilterString(filter: String): String {
         return when (filter) {
@@ -13,6 +13,7 @@ object SearchHelper {
             "video" -> stringResource(MR.strings.videos_string)
             "videos" -> stringResource(MR.strings.videos_string)
             "playlist" -> stringResource(MR.strings.playlists)
+            "playlists" -> stringResource(MR.strings.playlists)
             "channel" -> stringResource(MR.strings.channels)
             "channels" -> stringResource(MR.strings.channels)
             "lives" -> stringResource(MR.strings.lives)
