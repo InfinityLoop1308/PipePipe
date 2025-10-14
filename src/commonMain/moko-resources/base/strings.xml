@@ -342,5 +342,6 @@
     <string name="settings_appearance_material_you_disabled_summary">Requires Android 12 or later</string>
 
     <string name="view_details">View Details</string>
+    <string name="msg_copied">Copied to clipboard</string>
     <string name="stacktrace">StackTrace</string>
     </resources>

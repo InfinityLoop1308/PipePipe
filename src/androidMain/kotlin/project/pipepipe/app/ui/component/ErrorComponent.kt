@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.screens.settings.copyLogToClipboard
@@ -108,44 +109,59 @@ fun ErrorComponent(
     }
 
     if (showDetailsDialog) {
-        AlertDialog(
-            onDismissRequest = { showDetailsDialog = false },
-            title = {
-                Text(stringResource(MR.strings.stacktrace))
-            },
-            text = {
-                Text(
-                    text = stackTrace,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .background(
-                            MaterialTheme.colorScheme.surfaceVariant,
-                            RoundedCornerShape(8.dp)
-                        )
-                        .padding(12.dp)
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = { showDetailsDialog = false }
-                ) {
-                    Text(stringResource(MR.strings.close))
-                }
-            },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = {
-                        scope.launch {
-                            DatabaseOperations.getErrorLogById(error.errorId)?.let {
-                                copyLogToClipboard(context, it)
-                            }
-                        }
+        StacktraceDialog(
+            stackTrace = stackTrace,
+            onDismiss = { showDetailsDialog = false },
+            onCopy = {
+                scope.launch {
+                    DatabaseOperations.getErrorLogById(error.errorId)?.let {
+                        copyLogToClipboard(context, it)
                     }
-                ) {
-                    Text(stringResource(MR.strings.copy))
                 }
             }
         )
     }
+}
+
+@Composable
+fun StacktraceDialog(
+    stackTrace: String,
+    onDismiss: () -> Unit,
+    onCopy: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(stringResource(MR.strings.stacktrace))
+        },
+        text = {
+            Text(
+                text = stackTrace,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .background(
+                        MaterialTheme.colorScheme.surfaceVariant,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(12.dp)
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onDismiss
+            ) {
+                Text(stringResource(MR.strings.close))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = onCopy
+            ) {
+                Text(stringResource(MR.strings.copy))
+            }
+        },
+        modifier = modifier
+    )
 }
