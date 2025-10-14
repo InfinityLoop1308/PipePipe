@@ -407,7 +407,7 @@ class PlaybackService : MediaLibraryService() {
             }
 
             override fun onPlayerError(error: PlaybackException) {
-                GlobalScope.launch {
+                MainScope().launch {
                     DatabaseOperations.insertErrorLog(
                         stacktrace = error.stackTraceToString(),
                         request = player.currentMediaItem?.mediaId,
@@ -424,7 +424,7 @@ class PlaybackService : MediaLibraryService() {
         val currentPosition = player.currentPosition
 
         if (currentMediaItem != null && currentPosition > 0) {
-            GlobalScope.launch {
+            MainScope().launch {
                 DatabaseOperations.updateStreamProgress(currentMediaItem.mediaId, currentPosition)
             }
         }
