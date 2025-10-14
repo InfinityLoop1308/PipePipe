@@ -68,7 +68,6 @@ import project.pipepipe.shared.infoitem.helper.SearchFilterItem
 import project.pipepipe.shared.infoitem.helper.SearchType
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ErrorComponent
-import project.pipepipe.app.ui.component.ErrorState
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.ui.item.MediaListItem
 import project.pipepipe.app.ui.theme.getContrastingColor

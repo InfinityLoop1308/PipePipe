@@ -60,7 +60,7 @@ fun CommentSection(
     Box(modifier = modifier.fillMaxSize()) {
         if (commentsState.common.error != null) {
             ErrorComponent(
-                error = uiState.common.error!!,
+                error = commentsState.common.error!!,
                 onRetry = {
                     uiState.currentStreamInfo?.let { streamInfo ->
                         coroutineScope.launch {
@@ -68,7 +68,8 @@ fun CommentSection(
                         }
                     }
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                shouldStartFromTop = true
             )
         } else {
             when {

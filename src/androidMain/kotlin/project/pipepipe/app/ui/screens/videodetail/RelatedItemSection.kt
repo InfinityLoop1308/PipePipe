@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.app.ui.component.ErrorComponent
-import project.pipepipe.app.ui.component.ErrorState
 import project.pipepipe.app.ui.item.MediaListItem
 
 @Composable
@@ -63,7 +62,8 @@ fun RelatedItemSection (
                     }
                 }
             },
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
+            shouldStartFromTop = true
         )
     } else {
         LazyColumn(

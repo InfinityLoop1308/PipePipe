@@ -133,36 +133,8 @@
     <string name="backup_import_completed">Import completed</string>
     <string name="backup_import_failed">Failed to import backup: %s</string>
 
-    <string name="error_title_generic">Oops!</string>
-    <string name="error_message_generic">It looks like something went a little wrong.</string>
-    <string name="error_retry">Try again</string>
-    <string name="error_feedback">Report an issue</string>
-    <string name="error_show_more">Learn more</string>
-    <string name="error_show_less">Hide details</string>
-    <string name="error_details_title">💡 Possible reasons</string>
-
-    <string name="error_details_network_line_1">• The network connection might be a little unstable.</string>
-    <string name="error_details_network_line_2">• You can try switching to another network.</string>
-    <string name="error_details_network_line_3">• Please double-check your router or Wi‑Fi settings.</string>
-
-    <string name="error_details_server_line_1">• The server may be under maintenance right now.</string>
-    <string name="error_details_server_line_2">• Please wait a moment and try again.</string>
-    <string name="error_details_server_line_3">• If it keeps happening, we'll fix it as quickly as we can.</string>
-
-    <string name="error_details_permission_line_1">• The feature needs the related permission to work.</string>
-    <string name="error_details_permission_line_2">• You can re-enable it in system settings.</string>
-    <string name="error_details_permission_line_3">• We will always keep your privacy safe.</string>
-
-    <string name="error_details_unknown_line_1">• This might just be a tiny temporary hiccup.</string>
-    <string name="error_details_unknown_line_2">• Restarting the app usually solves it.</string>
-    <string name="error_details_unknown_line_3">• If it persists, feel free to reach out to us.</string>
-
-    <string name="error_reference_code">Reference code: %s</string>
-    <string name="error_occurred_at">Time of occurrence: %s</string>
-
-    <string name="error_status_icon_cd">Error status icon</string>
-    <string name="error_retry_button_cd">Retry the action</string>
-    <string name="error_feedback_button_cd">Open issue report</string>
+    <string name="error_snackbar_message">Sorry, something went wrong.</string>
+    <string name="error_snackbar_action">Report</string>
 
     
     <string name="player_volume">Volume</string>
@@ -368,4 +340,7 @@
     <string name="settings_appearance_material_you_title">Material You</string>
     <string name="settings_appearance_material_you_summary">Use dynamic colors from your wallpaper</string>
     <string name="settings_appearance_material_you_disabled_summary">Requires Android 12 or later</string>
+
+    <string name="view_details">View Details</string>
+    <string name="stacktrace">StackTrace</string>
     </resources>
