@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.shared.SharedContext
 import project.pipepipe.shared.formatCount
 import project.pipepipe.shared.infoitem.Info
@@ -198,12 +199,12 @@ fun MediaListItem(
             if (item is StreamInfo && item.isPaid) {
                 Text(
                     text = stringResource(MR.strings.paid_video).uppercase(),
-                    color = Color.White,
+                    color = Color.Black,
                     fontSize = 10.sp,
                     lineHeight = 18.sp,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .background(Color.Yellow.copy(alpha = 0.9f), RoundedCornerShape(4.dp))
+                        .background(SponsorBlockUtils.parseHexColor("#FFD700"), RoundedCornerShape(4.dp))
                         .padding(horizontal = 4.dp, vertical = 0.dp)
                 )
             }

@@ -43,7 +43,7 @@ fun SettingsScreen(
 //            SettingsSection(Icons.Default.Notifications, "Feed"),
 //            SettingsSection(Icons.Default.SystemUpdateAlt, "Updates"),
             SettingsSection(Icons.Default.Save, MR.strings.settings_section_import_export.desc().toString(context = context), Screen.ImportExportSettings),
-            SettingsSection(Icons.Default.FilterList, MR.strings.settings_section_filter.desc().toString(context = context), Screen.FilterSettings),
+            SettingsSection(Icons.Default.FilterAlt, MR.strings.settings_section_filter.desc().toString(context = context), Screen.FilterSettings),
             SettingsSection(Icons.Default.Shield, MR.strings.sponsor_block.desc().toString(context = context), Screen.SponsorBlockSettings),
             SettingsSection(Icons.Default.BugReport, MR.strings.log.desc().toString(context = context), Screen.LogSettings)
         )

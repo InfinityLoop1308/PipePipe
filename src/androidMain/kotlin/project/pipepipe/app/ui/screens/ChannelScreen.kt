@@ -356,7 +356,7 @@ private fun ChannelHeader(
                     contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
                 ) {
                     Text(
-                        text = if (isSubscribed) stringResource(MR.strings.subscribed_button_title) else stringResource(MR.strings.subscribe_button_title),
+                        text = (if (isSubscribed) stringResource(MR.strings.subscribed_button_title) else stringResource(MR.strings.subscribe_button_title)).uppercase(),
                         style = MaterialTheme.typography.labelMedium,
                         letterSpacing = 0.5.sp
                     )
