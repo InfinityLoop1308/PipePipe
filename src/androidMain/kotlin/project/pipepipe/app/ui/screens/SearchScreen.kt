@@ -74,6 +74,8 @@ import project.pipepipe.app.ui.item.MediaListItem
 import project.pipepipe.app.ui.theme.getContrastingColor
 import project.pipepipe.app.ui.theme.onCustomTopBarColor
 import project.pipepipe.app.ui.viewmodel.SearchViewModel
+import project.pipepipe.shared.infoitem.url
+import project.pipepipe.shared.infoitem.serviceId
 
 private val SELECTED_SERVICE_KEY = stringPreferencesKey("selected_service")
 

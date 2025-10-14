@@ -1,7 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources xmlns:ns0="http://schemas.android.com/tools" ns0:ignore="MissingTranslation">
-
-
+<resources>
     <string name="title_activity_history">History</string>
     <string name="settings">Settings</string>
 
@@ -386,4 +384,6 @@
     <string name="upload_month">Month</string>
     <string name="upload_year">Year</string>
     <string name="upload_date">Upload Date</string>
+
+    <string name="subscribers">subscribers</string>
     </resources>

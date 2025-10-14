@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DragHandle
@@ -37,6 +38,7 @@ import project.pipepipe.shared.formatCount
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
+import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import project.pipepipe.shared.toText
 import project.pipepipe.shared.formatRelativeTime
@@ -54,6 +56,123 @@ enum class DisplayType{
 
 @Composable
 fun MediaListItem(
+    item: Info,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    isDragging: Boolean = false,
+    onNavigateTo: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
+    showDragHandle: Boolean = false,
+    dragHandleModifier: Modifier = Modifier,
+    displayType: DisplayType = DisplayType.ORIGIN
+) {
+    when (item) {
+        is ChannelInfo -> {
+            ChannelListItem(
+                item = item,
+                modifier = modifier,
+                onClick = onClick
+            )
+        }
+        else -> {
+            StreamOrPlaylistListItem(
+                item = item,
+                modifier = modifier,
+                onClick = onClick,
+                isDragging = isDragging,
+                onNavigateTo = onNavigateTo,
+                onDelete = onDelete,
+                showDragHandle = showDragHandle,
+                dragHandleModifier = dragHandleModifier,
+                displayType = displayType
+            )
+        }
+    }
+}
+
+@Composable
+private fun ChannelListItem(
+    item: ChannelInfo,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val itemHeight = 70.dp
+    val avatarSize = 60.dp
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(itemHeight)
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = {
+                    SharedContext.bottomSheetMenuViewModel.show(item)
+                }
+            )
+            .padding(horizontal = 2.dp, vertical = 5.dp)
+    ) {
+        // 圆形头像
+        AsyncImage(
+            model = item.thumbnailUrl,
+            contentDescription = null,
+            modifier = Modifier
+                .size(avatarSize)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        // 频道信息
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            // 频道名
+            Text(
+                text = item.name,
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                ),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            // 描述
+            item.description?.let { description ->
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 11.sp,
+                    color = supportingTextColor(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            // 订阅数
+            item.subscriberCount?.let { count ->
+                Text(
+                    text = "${formatCount(count)} ${stringResource(MR.strings.subscribers) }",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 11.sp,
+                    color = supportingTextColor(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StreamOrPlaylistListItem(
     item: Info,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -134,6 +253,7 @@ fun MediaListItem(
                                 )
                             )
                         }
+
                         is PlaylistInfo -> {
                             SharedContext.bottomSheetMenuViewModel.show(item)
                         }
@@ -298,32 +418,5 @@ fun MediaListItem(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    MaterialTheme {
-        MediaListItem(
-            StreamInfo(
-                duration = 320,
-                url = "abc.xyz",
-                serviceId = "BILIBILI",
-                name = "自动分配间距自动分配间距自动分配间距自动分配间距",
-                uploadDate = null,
-                viewCount = 72817,
-                uploaderName = "SUCCESSFUL",
-                thumbnailUrl = "https://i0.hdslb.com/bfs/archive/a80339bddae46243be945074a1184237a1cdd5c1.jpg"
-            ),
-            modifier = Modifier,
-            onClick = {},
-            isDragging = false,
-            onNavigateTo = {},
-            onDelete ={},
-            showDragHandle = false,
-            dragHandleModifier = Modifier,
-            displayType = DisplayType.NAME_ONLY
-        )
     }
 }
