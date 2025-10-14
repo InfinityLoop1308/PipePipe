@@ -570,7 +570,20 @@ fun FilterContent(
     onSearchTypeChange: (SearchType) -> Unit,
     onFilterToggle: (String, SearchFilterItem) -> Unit
 ) {
-    var expandedGroups by remember { mutableStateOf<Set<String>>(emptySet()) }
+    val initialExpandedGroups = remember(selectedSearchType) {
+        selectedSearchType?.availableSearchFilterGroups
+            ?.filter { group ->
+                group.selectedSearchFilters.any { selectedFilter ->
+                    selectedFilter.parameter != group.defaultFilter?.parameter
+                }
+            }
+            ?.map { it.groupName }
+            ?.toSet() ?: emptySet()
+    }
+
+    var expandedGroups by remember(selectedSearchType) {
+        mutableStateOf(initialExpandedGroups)
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth()
