@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -28,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,6 +39,8 @@ import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import kotlinx.coroutines.launch
+import project.pipepipe.app.ui.theme.customTopBarColor
+import project.pipepipe.app.ui.theme.onCustomTopBarColor
 
 private data class TabItem(
     val title: String,
@@ -56,14 +61,17 @@ fun TabNavigationScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(customTopBarColor())
             .statusBarsPadding()
+            .background(MaterialTheme.colorScheme.background),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(56.dp)
+                .background(customTopBarColor()),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
                 onClick = { navController.navigate(Screen.Settings.route) },
@@ -71,27 +79,31 @@ fun TabNavigationScreen(navController: NavController) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = stringResource(MR.strings.settings)
+                    contentDescription = stringResource(MR.strings.settings),
+                    tint = onCustomTopBarColor()
                 )
             }
 
             Text(
                 text = tabs[pagerState.currentPage].title,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                color = onCustomTopBarColor()
             )
 
             IconButton(onClick = { navController.navigate(Screen.Search.route) }) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(MR.strings.search)
+                    contentDescription = stringResource(MR.strings.search),
+                    tint = onCustomTopBarColor()
                 )
             }
         }
 
         TabRow(
             selectedTabIndex = pagerState.currentPage,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = customTopBarColor()
         ) {
             tabs.forEachIndexed { index, tab ->
                 Tab(
@@ -105,7 +117,8 @@ fun TabNavigationScreen(navController: NavController) {
                         Icon(
                             imageVector = tab.icon,
                             contentDescription = tab.title,
-                            modifier = Modifier.size(22.dp)
+                            modifier = Modifier.size(22.dp),
+                            tint = onCustomTopBarColor()
                         )
                     }
                 )

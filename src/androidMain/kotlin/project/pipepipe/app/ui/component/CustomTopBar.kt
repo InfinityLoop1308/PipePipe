@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.ui.theme.customTopBarColor
+import project.pipepipe.app.ui.theme.onCustomTopBarColor
 
 @Composable
 fun CustomTopBar(
@@ -47,14 +49,14 @@ fun CustomTopBar(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(customTopBarColor())
                 .statusBarsPadding()
                 .height(height),
-            color = MaterialTheme.colorScheme.surface,
         ) {
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().background(customTopBarColor()),
                 horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (navigationIcon != null) {
                     Box(modifier = Modifier.padding(start = 4.dp)) {
@@ -62,7 +64,11 @@ fun CustomTopBar(
                     }
                 } else if (defaultNavigationOnClick != null) {
                     IconButton(onClick = defaultNavigationOnClick) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(MR.strings.back))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(MR.strings.back),
+                            tint = onCustomTopBarColor()
+                        )
                     }
                 }
 
@@ -79,7 +85,8 @@ fun CustomTopBar(
                             style = MaterialTheme.typography.titleMedium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            fontSize = 18.sp
+                            fontSize = 18.sp,
+                            color = onCustomTopBarColor()
                         )
                     }
                 }

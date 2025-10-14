@@ -3,6 +3,7 @@ package project.pipepipe.app.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
@@ -24,6 +25,22 @@ import com.materialkolor.PaletteStyle
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.shared.SharedContext
 
+private fun getCustomDarkColor(color: Color): Color {
+    return when (color) {
+        SponsorBlockUtils.parseHexColor("#e53935") -> SponsorBlockUtils.parseHexColor("#992722")
+        SponsorBlockUtils.parseHexColor("#f57c00") -> SponsorBlockUtils.parseHexColor("#a35300")
+        SponsorBlockUtils.parseHexColor("#9e9e9e") -> SponsorBlockUtils.parseHexColor("#878787")
+        SponsorBlockUtils.parseHexColor("#FB7299") -> SponsorBlockUtils.parseHexColor("#D94E74")
+        else -> color
+    }
+}
+
+
+
+// 添加静态变量来存储当前主题状态
+private var currentMaterialYouEnabled = false
+private var currentCustomPrimaryColor = Color(0xFFFFFFFF)
+private var isDarkTheme = false
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -44,7 +61,7 @@ fun PipePipeTheme(
     }
 
     var themeColorHex by remember {
-        mutableStateOf(settingsManager.getString("theme_color_key", "#e53935"))
+        mutableStateOf(settingsManager.getString("theme_color_key", "#FFFFFF"))
     }
 
     // Add listeners for settings changes
@@ -65,7 +82,7 @@ fun PipePipeTheme(
 
         val themeColorListener = settingsManager.addStringListener(
             "theme_color_key",
-            "#e53935"
+            "#FFFFFF"
         ) { newValue ->
             themeColorHex = newValue
         }
@@ -79,14 +96,18 @@ fun PipePipeTheme(
 
 
     // Determine dark theme based on theme mode
-    val isDarkTheme = when (themeMode) {
+    isDarkTheme = when (themeMode) {
         "light" -> false
         "dark" -> true
         else -> darkTheme // "system" or default
     }
 
     // Parse custom theme color
-    val customPrimaryColor = SponsorBlockUtils.parseHexColor(themeColorHex, Color(0xFFE53935))
+    val customPrimaryColor = SponsorBlockUtils.parseHexColor(themeColorHex, Color.White)
+
+    // 更新全局状态
+    currentMaterialYouEnabled = materialYouEnabled
+    currentCustomPrimaryColor = customPrimaryColor
 
     if (materialYouEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val colorScheme = if (isDarkTheme) {
@@ -96,12 +117,12 @@ fun PipePipeTheme(
         }
         MaterialTheme(colorScheme = colorScheme, content = content)
     } else {
-        DynamicMaterialExpressiveTheme(
-            seedColor = customPrimaryColor,
-            motionScheme = MotionScheme.expressive(),
-            isDark = isDarkTheme,
-            content = content
-        )
+        val colorScheme = if (isDarkTheme) {
+            darkColorScheme()
+        } else {
+            lightColorScheme()
+        }
+        MaterialTheme(colorScheme = colorScheme, content = content)
     }
 
 }
@@ -112,4 +133,33 @@ fun supportingTextColor(): Color {
     val surfaceLuma = scheme.surface.luminance()
     val alpha = if (surfaceLuma > 0.5f) 0.6f else 0.7f
     return scheme.onSurface.copy(alpha = alpha)
+}
+
+@Composable
+fun customTopBarColor(): Color {
+    return if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
+        MaterialTheme.colorScheme.surface
+    } else {
+        if (isDarkTheme) {
+            getCustomDarkColor(currentCustomPrimaryColor)
+        } else {
+            currentCustomPrimaryColor
+        }
+    }
+}
+
+@Composable
+fun onCustomTopBarColor(): Color {
+    return if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
+        LocalContentColor.current
+    } else {
+        getContrastingColor(currentCustomPrimaryColor)
+    }
+}
+
+fun getContrastingColor(backgroundColor: Color): Color {
+    val luminance = backgroundColor.luminance()
+    // WCAG 标准：亮度大于0.5使用深色文字，否则使用浅色文字
+    return if (luminance > 0.5f) Color.Black.copy(alpha = 0.87f)
+    else Color.White.copy(alpha = 0.95f)
 }

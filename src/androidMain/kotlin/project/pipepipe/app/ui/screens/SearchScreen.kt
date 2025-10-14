@@ -70,6 +70,7 @@ import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.component.ErrorState
 import project.pipepipe.app.ui.item.MediaListItem
+import project.pipepipe.app.ui.theme.onCustomTopBarColor
 import project.pipepipe.app.ui.viewmodel.SearchViewModel
 
 private val SELECTED_SERVICE_KEY = stringPreferencesKey("selected_service")
@@ -177,7 +178,7 @@ fun SearchScreen(navController: NavController) {
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false
                         )
-                    ), fontSize = 16.sp) },
+                    ), fontSize = 16.sp, color = onCustomTopBarColor()) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
@@ -204,16 +205,16 @@ fun SearchScreen(navController: NavController) {
                 Row(horizontalArrangement = Arrangement.spacedBy((-10).dp)) {
                     if (uiState.searchQuery.isNotEmpty()) {
                         IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = stringResource(MR.strings.clear))
+                            Icon(Icons.Default.Clear, contentDescription = stringResource(MR.strings.clear), tint = onCustomTopBarColor())
                         }
                     }
                     IconButton(onClick = { showFilterDialog = true }) {
-                        Icon(Icons.Default.FilterList, contentDescription = stringResource(MR.strings.filter))
+                        Icon(Icons.Default.FilterList, contentDescription = stringResource(MR.strings.filter), tint = onCustomTopBarColor())
                     }
                     IconButton(onClick = {
                         performSearch()
                     }) {
-                        Icon(Icons.Default.Search, contentDescription = stringResource(MR.strings.search))
+                        Icon(Icons.Default.Search, contentDescription = stringResource(MR.strings.search), tint = onCustomTopBarColor())
                     }
                 }
             }
