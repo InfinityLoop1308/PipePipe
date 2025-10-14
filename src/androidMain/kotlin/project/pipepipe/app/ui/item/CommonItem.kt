@@ -68,7 +68,7 @@ fun MediaListItem(
     var title: String
     var uploaderName: String? = null
     val thumbnailWidth: Dp = 120.dp
-    val thumbnailHeight: Dp = 72.dp
+    val thumbnailHeight: Dp = 70.dp
     var duration: Long? = null
     var uploadTimeText: String? = null
     var views: Long? = null
@@ -170,7 +170,7 @@ fun MediaListItem(
                 contentDescription = null,
                 modifier = Modifier
                     .matchParentSize(),
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.Crop
             )
 
             if (isLive) {
