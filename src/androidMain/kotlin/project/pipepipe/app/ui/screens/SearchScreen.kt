@@ -69,7 +69,9 @@ import project.pipepipe.shared.infoitem.helper.SearchType
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.component.ErrorState
+import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.ui.item.MediaListItem
+import project.pipepipe.app.ui.theme.getContrastingColor
 import project.pipepipe.app.ui.theme.onCustomTopBarColor
 import project.pipepipe.app.ui.viewmodel.SearchViewModel
 
@@ -158,6 +160,8 @@ fun SearchScreen(navController: NavController) {
             }
     }
 
+    val themeSearchBarColor = SponsorBlockUtils.parseHexColor(uiState.selectedService?.themeColor)
+    val onThemeSearchBarColor = getContrastingColor(themeSearchBarColor)
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -178,7 +182,7 @@ fun SearchScreen(navController: NavController) {
                         platformStyle = PlatformTextStyle(
                             includeFontPadding = false
                         )
-                    ), fontSize = 16.sp, color = onCustomTopBarColor()) },
+                    ), fontSize = 16.sp, color = onThemeSearchBarColor) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
@@ -190,7 +194,9 @@ fun SearchScreen(navController: NavController) {
                         unfocusedContainerColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent
+                        focusedIndicatorColor = Color.Transparent,
+                        focusedTextColor = onThemeSearchBarColor,
+                        unfocusedTextColor = onThemeSearchBarColor
                     ),
                     textStyle = TextStyle(fontSize = 16.sp),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -205,19 +211,21 @@ fun SearchScreen(navController: NavController) {
                 Row(horizontalArrangement = Arrangement.spacedBy((-10).dp)) {
                     if (uiState.searchQuery.isNotEmpty()) {
                         IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = stringResource(MR.strings.clear), tint = onCustomTopBarColor())
+                            Icon(Icons.Default.Clear, contentDescription = stringResource(MR.strings.clear), tint = onThemeSearchBarColor)
                         }
                     }
                     IconButton(onClick = { showFilterDialog = true }) {
-                        Icon(Icons.Default.FilterList, contentDescription = stringResource(MR.strings.filter), tint = onCustomTopBarColor())
+                        Icon(Icons.Default.FilterList, contentDescription = stringResource(MR.strings.filter), tint = onThemeSearchBarColor)
                     }
                     IconButton(onClick = {
                         performSearch()
                     }) {
-                        Icon(Icons.Default.Search, contentDescription = stringResource(MR.strings.search), tint = onCustomTopBarColor())
+                        Icon(Icons.Default.Search, contentDescription = stringResource(MR.strings.search), tint = onThemeSearchBarColor)
                     }
                 }
-            }
+            },
+            backgroundColor = themeSearchBarColor,
+            onBackgroundColor = onThemeSearchBarColor
         )
 
 

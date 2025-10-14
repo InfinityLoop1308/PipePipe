@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -43,18 +42,20 @@ fun CustomTopBar(
     actions: @Composable RowScope.() -> Unit = {},
     height: Dp = 56.dp,
     shadowElevation: Dp = 3.dp,
-    titlePadding: Dp = 16.dp
+    titlePadding: Dp = 16.dp,
+    backgroundColor: Color = customTopBarColor(),
+    onBackgroundColor: Color = onCustomTopBarColor(),
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(customTopBarColor())
+                .background(backgroundColor)
                 .statusBarsPadding()
                 .height(height),
         ) {
             Row(
-                modifier = Modifier.fillMaxSize().background(customTopBarColor()),
+                modifier = Modifier.fillMaxSize().background(backgroundColor),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -67,7 +68,7 @@ fun CustomTopBar(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(MR.strings.back),
-                            tint = onCustomTopBarColor()
+                            tint = onBackgroundColor
                         )
                     }
                 }
@@ -86,7 +87,7 @@ fun CustomTopBar(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             fontSize = 18.sp,
-                            color = onCustomTopBarColor()
+                            color = onBackgroundColor
                         )
                     }
                 }

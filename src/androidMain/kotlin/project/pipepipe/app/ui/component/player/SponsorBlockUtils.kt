@@ -80,9 +80,9 @@ object SponsorBlockUtils {
      * @param hex The hex color string (with or without # prefix)
      * @return The parsed Color, or white if parsing fails
      */
-    fun parseHexColor(hex: String, fallBack: Color = Color.White): Color {
+    fun parseHexColor(hex: String?, fallBack: Color = Color.White): Color {
         return try {
-            val cleanHex = hex.trim().removePrefix("#")
+            val cleanHex = hex!!.trim().removePrefix("#")
             if (cleanHex.length != 6 && cleanHex.length != 8) {
                 return Color.White
             }
