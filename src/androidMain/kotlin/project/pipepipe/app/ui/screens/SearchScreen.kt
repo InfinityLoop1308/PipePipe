@@ -512,11 +512,28 @@ fun IntegratedServiceHeader(
                         .padding(horizontal = 24.dp, vertical = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = selectedService?.serviceId ?: stringResource(MR.strings.select_service),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(start = (if (serviceInfoList.size > 1)28 else 0).dp)
+                    ) {
+                        Text(
+                            text = selectedService?.serviceId ?: stringResource(MR.strings.select_service),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        if (serviceInfoList.size > 1) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(start = 4.dp)
+                                    .rotate(if (expanded) 180f else 0f)
+                                    .width(24.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
             }
 
