@@ -1,6 +1,9 @@
 package project.pipepipe.app.service
 
+import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ServiceInfo
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
@@ -93,16 +96,27 @@ class FeedWorker(
 
             DatabaseOperations.deleteFeedStreamsOlderThan(13)
 
+            // Cancel the foreground notification when work is done
+            cancelNotification()
+
             Result.success(workDataOf(
                 "completed" to completed,
                 "failed" to failedCount,
                 "total" to total
             ))
         } catch (e: Exception) {
+            // Cancel the foreground notification even on failure
+            cancelNotification()
+
             Result.failure(workDataOf(
                 "error" to e.message
             ))
         }
+    }
+
+    private fun cancelNotification() {
+        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(FEED_NOTIFICATION_ID)
     }
 
     private fun createForegroundInfo(
@@ -125,7 +139,15 @@ class FeedWorker(
             .setOngoing(true)
             .build()
 
-        return ForegroundInfo(FEED_NOTIFICATION_ID, notification)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(
+                FEED_NOTIFICATION_ID,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(FEED_NOTIFICATION_ID, notification)
+        }
     }
 
     companion object {
