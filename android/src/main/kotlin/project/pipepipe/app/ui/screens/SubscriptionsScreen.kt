@@ -126,48 +126,46 @@ private fun SubscriptionsContent(
             .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
-        if (channelGroups.isNotEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp)
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(MR.strings.feed_groups),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(MR.strings.create_feed_group),
-                            modifier = Modifier.clickable{ showCreateFeedGroupDialog = true }
-                        )
-
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ChannelGroupsRow(
-                        channelGroups = channelGroups,
-                        onAllGroupsClick = { onChannelGroupClick(null, null) },
-                        onChannelGroupClick = { group ->
-                            onChannelGroupClick(group.uid, group.name)
-                        },
-                        showAll = true
+                    Text(
+                        text = stringResource(MR.strings.feed_groups),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f)
                     )
+
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(MR.strings.create_feed_group),
+                        modifier = Modifier.clickable{ showCreateFeedGroupDialog = true }
+                    )
+
                 }
-            }
-            item {
-                Divider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant
+                Spacer(modifier = Modifier.height(16.dp))
+                ChannelGroupsRow(
+                    channelGroups = channelGroups,
+                    onAllGroupsClick = { onChannelGroupClick(null, null) },
+                    onChannelGroupClick = { group ->
+                        onChannelGroupClick(group.uid, group.name)
+                    },
+                    showAll = true
                 )
             }
+        }
+        item {
+            Divider(
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
         }
 
         item { SubscriptionsHeader(onSearchClick = onSearchClick) }
