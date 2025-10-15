@@ -27,7 +27,9 @@ object DatabaseOperations {
                     uploadDate = row.upload_date?.takeIf { it > 0 },
                     thumbnailUrl = row.thumbnail_url,
                     joinId = row.join_id,
-                    progress = row.progress_time
+                    progress = row.progress_time,
+                    isPaid = row.is_paid != 0L,
+                    shortFormContent = row.is_short != 0L
                 )
             }
     }
@@ -47,7 +49,9 @@ object DatabaseOperations {
                 thumbnailUrl = row.thumbnail_url,
                 progress = row.progress_time,
                 localLastViewDate = row.last_access_date,
-                localRepeatCount = row.repeat_count
+                localRepeatCount = row.repeat_count,
+                isPaid = row.is_paid != 0L,
+                shortFormContent = row.is_short != 0L
             )
         }
     }
@@ -72,6 +76,8 @@ object DatabaseOperations {
                 uploadDate = row.upload_date?.takeIf { it > 0 },
                 thumbnailUrl = row.thumbnail_url,
                 progress = row.progress_time,
+                isPaid = row.is_paid != 0L,
+                shortFormContent = row.is_short != 0L
             )
         }
     }
@@ -134,6 +140,8 @@ object DatabaseOperations {
                 uploader_url = streamInfo.uploaderUrl,
                 thumbnail_url = streamInfo.thumbnailUrl,
                 upload_date = streamInfo.uploadDate ?: 0,
+                is_paid = if (streamInfo.isPaid) 1L else 0L,
+                is_short = if (streamInfo.shortFormContent) 1L else 0L,
                 url = streamInfo.url
             )
         } else {
@@ -148,6 +156,8 @@ object DatabaseOperations {
                 streamInfo.uploaderUrl,
                 streamInfo.thumbnailUrl,
                 streamInfo.uploadDate?:0,
+                if (streamInfo.isPaid) 1L else 0L,
+                if (streamInfo.shortFormContent) 1L else 0L
             )
         }
     }

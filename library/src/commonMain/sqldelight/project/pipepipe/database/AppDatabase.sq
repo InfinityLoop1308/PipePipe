@@ -35,7 +35,9 @@ CREATE TABLE streams (
     upload_date INTEGER,
     last_access_date INTEGER,
     repeat_count INTEGER NOT NULL DEFAULT 0,
-    progress_time INTEGER NOT NULL DEFAULT 0
+    progress_time INTEGER NOT NULL DEFAULT 0,
+    is_paid INTEGER NOT NULL DEFAULT 0,
+    is_short INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE playlists (
@@ -177,8 +179,8 @@ WHERE psj.playlist_id = ?
 ORDER BY psj.join_index;
 
 insertStream:
-INSERT INTO streams (service_id, url, title, stream_type, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO streams (service_id, url, title, stream_type, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, is_paid, is_short)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateStream:
 UPDATE streams
@@ -191,7 +193,9 @@ SET
     uploader = ?,
     uploader_url = ?,
     thumbnail_url = ?,
-    upload_date = ?
+    upload_date = ?,
+    is_paid = ?,
+    is_short = ?
 WHERE url = ?;
 
 selectStreamByUrl:
