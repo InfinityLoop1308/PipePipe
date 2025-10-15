@@ -63,7 +63,7 @@
 <string name="settings_category_sponsor_block_category_color">シークバーの色</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">有料のプロモーション、有料の紹介、直接の広告。自己宣伝や好きな事業/クリエイター/ウェブサイト/製品への無料のシャウトアウトには適用されません。</string>
 <string name="settings_category_sponsor_block_category_intro_summary">実際のコンテンツがない間隔。一時停止、静止画、繰り返しアニメーションが含まれることがあります。情報を含むトランジションや MV には使用しないでください。</string>
-<string name="settings_category_sponsor_block_category_outro_summary">クレジットまたは YouTube のエンドカードが表示されるとき。話された結論には適用されません。有用なコンテンツを含んではいけません。MV には使用しないでください。</string>
+<string name="settings_category_sponsor_block_category_outro_summary">クレジットやエンドカードが表示されるとき。話された結論のためではありません。これには有用なコンテンツを含めるべきではありません。ミュージックビデオには使用すべきではありません。</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">コンテンツの途中でいいね、購読、フォローするように促す短いリマインダーがある場合。それが長い場合や特定のことについての場合は、自己宣伝のカテゴリに含めるべきです。</string>
 <string name="settings_category_sponsor_block_category_highlight_summary">ほとんどの人が探しているビデオの部分です。「ビデオはxから始まります」といったコメントと似ています。</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">有料のプロモーションと同様ですが、無報酬または自己宣伝の場合。これには商品、寄付に関するセクション、共同作業した相手に関する情報が含まれます。</string>
@@ -87,14 +87,14 @@
 <string name="enqueue_stream">キューに追加</string>
 <string name="feed_notification_loading">フィードを読み込み中…</string>
 <string name="feed_oldest_subscription_update">フィードの最終更新: %s</string>
-<string name="filter_by_channel_summary">ブロックしたいチャンネル名をここにコンマで区切って追加してください</string>
+<string name="filter_by_channel_summary">ブロックしたいチャンネル名をここに追加してください</string>
 <string name="filter_by_channel_title">チャンネルでフィルタリング</string>
-<string name="filter_by_keyword_summary">ここにブロックしたいキーワードをカンマで区切って追加してください</string>
+<string name="filter_by_keyword_summary">ブロックしたいキーワードをここに追加してください</string>
 <string name="filter_by_keyword_title">キーワードでフィルター</string>
 <string name="filter_field_summary">フィルターを適用</string>
 <string name="filter_paid_contents_summary">有料コンテンツを結果から除外する</string>
 <string name="filter_paid_contents_title">有料コンテンツをフィルタリング</string>
-<string name="filter_shorts_summary">短編動画を結果から除外します。YouTube のみで機能します。</string>
+<string name="filter_shorts_summary">結果からショート動画を削除する</string>
 <string name="filter_shorts_title">短編動画をフィルタ</string>
 <string name="general_error">エラー</string>
 <string name="navigate_to">移動</string>
@@ -105,7 +105,7 @@
 <string name="settings_category_filter_title">コンテンツフィルター</string>
 <string name="share">共有</string>
 <string name="show_channel_details">チャンネルの詳細を表示</string>
-<string name="sponsor_block_enable_summary">SponsorBlock APIを使用して動画内のスポンサーを自動的にスキップします。現在はYouTube、BiliBili対応しています。</string>
+<string name="sponsor_block_enable_summary">動画内のスポンサーを自動的にスキップする</string>
 <string name="sponsor_block_enable_title">スポンサーをスキップ</string>
 <string name="sponsor_block_notifications_summary">スポンサーが自動的にスキップされたときにトースト通知を表示します。</string>
 <string name="sponsor_block_notifications_title">スポンサーがスキップされたときに通知</string>

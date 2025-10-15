@@ -63,7 +63,7 @@
 <string name="settings_category_sponsor_block_category_color">Color de la barra de progreso</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">Promoción pagada, referencias pagadas y anuncios directos. No para autopromoción o menciones gratuitas a causas/creadores/sitios web/productos que les gusten.</string>
 <string name="settings_category_sponsor_block_category_intro_summary">Un intervalo sin contenido real. Podría ser una pausa, marco estático, animación repetida. No se debe usar para transiciones que contengan información ni en vídeos musicales.</string>
-<string name="settings_category_sponsor_block_category_outro_summary">Créditos o cuando aparecen las tarjetas finales de YouTube. No para conclusiones habladas. No debe incluir contenido útil. No debe usarse en vídeos musicales.</string>
+<string name="settings_category_sponsor_block_category_outro_summary">Créditos o cuando aparecen las tarjetas finales. No para conclusiones habladas. Esto no debe incluir contenido útil. Esto no debe usarse en videos musicales.</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">Cuando hay un recordatorio corto para darle me gusta, suscribirse o seguirlos en medio del contenido. Si es largo o sobre algo específico, debe estar bajo autopromoción.</string>
 <string name="settings_category_sponsor_block_category_highlight_summary">La parte del vídeo que la mayoría de las personas está buscando. Similar a los comentarios "El vídeo comienza en x".</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">Similar a "patrocinador" excepto para promociones no pagadas o autopromoción. Esto incluye secciones sobre mercancía, donaciones o información sobre colaboraciones.</string>
@@ -87,14 +87,14 @@
 <string name="enqueue_stream">Agregar a la cola</string>
 <string name="feed_notification_loading">Cargando feed…</string>
 <string name="feed_oldest_subscription_update">Última actualización del feed: %s</string>
-<string name="filter_by_channel_summary">Agregue los nombres de los canales que desea bloquear aquí, separados por comas</string>
+<string name="filter_by_channel_summary">Añade los nombres de los canales que quieres bloquear aquí</string>
 <string name="filter_by_channel_title">Filtrar por canales</string>
-<string name="filter_by_keyword_summary">Agregue aquí las palabras clave que desea bloquear, separadas por comas</string>
+<string name="filter_by_keyword_summary">Añade las palabras clave que quieres bloquear aquí</string>
 <string name="filter_by_keyword_title">Filtrar por palabras clave</string>
 <string name="filter_field_summary">Aplicar filtro a</string>
 <string name="filter_paid_contents_summary">Eliminar contenidos de pago de los resultados</string>
 <string name="filter_paid_contents_title">Filtrar contenidos pagos</string>
-<string name="filter_shorts_summary">Eliminar vídeos cortos de los resultados. Solo funciona para YouTube.</string>
+<string name="filter_shorts_summary">Eliminar los cortos de los resultados</string>
 <string name="filter_shorts_title">Filtrar vídeos cortos</string>
 <string name="general_error">Error</string>
 <string name="navigate_to">Navegar</string>
@@ -105,7 +105,7 @@
 <string name="settings_category_filter_title">Filtro de Contenido</string>
 <string name="share">Compartir</string>
 <string name="show_channel_details">Mostrar detalles del canal</string>
-<string name="sponsor_block_enable_summary">Saltar automáticamente patrocinadores en vídeos. Funciona para YouTube y BiliBili.</string>
+<string name="sponsor_block_enable_summary">Saltar automáticamente los patrocinadores en los videos</string>
 <string name="sponsor_block_enable_title">Saltar patrocinadores</string>
 <string name="sponsor_block_notifications_summary">Mostrar una notificación emergente cuando un patrocinador se omite automáticamente.</string>
 <string name="sponsor_block_notifications_title">Notificar cuando se omiten patrocinadores</string>

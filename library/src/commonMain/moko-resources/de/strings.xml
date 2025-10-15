@@ -63,7 +63,7 @@
 <string name="settings_category_sponsor_block_category_color">Farbe der Suchleiste</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">Bezahlte Werbung, bezahlte Empfehlungen und direkte Werbung. Nicht für Eigenwerbung oder kostenlose Empfehlungen an Ursachen/Ersteller/Websites/Produkte, die sie mögen.</string>
 <string name="settings_category_sponsor_block_category_intro_summary">Ein Intervall ohne tatsächlichen Inhalt. Könnte eine Pause sein, statisches Bild oder sich wiederholende Animation. Soll nicht für Übergänge mit Informationen oder in Musikvideos verwendet werden.</string>
-<string name="settings_category_sponsor_block_category_outro_summary">Credits oder wenn die YouTube-Endkarten erscheinen. Nicht für gesprochene Schlussfolgerungen. Soll keinen nützlichen Inhalt enthalten.</string>
+<string name="settings_category_sponsor_block_category_outro_summary">Abspänne oder wenn Endkarten erscheinen. Nicht für gesprochene Schlussfolgerungen. Dies sollte keine nützlichen Inhalte enthalten. Dies sollte nicht für Musikvideos verwendet werden.</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">Wenn es eine kurze Erinnerung gibt, ihnen in der Mitte des Inhalts zu gefallen, zu abonnieren oder ihnen zu folgen. Wenn es lang ist oder über etwas spezifisches, sollte es stattdessen unter Eigenwerbung sein.</string>
 <string name="settings_category_sponsor_block_category_highlight_summary">Der Teil des Videos, den die meisten Leute suchen. Ähnlich wie "Video beginnt bei x"-Kommentare.</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">Ähnlich wie \"Sponsor\", aber für unbezahlte oder Eigenwerbung. Dies umfasst Abschnitte über Merchandise, Spenden oder Informationen über Kooperationspartner.</string>
@@ -87,14 +87,14 @@
 <string name="enqueue_stream">Einreihen</string>
 <string name="feed_notification_loading">Feed wird geladen…</string>
 <string name="feed_oldest_subscription_update">Feed zuletzt aktualisiert: %s</string>
-<string name="filter_by_channel_summary">Fügen Sie hier die Kanalnamen hinzu, die Sie blockieren möchten, durch Kommas getrennt</string>
+<string name="filter_by_channel_summary">Fügen Sie hier die Kanalnamen hinzu, die Sie blockieren möchten</string>
 <string name="filter_by_channel_title">Nach Kanälen filtern</string>
-<string name="filter_by_keyword_summary">Fügen Sie hier die Schlüsselwörter ein, die Sie blockieren möchten, getrennt durch Kommas</string>
+<string name="filter_by_keyword_summary">Fügen Sie hier die Schlüsselwörter hinzu, die Sie blockieren möchten</string>
 <string name="filter_by_keyword_title">Nach Schlüsselwörtern filtern</string>
 <string name="filter_field_summary">Filter anwenden auf</string>
 <string name="filter_paid_contents_summary">Entfernen Sie kostenpflichtige Inhalte aus den Ergebnissen</string>
 <string name="filter_paid_contents_title">Filter bezahlte Inhalte</string>
-<string name="filter_shorts_summary">Kurze Videos aus den Ergebnissen entfernen. Funktioniert nur für YouTube.</string>
+<string name="filter_shorts_summary">Shorts aus den Ergebnissen entfernen</string>
 <string name="filter_shorts_title">Kurze Videos filtern</string>
 <string name="general_error">Fehler</string>
 <string name="navigate_to">Navigieren</string>
@@ -105,7 +105,7 @@
 <string name="settings_category_filter_title">Inhaltsfilter</string>
 <string name="share">Teilen</string>
 <string name="show_channel_details">Kanaldetails anzeigen</string>
-<string name="sponsor_block_enable_summary">Sponsoren in Videos automatisch überspringen. Funktioniert für YouTube und BiliBili.</string>
+<string name="sponsor_block_enable_summary">Sponsoren in Videos automatisch überspringen</string>
 <string name="sponsor_block_enable_title">Sponsoren überspringen</string>
 <string name="sponsor_block_notifications_summary">Eine Benachrichtigung anzeigen, wenn ein Sponsor automatisch übersprungen wird.</string>
 <string name="sponsor_block_notifications_title">Benachrichtigen, wenn Sponsoren übersprungen werden</string>

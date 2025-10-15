@@ -63,7 +63,7 @@
 <string name="settings_category_sponsor_block_category_color">Couleur de la barre de recherche</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">Promotion payée, parrainages payés et publicités directes. Pas pour l\'auto-promotion ou les mentions gratuites à des causes/créateurs/sites web/produits qu\'ils aiment.</string>
 <string name="settings_category_sponsor_block_category_intro_summary">Un intervalle sans contenu réel. Pourrait être une pause, une image fixe, une animation répétée. Ne devrait pas être utilisé pour les transitions contenant des informations ou être utilisé sur des vidéos musicales.</string>
-<string name="settings_category_sponsor_block_category_outro_summary">Crédits ou lorsque les fiches de fin YouTube apparaissent. Pas pour les conclusions parlées. Ne devrait pas inclure de contenu utile. Ne devrait pas être utilisé sur des vidéos musicales.</string>
+<string name="settings_category_sponsor_block_category_outro_summary">Crédits ou lorsque les écrans de fin apparaissent. Pas pour les conclusions parlées. Cela ne devrait pas inclure de contenu utile. Cela ne devrait pas être utilisé sur les clips musicaux.</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">Lorsqu\'il y a un court rappel pour aimer, s\'abonner ou suivre au milieu du contenu. Si c\'est long ou concerne quelque chose de spécifique, cela devrait être sous l\'auto-promotion à la place.</string>
 <string name="settings_category_sponsor_block_category_highlight_summary">La partie de la vidéo que la plupart des gens recherchent. Semblable aux commentaires "La vidéo commence à x".</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">Similaire à "sponsor" sauf pour la promotion non payée ou l\'auto-promotion. Cela inclut des sections sur le merchandising, les dons, ou des informations sur qui ils ont collaboré avec.</string>
@@ -87,14 +87,14 @@
 <string name="enqueue_stream">Mettre en file d\'attente</string>
 <string name="feed_notification_loading">Chargement du flux…</string>
 <string name="feed_oldest_subscription_update">Dernière mise à jour du flux : %s</string>
-<string name="filter_by_channel_summary">Ajoutez ici les noms des chaînes que vous souhaitez bloquer, séparés par des virgules</string>
+<string name="filter_by_channel_summary">Ajoutez les noms de chaînes que vous souhaitez bloquer ici</string>
 <string name="filter_by_channel_title">Filtrer par chaînes</string>
-<string name="filter_by_keyword_summary">Ajoutez ici les mots-clés que vous souhaitez bloquer, séparés par des virgules</string>
+<string name="filter_by_keyword_summary">Ajoutez les mots-clés que vous souhaitez bloquer ici</string>
 <string name="filter_by_keyword_title">Filtrer par mots-clés</string>
 <string name="filter_field_summary">Appliquer le filtre à</string>
 <string name="filter_paid_contents_summary">Supprimer les contenus payants des résultats</string>
 <string name="filter_paid_contents_title">Filtrer les contenus payants</string>
-<string name="filter_shorts_summary">Supprimer les vidéos courtes des résultats. Fonctionne uniquement pour YouTube.</string>
+<string name="filter_shorts_summary">Supprimer les courts métrages des résultats</string>
 <string name="filter_shorts_title">Filtrer les vidéos courtes</string>
 <string name="general_error">Erreur</string>
 <string name="navigate_to">Naviguer</string>
@@ -105,7 +105,7 @@
 <string name="settings_category_filter_title">Filtre de contenu</string>
 <string name="share">Partager</string>
 <string name="show_channel_details">Afficher les détails de la chaîne</string>
-<string name="sponsor_block_enable_summary">Ignorer automatiquement les sponsors dans les vidéos. Fonctionne pour YouTube et BiliBili.</string>
+<string name="sponsor_block_enable_summary">Ignorer automatiquement les sponsors dans les vidéos</string>
 <string name="sponsor_block_enable_title">Passer les sponsors</string>
 <string name="sponsor_block_notifications_summary">Afficher une notification toast lorsqu\'un sponsor est automatiquement ignoré.</string>
 <string name="sponsor_block_notifications_title">Notifier lors du passage des sponsors</string>

@@ -196,7 +196,7 @@
 <string name="settings_category_sponsor_block_category_color">Seek Bar Color</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">Paid promotion, paid referrals and direct advertisements. Not for self-promotion or free shoutouts to causes/creators/websites/products they like.</string>
 <string name="settings_category_sponsor_block_category_intro_summary">An interval without actual content. Could be a pause, static frame, repeating animation. This should not be used for transitions containing information or be used on music videos.</string>
-<string name="settings_category_sponsor_block_category_outro_summary">Credits or when the YouTube endcards appear. Not for spoken conclusions. This should not include useful content. This should not be used on music videos.</string>
+<string name="settings_category_sponsor_block_category_outro_summary">Credits or when endcards appear. Not for spoken conclusions. This should not include useful content. This should not be used on music videos.</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">When there is a short reminder to like, subscribe or follow them in the middle of content. If it is long or about something specific, it should be under self promotion instead.</string>
 <string name="settings_category_sponsor_block_category_highlight_summary">The part of the video that most people are looking for. Similar to "Video starts at x" comments.</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">Similar to "sponsor" except for unpaid or self promotion. This includes sections about merchandise, donations, or information about who they collaborated with.</string>
@@ -220,14 +220,14 @@
 <string name="enqueue_stream">Enqueue</string>
 <string name="feed_notification_loading">Loading feed…</string>
 <string name="feed_oldest_subscription_update">Feed last updated: %s</string>
-<string name="filter_by_channel_summary">Add the channel names you want to block here, separated by commas</string>
+<string name="filter_by_channel_summary">Add the channel names you want to block here</string>
 <string name="filter_by_channel_title">Filter by channels</string>
-<string name="filter_by_keyword_summary">Add the keywords you want to block here, separated by commas</string>
+<string name="filter_by_keyword_summary">Add the keywords you want to block here</string>
 <string name="filter_by_keyword_title">Filter by keywords</string>
 <string name="filter_field_summary">Apply Filter To</string>
 <string name="filter_paid_contents_summary">Remove paid contents from results</string>
 <string name="filter_paid_contents_title">Filter paid contents</string>
-<string name="filter_shorts_summary">Remove short videos from results. Only work for YouTube.</string>
+<string name="filter_shorts_summary">Remove shorts from results</string>
 <string name="filter_shorts_title">Filter short videos</string>
 <string name="general_error">Error</string>
 <string name="navigate_to">Navigate</string>
@@ -239,7 +239,7 @@
 <string name="settings_category_filter_title">Content Filter</string>
 <string name="share">Share</string>
 <string name="show_channel_details">Show channel details</string>
-<string name="sponsor_block_enable_summary">Automatically skip sponsors in videos. Works for YouTube and BiliBili.</string>
+<string name="sponsor_block_enable_summary">Automatically skip sponsors in videos</string>
 <string name="sponsor_block_enable_title">Enable SponsorBlock</string>
 <string name="sponsor_block_notifications_summary">Show a toast notification when a sponsor is automatically skipped.</string>
 <string name="sponsor_block_notifications_title">Notify when sponsors are skipped</string>

@@ -238,16 +238,16 @@ def compare_xml_strings_with_values(xml_a_path, xml_b_path):
 class StringTranslator:
 
     def __init__(self):
-        self.base = XMLHandler('src/commonMain/moko-resources/base/strings.xml')
+        self.base = XMLHandler('library/src/commonMain/moko-resources/base/strings.xml')
         self.targets = [
-            XMLHandler('src/commonMain/moko-resources/zh-CN/strings.xml'),
-            XMLHandler('src/commonMain/moko-resources/zh-TW/strings.xml'),
-            XMLHandler('src/commonMain/moko-resources/ja/strings.xml'),
-            XMLHandler('src/commonMain/moko-resources/vi/strings.xml'),
-            XMLHandler('src/commonMain/moko-resources/fr/strings.xml'),
-            XMLHandler('src/commonMain/moko-resources/de/strings.xml'),
-            XMLHandler('src/commonMain/moko-resources/it/strings.xml'),
-            XMLHandler('src/commonMain/moko-resources/es/strings.xml'),
+            XMLHandler('library/src/commonMain/moko-resources/zh-CN/strings.xml'),
+            XMLHandler('library/src/commonMain/moko-resources/zh-TW/strings.xml'),
+            XMLHandler('library/src/commonMain/moko-resources/ja/strings.xml'),
+            XMLHandler('library/src/commonMain/moko-resources/vi/strings.xml'),
+            XMLHandler('library/src/commonMain/moko-resources/fr/strings.xml'),
+            XMLHandler('library/src/commonMain/moko-resources/de/strings.xml'),
+            XMLHandler('library/src/commonMain/moko-resources/it/strings.xml'),
+            XMLHandler('library/src/commonMain/moko-resources/es/strings.xml'),
         ]
 
         self.translator = Translator()

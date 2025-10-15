@@ -63,7 +63,7 @@
 <string name="settings_category_sponsor_block_category_color">搜尋列顏色</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">付費推廣、付費推薦和直接廣告。不包括自我推廣或免費宣傳支持事業 / 創作者 / 網站 / 產品。</string>
 <string name="settings_category_sponsor_block_category_intro_summary">沒有實際內容的間隔。可能是暫停、靜態畫面、重複動畫。不應用於包含資訊的過渡或音樂影片。</string>
-<string name="settings_category_sponsor_block_category_outro_summary">字幕或當 YouTube 字幕出現時。不包括口頭結論。不應包含有用的內容。不應用於音樂影片。</string>
+<string name="settings_category_sponsor_block_category_outro_summary">片尾製作人員名單或片尾卡出現時。不適用於口頭結論。這不應包含有用的內容。這不應用於音樂影片。</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">當內容中有簡短提醒要按讚、訂閱或追蹤他們時。如果提醒很長或涉及特定事項，應歸類為自我推廣。</string>
 <string name="settings_category_sponsor_block_category_highlight_summary">大多數人正在尋找的影片部分。類似「影片在 x 開始」的評論。</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">類似於「贊助」，但不包括付費或自我推廣。這包括有關商品、捐款或與誰合作的資訊。</string>
@@ -87,14 +87,14 @@
 <string name="enqueue_stream">加入佇列</string>
 <string name="feed_notification_loading">正在載入 feed……</string>
 <string name="feed_oldest_subscription_update">Feed 最後更新：%s</string>
-<string name="filter_by_channel_summary">在此處新增您要封鎖的頻道名稱，以逗號分隔</string>
+<string name="filter_by_channel_summary">在此處新增您要封鎖的頻道名稱</string>
 <string name="filter_by_channel_title">依頻道篩選</string>
-<string name="filter_by_keyword_summary">在這裡新增您要隱藏的關鍵字，使用逗號分隔</string>
+<string name="filter_by_keyword_summary">在此處新增您要封鎖的關鍵字</string>
 <string name="filter_by_keyword_title">按關鍵字篩選</string>
 <string name="filter_field_summary">套用篩選到</string>
 <string name="filter_paid_contents_summary">從結果中移除付費內容</string>
 <string name="filter_paid_contents_title">篩選付費內容</string>
-<string name="filter_shorts_summary">從結果中移除短片。僅適用於YouTube。</string>
+<string name="filter_shorts_summary">從結果中移除短片</string>
 <string name="filter_shorts_title">篩選短片</string>
 <string name="general_error">錯誤</string>
 <string name="navigate_to">導覽至</string>
@@ -105,7 +105,7 @@
 <string name="settings_category_filter_title">內容過濾器</string>
 <string name="share">分享</string>
 <string name="show_channel_details">顯示頻道詳細資訊</string>
-<string name="sponsor_block_enable_summary">自動跳過影片中的贊助內容。適用於 YouTube 和 BiliBili。</string>
+<string name="sponsor_block_enable_summary">自動跳過影片中的贊助商</string>
 <string name="sponsor_block_enable_title">跳過贊助</string>
 <string name="sponsor_block_notifications_summary">當自動跳過贊助時顯示一個提示通知。</string>
 <string name="sponsor_block_notifications_title">當贊助被跳過時通知</string>
