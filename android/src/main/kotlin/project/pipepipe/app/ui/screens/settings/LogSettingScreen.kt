@@ -3,6 +3,9 @@ package project.pipepipe.app.ui.screens.settings
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -100,6 +104,9 @@ fun LogSettingScreen(
                         },
                         onCopy = {
                             copyLogToClipboard(context, log)
+                        },
+                        onEmail = {
+                            sendLogEmail(context, log)
                         }
                     )
                 }
@@ -112,7 +119,8 @@ fun LogSettingScreen(
 private fun ErrorLogItem(
     log: project.pipepipe.database.Error_log,
     onDelete: () -> Unit,
-    onCopy: () -> Unit
+    onCopy: () -> Unit,
+    onEmail: () -> Unit
 ) {
     val context = LocalContext.current
     var showDetailsDialog by remember { mutableStateOf(false) }
@@ -183,11 +191,21 @@ private fun ErrorLogItem(
                     Text(stringResource(MR.strings.view_details))
                 }
 
-                // Copy and Delete icons on the right
+                // Email, Copy and Delete icons on the right
                 Row(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    IconButton(onClick = onEmail) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = stringResource(MR.strings.email),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
                     IconButton(onClick = onCopy) {
                         Icon(
                             imageVector = Icons.Default.ContentCopy,
@@ -232,4 +250,31 @@ fun copyLogToClipboard(context: Context, log: project.pipepipe.database.Error_lo
     clipboard.setPrimaryClip(clip)
 
     ToastManager.show(MR.strings.msg_copied.desc().toString(context = context))
+}
+
+fun sendLogEmail(context: Context, log: project.pipepipe.database.Error_log) {
+    val json = buildJsonObject {
+        put("timestamp", log.timestamp)
+        put("task", log.task)
+        put("request", log.request)
+        put("stacktrace", log.stacktrace)
+    }.toString()
+
+    val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:")
+        putExtra(Intent.EXTRA_EMAIL, arrayOf("feedback@pipepipe.dev"))
+        putExtra(Intent.EXTRA_SUBJECT, "Exception in PipePipe $versionName")
+        putExtra(Intent.EXTRA_TEXT, json)
+    }
+
+    // Check if there's an email app available
+    val packageManager = context.packageManager
+    val activities = packageManager.queryIntentActivities(emailIntent, PackageManager.MATCH_DEFAULT_ONLY)
+
+    if (activities.isNotEmpty()) {
+        context.startActivity(emailIntent)
+    } else {
+        ToastManager.show(MR.strings.no_email_app_available.desc().toString(context = context))
+    }
 }

@@ -150,6 +150,8 @@
 <string name="expand">Expand</string>
 <string name="no_error_logs">No error logs</string>
 <string name="copy">Copy</string>
+<string name="email">Email</string>
+<string name="no_email_app_available">No email app available</string>
 <string name="add_keyword">Add keyword</string>
 <string name="enter_keyword">Enter keyword</string>
 <string name="confirm">Confirm</string>
