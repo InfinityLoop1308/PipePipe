@@ -25,10 +25,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import project.pipepipe.app.ui.screens.Screen
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import project.pipepipe.app.global.PipHelper
@@ -50,6 +53,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 class MainActivity : ComponentActivity() {
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var mediaController: MediaController? = null
+    lateinit var navController: NavHostController
 
     @androidx.annotation.OptIn(UnstableApi::class)
     @OptIn(ExperimentalMaterial3Api::class)
@@ -66,9 +70,11 @@ class MainActivity : ComponentActivity() {
 
         checkIntentForPlayQueue(intent)
         checkIntentForFeedFailures(intent)
+        checkIntentForStreamsFailures(intent)
+        checkIntentForChannelNavigation(intent)
 
         setContent {
-            val navController = rememberNavController()
+            navController = rememberNavController()
             val toastMessage by ToastManager.message.collectAsState()
             PipePipeTheme {
                 Surface(
@@ -139,7 +145,23 @@ class MainActivity : ComponentActivity() {
         setIntent(intent)
         checkIntentForPlayQueue(intent)
         checkIntentForFeedFailures(intent)
+        checkIntentForStreamsFailures(intent)
+        checkIntentForChannelNavigation(intent)
     }
+
+    private fun checkIntentForChannelNavigation(intent: Intent) {
+        if (intent.getBooleanExtra("navigate_to_channel", false)) {
+            val channelUrl = intent.getStringExtra("channel_url")
+            val serviceId = intent.getStringExtra("service_id")
+            if (channelUrl != null && serviceId != null) {
+                navController.navigate(Screen.Channel.createRoute(channelUrl, serviceId))
+                intent.removeExtra("navigate_to_channel")
+                intent.removeExtra("channel_url")
+                intent.removeExtra("service_id")
+            }
+        }
+    }
+
 
     private fun checkIntentForPlayQueue(intent: Intent) {
         if (intent.getBooleanExtra("open_play_queue", false) && !SharedContext.playQueueVisibility.value) {
@@ -167,6 +189,30 @@ class MainActivity : ComponentActivity() {
 
             // Clear the flag to avoid showing the dialog again
             intent.removeExtra("show_feed_failures")
+            intent.removeExtra("failed_channels")
+        }
+    }
+
+    private fun checkIntentForStreamsFailures(intent: Intent) {
+        if (intent.getBooleanExtra("show_streams_failures", false)) {
+            val failedChannels = intent.getStringArrayListExtra("failed_channels") ?: return
+
+            val message = buildString {
+                append(MR.strings.feed_update_failed_channels.desc().toString(this@MainActivity))
+                append("\n\n")
+                failedChannels.forEachIndexed { index, channel ->
+                    append("${index + 1}. $channel\n")
+                }
+            }
+
+            AlertDialog.Builder(this)
+                .setTitle(MR.strings.streams_notification_error.desc().toString(this))
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+
+            // Clear the flag to avoid showing the dialog again
+            intent.removeExtra("show_streams_failures")
             intent.removeExtra("failed_channels")
         }
     }

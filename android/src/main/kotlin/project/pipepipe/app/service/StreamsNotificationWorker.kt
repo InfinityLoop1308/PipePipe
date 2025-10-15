@@ -186,6 +186,21 @@ class StreamsNotificationWorker(
             largeIcon?.let { builder.setLargeIcon(it) }
             style?.let { builder.setStyle(it) }
 
+            // Add PendingIntent to open channel when notification is clicked
+            val intent = Intent("project.pipepipe.app.OPEN_CHANNEL").apply {
+                putExtra("channel_url", subscription.url)
+                putExtra("service_id", subscription.service_id.toString())
+                putExtra("notification_id", NotificationHelper.STREAMS_NOTIFICATION_BASE_ID)
+                setPackage(applicationContext.packageName)
+            }
+            val pendingIntent = PendingIntent.getBroadcast(
+                applicationContext,
+                NotificationHelper.STREAMS_NOTIFICATION_BASE_ID,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            builder.setContentIntent(pendingIntent)
+
             notificationManager.notify(NotificationHelper.STREAMS_NOTIFICATION_BASE_ID, builder.build())
         } else {
             // Multiple channels - show summary notification
@@ -252,7 +267,23 @@ class StreamsNotificationWorker(
                 largeIcon?.let { builder.setLargeIcon(it) }
                 style?.let { builder.setStyle(it) }
 
-                notificationManager.notify(NotificationHelper.STREAMS_NOTIFICATION_BASE_ID + index + 1, builder.build())
+                // Add PendingIntent to open channel when notification is clicked
+                val notificationId = NotificationHelper.STREAMS_NOTIFICATION_BASE_ID + index + 1
+                val intent = Intent("project.pipepipe.app.OPEN_CHANNEL").apply {
+                    putExtra("channel_url", subscription.url)
+                    putExtra("service_id", subscription.service_id.toString())
+                    putExtra("notification_id", notificationId)
+                    setPackage(applicationContext.packageName)
+                }
+                val pendingIntent = PendingIntent.getBroadcast(
+                    applicationContext,
+                    notificationId,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                builder.setContentIntent(pendingIntent)
+
+                notificationManager.notify(notificationId, builder.build())
             }
         }
     }

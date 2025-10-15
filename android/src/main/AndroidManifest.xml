@@ -61,6 +61,14 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="project.pipepipe.app.SHOW_FEED_FAILURES" />
+                <action android:name="project.pipepipe.app.SHOW_STREAMS_NOTIFICATION_FAILURES" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="project.pipepipe.app.service.StreamsNotificationReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="project.pipepipe.app.OPEN_CHANNEL" />
             </intent-filter>
         </receiver>
     </application>
