@@ -62,7 +62,7 @@ import project.pipepipe.app.uistate.PlaylistType
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.item.DisplayType
-import project.pipepipe.app.ui.item.MediaListItem
+import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.viewmodel.PlaylistDetailViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -685,7 +685,7 @@ fun PlaylistDetailScreen(
                     ) { index, streamItem ->
                         ReorderableItem(reorderableLazyListState, key = streamItem.joinId ?: streamItem.url) { isDragging ->
                             val interactionSource = remember { MutableInteractionSource() }
-                            MediaListItem(
+                            CommonItem(
                                 item = streamItem,
                                 isDragging = isDragging,
                                 showDragHandle = uiState.playlistType == PlaylistType.LOCAL && !isSearchActive,

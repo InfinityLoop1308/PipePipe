@@ -17,7 +17,7 @@ import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.item.DisplayType
-import project.pipepipe.app.ui.item.MediaListItem
+import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.viewmodel.BookmarkedPlaylistViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -72,7 +72,7 @@ fun BookmarkedPlaylistScreen(navController: NavController) {
                         ) { isDragging ->
                             val interactionSource = remember { MutableInteractionSource() }
 
-                            MediaListItem(
+                            CommonItem(
                                 item = playlist,
                                 isDragging = isDragging,
                                 showDragHandle = true,

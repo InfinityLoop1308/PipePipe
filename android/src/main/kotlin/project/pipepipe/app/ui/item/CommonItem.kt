@@ -50,7 +50,7 @@ enum class DisplayType{
 }
 
 @Composable
-fun MediaListItem(
+fun CommonItem(
     item: Info,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -208,10 +208,12 @@ private fun StreamOrPlaylistListItem(
         }
         else -> throw Exception("Invalid item")
     }
+    val viewsText = stringResource(MR.strings.video_info_views)
+    val watchingText = stringResource(MR.strings.video_info_watching)
     val additionalDetails = buildString {
         when (displayType) {
             DisplayType.ORIGIN -> {
-                views?.let { append("${formatCount(it)} ${if (!isLive)"views" else "watching"}") }
+                views?.let { append("${formatCount(it)} ${if (!isLive) viewsText else watchingText}") }
                 if (!uploadTimeText.isNullOrEmpty() && views != null) {
                     append(" • ")
                 }
@@ -219,7 +221,7 @@ private fun StreamOrPlaylistListItem(
             }
             DisplayType.STREAM_HISTORY -> {
                 item as StreamInfo
-                item.localRepeatCount?.let { append("${formatCount(it)} views") }
+                item.localRepeatCount?.let { append("${formatCount(it)} $viewsText") }
                 if (item.localLastViewDate != null && item.localRepeatCount != null) {
                     append(" • ")
                 }
@@ -406,7 +408,7 @@ private fun StreamOrPlaylistListItem(
         if (showDragHandle) {
             Icon(
                 imageVector = Icons.Default.DragHandle,
-                contentDescription = "Drag to reorder",
+                contentDescription = stringResource(MR.strings.detail_drag_description),
                 modifier = dragHandleModifier
                     .align(Alignment.CenterVertically)
                     .padding(8.dp),

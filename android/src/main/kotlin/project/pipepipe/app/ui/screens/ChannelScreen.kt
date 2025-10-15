@@ -72,7 +72,7 @@ import project.pipepipe.shared.infoitem.ChannelTabType
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.FeedGroupSelectionDialog
-import project.pipepipe.app.ui.item.MediaListItem
+import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.ui.viewmodel.ChannelViewModel
 import java.net.URLEncoder
@@ -414,7 +414,7 @@ private fun <T: Info> TabContent(
                 items = uniqueItems,
                 key = { getUrl(it) }
             ) { item ->
-                MediaListItem(
+                CommonItem(
                     item = item,
                     modifier = Modifier
                         .fillMaxWidth(),

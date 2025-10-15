@@ -67,7 +67,7 @@ import project.pipepipe.shared.infoitem.helper.SearchType
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
-import project.pipepipe.app.ui.item.MediaListItem
+import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.theme.getContrastingColor
 import project.pipepipe.app.ui.viewmodel.SearchViewModel
 import project.pipepipe.shared.infoitem.url
@@ -265,7 +265,7 @@ fun SearchScreen(navController: NavController) {
                         items = uniqueItems,
                         key = {_, item -> item.url }
                     ) { index, item ->
-                        MediaListItem(
+                        CommonItem(
                             item = item,
                             onClick = {
                                 SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url, item.serviceId)

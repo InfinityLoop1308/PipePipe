@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.ErrorComponent
-import project.pipepipe.app.ui.item.MediaListItem
+import project.pipepipe.app.ui.item.CommonItem
 
 @Composable
 fun RelatedItemSection (
@@ -84,7 +84,7 @@ fun RelatedItemSection (
                     items = relatedState.list.itemList,
                     key = { it.url }
                 ) { item ->
-                    MediaListItem(
+                    CommonItem(
                         item = item,
                         onClick = { viewModel.loadVideoDetails(item.url, item.serviceId) }
                     )

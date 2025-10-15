@@ -21,7 +21,7 @@ import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.database.DatabaseOperations.getAllLocalPlaylists
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.app.ui.item.MediaListItem
+import project.pipepipe.app.ui.item.CommonItem
 
 @Composable
 fun PlaylistSelectorPopup(
@@ -120,7 +120,7 @@ fun PlaylistSelectorPopup(
                                             },
                                         shape = RoundedCornerShape(8.dp)
                                     ) {
-                                        MediaListItem(
+                                        CommonItem(
                                             item = playlist,
                                             onClick = {
                                                 scope.launch {
