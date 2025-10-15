@@ -3,6 +3,7 @@ package project.pipepipe.app.viewmodel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.helper.FilterHelper
 import project.pipepipe.app.uistate.ErrorInfo
 import project.pipepipe.app.uistate.ListUiState
 import project.pipepipe.app.uistate.PlaylistSortMode
@@ -56,7 +57,14 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             url.startsWith("local://feed") -> {
                 val name = url.substringAfter("?name=","All")
                 val feedId = url.substringAfterLast("/").substringBefore("?").toLong()
-                val streamInfos = DatabaseOperations.getFeedStreamsByGroup(feedId)
+                val rawStreamInfos = DatabaseOperations.getFeedStreamsByGroup(feedId)
+
+                // Apply filters
+                val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+                    rawStreamInfos,
+                    FilterHelper.FilterScope.CHANNELS
+                )
+
                 val isPinned = DatabaseOperations.getPinnedFeedGroups().any { it.uid == feedId }
                 setState { state ->
                     state.copy(
@@ -67,8 +75,8 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                             name = name,
                             isPinned = isPinned
                         ),
-                        list = state.list.copy(itemList = streamInfos),
-                        displayItems = streamInfos
+                        list = state.list.copy(itemList = filteredItems),
+                        displayItems = filteredItems
                     )
                 }
                 updateFeedLastUpdated(feedId)
