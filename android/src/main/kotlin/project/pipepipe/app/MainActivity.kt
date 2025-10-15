@@ -1,6 +1,7 @@
 package project.pipepipe.app
 
 import android.app.PictureInPictureParams
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -9,6 +10,10 @@ import android.util.Rational
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,9 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import project.pipepipe.app.global.PipHelper
 import project.pipepipe.app.helper.ToastManager
+import project.pipepipe.app.service.PlaybackService
+import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.BottomSheetMenu
 import project.pipepipe.app.ui.component.ImageViewer
@@ -37,10 +46,21 @@ import project.pipepipe.app.ui.theme.PipePipeTheme
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class MainActivity : ComponentActivity() {
+    private var controllerFuture: ListenableFuture<MediaController>? = null
+    private var mediaController: MediaController? = null
+
+    @androidx.annotation.OptIn(UnstableApi::class)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Initialize MediaController
+        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
+        controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        controllerFuture?.addListener({
+            mediaController = controllerFuture?.get()
+        }, MoreExecutors.directExecutor())
 
         checkIntentForPlayQueue(intent)
 
@@ -144,6 +164,42 @@ class MainActivity : ComponentActivity() {
         if (!isInPictureInPictureMode) {
             SharedContext.exitPipMode()
             SharedContext.sharedVideoDetailViewModel.showAsDetailPage()
+        }
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+
+        val uiState = SharedContext.sharedVideoDetailViewModel.uiState.value
+        val pageState = uiState.pageState
+
+        // Only trigger when in DETAIL_PAGE or FULLSCREEN_PLAYER and player is playing
+        if ((pageState == VideoDetailPageState.DETAIL_PAGE || pageState == VideoDetailPageState.FULLSCREEN_PLAYER)
+            && mediaController?.isPlaying == true) {
+
+            val minimizeSetting = SharedContext.settingsManager.getString("minimize_on_exit_key", "minimize_on_exit_none_key")
+            val streamInfo = uiState.currentStreamInfo
+
+            when (minimizeSetting) {
+                "minimize_on_exit_background_key" -> {
+                    // Minimize to background player
+                    mediaController?.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+                }
+                "minimize_on_exit_popup_key" -> {
+                    // Minimize to popup player (PiP)
+                    if (streamInfo != null && mediaController != null) {
+                        PipHelper.enterPipMode(mediaController!!, streamInfo, this)
+                    }
+                }
+                // "minimize_on_exit_none_key" or default - do nothing
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        controllerFuture?.let { future ->
+            MediaController.releaseFuture(future)
         }
     }
 }

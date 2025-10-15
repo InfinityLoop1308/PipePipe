@@ -97,6 +97,38 @@ fun PlayerSettingScreen(
         }
     }
 
+    val minimizeNone = stringResource(MR.strings.minimize_on_exit_none_description)
+    val minimizeBackground = stringResource(MR.strings.minimize_on_exit_background_description)
+    val minimizePopup = stringResource(MR.strings.minimize_on_exit_popup_description)
+
+    val minimizeEntries = remember(minimizeNone, minimizeBackground, minimizePopup) {
+        listOf(
+            minimizeNone,
+            minimizeBackground,
+            minimizePopup
+        )
+    }
+    val minimizeValues = remember {
+        listOf(
+            "minimize_on_exit_none_key",
+            "minimize_on_exit_background_key",
+            "minimize_on_exit_popup_key"
+        )
+    }
+
+    var minimizeValue by remember {
+        mutableStateOf(SharedContext.settingsManager.getString("minimize_on_exit_key", "minimize_on_exit_none_key"))
+    }
+
+    val minimizeSummary = remember(minimizeValue, minimizeNone, minimizeBackground, minimizePopup) {
+        when (minimizeValue) {
+            "minimize_on_exit_none_key" -> minimizeNone
+            "minimize_on_exit_background_key" -> minimizeBackground
+            "minimize_on_exit_popup_key" -> minimizePopup
+            else -> minimizeNone
+        }
+    }
+
     val preferenceItems = listOf<PreferenceItem>(
         PreferenceItem.ListPref(
             key = "default_resolution",
@@ -115,6 +147,17 @@ fun PlayerSettingScreen(
             defaultValue = "autoplay_wifi_key",
             onValueChange = { value ->
                 autoplayValue = value
+            }
+        ),
+        PreferenceItem.ListPref(
+            key = "minimize_on_exit_key",
+            title = stringResource(MR.strings.minimize_on_exit_title),
+            summary = stringResource(MR.strings.minimize_on_exit_summary).replace("%s", minimizeSummary),
+            entries = minimizeEntries,
+            entryValues = minimizeValues,
+            defaultValue = "minimize_on_exit_none_key",
+            onValueChange = { value ->
+                minimizeValue = value
             }
         ),
         PreferenceItem.SwitchPref(

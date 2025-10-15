@@ -328,4 +328,9 @@
     <string name="wifi_only">Only on Wi-Fi</string>
     <string name="never">Never</string>
     <string name="always">Always</string>
+    <string name="minimize_on_exit_title">Minimize on app switch</string>
+    <string name="minimize_on_exit_summary">Action when switching to other app from main video player — %s</string>
+    <string name="minimize_on_exit_none_description">None</string>
+    <string name="minimize_on_exit_background_description">Minimize to background player</string>
+    <string name="minimize_on_exit_popup_description">Minimize to popup player</string>
 </resources>
