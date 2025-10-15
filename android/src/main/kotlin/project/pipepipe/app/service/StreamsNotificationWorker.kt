@@ -66,15 +66,13 @@ class StreamsNotificationWorker(
                 if (result.pagedData != null) {
                     val newStreams = result.pagedData!!.itemList as List<StreamInfo>
 
-                    // Get existing streams for this subscription to detect new ones
-                    val existingStreamUrls = withContext(Dispatchers.IO) {
-                        val feedStreams = DatabaseOperations.getFeedStreamsByGroup(-1L)
-                        feedStreams.filter { it.uploaderUrl == subscription.url }.map { it.url }.toSet()
-                    }
+                    // Get the last updated time for this subscription
+                    val lastUpdated = DatabaseOperations.getFeedLastUpdated(subscription.uid)
 
-                    // Filter for truly new streams (not in feed yet)
+                    // Filter for streams published after last_updated
                     val actualNewStreams = newStreams.filter { stream ->
-                        stream.url !in existingStreamUrls
+                        val uploadDate = stream.uploadDate
+                        uploadDate != null && (lastUpdated == null || uploadDate > lastUpdated)
                     }
 
                     if (actualNewStreams.isNotEmpty()) {

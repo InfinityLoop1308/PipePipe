@@ -495,6 +495,12 @@ object DatabaseOperations {
     suspend fun deleteFeedGroup(groupId: Long) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.deleteFeedGroup(groupId)
     }
+
+    suspend fun getFeedLastUpdated(subscriptionId: Long): Long? = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.selectFeedLastUpdated(subscriptionId)
+            .executeAsOneOrNull()?.last_updated
+    }
+
     suspend fun insertFeedGroup(name: String, iconId: Long) = withContext(Dispatchers.IO) {
         database.transaction {
             val maxSortOrder = database.appDatabaseQueries
