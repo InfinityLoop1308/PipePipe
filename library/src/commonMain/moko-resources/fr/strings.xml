@@ -330,4 +330,16 @@
 <string name="minimize_on_exit_popup_description">Minimiser vers le lecteur popup</string>
 <string name="email">Courriel</string>
 <string name="no_email_app_available">Aucune application de messagerie disponible</string>
+<string name="settings_category_feed_title">Flux</string>
+<string name="feed_update_threshold_title">Seuil de mise à jour du flux</string>
+<string name="feed_update_threshold_summary">Temps après la dernière mise à jour avant qu\'un abonnement soit considéré comme obsolète — %s</string>
+<string name="feed_update_threshold_option_always_update">Toujours mettre à jour</string>
+<string name="feed_load_error">Erreur de chargement du flux</string>
+<string name="enable_streams_notifications_title">Notifications de nouveaux flux</string>
+<string name="enable_streams_notifications_summary">Notifier des nouveaux flux des abonnements</string>
+<string name="streams_notifications_interval_title">Fréquence de vérification</string>
+<string name="feed_all_subscriptions_up_to_date">Tous les abonnements sont à jour</string>
+<string name="feed_update_failed_channels">Les chaînes suivantes n\'ont pas pu être mises à jour :</string>
+<string name="channel_enable_notifications">Activer les notifications</string>
+<string name="channel_disable_notifications">Désactiver les notifications</string>
 </resources>

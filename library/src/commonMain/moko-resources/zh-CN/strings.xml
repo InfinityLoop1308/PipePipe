@@ -330,4 +330,16 @@
 <string name="minimize_on_exit_popup_description">最小化到悬浮窗播放器</string>
 <string name="email">电子邮件</string>
 <string name="no_email_app_available">没有可用的电子邮件应用</string>
+<string name="settings_category_feed_title">推送</string>
+<string name="feed_update_threshold_title">推送更新阈值</string>
+<string name="feed_update_threshold_summary">在订阅被视为过时之前最后一次更新之后的时间 — %s</string>
+<string name="feed_update_threshold_option_always_update">总是更新</string>
+<string name="feed_load_error">加载推送出错</string>
+<string name="enable_streams_notifications_title">新串流通知</string>
+<string name="enable_streams_notifications_summary">订阅新串流通知</string>
+<string name="streams_notifications_interval_title">检查频率</string>
+<string name="feed_all_subscriptions_up_to_date">所有订阅都已是最新状态</string>
+<string name="feed_update_failed_channels">以下频道更新失败：</string>
+<string name="channel_enable_notifications">启用通知</string>
+<string name="channel_disable_notifications">禁用通知</string>
 </resources>

@@ -330,4 +330,16 @@
 <string name="minimize_on_exit_popup_description">Thu nhỏ thành trình phát bật lên</string>
 <string name="email">Email</string>
 <string name="no_email_app_available">Không có ứng dụng email nào khả dụng</string>
+<string name="settings_category_feed_title">Nguồn cấp</string>
+<string name="feed_update_threshold_title">Ngưỡng cập nhật nguồn cấp</string>
+<string name="feed_update_threshold_summary">Thời gian sau lần cập nhật cuối cùng trước khi đăng ký được coi là lỗi thời — %s</string>
+<string name="feed_update_threshold_option_always_update">Luôn cập nhật</string>
+<string name="feed_load_error">Lỗi tải nguồn cấp</string>
+<string name="enable_streams_notifications_title">Thông báo luồng mới</string>
+<string name="enable_streams_notifications_summary">Thông báo về luồng mới từ đăng ký</string>
+<string name="streams_notifications_interval_title">Tần suất kiểm tra</string>
+<string name="feed_all_subscriptions_up_to_date">Tất cả các đăng ký đều được cập nhật</string>
+<string name="feed_update_failed_channels">Các kênh sau không thể cập nhật:</string>
+<string name="channel_enable_notifications">Bật thông báo</string>
+<string name="channel_disable_notifications">Tắt thông báo</string>
 </resources>

@@ -38,4 +38,5 @@ sealed class Screen(val route: String) {
     object LogSettings: Screen("log_settings")
     object AppearanceSettings: Screen("appearance_settings")
     object FeedSettings: Screen("feed_settings")
+    object ChannelNotificationSelection: Screen("channel_notification_selection")
 }

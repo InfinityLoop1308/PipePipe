@@ -16,6 +16,7 @@ import project.pipepipe.app.ui.screens.SearchScreen
 import project.pipepipe.app.ui.screens.SettingsScreen
 import project.pipepipe.app.ui.screens.TabNavigationScreen
 import project.pipepipe.app.ui.screens.settings.AppearanceSettingsScreen
+import project.pipepipe.app.ui.screens.settings.ChannelNotificationSelectionScreen
 import project.pipepipe.app.ui.screens.settings.FeedSettingsScreen
 import project.pipepipe.app.ui.screens.settings.FilterByKeywordsScreen
 import project.pipepipe.app.ui.screens.settings.FilterSettingScreen
@@ -90,6 +91,9 @@ fun NavGraph(
         }
         composable(Screen.FeedSettings.route) {
             FeedSettingsScreen(navController = navController)
+        }
+        composable(Screen.ChannelNotificationSelection.route) {
+            ChannelNotificationSelectionScreen(navController = navController)
         }
         composable(Screen.Search.route) {
             SearchScreen(navController = navController)

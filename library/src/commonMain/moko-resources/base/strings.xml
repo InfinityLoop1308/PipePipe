@@ -342,4 +342,9 @@
     <string name="feed_all_subscriptions_up_to_date">All subscriptions are up to date</string>
     <string name="feed_update_failed_channels">The following channels failed to update:</string>
     <string name="feed_load_error">Error loading feed</string>
+    <string name="enable_streams_notifications_title">New streams notifications</string>
+    <string name="enable_streams_notifications_summary">Notify about new streams from subscriptions</string>
+    <string name="streams_notifications_interval_title">Checking frequency</string>
+    <string name="channel_enable_notifications">Enable notifications</string>
+    <string name="channel_disable_notifications">Disable notifications</string>
 </resources>

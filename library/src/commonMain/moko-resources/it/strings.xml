@@ -330,4 +330,16 @@
 <string name="minimize_on_exit_popup_description">Minimizza al lettore popup</string>
 <string name="email">Email</string>
 <string name="no_email_app_available">Nessuna app di posta elettronica disponibile</string>
+<string name="settings_category_feed_title">Feed</string>
+<string name="feed_update_threshold_title">Soglia di aggiornamento del feed</string>
+<string name="feed_update_threshold_summary">Tempo dall\'ultimo aggiornamento prima che un\'abbonamento sia considerato obsoleto — %s</string>
+<string name="feed_update_threshold_option_always_update">Aggiorna sempre</string>
+<string name="feed_load_error">Errore nel caricamento del feed</string>
+<string name="enable_streams_notifications_title">Notifiche nuovi flussi</string>
+<string name="enable_streams_notifications_summary">Notifica sui nuovi flussi dagli abbonamenti</string>
+<string name="streams_notifications_interval_title">Frequenza di controllo</string>
+<string name="feed_all_subscriptions_up_to_date">Tutti gli abbonamenti sono aggiornati</string>
+<string name="feed_update_failed_channels">I seguenti canali non sono riusciti ad aggiornarsi:</string>
+<string name="channel_enable_notifications">Abilita notifiche</string>
+<string name="channel_disable_notifications">Disabilita notifiche</string>
 </resources>

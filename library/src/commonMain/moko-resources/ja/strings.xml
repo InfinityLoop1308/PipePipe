@@ -330,4 +330,16 @@
 <string name="minimize_on_exit_popup_description">ポップアップに変更</string>
 <string name="email">メール</string>
 <string name="no_email_app_available">利用可能なメールアプリがありません</string>
+<string name="settings_category_feed_title">フィード</string>
+<string name="feed_update_threshold_title">フィードの更新間隔</string>
+<string name="feed_update_threshold_summary">最後の更新後、登録チャンネルを更新すべきとするまでの時間 ― %s</string>
+<string name="feed_update_threshold_option_always_update">常に更新する</string>
+<string name="feed_load_error">フィードの読み込みエラー</string>
+<string name="enable_streams_notifications_title">新しいストリームの通知</string>
+<string name="enable_streams_notifications_summary">登録チャンネルの新しいストリームについて通知する</string>
+<string name="streams_notifications_interval_title">確認する頻度</string>
+<string name="feed_all_subscriptions_up_to_date">すべてのサブスクリプションは最新です</string>
+<string name="feed_update_failed_channels">以下のチャンネルの更新に失敗しました:</string>
+<string name="channel_enable_notifications">通知を有効にする</string>
+<string name="channel_disable_notifications">通知を無効にする</string>
 </resources>

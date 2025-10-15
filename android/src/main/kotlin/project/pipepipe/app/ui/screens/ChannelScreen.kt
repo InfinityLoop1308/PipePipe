@@ -22,12 +22,18 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
@@ -75,6 +82,7 @@ import project.pipepipe.app.ui.component.FeedGroupSelectionDialog
 import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.ui.viewmodel.ChannelViewModel
+import project.pipepipe.app.database.DatabaseOperations
 import java.net.URLEncoder
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -84,6 +92,7 @@ fun ChannelScreen(
     channelUrl: String,
     serviceId: String
 ) {
+    val context = LocalContext.current
     val viewModel: ChannelViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
     val tabs = uiState.channelInfo?.tabs.orEmpty()
@@ -96,6 +105,8 @@ fun ChannelScreen(
     val videoListState = rememberLazyListState()
     val liveListState = rememberLazyListState()
     var showGroupDialog by remember { mutableStateOf(false) }
+    var showMoreMenu by remember { mutableStateOf(false) }
+    var notificationMode by remember { mutableStateOf(0L) }
 
     val deferredTabLoaders = remember(channelUrl, serviceId, viewModel) {
         mapOf(
@@ -110,6 +121,10 @@ fun ChannelScreen(
         tabLoadRequests.clear()
         viewModel.loadChannelMainTab(channelUrl, serviceId)
         viewModel.checkSubscriptionStatus(channelUrl)
+
+        // Load notification mode
+        val subscription = DatabaseOperations.getSubscriptionByUrl(channelUrl)
+        notificationMode = subscription?.notification_mode ?: 0L
     }
 
     LaunchedEffect(tabTypes, pagerState, deferredTabLoaders) {
@@ -135,8 +150,67 @@ fun ChannelScreen(
             defaultTitleText = uiState.channelInfo?.name ?: stringResource(MR.strings.channel),
             defaultNavigationOnClick = { navController.popBackStack() },
             actions = {
-                IconButton(onClick = { }) {
-                    Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+                Box {
+                    IconButton(onClick = { showMoreMenu = true }) {
+                        Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+                    }
+                    DropdownMenu(
+                        expanded = showMoreMenu,
+                        onDismissRequest = { showMoreMenu = false }
+                    ) {
+                        // Notification toggle - only show when subscribed
+                        if (uiState.isSubscribed) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        stringResource(
+                                            if (notificationMode == 1L) MR.strings.channel_disable_notifications
+                                            else MR.strings.channel_enable_notifications
+                                        )
+                                    )
+                                },
+                                onClick = {
+                                    showMoreMenu = false
+                                    scope.launch {
+                                        val newMode = if (notificationMode == 1L) 0L else 1L
+                                        DatabaseOperations.updateSubscriptionNotificationMode(
+                                            channelUrl,
+                                            newMode
+                                        )
+                                        notificationMode = newMode
+                                    }
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = if (notificationMode == 1L) Icons.Default.NotificationsOff else Icons.Default.Notifications,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                        }
+
+                        // Share
+                        DropdownMenuItem(
+                            text = { Text(stringResource(MR.strings.share)) },
+                            onClick = {
+                                showMoreMenu = false
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, channelUrl)
+                                    putExtra(Intent.EXTRA_TITLE, uiState.channelInfo?.name ?: "")
+                                    type = "text/plain"
+                                }
+                                val shareIntent = Intent.createChooser(sendIntent, null)
+                                context.startActivity(shareIntent)
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                    }
                 }
             }
         )
