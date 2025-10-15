@@ -108,7 +108,7 @@ class VideoDetailViewModel(val exec: suspend (JobRequest) -> JobResponse<out Inf
                     it.copy(
                         common = it.common.copy(
                             isLoading = false,
-                            error = result.fatalError.let { fatalError ->
+                            error = result.fatalError!!.let { fatalError ->
                                 ErrorInfo(fatalError.errorId!!, fatalError.code)
                             }
                         )
@@ -192,7 +192,7 @@ class VideoDetailViewModel(val exec: suspend (JobRequest) -> JobResponse<out Inf
                     cachedComments = entry.cachedComments.copy(
                         common = entry.cachedComments.common.copy(
                             isLoading = false,
-                            error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                         )
                     )
                 )
@@ -240,7 +240,7 @@ class VideoDetailViewModel(val exec: suspend (JobRequest) -> JobResponse<out Inf
                     cachedComments = entry.cachedComments.copy(
                         common = entry.cachedComments.common.copy(
                             isLoading = false,
-                            error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                         )
                     )
                 )
@@ -293,7 +293,7 @@ class VideoDetailViewModel(val exec: suspend (JobRequest) -> JobResponse<out Inf
                     cachedComments = entry.cachedComments.copy(
                         common = entry.cachedComments.common.copy(
                             isLoading = false,
-                            error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                         )
                     )
                 )
@@ -343,7 +343,7 @@ class VideoDetailViewModel(val exec: suspend (JobRequest) -> JobResponse<out Inf
                     cachedComments = entry.cachedComments.copy(
                         common = entry.cachedComments.common.copy(
                             isLoading = false,
-                            error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                         )
                     )
                 )
@@ -404,7 +404,7 @@ class VideoDetailViewModel(val exec: suspend (JobRequest) -> JobResponse<out Inf
                     cachedRelatedItems = entry.cachedRelatedItems.copy(
                         common = entry.cachedRelatedItems.common.copy(
                             isLoading = false,
-                            error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                         )
                     )
                 )

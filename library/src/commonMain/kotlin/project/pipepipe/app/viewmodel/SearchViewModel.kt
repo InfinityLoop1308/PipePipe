@@ -16,7 +16,6 @@ import project.pipepipe.shared.job.ClientTask
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeClientTasksConcurrent
 import project.pipepipe.app.helper.executeJobFlow
-import project.pipepipe.shared.utils.json.asJson
 import project.pipepipe.shared.utils.json.requireArray
 import project.pipepipe.shared.utils.json.requireString
 
@@ -38,19 +37,19 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
         } else {
             val service = uiState.value.selectedService!!
             val localHistory = DatabaseOperations.getSearchHistoryByPattern(query)
-            var remoteSuggestionsReponse = service.suggestionPayload?.let {
+            var remoteSuggestionsReponse = service.suggestionPayload!!.let {
                 withContext(Dispatchers.IO) {
-                    executeClientTasksConcurrent(listOf(ClientTask(payload = service.suggestionPayload.copy(url = it.url + query))))[0].result
+                    executeClientTasksConcurrent(listOf(ClientTask(payload = service.suggestionPayload!!.copy(url = it.url + query))))[0].result
                 }
             }
             if (remoteSuggestionsReponse != null && service.suggestionJsonBetween != null) {
                 remoteSuggestionsReponse = remoteSuggestionsReponse
-                    .substringBeforeLast(service.suggestionJsonBetween.second)
-                    .substringAfter(service.suggestionJsonBetween.first)
+                    .substringBeforeLast(service.suggestionJsonBetween!!.second)
+                    .substringAfter(service.suggestionJsonBetween!!.first)
             }
             val remoteSuggestionsResult: List<String>? = remoteSuggestionsReponse?.let { SharedContext.objectMapper.readTree(it)}
                 ?.requireArray(service.suggestionStringPath!!.first)
-                ?.map { it.requireString(service.suggestionStringPath.second) }
+                ?.map { it.requireString(service.suggestionStringPath!!.second) }
 
             val allSuggestions = localHistory.map { SearchSuggestion(it.search, true) }.toMutableList()
             remoteSuggestionsResult?.let {
@@ -93,7 +92,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                     group.defaultFilter != null -> listOf(group.defaultFilter)
                     else -> emptyList()
                 }
-                group.copy(selectedSearchFilters = defaultFilters)
+                group.copy(selectedSearchFilters = defaultFilters.filterNotNull())
             }
         )
     }
@@ -144,7 +143,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                                     }
                                 }
 
-                                group.copy(selectedSearchFilters = finalFilters)
+                                group.copy(selectedSearchFilters = finalFilters.filterNotNull())
                             }
                         } else {
                             group
@@ -190,7 +189,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                     )
                 )
             }
@@ -201,7 +200,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
         // Apply filters
         val shouldFilter = result.pagedData!!.itemList.get(0) is StreamInfo
 
-        val rawItems = (result.pagedData.itemList as? List<StreamInfo>) ?: emptyList()
+        val rawItems = (result.pagedData!!.itemList as? List<StreamInfo>) ?: emptyList()
         val (filteredItems, _) = if (shouldFilter) FilterHelper.filterStreamInfoList(
             rawItems,
             FilterHelper.FilterScope.SEARCH_RESULT
@@ -215,8 +214,8 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                     error = null
                 ),
                 list = it.list.copy(
-                    itemList = if(shouldFilter)filteredItems else result.pagedData.itemList,
-                    nextPageUrl = result.pagedData.nextPageUrl
+                    itemList = if(shouldFilter)filteredItems else result.pagedData!!.itemList,
+                    nextPageUrl = result.pagedData!!.nextPageUrl
                 ),
             )
         }
@@ -243,7 +242,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                     )
                 )
             }

@@ -35,7 +35,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                     )
                 )
             }
@@ -55,15 +55,15 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                     isLoading = false,
                     error = null
                 ),
-                channelInfo = result.info as ChannelInfo,
+                channelInfo = result.info!! as ChannelInfo,
                 videoTab = ListUiState(
                     itemList = filteredItems,
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )
         }
-        DatabaseOperations.insertOrUpdateSubscription(result.info as ChannelInfo, true)
-        DatabaseOperations.updateSubscriptionFeed(result.info.url, rawItems)
+        DatabaseOperations.insertOrUpdateSubscription(result.info!! as ChannelInfo, true)
+        DatabaseOperations.updateSubscriptionFeed((result.info as ChannelInfo).url, rawItems)
     }
 
     suspend fun loadMainTabMoreItems(serviceId: String) {
@@ -87,7 +87,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                     )
                 )
             }
@@ -135,7 +135,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                     )
                 )
             }
@@ -184,7 +184,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                     )
                 )
             }
@@ -232,7 +232,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError.errorId!!, result.fatalError.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
                     )
                 )
             }

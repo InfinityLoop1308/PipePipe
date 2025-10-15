@@ -56,9 +56,9 @@ suspend fun executeJobFlow(
         when (response.status) {
             JobStatus.COMPLETE -> {
                 if (response.state != null) {
-                    sessionManager.saveState(response.sessionId, response.state)
+                    sessionManager.saveState(response.sessionId, response.state!!)
                 }
-                return response.result !!
+                return response.result!!
             }
             JobStatus.CONTINUE -> {
                 val tasks = response.tasks ?: throw kotlin.IllegalStateException("Job must continue but no tasks were provided")
@@ -66,7 +66,7 @@ suspend fun executeJobFlow(
 
                 // Cache the state on client side
                 if (response.state != null) {
-                    sessionManager.saveState(response.sessionId, response.state)
+                    sessionManager.saveState(response.sessionId, response.state!!)
                 }
 
                 currentRequest = JobRequest(
@@ -76,7 +76,7 @@ suspend fun executeJobFlow(
                     results = taskResults,
                     serviceId = serviceId,
                     cookie = cookie,
-                    state = response.state
+                    state = response.state!!
                 )
             }
 
@@ -88,7 +88,7 @@ suspend fun executeJobFlow(
                     errorCode = fatalError.code,
                     request = currentRequest.url
                 )
-                return response.result.copy(fatalError = fatalError.copy(errorId = errorId))
+                return response.result!!.copy(fatalError = fatalError.copy(errorId = errorId))
             }
         }
     }
@@ -110,7 +110,7 @@ suspend fun executeClientTasksConcurrent(
                         if (task.payload.body != null) {
                             downloader.postJson(
                                 url = task.payload.url,
-                                json = task.payload.body,
+                                json = task.payload.body!!,
                                 headers = task.payload.headers
                             )
                         } else {
