@@ -79,6 +79,7 @@ import project.pipepipe.app.ui.component.player.VideoPlayer
 import project.pipepipe.app.ui.component.VideoTitleSection
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.helper.NetworkStateHelper
 import kotlin.math.min
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -166,6 +167,40 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         controllerFuture?.addListener({
             mediaController = controllerFuture?.get()
         }, MoreExecutors.directExecutor())
+    }
+
+    // Auto-play logic based on settings and network state
+    var hasAutoPlayed by remember { mutableStateOf(false) }
+
+    LaunchedEffect(streamInfo, mediaController) {
+        if (streamInfo != null && mediaController != null && !hasAutoPlayed &&
+            uiState.pageState == VideoDetailPageState.DETAIL_PAGE) {
+            val autoplaySetting = SharedContext.settingsManager.getString("autoplay_key", "autoplay_wifi_key")
+
+            val shouldAutoPlay = when (autoplaySetting) {
+                "autoplay_always_key" -> true
+                "autoplay_wifi_key" -> NetworkStateHelper.isWifiConnected()
+                "autoplay_never_key" -> false
+                else -> NetworkStateHelper.isWifiConnected() // default to WiFi only
+            }
+
+            if (shouldAutoPlay) {
+                mediaController?.let { controller ->
+                    controller.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
+                    if (controller.currentMediaItem?.mediaId != streamInfo.url) {
+                        controller.playFromStreamInfo(streamInfo)
+                    } else if (!controller.isPlaying) {
+                        controller.play()
+                    }
+                }
+                hasAutoPlayed = true
+            }
+        }
+    }
+
+    // Reset auto-play flag when video changes
+    LaunchedEffect(streamInfo?.url) {
+        hasAutoPlayed = false
     }
 
     val view = LocalView.current

@@ -323,4 +323,9 @@
 <string name="upload_date">Upload Date</string>
 <string name="subscribers">subscribers</string>
     <string name="fill_search">Fill search</string>
+    <string name="autoplay_title">Autoplay</string>
+    <string name="autoplay_summary">Start playback automatically — %s</string>
+    <string name="wifi_only">Only on Wi-Fi</string>
+    <string name="never">Never</string>
+    <string name="always">Always</string>
 </resources>

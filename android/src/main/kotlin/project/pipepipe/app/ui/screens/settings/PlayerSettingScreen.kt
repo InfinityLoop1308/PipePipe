@@ -65,14 +65,57 @@ fun PlayerSettingScreen(
         stringResource(MR.strings.settings_player_music_random_disabled_summary)
     }
 
+    val autoplayAlways = stringResource(MR.strings.always)
+    val autoplayWifi = stringResource(MR.strings.wifi_only)
+    val autoplayNever = stringResource(MR.strings.never)
+
+    val autoplayEntries = remember(autoplayAlways, autoplayWifi, autoplayNever) {
+        listOf(
+            autoplayAlways,
+            autoplayWifi,
+            autoplayNever
+        )
+    }
+    val autoplayValues = remember {
+        listOf(
+            "autoplay_always_key",
+            "autoplay_wifi_key",
+            "autoplay_never_key"
+        )
+    }
+
+    var autoplayValue by remember {
+        mutableStateOf(SharedContext.settingsManager.getString("autoplay_key", "autoplay_wifi_key"))
+    }
+
+    val autoplaySummary = remember(autoplayValue, autoplayAlways, autoplayWifi, autoplayNever) {
+        when (autoplayValue) {
+            "autoplay_always_key" -> autoplayAlways
+            "autoplay_wifi_key" -> autoplayWifi
+            "autoplay_never_key" -> autoplayNever
+            else -> autoplayWifi
+        }
+    }
+
     val preferenceItems = listOf<PreferenceItem>(
         PreferenceItem.ListPref(
-            key = "default_resolution_key",
+            key = "default_resolution",
             title = stringResource(MR.strings.default_resolution_title),
             summary = null,
             entries = resolutionEntries,
             entryValues = resolutionValues,
             defaultValue = "auto"
+        ),
+        PreferenceItem.ListPref(
+            key = "autoplay_key",
+            title = stringResource(MR.strings.autoplay_title),
+            summary = stringResource(MR.strings.autoplay_summary).replace("%s", autoplaySummary),
+            entries = autoplayEntries,
+            entryValues = autoplayValues,
+            defaultValue = "autoplay_wifi_key",
+            onValueChange = { value ->
+                autoplayValue = value
+            }
         ),
         PreferenceItem.SwitchPref(
             key = "auto_background_play_key",

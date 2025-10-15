@@ -56,6 +56,7 @@ kotlin {
                 implementation("com.materialkolor:material-kolor:3.0.1")
                 implementation("com.fasterxml.jackson.core:jackson-core:2.20.0")
                 implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
+                implementation("dev.tmapps:konnection:1.4.5")
             }
         }
         androidMain {

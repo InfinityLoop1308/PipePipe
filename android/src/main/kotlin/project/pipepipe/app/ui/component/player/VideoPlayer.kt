@@ -105,7 +105,7 @@ fun VideoPlayer(
     var showSubtitleMenu by remember { mutableStateOf(false) }
     var availableSubtitles by remember { mutableStateOf<List<SubtitleInfo>>(emptyList()) }
     val defaultResolution = remember {
-        SharedContext.settingsManager.getString("default_resolution_key", "auto")
+        SharedContext.settingsManager.getString("default_resolution", "auto")
     }
 
     // SponsorBlock state variables
