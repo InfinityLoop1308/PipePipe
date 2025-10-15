@@ -1,0 +1,203 @@
+-- Combined migration: playlist_stream_join recreation + stream table consolidation + drop unused columns + service ID mapping + remove service_id from search_history
+
+-- ============================================================
+-- Part 0.1: Clean up data for non-target services (keep only 0, 5, 6)
+-- ============================================================
+-- IMPORTANT: This must happen BEFORE service_id mapping!
+
+-- Delete subscriptions for services other than YOUTUBE(0), BILIBILI(5), NICONICO(6)
+-- This will cascade to feed_group_subscription_join if foreign keys are set up
+DELETE FROM subscriptions WHERE service_id NOT IN (0, 5, 6);
+
+-- Delete remote_playlists for non-target services
+DELETE FROM remote_playlists WHERE service_id NOT IN (0, 5, 6);
+
+-- Delete streams for non-target services
+-- This will cascade to:
+-- - playlist_stream_join (if foreign keys are set up)
+-- - stream_history (if foreign keys are set up)
+-- - stream_state (if foreign keys are set up)
+DELETE FROM streams WHERE service_id NOT IN (0, 5, 6);
+
+-- ============================================================
+-- Part 0.2: Service ID Mapping (excluding search_history)
+-- ============================================================
+
+-- Update service_id mapping in relevant tables (excluding search_history)
+-- YOUTUBE->0, SoundCloud->1, MediaCCC->2, PeerTube->3, Bandcamp->4, BiliBili->5, NicoNico->6
+
+-- Update subscriptions table
+UPDATE subscriptions SET service_id = 'YOUTUBE' WHERE service_id = 0;
+UPDATE subscriptions SET service_id = 'SOUNDCLOUD' WHERE service_id = 1;
+UPDATE subscriptions SET service_id = 'MEDIACCC' WHERE service_id = 2;
+UPDATE subscriptions SET service_id = 'PEERTUBE' WHERE service_id = 3;
+UPDATE subscriptions SET service_id = 'BANDCAMP' WHERE service_id = 4;
+UPDATE subscriptions SET service_id = 'BILIBILI' WHERE service_id = 5;
+UPDATE subscriptions SET service_id = 'NICONICO' WHERE service_id = 6;
+
+-- Update streams table
+UPDATE streams SET service_id = 'YOUTUBE' WHERE service_id = 0;
+UPDATE streams SET service_id = 'SOUNDCLOUD' WHERE service_id = 1;
+UPDATE streams SET service_id = 'MEDIACCC' WHERE service_id = 2;
+UPDATE streams SET service_id = 'PEERTUBE' WHERE service_id = 3;
+UPDATE streams SET service_id = 'BANDCAMP' WHERE service_id = 4;
+UPDATE streams SET service_id = 'BILIBILI' WHERE service_id = 5;
+UPDATE streams SET service_id = 'NICONICO' WHERE service_id = 6;
+
+-- Update remote_playlists table
+UPDATE remote_playlists SET service_id = 'YOUTUBE' WHERE service_id = 0;
+UPDATE remote_playlists SET service_id = 'SOUNDCLOUD' WHERE service_id = 1;
+UPDATE remote_playlists SET service_id = 'MEDIACCC' WHERE service_id = 2;
+UPDATE remote_playlists SET service_id = 'PEERTUBE' WHERE service_id = 3;
+UPDATE remote_playlists SET service_id = 'BANDCAMP' WHERE service_id = 4;
+UPDATE remote_playlists SET service_id = 'BILIBILI' WHERE service_id = 5;
+UPDATE remote_playlists SET service_id = 'NICONICO' WHERE service_id = 6;
+
+-- ============================================================
+-- Part 0.5: Recreate search_history table without service_id
+-- ============================================================
+
+-- Create new search_history table without service_id column
+CREATE TABLE search_history_new (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    creation_date INTEGER,
+    search TEXT NOT NULL
+);
+
+-- 复制数据时顺便按 search 去重，保留 creation_date 最新的一条
+INSERT INTO search_history_new (creation_date, search)
+SELECT MAX(creation_date) AS creation_date, search
+FROM search_history
+WHERE search IS NOT NULL
+GROUP BY search;
+
+DROP TABLE search_history;
+
+ALTER TABLE search_history_new RENAME TO search_history;
+
+CREATE UNIQUE INDEX index_search_history_unique_search ON search_history (search);
+
+-- ============================================================
+-- Part 1: Recreate playlist_stream_join table
+-- ============================================================
+
+-- Create a new version of the playlist_stream_join table with the desired schema.
+-- The name must be different from the existing table.
+CREATE TABLE playlist_stream_join_new (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    playlist_id INTEGER NOT NULL,
+    stream_id INTEGER NOT NULL,
+    join_index INTEGER NOT NULL,
+    FOREIGN KEY(playlist_id) REFERENCES playlists(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY(stream_id) REFERENCES streams(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+);
+
+-- Copy all data from the old table to the new one.
+-- The `id` column will be auto-generated.
+INSERT INTO playlist_stream_join_new (playlist_id, stream_id, join_index)
+SELECT playlist_id, stream_id, join_index FROM playlist_stream_join;
+
+-- Drop the old table.
+DROP TABLE playlist_stream_join;
+
+-- Rename the new table to the original name.
+ALTER TABLE playlist_stream_join_new RENAME TO playlist_stream_join;
+CREATE UNIQUE INDEX index_playlist_stream_join_playlist_id_join_index ON playlist_stream_join (playlist_id, join_index);
+CREATE INDEX index_playlist_stream_join_stream_id ON playlist_stream_join (stream_id);
+
+-- ============================================================
+-- Part 2: Recreate streams table with consolidated data and dropped columns
+-- ============================================================
+
+-- Create new streams table without the columns to be dropped and with new columns
+CREATE TABLE streams_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id INTEGER NOT NULL,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    stream_type TEXT NOT NULL,
+    view_count INTEGER,
+    duration INTEGER NOT NULL,
+    uploader TEXT NOT NULL,
+    uploader_url TEXT,
+    thumbnail_url TEXT,
+    upload_date INTEGER,
+    last_access_date INTEGER,
+    repeat_count INTEGER NOT NULL DEFAULT 0,
+    progress_time INTEGER NOT NULL DEFAULT 0
+);
+
+-- Copy data from old streams table (excluding dropped columns)
+INSERT INTO streams_new (uid, service_id, url, title, stream_type, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date)
+SELECT uid, service_id, url, title, stream_type, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date
+FROM streams;
+
+-- Clean up empty strings and invalid values
+UPDATE streams_new SET uploader_url = NULL WHERE uploader_url = '';
+UPDATE streams_new SET view_count = NULL WHERE view_count = -1;
+
+-- Migrate data from stream_history (keeping only the latest access for each stream)
+UPDATE streams_new
+SET last_access_date = (
+    SELECT MAX(access_date)
+    FROM stream_history
+    WHERE stream_history.stream_id = streams_new.uid
+),
+repeat_count = (
+    SELECT repeat_count
+    FROM stream_history
+    WHERE stream_history.stream_id = streams_new.uid
+    AND stream_history.access_date = (
+        SELECT MAX(access_date)
+        FROM stream_history sh2
+        WHERE sh2.stream_id = streams_new.uid
+    )
+)
+WHERE EXISTS (
+    SELECT 1
+    FROM stream_history
+    WHERE stream_history.stream_id = streams_new.uid
+);
+
+-- Migrate data from stream_state
+UPDATE streams_new
+SET progress_time = (
+    SELECT progress_time
+    FROM stream_state
+    WHERE stream_state.stream_id = streams_new.uid
+)
+WHERE EXISTS (
+    SELECT 1
+    FROM stream_state
+    WHERE stream_state.stream_id = streams_new.uid
+);
+
+ALTER TABLE playlists ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE feed_group ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0;
+
+-- Drop the old tables
+DROP TABLE stream_history;
+DROP TABLE stream_state;
+DROP TABLE streams;
+
+-- Rename the new table to the original name
+ALTER TABLE streams_new RENAME TO streams;
+
+-- Recreate indexes for streams table
+CREATE UNIQUE INDEX index_streams_service_id_url ON streams (service_id, url);
+CREATE INDEX index_streams_last_access_date ON streams (last_access_date);
+
+-- ============================================================
+-- Part 3: Create error_log table
+-- ============================================================
+
+CREATE TABLE error_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    stacktrace TEXT NOT NULL,
+    request TEXT,
+    task TEXT NOT NULL,
+    error_code TEXT NOT NULL
+);
+
+CREATE INDEX index_error_log_timestamp ON error_log (timestamp DESC);

@@ -1,0 +1,508 @@
+-- AppDatabase.sq
+
+-- =================================================================
+-- Tables
+-- =================================================================
+
+CREATE TABLE subscriptions (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id TEXT NOT NULL,
+    url TEXT,
+    name TEXT,
+    avatar_url TEXT,
+    subscriber_count INTEGER,
+    description TEXT,
+    notification_mode INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE search_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    creation_date INTEGER,
+    search TEXT NOT NULL
+);
+
+CREATE TABLE streams (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id TEXT NOT NULL,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    stream_type TEXT NOT NULL,
+    view_count INTEGER,
+    duration INTEGER NOT NULL,
+    uploader TEXT NOT NULL,
+    uploader_url TEXT,
+    thumbnail_url TEXT,
+    upload_date INTEGER,
+    last_access_date INTEGER,
+    repeat_count INTEGER NOT NULL DEFAULT 0,
+    progress_time INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE playlists (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT,
+    thumbnail_url TEXT,
+    display_index INTEGER NOT NULL DEFAULT 0,
+    is_pinned INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE playlist_stream_join (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    playlist_id INTEGER NOT NULL,
+    stream_id INTEGER NOT NULL,
+    join_index INTEGER NOT NULL,
+    FOREIGN KEY(playlist_id) REFERENCES playlists(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY(stream_id) REFERENCES streams(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE remote_playlists (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id TEXT NOT NULL,
+    name TEXT,
+    url TEXT,
+    thumbnail_url TEXT,
+    uploader TEXT,
+    display_index INTEGER NOT NULL DEFAULT 0,
+    stream_count INTEGER
+);
+
+CREATE TABLE feed (
+    stream_id INTEGER NOT NULL,
+    subscription_id INTEGER NOT NULL,
+    PRIMARY KEY(stream_id, subscription_id),
+    FOREIGN KEY(stream_id) REFERENCES streams(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY(subscription_id) REFERENCES subscriptions(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE feed_group (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT NOT NULL,
+    icon_id INTEGER NOT NULL,
+    sort_order INTEGER NOT NULL ,
+    is_pinned INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE feed_group_subscription_join (
+    group_id INTEGER NOT NULL,
+    subscription_id INTEGER NOT NULL,
+    PRIMARY KEY(group_id, subscription_id),
+    FOREIGN KEY(group_id) REFERENCES feed_group(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY(subscription_id) REFERENCES subscriptions(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE feed_last_updated (
+    subscription_id INTEGER NOT NULL,
+    last_updated INTEGER,
+    PRIMARY KEY(subscription_id),
+    FOREIGN KEY(subscription_id) REFERENCES subscriptions(uid) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE error_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    stacktrace TEXT NOT NULL,
+    request TEXT,
+    task TEXT NOT NULL,
+    error_code TEXT NOT NULL
+);
+
+
+-- =================================================================
+-- Indexes
+-- =================================================================
+
+CREATE UNIQUE INDEX index_subscriptions_service_id_url ON subscriptions (service_id, url);
+
+CREATE INDEX index_search_history_search ON search_history (search);
+
+CREATE UNIQUE INDEX index_streams_service_id_url ON streams (service_id, url);
+
+CREATE INDEX index_streams_last_access_date ON streams (last_access_date);
+
+CREATE UNIQUE INDEX index_playlist_stream_join_playlist_id_join_index ON playlist_stream_join (playlist_id, join_index);
+
+CREATE INDEX index_playlist_stream_join_stream_id ON playlist_stream_join (stream_id);
+
+CREATE INDEX index_feed_subscription_id ON feed (subscription_id);
+
+CREATE INDEX index_feed_group_sort_order ON feed_group (sort_order);
+
+CREATE INDEX index_feed_group_subscription_join_subscription_id ON feed_group_subscription_join (subscription_id);
+
+CREATE INDEX index_playlists_name ON playlists (name);
+
+CREATE INDEX index_remote_playlists_name ON remote_playlists (name);
+
+CREATE UNIQUE INDEX index_remote_playlists_service_id_url ON remote_playlists (service_id, url);
+
+CREATE UNIQUE INDEX index_search_history_unique_search ON search_history(search);
+
+CREATE INDEX index_error_log_timestamp ON error_log (timestamp DESC);
+
+
+-- =================================================================
+-- Queries
+-- =================================================================
+
+-- Subscription queries
+selectAllSubscriptions:
+SELECT * FROM subscriptions ORDER BY name;
+
+insertSubscription:
+INSERT INTO subscriptions (service_id, url, name, avatar_url, subscriber_count, description)
+VALUES (?, ?, ?, ?, ?, NULL);
+
+deleteSubscription:
+DELETE FROM subscriptions WHERE url = ?;
+
+updateSubscription:
+UPDATE subscriptions
+SET
+    name = ?,
+    avatar_url = ?,
+    subscriber_count = ?
+WHERE url = ?;
+
+updateSubscriptionNotificationMode:
+UPDATE subscriptions
+SET notification_mode = ?
+WHERE url = ?;
+
+-- Stream queries
+selectStreamsByPlaylist:
+SELECT s.*, psj.id AS join_id
+FROM streams s
+INNER JOIN playlist_stream_join psj ON s.uid = psj.stream_id
+WHERE psj.playlist_id = ?
+ORDER BY psj.join_index;
+
+insertStream:
+INSERT INTO streams (service_id, url, title, stream_type, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateStream:
+UPDATE streams
+SET
+    service_id = ?,
+    title = ?,
+    stream_type = ?,
+    view_count = ?,
+    duration = ?,
+    uploader = ?,
+    uploader_url = ?,
+    thumbnail_url = ?,
+    upload_date = ?
+WHERE url = ?;
+
+selectStreamByUrl:
+SELECT * FROM streams WHERE url = ?;
+
+-- Stream history queries (now integrated into streams)
+updateStreamHistory:
+UPDATE streams
+SET last_access_date = ?,
+    repeat_count = repeat_count + 1
+WHERE url = ?;
+
+selectStreamHistoryItems:
+SELECT * FROM streams
+WHERE last_access_date IS NOT NULL
+ORDER BY last_access_date DESC;
+
+deleteStreamHistory:
+UPDATE streams
+SET last_access_date = NULL,
+    repeat_count = 0
+WHERE url = ?;
+
+-- Stream state queries (now integrated into streams)
+updateStreamProgress:
+UPDATE streams
+SET progress_time = ?
+WHERE url = ?;
+
+selectStreamProgress:
+SELECT progress_time FROM streams WHERE url = ?;
+
+-- Playlist queries
+selectAllPlaylists:
+SELECT * FROM playlists ORDER BY display_index;
+
+selectAllPlaylistsCombined:
+SELECT
+    uid,
+    name,
+    thumbnail_url,
+    display_index,
+    is_pinned,
+    'local' AS playlist_type,
+    NULL AS service_id,
+    NULL AS uploader,
+    NULL AS stream_count,
+    NULL AS url
+FROM playlists
+UNION ALL
+SELECT
+    uid,
+    name,
+    thumbnail_url,
+    display_index,
+    0 AS is_pinned,
+    'remote' AS playlist_type,
+    service_id,
+    uploader,
+    stream_count,
+    url
+FROM remote_playlists
+ORDER BY display_index;
+
+insertPlaylist:
+INSERT INTO playlists (name, thumbnail_url, display_index, is_pinned)
+VALUES (?, ?, ?, ?);
+
+incrementAllPlaylistDisplayIndexes:
+UPDATE playlists SET display_index = display_index + 1;
+
+deletePlaylist:
+DELETE FROM playlists WHERE uid = ?;
+
+updatePlaylistName:
+UPDATE playlists
+SET name = ?
+WHERE uid = ?;
+
+updatePlaylistThumbnail:
+UPDATE playlists
+SET thumbnail_url = ?
+WHERE uid = ?;
+
+updatePlaylistPinnedState:
+UPDATE playlists
+SET is_pinned = ?
+WHERE uid = ?;
+
+selectPinnedPlaylists:
+SELECT * FROM playlists
+WHERE is_pinned = 1
+ORDER BY display_index;
+
+updatePlaylistDisplayIndex:
+UPDATE playlists
+SET display_index = ?
+WHERE uid = ?;
+
+updateRemotePlaylistDisplayIndex:
+UPDATE remote_playlists
+SET display_index = ?
+WHERE uid = ?;
+
+-- Playlist stream join queries
+insertStreamAtEndOfPlaylist:
+INSERT INTO playlist_stream_join (playlist_id, stream_id, join_index)
+VALUES (
+    ?1, -- playlist_id
+    ?2, -- stream_id
+    (SELECT COALESCE(MAX(join_index), -1) + 1 FROM playlist_stream_join WHERE playlist_id = ?1)
+);
+
+deleteStreamFromPlaylistById:
+DELETE FROM playlist_stream_join WHERE id = ?;
+
+-- Used to re-order the playlist after a drag-and-drop operation.
+updatePlaylistStreamOrder:
+UPDATE playlist_stream_join SET join_index = ? WHERE id = ?;
+
+-- Search history queries
+insertSearchHistory:
+INSERT INTO search_history (creation_date, search)
+VALUES (?, ?);
+
+selectSearchHistory:
+SELECT * FROM search_history ORDER BY creation_date DESC;
+
+selectSearchHistoryBySearchPattern:
+SELECT * FROM search_history
+WHERE search LIKE '%' || ? || '%'
+ORDER BY creation_date DESC
+LIMIT 5;
+
+deleteSearchHistory:
+DELETE FROM search_history WHERE id = ?;
+
+updateSearchHistoryDate:
+UPDATE search_history
+SET creation_date = ?
+WHERE search = ?;
+
+selectSearchHistoryBySearch:
+SELECT * FROM search_history WHERE search = ? LIMIT 1;
+-- Feed queries
+selectFeedStreams:
+SELECT s.* FROM streams s
+INNER JOIN feed f ON s.uid = f.stream_id
+INNER JOIN subscriptions sub ON f.subscription_id = sub.uid
+ORDER BY s.upload_date DESC;
+
+insertFeedStream:
+INSERT OR IGNORE INTO feed (stream_id, subscription_id)
+VALUES (?, ?);
+
+deleteFeedStreamsOlderThan:
+DELETE FROM feed
+WHERE stream_id IN (
+    SELECT s.uid FROM streams s
+    INNER JOIN feed f ON s.uid = f.stream_id
+    WHERE s.upload_date IS NOT NULL
+    AND s.upload_date < ?
+);
+
+-- Remote playlist queries
+selectAllRemotePlaylists:
+SELECT * FROM remote_playlists ORDER BY display_index;
+
+insertRemotePlaylist:
+INSERT INTO remote_playlists (service_id, name, url, thumbnail_url, uploader, display_index, stream_count)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+deleteRemotePlaylist:
+DELETE FROM remote_playlists WHERE uid = ?;
+
+-- Database verification queries
+selectSubscriptionsCount:
+SELECT COUNT(*) FROM subscriptions;
+
+selectSearchHistoryCount:
+SELECT COUNT(*) FROM search_history;
+
+selectStreamsCount:
+SELECT COUNT(*) FROM streams;
+
+selectPlaylistsCount:
+SELECT COUNT(*) FROM playlists;
+
+selectPlaylistStreamJoinCount:
+SELECT COUNT(*) FROM playlist_stream_join;
+
+selectRemotePlaylistsCount:
+SELECT COUNT(*) FROM remote_playlists;
+
+selectFeedCount:
+SELECT COUNT(*) FROM feed;
+
+selectFeedGroupCount:
+SELECT COUNT(*) FROM feed_group;
+
+selectFeedGroupSubscriptionJoinCount:
+SELECT COUNT(*) FROM feed_group_subscription_join;
+
+selectFeedLastUpdatedCount:
+SELECT COUNT(*) FROM feed_last_updated;
+
+-- 获取所有订阅中最早的更新时间
+selectEarliestLastUpdated:
+SELECT MIN(last_updated)
+FROM feed_last_updated;
+
+-- 获取特定 feed group 中最早的更新时间
+selectEarliestLastUpdatedByFeedGroup:
+SELECT MIN(flu.last_updated)
+FROM feed_last_updated flu
+INNER JOIN feed_group_subscription_join fgsj ON flu.subscription_id = fgsj.subscription_id
+WHERE fgsj.group_id = ?;
+
+
+-- Feed group queries
+selectAllFeedGroups:
+SELECT * FROM feed_group ORDER BY sort_order;
+
+insertFeedGroup:
+INSERT INTO feed_group (name, icon_id, sort_order, is_pinned)
+VALUES (?, ?, ?, 0);
+
+updateFeedGroupPinnedState:
+UPDATE feed_group
+SET is_pinned = ?
+WHERE uid = ?;
+
+selectPinnedFeedGroups:
+SELECT * FROM feed_group
+WHERE is_pinned = 1
+ORDER BY sort_order;
+
+updateFeedGroupName:
+UPDATE feed_group
+SET name = ?
+WHERE uid = ?;
+
+deleteFeedGroup:
+DELETE FROM feed_group WHERE uid = ?;
+
+-- Feed group subscription join queries
+insertFeedGroupSubscriptionJoin:
+INSERT OR IGNORE INTO feed_group_subscription_join (group_id, subscription_id)
+VALUES (?, ?);
+
+insertFeedGroupSubscription:
+INSERT OR IGNORE INTO feed_group_subscription_join (group_id, subscription_id)
+VALUES (?, ?);
+
+deleteFeedGroupSubscription:
+DELETE FROM feed_group_subscription_join
+WHERE group_id = ? AND subscription_id = ?;
+
+selectFeedGroupsBySubscription:
+SELECT * FROM feed_group_subscription_join
+WHERE subscription_id = ?;
+
+selectSubscriptionsByFeedGroup:
+SELECT s.* FROM subscriptions s
+INNER JOIN feed_group_subscription_join fgsj ON s.uid = fgsj.subscription_id
+WHERE fgsj.group_id = ?;
+
+selectSubscriptionsByFeedGroupWithThreshold:
+SELECT s.* FROM subscriptions s
+INNER JOIN feed_group_subscription_join fgsj ON s.uid = fgsj.subscription_id
+LEFT JOIN feed_last_updated flu ON s.uid = flu.subscription_id
+WHERE fgsj.group_id = ?
+AND (flu.last_updated IS NULL OR (? - flu.last_updated) > ? * 1000);
+
+selectAllSubscriptionsWithThreshold:
+SELECT s.* FROM subscriptions s
+LEFT JOIN feed_last_updated flu ON s.uid = flu.subscription_id
+WHERE flu.last_updated IS NULL OR (? - flu.last_updated) > ? * 1000;
+
+-- Feed group stream queries
+selectFeedStreamsByGroup:
+SELECT s.*
+FROM streams s
+INNER JOIN feed f ON s.uid = f.stream_id
+INNER JOIN feed_group_subscription_join fgsj ON f.subscription_id = fgsj.subscription_id
+WHERE fgsj.group_id = ?
+ORDER BY s.upload_date DESC;
+
+
+-- Feed last updated queries
+insertOrUpdateFeedLastUpdated:
+INSERT OR REPLACE INTO feed_last_updated (subscription_id, last_updated)
+VALUES (?, ?);
+
+selectFeedLastUpdated:
+SELECT * FROM feed_last_updated WHERE subscription_id = ?;
+
+-- Error log queries
+insertErrorLog:
+INSERT INTO error_log (timestamp, stacktrace, request, task, error_code)
+VALUES (?, ?, ?, ?, ?);
+
+deleteErrorLog:
+DELETE FROM error_log WHERE id = ?;
+
+selectAllErrorLogs:
+SELECT * FROM error_log ORDER BY timestamp DESC;
+
+selectErrorLogById:
+SELECT * FROM error_log WHERE id = ?;
+
+-- Utility queries
+lastInsertRowId:
+SELECT last_insert_rowid();

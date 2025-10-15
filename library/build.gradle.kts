@@ -71,3 +71,13 @@ kotlin {
 multiplatformResources {
     resourcesPackage.set("project.pipepipe.app")
 }
+
+
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("project.pipepipe.database")
+            version = 901
+        }
+    }
+}
