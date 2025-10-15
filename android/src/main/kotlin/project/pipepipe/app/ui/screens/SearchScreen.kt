@@ -59,8 +59,8 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.dataStore
 import project.pipepipe.app.global.StringResourceHelper
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.Utils.generateQueryUrl
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.shared.generateQueryUrl
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
 import project.pipepipe.shared.infoitem.helper.SearchFilterItem
 import project.pipepipe.shared.infoitem.helper.SearchType

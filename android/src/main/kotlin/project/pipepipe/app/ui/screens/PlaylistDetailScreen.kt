@@ -54,9 +54,9 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.shared.formatCount
+import project.pipepipe.app.Utils.formatCount
 import project.pipepipe.app.utils.formatRelativeTime
-import project.pipepipe.shared.toText
+import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.uistate.PlaylistSortMode
 import project.pipepipe.app.uistate.PlaylistType
 import project.pipepipe.app.uistate.VideoDetailPageState
@@ -603,7 +603,7 @@ fun PlaylistDetailScreen(
                                             val totalDuration = uiState.list.itemList.sumOf { it.duration ?: 0L }
                                             Text(
                                                 text = MR.strings.playlist_info_summary.desc().toString(context = context)
-                                                    .format(formatCount(uiState.playlistInfo?.streamCount), totalDuration.toText()),
+                                                    .format(formatCount(uiState.playlistInfo?.streamCount), totalDuration.toDurationString()),
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )

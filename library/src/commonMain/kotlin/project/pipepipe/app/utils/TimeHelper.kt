@@ -28,3 +28,22 @@ fun formatAbsoluteTime(
 
     return "$year/$month/$day"
 }
+
+fun Long.toDurationString(isMillis: Boolean = false): String {
+    var totalSeconds = this
+    if (isMillis) totalSeconds /= 1000
+    val days = totalSeconds / 86400
+    val hours = (totalSeconds % 86400) / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+
+    return buildString {
+        if (days > 0) {
+            append(String.format("%02d:", days))
+        }
+        if (hours > 0 || days > 0) {
+            append(String.format("%02d:", hours))
+        }
+        append(String.format("%02d:%02d", minutes, seconds))
+    }
+}

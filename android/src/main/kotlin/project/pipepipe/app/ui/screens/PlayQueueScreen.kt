@@ -41,7 +41,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import project.pipepipe.app.service.PlaybackService
 
 import project.pipepipe.app.SharedContext
-import project.pipepipe.shared.toText
+import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.ui.component.CustomTopBar
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -261,7 +261,7 @@ fun PlayQueueItem(
                 )
                 if (mediaItem.mediaMetadata.durationMs != null) {
                     Text(
-                        text = mediaItem.mediaMetadata.durationMs!!.toText(true),
+                        text = mediaItem.mediaMetadata.durationMs!!.toDurationString(true),
                         color = Color.White,
                         fontSize = 9.5.sp,
                         lineHeight = 16.sp,
@@ -385,7 +385,7 @@ fun PlayQueueFooter(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = currentPosition.toText(true),
+                    text = currentPosition.toDurationString(true),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -407,7 +407,7 @@ fun PlayQueueFooter(
 
                 if (duration > 0) {
                     Text(
-                        text = duration.toText(true),
+                        text = duration.toDurationString(true),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

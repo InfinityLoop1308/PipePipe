@@ -43,7 +43,7 @@ import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.DanmakuInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.toText
+import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.player.PlayerHelper.ResolutionInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.SubtitleInfo
@@ -212,8 +212,8 @@ fun VideoPlayer(
 
     fun showSeekOverlay(deltaMs: Long, targetMs: Long) {
         val deltaLabel = (if (deltaMs >= 0) "+" else "-") +
-                deltaMs.absoluteValue.toText(true)
-        val positionLabel = targetMs.toText(true)
+                deltaMs.absoluteValue.toDurationString(true)
+        val positionLabel = targetMs.toDurationString(true)
         swipeSeekState = SwipeSeekUiState(deltaLabel, positionLabel)
         swipeSeekDismissJob?.cancel()
         swipeSeekDismissJob = gestureScope.launch {
@@ -240,7 +240,7 @@ fun VideoPlayer(
         swipeSeekStartPosition = mediaController.currentPosition
         swipeSeekTargetPosition = swipeSeekStartPosition
         swipeSeekDismissJob?.cancel()
-        swipeSeekState = SwipeSeekUiState("+0", swipeSeekStartPosition.toText(true))
+        swipeSeekState = SwipeSeekUiState("+0", swipeSeekStartPosition.toDurationString(true))
         showVolumeOverlay = false
         showBrightnessOverlay = false
         isChangingVolume = false
@@ -261,8 +261,8 @@ fun VideoPlayer(
         val clamp = duration.takeIf { it > 0 } ?: Long.MAX_VALUE
         swipeSeekTargetPosition = (swipeSeekStartPosition + deltaMs).coerceIn(0L, clamp)
         val diff = swipeSeekTargetPosition - swipeSeekStartPosition
-        val deltaLabel = (if (diff >= 0) "+" else "-") + diff.absoluteValue.toText(true)
-        swipeSeekState = SwipeSeekUiState(deltaLabel, swipeSeekTargetPosition.toText(true))
+        val deltaLabel = (if (diff >= 0) "+" else "-") + diff.absoluteValue.toDurationString(true)
+        swipeSeekState = SwipeSeekUiState(deltaLabel, swipeSeekTargetPosition.toDurationString(true))
     }
 
     fun endSeekGesture() {

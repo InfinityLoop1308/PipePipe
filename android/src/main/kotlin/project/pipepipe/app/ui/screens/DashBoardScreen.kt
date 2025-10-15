@@ -54,7 +54,7 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import project.pipepipe.shared.infoitem.StreamType
-import project.pipepipe.shared.toText
+import project.pipepipe.app.utils.toDurationString
 import java.net.URLEncoder
 
 
@@ -246,7 +246,7 @@ private fun HistoryCard(
                 }
                 duration != null -> {
                     Text(
-                        text = duration.toText(),
+                        text = duration.toDurationString(),
                         color = Color.White,
                         fontSize = 10.sp,
                         lineHeight = 18.sp,

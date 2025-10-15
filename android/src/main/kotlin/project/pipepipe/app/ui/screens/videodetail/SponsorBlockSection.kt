@@ -24,7 +24,7 @@ import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
-import project.pipepipe.shared.toText
+import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import java.util.UUID
 
@@ -44,8 +44,8 @@ fun SponsorBlockSection(
     val viewModel = SharedContext.sharedVideoDetailViewModel
 
     val currentRange = remember(startTime.value, endTime.value) {
-        val start = startTime.value?.toText(true) ?: "00:00:00"
-        val end = endTime.value?.toText(true) ?: "00:00:00"
+        val start = startTime.value?.toDurationString(true) ?: "00:00:00"
+        val end = endTime.value?.toDurationString(true) ?: "00:00:00"
         "$start - $end"
     }
 
@@ -336,5 +336,5 @@ private fun getCategoryColor(category: SponsorBlockCategory): Color {
 }
 
 private fun formatSegmentRange(segment: SponsorBlockSegmentInfo): String {
-    return "${segment.startTime.toLong().toText(true)} - ${segment.endTime.toLong().toText(true)}"
+    return "${segment.startTime.toLong().toDurationString(true)} - ${segment.endTime.toLong().toDurationString(true)}"
 }

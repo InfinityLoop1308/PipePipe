@@ -62,7 +62,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.database.Feed_group
 import project.pipepipe.database.Subscriptions
-import project.pipepipe.shared.formatCount
+import project.pipepipe.app.Utils.formatCount
 import project.pipepipe.app.ui.viewmodel.SubscriptionsViewModel
 import java.net.URLEncoder
 

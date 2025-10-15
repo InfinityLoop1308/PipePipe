@@ -3,8 +3,8 @@ package project.pipepipe.app.helper
 import io.ktor.client.statement.*
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.extractor.utils.RequestHelper.getQueryValue
 import project.pipepipe.shared.downloader.Downloader
-import project.pipepipe.shared.getQueryValue
 import project.pipepipe.shared.infoitem.CookieInfo
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.job.ClientTask

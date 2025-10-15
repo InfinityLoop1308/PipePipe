@@ -64,7 +64,7 @@ import project.pipepipe.app.ui.component.player.PlayerHelper.ResolutionInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.SubtitleInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.toText
+import project.pipepipe.app.utils.toDurationString
 
 /**
  * Data class to hold all player control state
@@ -414,7 +414,7 @@ fun PlayerControl(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = state.currentPosition.toText(true),
+                        text = state.currentPosition.toDurationString(true),
                         color = Color.White,
                         fontSize = 14.sp
                     )
@@ -431,7 +431,7 @@ fun PlayerControl(
                     )
 
                     Text(
-                        text = state.duration.toText(true),
+                        text = state.duration.toDurationString(true),
                         color = Color.White,
                         fontSize = 14.sp
                     )

@@ -10,10 +10,9 @@ import android.os.IBinder
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.util.UnstableApi
-import dev.icerock.moko.resources.desc.StringDesc
 import dev.icerock.moko.resources.desc.desc
 import project.pipepipe.app.MR
-import project.pipepipe.shared.toText
+import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.R as AppR
 
 class SleepTimerService : Service() {
@@ -90,7 +89,7 @@ class SleepTimerService : Service() {
     }
 
     private fun buildNotification(millisUntilFinished: Long): android.app.Notification {
-        val timeText = millisUntilFinished.toText(true)
+        val timeText = millisUntilFinished.toDurationString(true)
 
         // Cancel button action
         val cancelIntent = Intent(this, SleepTimerService::class.java).apply {

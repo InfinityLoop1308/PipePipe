@@ -24,12 +24,12 @@ import project.pipepipe.shared.infoitem.StreamInfo
 
 import java.text.NumberFormat
 import java.util.*
-import project.pipepipe.shared.formatCount
 import project.pipepipe.shared.infoitem.StreamType
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.Utils.formatCount
 
 @Composable
 fun VideoTitleSection(name: String?) {

@@ -66,7 +66,7 @@ import project.pipepipe.app.MR
 import kotlinx.coroutines.launch
 import project.pipepipe.app.global.StringResourceHelper
 import project.pipepipe.app.SharedContext
-import project.pipepipe.shared.formatCount
+import project.pipepipe.app.Utils.formatCount
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.shared.infoitem.ChannelTabType
 import project.pipepipe.shared.infoitem.Info

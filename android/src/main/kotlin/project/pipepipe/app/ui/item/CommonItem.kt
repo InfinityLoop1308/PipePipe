@@ -31,13 +31,13 @@ import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.SharedContext
-import project.pipepipe.shared.formatCount
+import project.pipepipe.app.Utils.formatCount
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.shared.infoitem.StreamInfoWithCallback
-import project.pipepipe.shared.toText
+import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.app.ui.theme.supportingTextColor
@@ -301,7 +301,7 @@ private fun StreamOrPlaylistListItem(
                 )
             } else if (duration != null) {
                 Text(
-                    text = duration.toText(),
+                    text = duration.toDurationString(),
                     color = Color.White,
                     fontSize = 10.sp,
                     lineHeight = 18.sp,
