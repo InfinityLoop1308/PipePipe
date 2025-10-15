@@ -56,6 +56,13 @@
             android:exported="false"
             android:foregroundServiceType="dataSync"
             tools:node="merge" />
+        <receiver
+            android:name="project.pipepipe.app.service.FeedFailureReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="project.pipepipe.app.SHOW_FEED_FAILURES" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

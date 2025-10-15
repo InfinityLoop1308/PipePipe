@@ -1,5 +1,6 @@
 package project.pipepipe.app
 
+import android.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.content.ComponentName
 import android.content.Context
@@ -14,6 +15,7 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import dev.icerock.moko.resources.desc.desc
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -63,6 +65,7 @@ class MainActivity : ComponentActivity() {
         }, MoreExecutors.directExecutor())
 
         checkIntentForPlayQueue(intent)
+        checkIntentForFeedFailures(intent)
 
         setContent {
             val navController = rememberNavController()
@@ -135,11 +138,36 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         checkIntentForPlayQueue(intent)
+        checkIntentForFeedFailures(intent)
     }
 
     private fun checkIntentForPlayQueue(intent: Intent) {
         if (intent.getBooleanExtra("open_play_queue", false) && !SharedContext.playQueueVisibility.value) {
             SharedContext.toggleShowPlayQueueVisibility()
+        }
+    }
+
+    private fun checkIntentForFeedFailures(intent: Intent) {
+        if (intent.getBooleanExtra("show_feed_failures", false)) {
+            val failedChannels = intent.getStringArrayListExtra("failed_channels") ?: return
+
+            val message = buildString {
+                append(MR.strings.feed_update_failed_channels.desc().toString(this@MainActivity))
+                append("\n\n")
+                failedChannels.forEachIndexed { index, channel ->
+                    append("${index + 1}. $channel\n")
+                }
+            }
+
+            AlertDialog.Builder(this)
+                .setTitle(MR.strings.feed_load_error.desc().toString(this))
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+
+            // Clear the flag to avoid showing the dialog again
+            intent.removeExtra("show_feed_failures")
+            intent.removeExtra("failed_channels")
         }
     }
 

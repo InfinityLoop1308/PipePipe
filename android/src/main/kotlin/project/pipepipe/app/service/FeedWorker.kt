@@ -1,7 +1,9 @@
 package project.pipepipe.app.service
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -60,6 +62,7 @@ class FeedWorker(
             }
             var completed = 0
             var failedCount = 0
+            val failedChannels = mutableListOf<String>()
 
             subscriptions.forEach { subscription ->
                 val result = withContext(Dispatchers.IO) {
@@ -77,6 +80,7 @@ class FeedWorker(
                     )
                 } else {
                     failedCount++
+                    subscription.name?.let { failedChannels.add(it) }
                 }
 
                 completed++
@@ -96,8 +100,12 @@ class FeedWorker(
 
             DatabaseOperations.deleteFeedStreamsOlderThan(13)
 
-            // Cancel the foreground notification when work is done
-            cancelNotification()
+            // If there are failures, show persistent notification. Otherwise cancel it.
+            if (failedCount > 0) {
+                showFailureNotification(failedChannels)
+            } else {
+                cancelNotification()
+            }
 
             Result.success(workDataOf(
                 "completed" to completed,
@@ -116,7 +124,33 @@ class FeedWorker(
 
     private fun cancelNotification() {
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(FEED_NOTIFICATION_ID)
+        notificationManager.cancel(NotificationHelper.FEED_NOTIFICATION_ID)
+    }
+
+    private fun showFailureNotification(failedChannels: List<String>) {
+        val intent = Intent("project.pipepipe.app.SHOW_FEED_FAILURES").apply {
+            putStringArrayListExtra("failed_channels", ArrayList(failedChannels))
+            setPackage(applicationContext.packageName)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(applicationContext, "feed_update")
+            .setContentTitle(MR.strings.feed_load_error.desc().toString(applicationContext))
+            .setContentText(MR.strings.stream_processing_failed_count.desc().toString(applicationContext).format(failedChannels.size))
+            .setSmallIcon(AppR.drawable.ic_pipepipe)
+            .setOngoing(false)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
+
+        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NotificationHelper.FEED_FAILURE_NOTIFICATION_ID, notification)
     }
 
     private fun createForegroundInfo(
@@ -141,16 +175,12 @@ class FeedWorker(
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ForegroundInfo(
-                FEED_NOTIFICATION_ID,
+                NotificationHelper.FEED_NOTIFICATION_ID,
                 notification,
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             )
         } else {
-            ForegroundInfo(FEED_NOTIFICATION_ID, notification)
+            ForegroundInfo(NotificationHelper.FEED_NOTIFICATION_ID, notification)
         }
-    }
-
-    companion object {
-        const val FEED_NOTIFICATION_ID = 1001
     }
 }

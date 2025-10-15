@@ -9,6 +9,8 @@ import project.pipepipe.app.MR
 
 object NotificationHelper {
     const val SLEEP_TIMER_CHANNEL_ID = "sleep_timer_channel"
+    const val FEED_NOTIFICATION_ID = 1001
+    const val FEED_FAILURE_NOTIFICATION_ID = 1002
 
     fun initNotificationChannels(context: Context) {
         createFeedNotificationChannel(context)
