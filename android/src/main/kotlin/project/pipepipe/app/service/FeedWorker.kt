@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
@@ -51,6 +52,9 @@ class FeedWorker(
             }
 
             val total = subscriptions.size
+            if (total == 0) {
+                ToastManager.show(MR.strings.feed_all_subscriptions_up_to_date.desc().toString(context = applicationContext))
+            }
             var completed = 0
             var failedCount = 0
 

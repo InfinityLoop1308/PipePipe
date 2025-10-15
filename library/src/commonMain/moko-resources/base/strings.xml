@@ -339,4 +339,5 @@
     <string name="feed_update_threshold_title">Feed update threshold</string>
     <string name="feed_update_threshold_summary">Time after last update before a subscription is considered outdated — %s</string>
     <string name="feed_update_threshold_option_always_update">Always update</string>
+    <string name="feed_all_subscriptions_up_to_date">All subscriptions are up to date</string>
 </resources>

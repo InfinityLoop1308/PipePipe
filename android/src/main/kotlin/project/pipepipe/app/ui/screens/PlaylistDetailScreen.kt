@@ -87,7 +87,6 @@ fun PlaylistDetailScreen(
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var renameText by remember { mutableStateOf("") }
-    var feedLastUpdated by remember { mutableStateOf<Long?>(null) }
 
 
     val scope = rememberCoroutineScope()
@@ -106,16 +105,6 @@ fun PlaylistDetailScreen(
         viewModel.loadPlaylist(url, serviceId)
     }
 
-    LaunchedEffect(uiState.playlistType, uiState.playlistInfo) {
-        if (uiState.playlistType == PlaylistType.FEED) {
-            val feedId = url.substringAfterLast("/").substringBefore("?").toLong()
-            feedLastUpdated = if (feedId != -1L) {
-                DatabaseOperations.getEarliestLastUpdatedByFeedGroup(feedId)
-            } else {
-                DatabaseOperations.getEarliestLastUpdatedForAll()
-            }
-        }
-    }
 
     LaunchedEffect(feedWorkState) {
         when (feedWorkState) {
@@ -618,7 +607,7 @@ fun PlaylistDetailScreen(
                                     ) {
                                         Text(
                                             text = stringResource(MR.strings.feed_oldest_subscription_update).format(
-                                                feedLastUpdated?.let { formatRelativeTime(it) } ?: stringResource(MR.strings.never)),
+                                                uiState.feedLastUpdated?.let { formatRelativeTime(it) } ?: stringResource(MR.strings.never)),
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
