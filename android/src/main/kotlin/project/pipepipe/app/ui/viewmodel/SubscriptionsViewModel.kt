@@ -3,7 +3,7 @@ package project.pipepipe.app.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import project.pipepipe.shared.viewmodel.SubscriptionsViewModel
+import project.pipepipe.app.viewmodel.SubscriptionsViewModel
 
 class SubscriptionsViewModel: ViewModel() {
     private val sharedViewModel = SubscriptionsViewModel()

@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
-import project.pipepipe.shared.SharedContext
-import project.pipepipe.shared.helper.ToastManager
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 import project.pipepipe.shared.toText

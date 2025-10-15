@@ -13,7 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.list.CommentList
 

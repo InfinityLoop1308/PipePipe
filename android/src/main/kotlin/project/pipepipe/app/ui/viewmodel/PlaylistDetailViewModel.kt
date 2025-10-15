@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.uistate.PlaylistUiState
-import project.pipepipe.shared.uistate.PlaylistSortMode
-import project.pipepipe.shared.uistate.PlaylistType
-import project.pipepipe.shared.viewmodel.PlaylistDetailViewModel as SharedPlaylistDetailViewModel
+import project.pipepipe.app.uistate.PlaylistUiState
+import project.pipepipe.app.uistate.PlaylistSortMode
+import project.pipepipe.app.uistate.PlaylistType
+import project.pipepipe.app.viewmodel.PlaylistDetailViewModel as SharedPlaylistDetailViewModel
 
 class PlaylistDetailViewModel : ViewModel() {
     private val sharedViewModel: SharedPlaylistDetailViewModel = SharedPlaylistDetailViewModel()

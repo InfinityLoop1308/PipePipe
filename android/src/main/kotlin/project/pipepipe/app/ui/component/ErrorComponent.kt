@@ -14,12 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.screens.settings.copyLogToClipboard
-import project.pipepipe.shared.database.DatabaseOperations
-import project.pipepipe.shared.uistate.ErrorInfo
+import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.uistate.ErrorInfo
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable

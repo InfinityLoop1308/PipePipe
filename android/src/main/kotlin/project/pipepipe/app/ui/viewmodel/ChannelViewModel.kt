@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import project.pipepipe.shared.viewmodel.ChannelViewModel as SharedChannelViewModel
-import project.pipepipe.shared.uistate.ChannelUiState
+import project.pipepipe.app.viewmodel.ChannelViewModel as SharedChannelViewModel
+import project.pipepipe.app.uistate.ChannelUiState
 import project.pipepipe.shared.infoitem.ChannelInfo
 
 class ChannelViewModel : ViewModel() {

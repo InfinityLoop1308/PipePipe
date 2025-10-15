@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import project.pipepipe.app.settings.PreferenceItem
-import project.pipepipe.shared.helper.SettingsManager
+import project.pipepipe.app.helper.SettingsManager
 import project.pipepipe.app.ui.component.*
 
 @Composable

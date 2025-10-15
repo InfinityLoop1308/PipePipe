@@ -30,7 +30,7 @@ import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.formatCount
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.infoitem.PlaylistInfo

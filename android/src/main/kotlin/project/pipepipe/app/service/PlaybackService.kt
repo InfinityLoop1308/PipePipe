@@ -15,18 +15,17 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.*
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
 import project.pipepipe.app.mediasource.toMediaItem
-import project.pipepipe.shared.PlaybackMode
-import project.pipepipe.shared.SharedContext
-import project.pipepipe.shared.SharedContext.playbackMode
-import project.pipepipe.shared.database.DatabaseOperations
-import project.pipepipe.shared.helper.ToastManager
+import project.pipepipe.app.PlaybackMode
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.SharedContext.playbackMode
+import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.uistate.VideoDetailPageState
+import project.pipepipe.app.uistate.VideoDetailPageState
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.media3.ui.R as Media3UiR

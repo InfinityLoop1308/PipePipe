@@ -10,10 +10,10 @@ import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.MR
-import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
-import project.pipepipe.shared.job.executeJobFlow
+import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.R as AppR
 
 class FeedWorker(

@@ -21,14 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.media3.session.MediaController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import project.pipepipe.app.service.playFromStreamInfo
-import project.pipepipe.app.service.setPlaybackMode
-import project.pipepipe.shared.SharedContext
-import project.pipepipe.shared.helper.ToastManager
-import project.pipepipe.shared.uistate.VideoDetailPageState
+import project.pipepipe.app.helper.ToastManager
+import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.BottomSheetMenu
 import project.pipepipe.app.ui.component.ImageViewer
 import project.pipepipe.app.ui.component.Toast
@@ -36,8 +32,6 @@ import project.pipepipe.app.ui.navigation.NavGraph
 import project.pipepipe.app.ui.screens.PlayQueueScreen
 import project.pipepipe.app.ui.screens.videodetail.VideoDetailScreen
 import project.pipepipe.app.ui.theme.PipePipeTheme
-import project.pipepipe.shared.PlaybackMode
-import project.pipepipe.shared.infoitem.StreamInfo
 
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")

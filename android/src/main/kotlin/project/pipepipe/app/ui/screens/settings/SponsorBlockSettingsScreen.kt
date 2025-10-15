@@ -17,7 +17,7 @@ import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.MR
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.CategoryPreference
 import project.pipepipe.app.ui.component.ClickablePreference
 import project.pipepipe.app.ui.component.ColorPreference

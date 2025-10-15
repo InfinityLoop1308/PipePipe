@@ -2,7 +2,6 @@ package project.pipepipe.app.ui.component
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,8 +22,8 @@ import androidx.core.net.toUri
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import project.pipepipe.app.MR
-import project.pipepipe.shared.SharedContext
-import project.pipepipe.shared.helper.ToastManager
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ToastManager
 
 fun isSealInstalled(context: Context) = try {
     context.packageManager.getPackageInfo("com.junkfood.seal", 0)

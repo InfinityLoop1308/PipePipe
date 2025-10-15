@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import project.pipepipe.shared.infoitem.CommentInfo
 import project.pipepipe.app.ui.item.CommentItem
 import project.pipepipe.app.ui.screens.Screen
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

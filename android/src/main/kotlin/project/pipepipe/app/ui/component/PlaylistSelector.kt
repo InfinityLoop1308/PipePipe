@@ -17,8 +17,8 @@ import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
-import project.pipepipe.shared.database.DatabaseOperations
-import project.pipepipe.shared.database.DatabaseOperations.getAllLocalPlaylists
+import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations.getAllLocalPlaylists
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.app.ui.item.MediaListItem

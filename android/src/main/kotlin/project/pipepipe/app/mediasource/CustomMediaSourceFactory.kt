@@ -21,11 +21,11 @@ import androidx.media3.exoplayer.upstream.Allocator
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
 import androidx.media3.extractor.metadata.icy.IcyHeaders
 import kotlinx.coroutines.*
-import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.shared.job.SupportedJobType
-import project.pipepipe.shared.job.executeJobFlow
+import project.pipepipe.app.helper.executeJobFlow
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 

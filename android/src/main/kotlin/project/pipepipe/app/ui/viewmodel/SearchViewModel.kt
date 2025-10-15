@@ -8,13 +8,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import project.pipepipe.extractor.Router
-import project.pipepipe.extractor.services.bilibili.BilibiliService
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
 import project.pipepipe.shared.infoitem.helper.SearchFilterItem
 import project.pipepipe.shared.infoitem.helper.SearchType
-import project.pipepipe.shared.uistate.SearchUiState
-import project.pipepipe.shared.viewmodel.SearchViewModel
+import project.pipepipe.app.uistate.SearchUiState
+import project.pipepipe.app.viewmodel.SearchViewModel
 
 class SearchViewModel : ViewModel() {
     private val sharedViewModel: SearchViewModel = SearchViewModel()

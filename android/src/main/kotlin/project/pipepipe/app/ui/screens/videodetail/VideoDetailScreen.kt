@@ -66,10 +66,10 @@ import project.pipepipe.app.service.playFromStreamInfo
 
 import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.service.stopService
-import project.pipepipe.shared.PlaybackMode
-import project.pipepipe.shared.SharedContext
-import project.pipepipe.shared.database.DatabaseOperations
-import project.pipepipe.shared.uistate.VideoDetailPageState
+import project.pipepipe.app.PlaybackMode
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.ActionButtons
 import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.component.player.PlayerGestureSettings
@@ -78,9 +78,7 @@ import project.pipepipe.app.ui.component.VideoDetailSection
 import project.pipepipe.app.ui.component.player.VideoPlayer
 import project.pipepipe.app.ui.component.VideoTitleSection
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.delay
 import project.pipepipe.app.MR
-import project.pipepipe.app.MainActivity
 import kotlin.math.min
 
 @androidx.annotation.OptIn(UnstableApi::class)

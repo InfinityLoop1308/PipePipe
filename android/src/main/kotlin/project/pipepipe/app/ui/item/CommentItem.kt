@@ -19,7 +19,7 @@ import coil3.compose.AsyncImage
 import project.pipepipe.shared.infoitem.CommentInfo
 import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.app.ui.theme.supportingTextColor
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 
 @Composable
 fun CommentItem(

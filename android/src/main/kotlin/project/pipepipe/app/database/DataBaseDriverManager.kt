@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import project.pipepipe.database.AppDatabase
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 
 object DataBaseDriverManager {
     lateinit var driver: AndroidSqliteDriver

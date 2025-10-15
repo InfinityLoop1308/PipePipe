@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.MR
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.theme.supportingTextColor
 import java.util.Locale
 

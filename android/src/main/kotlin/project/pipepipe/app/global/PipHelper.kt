@@ -5,10 +5,10 @@ import androidx.media3.session.MediaController
 import project.pipepipe.app.MainActivity
 import project.pipepipe.app.service.playFromStreamInfo
 import project.pipepipe.app.service.setPlaybackMode
-import project.pipepipe.shared.PlaybackMode
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.PlaybackMode
+import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.uistate.VideoDetailPageState
+import project.pipepipe.app.uistate.VideoDetailPageState
 
 object PipHelper {
     fun enterPipMode(mediaController: MediaController, streamInfo: StreamInfo, context: Context) {

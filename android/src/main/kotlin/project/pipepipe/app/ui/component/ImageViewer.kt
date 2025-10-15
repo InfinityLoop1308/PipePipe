@@ -16,9 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -28,7 +26,7 @@ import com.github.panpf.zoomimage.rememberCoilZoomState
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 //import project.pipepipe.app.util.external_communication.ShareUtils
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 
 @Composable
 fun ImageViewer() {

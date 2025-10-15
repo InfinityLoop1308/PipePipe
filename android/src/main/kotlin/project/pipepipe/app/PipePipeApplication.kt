@@ -12,16 +12,14 @@ import project.pipepipe.extractor.Router
 import project.pipepipe.app.global.CookieManager
 import project.pipepipe.app.mediasource.MediaCacheProvider
 import project.pipepipe.app.service.NotificationHelper
-import project.pipepipe.shared.SharedContext
-import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.downloader.Downloader
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
 import project.pipepipe.shared.job.SupportedJobType
-import project.pipepipe.shared.job.executeJobFlow
-import project.pipepipe.shared.helper.SettingsManager
+import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.app.helper.SettingsManager
 import project.pipepipe.shared.state.Cache4kSessionManager
-import project.pipepipe.shared.viewmodel.VideoDetailViewModel
-import java.util.*
+import project.pipepipe.app.viewmodel.VideoDetailViewModel
 
 class PipePipeApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)

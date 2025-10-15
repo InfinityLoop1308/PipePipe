@@ -54,6 +54,8 @@ kotlin {
                 implementation("io.github.darkokoa:datetime-wheel-picker:1.1.0-alpha05-compose1.9")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
                 implementation("com.materialkolor:material-kolor:3.0.1")
+                implementation("com.fasterxml.jackson.core:jackson-core:2.20.0")
+                implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
             }
         }
         androidMain {

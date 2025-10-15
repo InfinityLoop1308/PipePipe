@@ -14,10 +14,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import project.pipepipe.database.AppDatabase
 import project.pipepipe.app.MR
-import project.pipepipe.shared.SharedContext
-import project.pipepipe.shared.database.DatabaseOperations
-import project.pipepipe.shared.helper.ToastManager
-import project.pipepipe.shared.helper.SettingsManager
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ToastManager
+import project.pipepipe.app.helper.SettingsManager
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File

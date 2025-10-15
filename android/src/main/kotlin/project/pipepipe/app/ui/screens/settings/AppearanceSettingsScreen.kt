@@ -29,7 +29,7 @@ import project.pipepipe.app.ui.component.ListPreference
 import project.pipepipe.app.ui.component.SwitchPreference
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.ui.theme.supportingTextColor
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 
 // Preset theme colors
 private val PRESET_COLORS = listOf(

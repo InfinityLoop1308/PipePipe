@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import project.pipepipe.shared.database.DatabaseOperations
-import project.pipepipe.shared.uistate.BookmarkedPlaylistUiState
-import project.pipepipe.shared.viewmodel.BookmarkedPlaylistViewModel
+import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.uistate.BookmarkedPlaylistUiState
+import project.pipepipe.app.viewmodel.BookmarkedPlaylistViewModel
 
 class BookmarkedPlaylistViewModel : ViewModel() {
     private val sharedViewModel = BookmarkedPlaylistViewModel()

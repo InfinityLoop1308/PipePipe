@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
-import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.ChannelInfo
 
 @Composable

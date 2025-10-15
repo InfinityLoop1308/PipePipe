@@ -51,15 +51,15 @@ import project.pipepipe.app.service.PlaybackService
 
 import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.MR
-import project.pipepipe.shared.PlaybackMode
-import project.pipepipe.shared.SharedContext
-import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.app.PlaybackMode
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.formatCount
 import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.shared.toText
-import project.pipepipe.shared.uistate.PlaylistSortMode
-import project.pipepipe.shared.uistate.PlaylistType
-import project.pipepipe.shared.uistate.VideoDetailPageState
+import project.pipepipe.app.uistate.PlaylistSortMode
+import project.pipepipe.app.uistate.PlaylistType
+import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.item.DisplayType
 import project.pipepipe.app.ui.item.MediaListItem

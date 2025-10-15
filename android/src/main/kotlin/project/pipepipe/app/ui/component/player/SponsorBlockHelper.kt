@@ -1,9 +1,6 @@
 package project.pipepipe.app.ui.component.player
 
-import androidx.compose.runtime.Composable
-import dev.icerock.moko.resources.compose.stringResource
-import project.pipepipe.app.MR
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 
 enum class SponsorBlockSkipMode {

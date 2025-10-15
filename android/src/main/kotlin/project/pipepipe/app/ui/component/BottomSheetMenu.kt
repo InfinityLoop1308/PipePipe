@@ -31,8 +31,8 @@ import project.pipepipe.app.service.PlaybackService
 import project.pipepipe.app.service.playFromStreamInfo
 import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.MR
-import project.pipepipe.shared.PlaybackMode
-import project.pipepipe.shared.database.DatabaseOperations
+import project.pipepipe.app.PlaybackMode
+import project.pipepipe.app.database.DatabaseOperations
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.infoitem.PlaylistInfo
@@ -41,10 +41,9 @@ import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import project.pipepipe.app.ui.screens.Screen.Channel
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.GlobalScope
-import project.pipepipe.app.global.PipHelper
-import project.pipepipe.shared.SharedContext
+import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.ChannelInfo
-import project.pipepipe.shared.uistate.VideoDetailPageState
+import project.pipepipe.app.uistate.VideoDetailPageState
 
 @OptIn(UnstableApi::class)
 @Composable
