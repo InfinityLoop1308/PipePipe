@@ -40,7 +40,7 @@ fun SettingsScreen(
 //            SettingsSection(Icons.Default.History, "History and cache"),
 //            SettingsSection(Icons.Default.Public, "Content"),
 //            SettingsSection(Icons.Default.Person, "Account"),
-//            SettingsSection(Icons.Default.Notifications, "Feed"),
+            SettingsSection(Icons.Default.Notifications, MR.strings.settings_category_feed_title.desc().toString(context = context), Screen.FeedSettings),
 //            SettingsSection(Icons.Default.SystemUpdateAlt, "Updates"),
             SettingsSection(Icons.Default.Save, MR.strings.settings_section_import_export.desc().toString(context = context), Screen.ImportExportSettings),
             SettingsSection(Icons.Default.FilterAlt, MR.strings.settings_section_filter.desc().toString(context = context), Screen.FilterSettings),

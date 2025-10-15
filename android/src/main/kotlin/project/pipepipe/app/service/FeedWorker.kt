@@ -10,6 +10,7 @@ import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
@@ -30,10 +31,23 @@ class FeedWorker(
         val group = inputData.getLong("groupId", -1)
 
         return try {
-            val subscriptions = if (group == -1L){
-                DatabaseOperations.getAllSubscriptions()
+            // Get feed update threshold setting (in seconds)
+            val thresholdSeconds = SharedContext.settingsManager.getString("feed_update_threshold_key", "300").toLongOrNull() ?: 300L
+
+            val subscriptions = if (thresholdSeconds == 0L) {
+                // Threshold is 0, always update all subscriptions
+                if (group == -1L) {
+                    DatabaseOperations.getAllSubscriptions()
+                } else {
+                    DatabaseOperations.getSubscriptionsByFeedGroup(group)
+                }
             } else {
-                DatabaseOperations.getSubscriptionsByFeedGroup(group)
+                // Use threshold to filter subscriptions
+                if (group == -1L) {
+                    DatabaseOperations.getAllSubscriptionsWithThreshold(thresholdSeconds)
+                } else {
+                    DatabaseOperations.getSubscriptionsByFeedGroupWithThreshold(group, thresholdSeconds)
+                }
             }
 
             val total = subscriptions.size

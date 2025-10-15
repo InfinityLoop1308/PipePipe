@@ -334,6 +334,16 @@ object DatabaseOperations {
         database.appDatabaseQueries.selectSubscriptionsByFeedGroup(groupId).executeAsList()
     }
 
+    suspend fun getSubscriptionsByFeedGroupWithThreshold(groupId: Long, thresholdSeconds: Long) = withContext(Dispatchers.IO) {
+        val currentTime = System.currentTimeMillis()
+        database.appDatabaseQueries.selectSubscriptionsByFeedGroupWithThreshold(groupId, currentTime, thresholdSeconds).executeAsList()
+    }
+
+    suspend fun getAllSubscriptionsWithThreshold(thresholdSeconds: Long) = withContext(Dispatchers.IO) {
+        val currentTime = System.currentTimeMillis()
+        database.appDatabaseQueries.selectAllSubscriptionsWithThreshold(currentTime, thresholdSeconds).executeAsList()
+    }
+
     suspend fun insertOrUpdateSubscription(
         channelInfo: ChannelInfo,
         updateExistedOnly: Boolean = false
