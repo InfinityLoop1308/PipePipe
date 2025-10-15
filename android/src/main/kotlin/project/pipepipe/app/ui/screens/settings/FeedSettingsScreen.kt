@@ -19,9 +19,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.compose.ui.platform.LocalContext
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
+import project.pipepipe.app.service.StreamsNotificationManager
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.settings.PreferenceItem
@@ -37,6 +39,7 @@ fun FeedSettingsScreen(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     val alwaysUpdate = stringResource(MR.strings.feed_update_threshold_option_always_update)
 
     val feedUpdateThresholdEntries = remember(alwaysUpdate) {
@@ -168,6 +171,8 @@ fun FeedSettingsScreen(
             defaultValue = false,
             onValueChange = { value ->
                 enableStreamsNotifications = value
+                // Reschedule periodic work when setting changes
+                StreamsNotificationManager.schedulePeriodicWork(context)
             }
         ),
         PreferenceItem.ListPref(
@@ -180,6 +185,8 @@ fun FeedSettingsScreen(
             enabled = enableStreamsNotifications,
             onValueChange = { value ->
                 streamsNotificationsIntervalValue = value
+                // Reschedule periodic work when interval changes
+                StreamsNotificationManager.schedulePeriodicWork(context)
             }
         ),
         PreferenceItem.ClickablePref(

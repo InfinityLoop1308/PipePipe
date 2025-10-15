@@ -397,6 +397,10 @@ object DatabaseOperations {
         database.appDatabaseQueries.selectAllSubscriptions().executeAsList()
     }
 
+    suspend fun getSubscriptionsByNotificationMode(notificationMode: Long) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.selectSubscriptionsByNotificationMode(notificationMode).executeAsList()
+    }
+
     suspend fun deleteSubscription(url: String) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.deleteSubscription(url)
     }

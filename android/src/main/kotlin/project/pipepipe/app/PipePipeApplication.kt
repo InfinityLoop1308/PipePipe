@@ -12,6 +12,7 @@ import project.pipepipe.extractor.Router
 import project.pipepipe.app.global.CookieManager
 import project.pipepipe.app.mediasource.MediaCacheProvider
 import project.pipepipe.app.service.NotificationHelper
+import project.pipepipe.app.service.StreamsNotificationManager
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.downloader.Downloader
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
@@ -52,6 +53,9 @@ class PipePipeApplication : Application() {
 
         // Initialize Database
         DataBaseDriverManager.initialize(this)
+
+        // Schedule streams notification periodic work
+        StreamsNotificationManager.schedulePeriodicWork(this)
 
         // Async initialization
         applicationScope.launch {

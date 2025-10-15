@@ -475,6 +475,11 @@ SELECT s.* FROM subscriptions s
 LEFT JOIN feed_last_updated flu ON s.uid = flu.subscription_id
 WHERE flu.last_updated IS NULL OR (? - flu.last_updated) > ? * 1000;
 
+selectSubscriptionsByNotificationMode:
+SELECT * FROM subscriptions
+WHERE notification_mode = ?
+ORDER BY name;
+
 -- Feed group stream queries
 selectFeedStreamsByGroup:
 SELECT s.*

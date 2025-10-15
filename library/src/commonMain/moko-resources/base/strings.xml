@@ -347,4 +347,11 @@
     <string name="streams_notifications_interval_title">Checking frequency</string>
     <string name="channel_enable_notifications">Enable notifications</string>
     <string name="channel_disable_notifications">Disable notifications</string>
+    <string name="streams_notification_channel_title">New Streams</string>
+    <string name="streams_notification_channel_description">Notifications for new streams from subscribed channels</string>
+    <string name="streams_notification_new_content">%d new streams</string>
+    <string name="streams_notification_count_new">%d new</string>
+    <string name="streams_notification_multiple_channels">New streams from subscriptions</string>
+    <string name="streams_notification_multiple_content">%d channels have %d new streams</string>
+    <string name="streams_notification_error">Failed to check for new streams</string>
 </resources>
