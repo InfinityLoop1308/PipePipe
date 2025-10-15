@@ -276,7 +276,7 @@
 <string name="error_component_title">Hoppla!</string>
 <string name="backup_import_completed">Import abgeschlossen</string>
 <string name="subscribers">Abonnenten</string>
-<string name="playlist_empty_no_streams">Keine Streams in dieser Playlist gefunden</string>
+<string name="playlist_empty_no_streams">Keine Videos in dieser Wiedergabeliste gefunden</string>
 <string name="no_error_logs">Keine Fehlerprotokolle</string>
 <string name="playlist_action_more">Mehr</string>
 <string name="collapse">Einklappen</string>
@@ -335,11 +335,16 @@
 <string name="feed_update_threshold_summary">Zeit nach der letzten Aktualisierung, bevor ein Abonnement als veraltet gilt — %s</string>
 <string name="feed_update_threshold_option_always_update">Immer aktualisieren</string>
 <string name="feed_load_error">Fehler beim Laden des Feeds</string>
-<string name="enable_streams_notifications_title">Benachrichtigungen über neue Streams</string>
-<string name="enable_streams_notifications_summary">Benachrichtigen Sie über neue Streams aus Abonnements</string>
+<string name="enable_streams_notifications_title">Benachrichtigungen über neue Videos</string>
+<string name="enable_streams_notifications_summary">Über neue Videos von Abonnements benachrichtigen</string>
 <string name="streams_notifications_interval_title">Prüfungsfrequenz</string>
 <string name="feed_all_subscriptions_up_to_date">Alle Abonnements sind auf dem neuesten Stand</string>
 <string name="feed_update_failed_channels">Die folgenden Kanäle konnten nicht aktualisiert werden:</string>
 <string name="channel_enable_notifications">Benachrichtigungen aktivieren</string>
 <string name="channel_disable_notifications">Benachrichtigungen deaktivieren</string>
+<string name="streams_notification_new_content">%d neue Videos</string>
+<string name="streams_notification_count_new">%d neu</string>
+<string name="streams_notification_multiple_channels">Neue Videos von Abonnements</string>
+<string name="streams_notification_multiple_content">%d Kanäle haben %d neue Videos</string>
+<string name="streams_notification_error">Fehler beim Überprüfen auf neue Videos</string>
 </resources>

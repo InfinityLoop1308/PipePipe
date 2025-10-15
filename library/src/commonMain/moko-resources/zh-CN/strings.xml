@@ -276,7 +276,7 @@
 <string name="error_component_title">糟糕！</string>
 <string name="backup_import_completed">导入完成</string>
 <string name="subscribers">订阅者</string>
-<string name="playlist_empty_no_streams">此播放列表中未找到任何流</string>
+<string name="playlist_empty_no_streams">此播放列表中没有找到视频</string>
 <string name="no_error_logs">无错误日志</string>
 <string name="playlist_action_more">更多</string>
 <string name="collapse">折叠</string>
@@ -335,11 +335,16 @@
 <string name="feed_update_threshold_summary">在订阅被视为过时之前最后一次更新之后的时间 — %s</string>
 <string name="feed_update_threshold_option_always_update">总是更新</string>
 <string name="feed_load_error">加载推送出错</string>
-<string name="enable_streams_notifications_title">新串流通知</string>
-<string name="enable_streams_notifications_summary">订阅新串流通知</string>
+<string name="enable_streams_notifications_title">新视频通知</string>
+<string name="enable_streams_notifications_summary">订阅的新视频通知</string>
 <string name="streams_notifications_interval_title">检查频率</string>
 <string name="feed_all_subscriptions_up_to_date">所有订阅都已是最新状态</string>
 <string name="feed_update_failed_channels">以下频道更新失败：</string>
 <string name="channel_enable_notifications">启用通知</string>
 <string name="channel_disable_notifications">禁用通知</string>
+<string name="streams_notification_new_content">%d 个新视频</string>
+<string name="streams_notification_count_new">%d 个新内容</string>
+<string name="streams_notification_multiple_channels">订阅中有新视频</string>
+<string name="streams_notification_multiple_content">%d 个频道有 %d 个新视频</string>
+<string name="streams_notification_error">检查新视频失败</string>
 </resources>

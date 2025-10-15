@@ -76,7 +76,7 @@
 <string name="playlist_menu_pin">Pin to Top</string>
 <string name="playlist_menu_unpin">Unpin</string>
 <string name="playlist_empty_search_result">No results found for \"%s\"</string>
-<string name="playlist_empty_no_streams">No streams found in this playlist</string>
+<string name="playlist_empty_no_streams">No videos found in this playlist</string>
 <string name="playlist_info_summary">%s videos • %s</string>
 <string name="dialog_confirm">Confirm</string>
 <string name="delete">Delete</string>
@@ -342,16 +342,14 @@
     <string name="feed_all_subscriptions_up_to_date">All subscriptions are up to date</string>
     <string name="feed_update_failed_channels">The following channels failed to update:</string>
     <string name="feed_load_error">Error loading feed</string>
-    <string name="enable_streams_notifications_title">New streams notifications</string>
-    <string name="enable_streams_notifications_summary">Notify about new streams from subscriptions</string>
+    <string name="enable_streams_notifications_title">New videos notifications</string>
+    <string name="enable_streams_notifications_summary">Notify about new videos from subscriptions</string>
     <string name="streams_notifications_interval_title">Checking frequency</string>
     <string name="channel_enable_notifications">Enable notifications</string>
     <string name="channel_disable_notifications">Disable notifications</string>
-    <string name="streams_notification_channel_title">New Streams</string>
-    <string name="streams_notification_channel_description">Notifications for new streams from subscribed channels</string>
-    <string name="streams_notification_new_content">%d new streams</string>
+    <string name="streams_notification_new_content">%d new videos</string>
     <string name="streams_notification_count_new">%d new</string>
-    <string name="streams_notification_multiple_channels">New streams from subscriptions</string>
-    <string name="streams_notification_multiple_content">%d channels have %d new streams</string>
-    <string name="streams_notification_error">Failed to check for new streams</string>
+    <string name="streams_notification_multiple_channels">New videos from subscriptions</string>
+    <string name="streams_notification_multiple_content">%d channels have %d new videos</string>
+    <string name="streams_notification_error">Failed to check for new videos</string>
 </resources>

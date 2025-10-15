@@ -47,10 +47,10 @@ object NotificationHelper {
     private fun createStreamsNotificationChannel(context: Context) {
         val channel = NotificationChannel(
             "streams_notifications",
-            MR.strings.streams_notification_channel_title.desc().toString(context = context),
+            MR.strings.enable_streams_notifications_title.desc().toString(context = context),
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
-            description = MR.strings.streams_notification_channel_description.desc().toString(context = context)
+            description = MR.strings.enable_streams_notifications_summary.desc().toString(context = context)
             setShowBadge(true)
         }
         val manager = context.getSystemService(NotificationManager::class.java)

@@ -276,7 +276,7 @@
 <string name="error_component_title">values-it</string>
 <string name="backup_import_completed">values-it</string>
 <string name="subscribers">values-it</string>
-<string name="playlist_empty_no_streams">values-it</string>
+<string name="playlist_empty_no_streams">Nessun video trovato in questa playlist</string>
 <string name="no_error_logs">values-it</string>
 <string name="playlist_action_more">values-it</string>
 <string name="collapse">values-it</string>
@@ -335,11 +335,16 @@
 <string name="feed_update_threshold_summary">Tempo dall\'ultimo aggiornamento prima che un\'abbonamento sia considerato obsoleto — %s</string>
 <string name="feed_update_threshold_option_always_update">Aggiorna sempre</string>
 <string name="feed_load_error">Errore nel caricamento del feed</string>
-<string name="enable_streams_notifications_title">Notifiche nuovi flussi</string>
-<string name="enable_streams_notifications_summary">Notifica sui nuovi flussi dagli abbonamenti</string>
+<string name="enable_streams_notifications_title">Notifiche nuovi video</string>
+<string name="enable_streams_notifications_summary">Notifica nuovi video dalle iscrizioni</string>
 <string name="streams_notifications_interval_title">Frequenza di controllo</string>
 <string name="feed_all_subscriptions_up_to_date">Tutti gli abbonamenti sono aggiornati</string>
 <string name="feed_update_failed_channels">I seguenti canali non sono riusciti ad aggiornarsi:</string>
 <string name="channel_enable_notifications">Abilita notifiche</string>
 <string name="channel_disable_notifications">Disabilita notifiche</string>
+<string name="streams_notification_new_content">%d nuovi video</string>
+<string name="streams_notification_count_new">%d nuovi</string>
+<string name="streams_notification_multiple_channels">Nuovi video dagli abbonamenti</string>
+<string name="streams_notification_multiple_content">%d canali hanno %d nuovi video</string>
+<string name="streams_notification_error">Impossibile controllare la presenza di nuovi video</string>
 </resources>

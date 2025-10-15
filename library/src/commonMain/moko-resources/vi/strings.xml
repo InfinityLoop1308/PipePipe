@@ -276,7 +276,7 @@
 <string name="error_component_title">Ối!</string>
 <string name="backup_import_completed">Nhập hoàn tất</string>
 <string name="subscribers">người đăng ký</string>
-<string name="playlist_empty_no_streams">Không tìm thấy luồng nào trong danh sách phát này</string>
+<string name="playlist_empty_no_streams">Không tìm thấy video nào trong danh sách phát này</string>
 <string name="no_error_logs">Không có nhật ký lỗi</string>
 <string name="playlist_action_more">Thêm</string>
 <string name="collapse">Thu gọn</string>
@@ -335,11 +335,16 @@
 <string name="feed_update_threshold_summary">Thời gian sau lần cập nhật cuối cùng trước khi đăng ký được coi là lỗi thời — %s</string>
 <string name="feed_update_threshold_option_always_update">Luôn cập nhật</string>
 <string name="feed_load_error">Lỗi tải nguồn cấp</string>
-<string name="enable_streams_notifications_title">Thông báo luồng mới</string>
-<string name="enable_streams_notifications_summary">Thông báo về luồng mới từ đăng ký</string>
+<string name="enable_streams_notifications_title">Thông báo video mới</string>
+<string name="enable_streams_notifications_summary">Thông báo về video mới từ các kênh đã đăng ký</string>
 <string name="streams_notifications_interval_title">Tần suất kiểm tra</string>
 <string name="feed_all_subscriptions_up_to_date">Tất cả các đăng ký đều được cập nhật</string>
 <string name="feed_update_failed_channels">Các kênh sau không thể cập nhật:</string>
 <string name="channel_enable_notifications">Bật thông báo</string>
 <string name="channel_disable_notifications">Tắt thông báo</string>
+<string name="streams_notification_new_content">%d video mới</string>
+<string name="streams_notification_count_new">%d mới</string>
+<string name="streams_notification_multiple_channels">Video mới từ các kênh đã đăng ký</string>
+<string name="streams_notification_multiple_content">%d kênh có %d video mới</string>
+<string name="streams_notification_error">Không thể kiểm tra video mới</string>
 </resources>

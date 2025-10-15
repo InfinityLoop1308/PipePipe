@@ -276,7 +276,7 @@
 <string name="error_component_title">¡Ups!</string>
 <string name="backup_import_completed">Importación completada</string>
 <string name="subscribers">suscriptores</string>
-<string name="playlist_empty_no_streams">No se encontraron transmisiones en esta lista de reproducción</string>
+<string name="playlist_empty_no_streams">No se encontraron videos en esta lista de reproducción</string>
 <string name="no_error_logs">No hay registros de errores</string>
 <string name="playlist_action_more">Más</string>
 <string name="collapse">Contraer</string>
@@ -335,11 +335,16 @@
 <string name="feed_update_threshold_summary">Tiempo después de la última actualización antes de que una suscripción se considere desactualizada — %s</string>
 <string name="feed_update_threshold_option_always_update">Siempre actualizar</string>
 <string name="feed_load_error">Error al cargar el feed</string>
-<string name="enable_streams_notifications_title">Notificaciones de nuevos flujos</string>
-<string name="enable_streams_notifications_summary">Notificar sobre nuevos flujos de suscripciones</string>
+<string name="enable_streams_notifications_title">Notificaciones de nuevos videos</string>
+<string name="enable_streams_notifications_summary">Notificar sobre nuevos videos de suscripciones</string>
 <string name="streams_notifications_interval_title">Frecuencia de comprobación</string>
 <string name="feed_all_subscriptions_up_to_date">Todas las suscripciones están actualizadas</string>
 <string name="feed_update_failed_channels">Los siguientes canales no se pudieron actualizar:</string>
 <string name="channel_enable_notifications">Habilitar notificaciones</string>
 <string name="channel_disable_notifications">Deshabilitar notificaciones</string>
+<string name="streams_notification_new_content">%d vídeos nuevos</string>
+<string name="streams_notification_count_new">%d nuevos</string>
+<string name="streams_notification_multiple_channels">Nuevos vídeos de suscripciones</string>
+<string name="streams_notification_multiple_content">%d canales tienen %d vídeos nuevos</string>
+<string name="streams_notification_error">Error al buscar vídeos nuevos</string>
 </resources>
