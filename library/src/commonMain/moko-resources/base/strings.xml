@@ -352,4 +352,6 @@
     <string name="streams_notification_multiple_channels">New videos from subscriptions</string>
     <string name="streams_notification_multiple_content">%d channels have %d new videos</string>
     <string name="streams_notification_error">Failed to check for new videos</string>
+    <string name="description_tab">Description</string>
+    <string name="published_on">Published on</string>
 </resources>

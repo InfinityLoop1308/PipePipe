@@ -85,7 +85,7 @@ fun PlayerSettingScreen(
     }
 
     var autoplayValue by remember {
-        mutableStateOf(SharedContext.settingsManager.getString("autoplay_key", "autoplay_wifi_key"))
+        mutableStateOf(SharedContext.settingsManager.getString("autoplay_key", "autoplay_never_key"))
     }
 
     val autoplaySummary = remember(autoplayValue, autoplayAlways, autoplayWifi, autoplayNever) {
@@ -144,7 +144,7 @@ fun PlayerSettingScreen(
             summary = stringResource(MR.strings.autoplay_summary).replace("%s", autoplaySummary),
             entries = autoplayEntries,
             entryValues = autoplayValues,
-            defaultValue = "autoplay_wifi_key",
+            defaultValue = "autoplay_never_key",
             onValueChange = { value ->
                 autoplayValue = value
             }

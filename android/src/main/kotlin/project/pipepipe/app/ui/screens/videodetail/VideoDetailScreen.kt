@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.ArtTrack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Shield
@@ -175,7 +176,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     LaunchedEffect(streamInfo, mediaController) {
         if (streamInfo != null && mediaController != null && !hasAutoPlayed &&
             uiState.pageState == VideoDetailPageState.DETAIL_PAGE) {
-            val autoplaySetting = SharedContext.settingsManager.getString("autoplay_key", "autoplay_wifi_key")
+            val autoplaySetting = SharedContext.settingsManager.getString("autoplay_key", "autoplay_never_key")
 
             val shouldAutoPlay = when (autoplaySetting) {
                 "autoplay_always_key" -> true
@@ -318,6 +319,14 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                         onEnd = { mediaController?.currentPosition },
                     )
                 }
+            }
+        ),
+        TabConfig(
+            title = stringResource(MR.strings.description_tab),
+            icon = Icons.Default.Description,
+            isAvailable = streamInfo != null,
+            content = {
+                streamInfo?.let { DescriptionSection(streamInfo = it, navController = navController, viewModel = viewModel) }
             }
         )
 //        TabConfig(
@@ -499,7 +508,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                     }
                                 }
 
-                                if(availableTabs.isNotEmpty()) {
+                                if(!(streamInfo == null || uiState.common.isLoading) && availableTabs.isNotEmpty()) {
                                     TabRow(
                                         selectedTabIndex = pagerState.currentPage,
                                         modifier = Modifier
