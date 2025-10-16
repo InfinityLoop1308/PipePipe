@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.ui.component.HtmlText
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.utils.formatAbsoluteTime
 import project.pipepipe.app.viewmodel.VideoDetailViewModel
@@ -71,10 +72,9 @@ fun DescriptionSection(
         item {
             Spacer(modifier = Modifier.height(4.dp))
             streamInfo.description?.let { description ->
-                Text(
+                HtmlText(
                     text = description.content ?: stringResource(MR.strings.no_items),
-                    style = MaterialTheme.typography.bodySmall,
-                    fontSize = 12.5.sp,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.5.sp),
                     color = supportingTextColor(),
                     modifier = Modifier
                         .fillMaxWidth()

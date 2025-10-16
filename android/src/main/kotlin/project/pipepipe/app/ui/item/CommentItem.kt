@@ -20,6 +20,7 @@ import project.pipepipe.shared.infoitem.CommentInfo
 import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.ui.component.HtmlText
 
 @Composable
 fun CommentItem(
@@ -91,7 +92,7 @@ fun CommentItem(
                         .defaultMinSize(minHeight = 25.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    Text(
+                    HtmlText(
                         text = commentInfo.content!!,
                         fontSize = 12.sp,
                         style = TextStyle(

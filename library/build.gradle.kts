@@ -63,6 +63,7 @@ kotlin {
             dependencies {
                 implementation("org.ocpsoft.prettytime:prettytime:5.0.7.Final")
                 implementation("androidx.compose.runtime:runtime")
+                implementation("androidx.core:core-ktx:1.17.0")
             }
         }
     }
