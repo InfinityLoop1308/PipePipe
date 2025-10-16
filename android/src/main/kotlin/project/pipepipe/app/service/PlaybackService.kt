@@ -284,6 +284,13 @@ class PlaybackService : MediaLibraryService() {
 
     override fun onDestroy() {
         saveCurrentProgress()
+        stopPlaybackReceiver?.let {
+            try {
+                unregisterReceiver(it)
+            } catch (e: IllegalArgumentException) {
+            }
+            stopPlaybackReceiver = null
+        }
         super.onDestroy()
         session?.release()
         player.release()
