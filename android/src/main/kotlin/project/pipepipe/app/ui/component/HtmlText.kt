@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import android.text.style.*
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnit.Companion
@@ -41,15 +42,24 @@ fun HtmlText(
     onTimestampClick: ((Int) -> Unit)? = null
 ) {
     val htmlHelper = getHtmlHelper()
-    val spanned = htmlHelper.parseHtml(text) as Spanned
     val linkColor = MaterialTheme.colorScheme.primary
-    val annotatedString = spannedToAnnotatedString(
-        spanned,
+    val annotatedString = remember(
+        text,
         style,
+        fontSize,
         linkColor,
         onHashtagClick != null,
         onTimestampClick != null
-    )
+    ) {
+        val spanned = htmlHelper.parseHtml(text) as Spanned
+        spannedToAnnotatedString(
+            spanned,
+            style,
+            linkColor,
+            onHashtagClick != null,
+            onTimestampClick != null
+        )
+    }
     val uriHandler = LocalUriHandler.current
 
     // 使用 ClickableText 替代 Text
