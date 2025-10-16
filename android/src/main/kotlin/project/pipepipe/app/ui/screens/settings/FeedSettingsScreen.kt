@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.platform.LocalContext
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.service.StreamsNotificationManager
@@ -38,7 +39,6 @@ fun FeedSettingsScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val alwaysUpdate = stringResource(MR.strings.feed_update_threshold_option_always_update)
 
@@ -127,7 +127,7 @@ fun FeedSettingsScreen(
 
     // Function to load channel counts
     fun loadChannelCounts() {
-        coroutineScope.launch {
+        GlobalScope.launch {
             val subscriptions = DatabaseOperations.getAllSubscriptions()
             totalChannels = subscriptions.size
             notificationChannels = subscriptions.count { it.notification_mode == 1L }

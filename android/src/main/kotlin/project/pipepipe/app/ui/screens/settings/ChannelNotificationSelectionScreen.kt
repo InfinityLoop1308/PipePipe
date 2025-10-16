@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
@@ -26,14 +27,13 @@ fun ChannelNotificationSelectionScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val coroutineScope = rememberCoroutineScope()
     var subscriptions by remember { mutableStateOf<List<Subscriptions>>(emptyList()) }
     var selectedChannels by remember { mutableStateOf<Set<String>>(emptySet()) }
     var isLoading by remember { mutableStateOf(true) }
 
     // Load subscriptions from database
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
+        GlobalScope.launch {
             try {
                 val subs = DatabaseOperations.getAllSubscriptions()
                 subscriptions = subs
@@ -65,7 +65,7 @@ fun ChannelNotificationSelectionScreen(
                         if (allSelected) {
                             // Unselect all
                             selectedChannels = emptySet()
-                            coroutineScope.launch {
+                            GlobalScope.launch {
                                 subscriptions.forEach { subscription ->
                                     subscription.url?.let { url ->
                                         DatabaseOperations.updateSubscriptionNotificationMode(
@@ -78,7 +78,7 @@ fun ChannelNotificationSelectionScreen(
                         } else {
                             // Select all
                             selectedChannels = subscriptions.mapNotNull { it.url }.toSet()
-                            coroutineScope.launch {
+                            GlobalScope.launch {
                                 subscriptions.forEach { subscription ->
                                     subscription.url?.let { url ->
                                         DatabaseOperations.updateSubscriptionNotificationMode(
@@ -146,7 +146,7 @@ fun ChannelNotificationSelectionScreen(
                                     }
 
                                     // Update database
-                                    coroutineScope.launch {
+                                    GlobalScope.launch {
                                         DatabaseOperations.updateSubscriptionNotificationMode(
                                             url = url,
                                             notificationMode = newNotificationMode

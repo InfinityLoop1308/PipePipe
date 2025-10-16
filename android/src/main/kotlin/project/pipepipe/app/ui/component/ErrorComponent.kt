@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.screens.settings.copyLogToClipboard
@@ -29,7 +30,6 @@ fun ErrorComponent(
     shouldStartFromTop: Boolean = false,
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     var showDetailsDialog by remember { mutableStateOf(false) }
     var stackTrace by remember { mutableStateOf<String>("") }
 
@@ -78,7 +78,7 @@ fun ErrorComponent(
 
             OutlinedButton(
                 onClick = {
-                    scope.launch {
+                    GlobalScope.launch {
                         DatabaseOperations.getErrorLogById(error.errorId)?.let {
                             copyLogToClipboard(context, it)
                         }
@@ -92,7 +92,7 @@ fun ErrorComponent(
 
             OutlinedButton(
                 onClick = {
-                    scope.launch {
+                    GlobalScope.launch {
                         DatabaseOperations.getErrorLogById(error.errorId)?.let {
                             stackTrace = it.stacktrace
                             showDetailsDialog = true
@@ -112,7 +112,7 @@ fun ErrorComponent(
             stackTrace = stackTrace,
             onDismiss = { showDetailsDialog = false },
             onCopy = {
-                scope.launch {
+                GlobalScope.launch {
                     DatabaseOperations.getErrorLogById(error.errorId)?.let {
                         copyLogToClipboard(context, it)
                     }

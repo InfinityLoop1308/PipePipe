@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.GlobalScope
 import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.ChannelInfo
@@ -23,10 +24,9 @@ fun FeedGroupSelectionDialog(
     var feedGroups by remember { mutableStateOf<List<Pair<Long, String>>>(emptyList()) }
     var selectedGroups by remember { mutableStateOf<Set<Long>>(emptySet()) }
     var isLoading by remember { mutableStateOf(true) }
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(channelInfo.url) {
-        scope.launch {
+        GlobalScope.launch {
             val groups = DatabaseOperations.getAllFeedGroups()
                 .map { it.uid to it.name }
             feedGroups = groups

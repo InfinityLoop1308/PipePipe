@@ -317,7 +317,6 @@ private fun PlaylistInfoMenuItems(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var renameText by remember { mutableStateOf(playlistInfo.name) }
@@ -333,7 +332,7 @@ private fun PlaylistInfoMenuItems(
                 MR.strings.playlist_menu_pin.desc().toString(context = context)
             }
         ) {
-            scope.launch {
+            GlobalScope.launch {
                 playlistInfo.uid?.let { uid ->
                     DatabaseOperations.setPlaylistPinned(uid, !playlistInfo.isPinned)
                 }
@@ -384,7 +383,7 @@ private fun PlaylistInfoMenuItems(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        scope.launch {
+                        GlobalScope.launch {
                             playlistInfo.uid?.let { uid ->
                                 DatabaseOperations.renamePlaylist(uid, renameText)
                             }
@@ -419,7 +418,7 @@ private fun PlaylistInfoMenuItems(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        scope.launch {
+                        GlobalScope.launch {
                             playlistInfo.uid?.let { uid ->
                                 DatabaseOperations.deletePlaylist(uid)
                             }
