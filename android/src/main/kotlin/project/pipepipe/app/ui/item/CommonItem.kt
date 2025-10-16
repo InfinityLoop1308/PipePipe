@@ -31,7 +31,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.SharedContext
-import project.pipepipe.app.Utils.formatCount
+import project.pipepipe.app.utils.formatCount
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo

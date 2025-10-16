@@ -54,7 +54,7 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.Utils.formatCount
+import project.pipepipe.app.utils.formatCount
 import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.uistate.PlaylistSortMode
