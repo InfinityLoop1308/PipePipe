@@ -48,6 +48,7 @@ fun CommentList(
     onBackClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     listState: LazyListState,
+    onTimestampClick: (Long) -> Unit,
     navController: NavHostController
 ) {
     val uniqueItems = remember(comments) { comments.distinctBy { it.url } }
@@ -123,7 +124,8 @@ fun CommentList(
                                 navController.navigate(Screen.Channel.createRoute(it, comment.serviceId!!))
                                 SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
                             }
-                        }
+                        },
+                        onTimestampClick = onTimestampClick
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                 }

@@ -28,6 +28,7 @@ fun CommentItem(
     onItemClick: () -> Unit = {},
     onReplyButtonClick: () -> Unit = {},
     onChannelAvatarClick: () -> Unit?,
+    onTimestampClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -99,7 +100,8 @@ fun CommentItem(
                             platformStyle = PlatformTextStyle(
                                 includeFontPadding = false
                             )
-                        )
+                        ),
+                        onTimestampClick = onTimestampClick
                     )
                 }
 

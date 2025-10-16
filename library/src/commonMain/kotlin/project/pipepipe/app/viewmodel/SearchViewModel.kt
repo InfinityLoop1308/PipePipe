@@ -169,7 +169,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
             addSearchFilter(groupName, filter)
         }
     }
-    suspend fun search(url: String) {
+    suspend fun search(url: String, serviceId: String) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true)
@@ -179,7 +179,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
             executeJobFlow(
                 SupportedJobType.FETCH_FIRST_PAGE,
                 url,
-                uiState.value.selectedService!!.serviceId
+                serviceId
             )
         }
 

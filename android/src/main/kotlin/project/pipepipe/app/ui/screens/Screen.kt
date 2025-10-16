@@ -11,7 +11,16 @@ sealed class Screen(val route: String) {
     object PlaylistDetail : Screen("playlist?url={url}&serviceId={serviceId}")
     object History : Screen("history")
     object Settings : Screen("settings")
-    object Search : Screen("search")
+    object Search : Screen("search?query={query}&serviceId={serviceId}") {
+        fun createRoute(query: String? = null, serviceId: String? = null): String {
+            return if (query != null && serviceId != null) {
+                val encodedQuery = URLEncoder.encode(query, "UTF-8").replace("+", "%20")
+                "search?query=${encodedQuery}&serviceId=${serviceId}"
+            } else {
+                "search"
+            }
+        }
+    }
     object Channel : Screen("channel?url={url}&serviceId={serviceId}") {
         fun createRoute(url: String, serviceId: String): String {
             val encodedUrl = URLEncoder.encode(url, "UTF-8")

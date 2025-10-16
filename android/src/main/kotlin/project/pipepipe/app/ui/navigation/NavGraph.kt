@@ -95,8 +95,14 @@ fun NavGraph(
         composable(Screen.ChannelNotificationSelection.route) {
             ChannelNotificationSelectionScreen(navController = navController)
         }
-        composable(Screen.Search.route) {
-            SearchScreen(navController = navController)
+        composable(Screen.Search.route) { backStackEntry ->
+            val query = backStackEntry.arguments?.getString("query")
+            val serviceId = backStackEntry.arguments?.getString("serviceId")
+            SearchScreen(
+                navController = navController,
+                initialQuery = query,
+                initialServiceId = serviceId
+            )
         }
         composable(Screen.Channel.route) { backStackEntry ->
             val channelUrl = backStackEntry.arguments!!.getString("url")!!

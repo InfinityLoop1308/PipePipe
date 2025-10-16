@@ -91,7 +91,7 @@ fun TabNavigationScreen(navController: NavController) {
                 color = onCustomTopBarColor()
             )
 
-            IconButton(onClick = { navController.navigate(Screen.Search.route) }) {
+            IconButton(onClick = { navController.navigate(Screen.Search.createRoute()) }) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = stringResource(MR.strings.search),

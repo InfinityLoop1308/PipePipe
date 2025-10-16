@@ -287,7 +287,17 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             icon = Icons.AutoMirrored.Filled.Comment,
             isAvailable = streamInfo?.commentInfo != null,
             content = {
-                streamInfo?.commentInfo?.let { CommentSection(navController = navController) }
+                streamInfo?.commentInfo?.let {
+                    CommentSection(
+                        navController = navController,
+                        onTimestampClick = { timestamp ->
+                            mediaController?.let {
+                                if (it.currentMediaItem?.mediaId == streamInfo.url) {
+                                    it.seekTo(timestamp * 1000)
+                                }
+                            }
+                        })
+                }
             }
         ),
         TabConfig(
@@ -326,7 +336,19 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             icon = Icons.Default.Description,
             isAvailable = streamInfo != null,
             content = {
-                streamInfo?.let { DescriptionSection(streamInfo = it, navController = navController, viewModel = viewModel) }
+                streamInfo?.let {
+                    DescriptionSection(
+                        streamInfo = it,
+                        navController = navController,
+                        onTimestampClick = { timestamp ->
+                            mediaController?.let {
+                                if (it.currentMediaItem?.mediaId == streamInfo.url) {
+                                    it.seekTo(timestamp * 1000)
+                                }
+                            }
+                        }
+                    )
+                }
             }
         )
 //        TabConfig(

@@ -20,6 +20,7 @@ import project.pipepipe.app.ui.list.CommentList
 @Composable
 fun CommentSection(
     modifier: Modifier = Modifier,
+    onTimestampClick: (Long) -> Unit,
     navController: NavHostController,
 ) {
     val viewModel = SharedContext.sharedVideoDetailViewModel
@@ -89,7 +90,8 @@ fun CommentSection(
                         showStickyHeader = true,
                         onBackClick = { viewModel.backToCommentList() },
                         listState = repliesListState,
-                        navController = navController
+                        navController = navController,
+                        onTimestampClick = onTimestampClick
                     )
                     BackHandler() {
                         viewModel.backToCommentList()
@@ -116,7 +118,8 @@ fun CommentSection(
                         },
                         onBackClick = { },
                         listState = commentsListState,
-                        navController = navController
+                        navController = navController,
+                        onTimestampClick = onTimestampClick
                     )
                 }
             }

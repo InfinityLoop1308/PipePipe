@@ -22,13 +22,15 @@ import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.utils.formatAbsoluteTime
 import project.pipepipe.app.viewmodel.VideoDetailViewModel
 import project.pipepipe.shared.infoitem.StreamInfo
+import project.pipepipe.app.ui.screens.Screen
 
 @Composable
 fun DescriptionSection(
     streamInfo: StreamInfo,
     navController: NavHostController,
-    viewModel: VideoDetailViewModel
+    onTimestampClick: (Long)-> Unit
 ) {
+    val viewModel = SharedContext.sharedVideoDetailViewModel
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -76,8 +78,12 @@ fun DescriptionSection(
                     text = description.content ?: stringResource(MR.strings.no_items),
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.5.sp),
                     color = supportingTextColor(),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    onHashtagClick = {
+                        viewModel.showAsBottomPlayer()
+                        navController.navigate(Screen.Search.createRoute(it, streamInfo.serviceId))
+                    },
+                    onTimestampClick = onTimestampClick
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -101,8 +107,8 @@ fun DescriptionSection(
                                     // Minimize to bottom player
                                     viewModel.showAsBottomPlayer()
 
-                                    // Navigate to search screen
-                                    navController.navigate("search")
+                                    // Navigate to search screen with tag as query
+                                    navController.navigate(Screen.Search.createRoute(tag, streamInfo.serviceId))
                                 },
                                 label = {
                                     Text(

@@ -39,7 +39,7 @@ fun HtmlText(
     color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
     onHashtagClick: ((String) -> Unit)? = null,
-    onTimestampClick: ((Int) -> Unit)? = null
+    onTimestampClick: ((Long) -> Unit)? = null
 ) {
     val htmlHelper = getHtmlHelper()
     val linkColor = MaterialTheme.colorScheme.primary
@@ -51,7 +51,7 @@ fun HtmlText(
         onHashtagClick != null,
         onTimestampClick != null
     ) {
-        val spanned = htmlHelper.parseHtml(text) as Spanned
+        val spanned = htmlHelper.parseHtml(text.replace("\n", "<br>")) as Spanned
         spannedToAnnotatedString(
             spanned,
             style,
@@ -74,7 +74,7 @@ fun HtmlText(
                     when (annotation.tag) {
                         "URL" -> uriHandler.openUri(annotation.item)
                         "HASHTAG" -> onHashtagClick?.invoke(annotation.item)
-                        "TIMESTAMP" -> onTimestampClick?.invoke(annotation.item.toInt())
+                        "TIMESTAMP" -> onTimestampClick?.invoke(annotation.item.toLong())
                     }
                 }
         }

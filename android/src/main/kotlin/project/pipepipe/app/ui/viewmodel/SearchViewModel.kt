@@ -66,10 +66,10 @@ class SearchViewModel : ViewModel() {
         sharedViewModel.toggleSearchFilter(groupName, filter)
     }
 
-    fun search(query: String, listState: LazyListState) {
+    fun search(query: String, listState: LazyListState, serviceId: String = uiState.value.selectedService!!.serviceId) {
         viewModelScope.launch {
             listState.scrollToItem(0)
-            sharedViewModel.search(query)
+            sharedViewModel.search(query, serviceId)
         }
     }
 

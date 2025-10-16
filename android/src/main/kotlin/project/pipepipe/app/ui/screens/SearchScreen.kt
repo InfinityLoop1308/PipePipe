@@ -50,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -77,7 +78,11 @@ private val SELECTED_SERVICE_KEY = stringPreferencesKey("selected_service")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavController) {
+fun SearchScreen(
+    navController: NavController,
+    initialQuery: String? = null,
+    initialServiceId: String? = null
+) {
     var showFilterDialog by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -109,22 +114,6 @@ fun SearchScreen(navController: NavController) {
         Json.decodeFromString<List<SupportedServiceInfo>>(context.dataStore.data.first()[stringPreferencesKey("supported_services")]!!)
     }
 
-    LaunchedEffect(Unit) {
-        if (uiState.selectedService == null && serviceInfoList.isNotEmpty()) { //todo: a page to show when serviceInfoList is empty
-            val savedServiceId = context.dataStore.data.first()[SELECTED_SERVICE_KEY]
-            val savedService = savedServiceId?.let { serviceId ->
-                serviceInfoList.find { it.serviceId == serviceId }
-            }
-            val serviceToUse = savedService ?: serviceInfoList.first()
-            viewModel.updateSelectedService(serviceToUse)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        viewModel.updateSearchQuery("")
-    }
-
 
     fun performSearch(query: String? = null) {
         val searchText = query ?: textFieldValue.text
@@ -138,6 +127,29 @@ fun SearchScreen(navController: NavController) {
         }
     }
 
+
+    LaunchedEffect(Unit) {
+        if (uiState.selectedService == null && serviceInfoList.isNotEmpty()) { //todo: a page to show when serviceInfoList is empty
+            val savedServiceId = context.dataStore.data.first()[SELECTED_SERVICE_KEY]
+            val savedService = savedServiceId?.let { serviceId ->
+                serviceInfoList.find { it.serviceId == serviceId }
+            }
+            val serviceToUse = savedService ?: serviceInfoList.first()
+            viewModel.updateSelectedService(serviceToUse)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        // Only focus if no initial query is provided
+        if (initialQuery == null) {
+            focusRequester.requestFocus()
+            viewModel.updateSearchQuery("")
+        } else {
+            delay(300)
+            viewModel.updateSearchQuery(initialQuery)
+            performSearch(initialQuery)
+        }
+    }
 
     LaunchedEffect(listState, uiState.list.nextPageUrl, uiState.common.isLoading) {
         snapshotFlow {
