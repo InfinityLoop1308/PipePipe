@@ -12,13 +12,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.item.DisplayType
 import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.viewmodel.BookmarkedPlaylistViewModel
+import project.pipepipe.app.uistate.VideoDetailPageState
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.net.URLEncoder
@@ -27,7 +34,6 @@ import java.net.URLEncoder
 fun BookmarkedPlaylistScreen(navController: NavController) {
     val viewModel: BookmarkedPlaylistViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
@@ -37,6 +43,16 @@ fun BookmarkedPlaylistScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         viewModel.loadPlaylists()
     }
+
+
+    val videoDetailUiState by SharedContext.sharedVideoDetailViewModel.uiState.collectAsState()
+
+    LaunchedEffect(videoDetailUiState.pageState) {
+        if (videoDetailUiState.pageState == VideoDetailPageState.BOTTOM_PLAYER
+            && navController.currentDestination?.route == Screen.Main.route)
+        viewModel.loadPlaylists()
+    }
+
 
     Column(
         modifier = Modifier

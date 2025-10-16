@@ -347,4 +347,5 @@
 <string name="streams_notification_multiple_channels">Nouvelles vidéos des abonnements</string>
 <string name="streams_notification_multiple_content">%d chaînes ont %d nouvelles vidéos</string>
 <string name="streams_notification_error">Échec de la vérification des nouvelles vidéos</string>
+<string name="added">Ajouté</string>
 </resources>

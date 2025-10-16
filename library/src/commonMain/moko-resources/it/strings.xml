@@ -347,4 +347,5 @@
 <string name="streams_notification_multiple_channels">Nuovi video dagli abbonamenti</string>
 <string name="streams_notification_multiple_content">%d canali hanno %d nuovi video</string>
 <string name="streams_notification_error">Impossibile controllare la presenza di nuovi video</string>
+<string name="added">Aggiunto</string>
 </resources>

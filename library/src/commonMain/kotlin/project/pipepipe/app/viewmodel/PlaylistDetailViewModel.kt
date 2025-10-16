@@ -25,7 +25,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             url.startsWith("local://playlist") -> {
                 val playlistId = url.substringAfterLast("/")
                 val playlistInfo = DatabaseOperations.getPlaylistInfoById(playlistId)
-                val streamInfos = DatabaseOperations.loadPlaylistsItemsFromDatabase(playlistId)
+                val streamInfos = DatabaseOperations.loadPlaylistsItemsFromDatabase(playlistId.toLong())
                 setState { state ->
                     state.copy(
                         common = state.common.copy(isLoading = false),

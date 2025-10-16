@@ -347,4 +347,5 @@
 <string name="streams_notification_multiple_channels">Nuevos vídeos de suscripciones</string>
 <string name="streams_notification_multiple_content">%d canales tienen %d vídeos nuevos</string>
 <string name="streams_notification_error">Error al buscar vídeos nuevos</string>
+<string name="added">Añadido</string>
 </resources>

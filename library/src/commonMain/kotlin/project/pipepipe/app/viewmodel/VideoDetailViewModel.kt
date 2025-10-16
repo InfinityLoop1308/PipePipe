@@ -18,16 +18,13 @@ import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.CommentInfo
 import project.pipepipe.shared.infoitem.DanmakuInfo
-import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.infoitem.RelatedItemInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.job.JobRequest
-import project.pipepipe.shared.job.JobResponse
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
 
-class VideoDetailViewModel(val exec: suspend (JobRequest) -> JobResponse<out Info, out Info>)
+class VideoDetailViewModel()
     : BaseViewModel<VideoDetailUiState>(VideoDetailUiState()) {
 
     private inline fun updateCurrentEntry(

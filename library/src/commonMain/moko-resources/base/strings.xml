@@ -354,4 +354,5 @@
     <string name="streams_notification_error">Failed to check for new videos</string>
     <string name="description_tab">Description</string>
     <string name="published_on">Published on</string>
+    <string name="added">Added</string>
 </resources>

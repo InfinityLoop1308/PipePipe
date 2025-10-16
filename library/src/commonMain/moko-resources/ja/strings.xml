@@ -347,4 +347,5 @@
 <string name="streams_notification_multiple_channels">登録チャンネルからの新しい動画</string>
 <string name="streams_notification_multiple_content">%d チャンネルに %d 件の新しい動画があります</string>
 <string name="streams_notification_error">新しい動画の確認に失敗しました</string>
+<string name="added">追加済み</string>
 </resources>

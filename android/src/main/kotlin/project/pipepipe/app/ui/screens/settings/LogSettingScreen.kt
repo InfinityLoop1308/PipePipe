@@ -32,6 +32,7 @@ import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.ToastManager
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
+import kotlinx.coroutines.GlobalScope
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.StacktraceDialog
@@ -49,15 +50,9 @@ fun LogSettingScreen(
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        scope.launch {
-            try {
-                val logs = withContext(Dispatchers.IO) {
-                    DatabaseOperations.getAllErrorLogs()
-                }
-                errorLogs = logs
-            } finally {
-                isLoading = false
-            }
+        GlobalScope.launch {
+            errorLogs = DatabaseOperations.getAllErrorLogs()
+            isLoading = false
         }
     }
 
@@ -95,10 +90,8 @@ fun LogSettingScreen(
                     ErrorLogItem(
                         log = log,
                         onDelete = {
-                            scope.launch {
-                                withContext(Dispatchers.IO) {
-                                    DatabaseOperations.deleteErrorLog(log.id)
-                                }
+                            GlobalScope.launch {
+                                DatabaseOperations.deleteErrorLog(log.id)
                                 errorLogs = errorLogs.filter { it.id != log.id }
                             }
                         },

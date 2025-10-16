@@ -52,6 +52,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.app.utils.toDurationString
@@ -64,6 +65,13 @@ fun DashboardScreen(navController: NavController) {
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.loadDashboard()
+    }
+    val videoDetailUiState by SharedContext.sharedVideoDetailViewModel.uiState.collectAsState()
+
+    LaunchedEffect(videoDetailUiState.pageState) {
+        if (videoDetailUiState.pageState == VideoDetailPageState.BOTTOM_PLAYER
+            && navController.currentDestination?.route == Screen.Main.route)
+            viewModel.loadDashboard()
     }
     Column(
         modifier = Modifier

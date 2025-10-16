@@ -347,4 +347,5 @@
 <string name="streams_notification_multiple_channels">订阅中有新视频</string>
 <string name="streams_notification_multiple_content">%d 个频道有 %d 个新视频</string>
 <string name="streams_notification_error">检查新视频失败</string>
+<string name="added">已添加</string>
 </resources>

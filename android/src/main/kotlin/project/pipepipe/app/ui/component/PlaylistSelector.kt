@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.GlobalScope
 import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.database.DatabaseOperations.getAllLocalPlaylists
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.app.ui.item.CommonItem
@@ -29,7 +31,6 @@ fun PlaylistSelectorPopup(
     onDismiss: () -> Unit,
     onPlaylistSelected: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     var playlists by remember { mutableStateOf<List<PlaylistInfo>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -39,7 +40,7 @@ fun PlaylistSelectorPopup(
         playlists = getAllLocalPlaylists()
         isLoading = false
     }
-
+    val addedText = stringResource(MR.strings.added)
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
@@ -111,22 +112,17 @@ fun PlaylistSelectorPopup(
                                 items(playlists) { playlist ->
                                     Card(
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                scope.launch {
-                                                    addStreamToPlaylist(streamInfo, playlist)
-                                                }
-                                                onPlaylistSelected()
-                                            },
+                                            .fillMaxWidth(),
                                         shape = RoundedCornerShape(8.dp)
                                     ) {
                                         CommonItem(
                                             item = playlist,
                                             onClick = {
-                                                scope.launch {
+                                                GlobalScope.launch {
                                                     addStreamToPlaylist(streamInfo, playlist)
                                                 }
                                                 onPlaylistSelected()
+                                                ToastManager.show(addedText)
                                             }
                                         )
                                     }
@@ -156,7 +152,7 @@ fun PlaylistSelectorPopup(
         NewPlaylistDialog(
             onDismiss = { showNewPlaylistDialog = false },
             onConfirm = { playlistName ->
-                scope.launch  {
+                GlobalScope.launch  {
                     createNewPlaylistAndAddStream(playlistName, streamInfo)
                 }
                 showNewPlaylistDialog = false
@@ -209,22 +205,12 @@ private suspend fun addStreamToPlaylist(
     streamInfo: StreamInfo,
     playlist: PlaylistInfo
 ) {
-    try {
-        var stream = DatabaseOperations.getStreamByUrl(streamInfo.url)
-        if (stream == null) {
-            DatabaseOperations.insertOrUpdateStream(streamInfo )
-            stream = DatabaseOperations.getStreamByUrl(streamInfo.url)
-        }
-
-        if (stream != null) {
-            val playlistId = playlist.url.substringAfterLast("/").toLong()
-            val existingStreams = DatabaseOperations.loadPlaylistsItemsFromDatabase(playlistId.toString())
-            val nextIndex = existingStreams.size
-            DatabaseOperations.addStreamToPlaylist(playlistId, stream.uid)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
+    var stream = DatabaseOperations.getStreamByUrl(streamInfo.url)
+    if (stream == null) {
+        DatabaseOperations.insertOrUpdateStream(streamInfo)
+        stream = DatabaseOperations.getStreamByUrl(streamInfo.url)
     }
+    DatabaseOperations.addStreamToPlaylist(playlist.uid!!, stream!!.uid)
 }
 
 private suspend fun createNewPlaylistAndAddStream(

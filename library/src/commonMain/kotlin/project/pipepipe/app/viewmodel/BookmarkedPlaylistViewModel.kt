@@ -6,11 +6,14 @@ import project.pipepipe.app.uistate.BookmarkedPlaylistUiState
 class BookmarkedPlaylistViewModel : BaseViewModel<BookmarkedPlaylistUiState>(BookmarkedPlaylistUiState()) {
 
     suspend fun loadPlaylists() {
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
+        if (uiState.value.playlists.isEmpty()) {
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
         }
+
         val playlists = DatabaseOperations.getAllPlaylistsCombined()
         setState {
             it.copy(

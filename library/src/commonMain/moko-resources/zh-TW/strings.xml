@@ -347,4 +347,5 @@
 <string name="streams_notification_multiple_channels">訂閱中有新影片</string>
 <string name="streams_notification_multiple_content">%d 個頻道有 %d 個新影片</string>
 <string name="streams_notification_error">檢查新影片失敗</string>
+<string name="added">已新增</string>
 </resources>

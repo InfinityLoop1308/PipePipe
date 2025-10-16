@@ -43,7 +43,7 @@ class PipePipeApplication : Application() {
         SharedContext.downloader = Downloader(HttpClient(OkHttp))
         SharedContext.cookieManager = CookieManager.getInstance(this)
         SharedContext.sessionManager = Cache4kSessionManager()
-        SharedContext.sharedVideoDetailViewModel = VideoDetailViewModel(Router::execute)
+        SharedContext.sharedVideoDetailViewModel = VideoDetailViewModel()
         SharedContext.serverRequestHandler = Router::execute
         SharedContext.settingsManager = SettingsManager()
 

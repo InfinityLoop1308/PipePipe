@@ -54,29 +54,81 @@ curse(dict, "filter", filter_dict)
 
 
 class Translator:
+    # 常见语言代码映射表
+    LANGUAGE_NAMES = {
+        'zh-CN': 'Simplified Chinese',
+        'zh-TW': 'Traditional Chinese',
+        'en': 'English',
+        'en-US': 'English (United States)',
+        'en-GB': 'English (United Kingdom)',
+        'ja': 'Japanese',
+        'ko': 'Korean',
+        'fr': 'French',
+        'de': 'German',
+        'es': 'Spanish',
+        'it': 'Italian',
+        'pt': 'Portuguese',
+        'pt-BR': 'Portuguese (Brazil)',
+        'ru': 'Russian',
+        'ar': 'Arabic',
+        'hi': 'Hindi',
+        'th': 'Thai',
+        'vi': 'Vietnamese',
+        'id': 'Indonesian',
+        'tr': 'Turkish',
+    }
+
     def __init__(self):
         self.client = openai.OpenAI(api_key=config.api_key, base_url=config.base_url)
 
-    def translate(self, content, language):
-        extra_note = ""
+    def _get_language_name(self, language_code: str) -> str:
+        """获取语言代码对应的完整名称"""
+        return self.LANGUAGE_NAMES.get(
+            language_code,
+            f"the language with code '{language_code}'"
+        )
+
+    def _build_translation_prompt(self, content: str, language: str, extra_note: str = "") -> str:
+        """构建翻译提示词"""
+        lang_name = self._get_language_name(language)
+
+        prompt = f"""Translate all values in this dictionary to {lang_name}.
+
+Language code: {language}
+
+Rules:
+- Only translate the VALUES, never translate the KEYS
+- Preserve all special characters including \\n (newlines)
+- Keep the exact same JSON structure
+- Output valid JSON format
+
+Input:
+{content}"""
+
+        if extra_note:
+            prompt += f"\n\nAdditional notes:\n{extra_note}"
+
+        return prompt
+
+    def translate(self, content, language, extra_note=""):
         response = self.client.chat.completions.create(
             model="gemini-2.5-flash",
             response_format={"type": "json_object"},
             messages=[
                 {
                     "role": "user",
-                    "content": f"Translate the values(not including the keys) in the dict to values-{language}. Always preserve new line tokens like \\n. Output result in json format. \n\n{content}" + extra_note,
+                    "content": self._build_translation_prompt(content, language, extra_note),
                 }
             ],
             temperature=0,
         )
-        print(response.choices[0].message.content.strip())
         translated_text = response.choices[0].message.content.strip()
-        # print(translated_text)
+        print(translated_text)
         return translated_text
 
-    def get_translated_dict(self, content, language):
-        return json.loads(self.translate(content, language))
+    def get_translated_dict(self, content, language, extra_note=""):
+        """获取翻译后的字典对象"""
+        return json.loads(self.translate(content, language, extra_note))
 
 
 from bs4 import BeautifulSoup

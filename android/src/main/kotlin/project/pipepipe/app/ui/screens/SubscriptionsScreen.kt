@@ -60,10 +60,12 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.database.Feed_group
 import project.pipepipe.database.Subscriptions
 import project.pipepipe.app.utils.formatCount
 import project.pipepipe.app.ui.viewmodel.SubscriptionsViewModel
+import project.pipepipe.app.uistate.VideoDetailPageState
 import java.net.URLEncoder
 
 @Composable
@@ -73,6 +75,13 @@ fun SubscriptionsScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         viewModel.init()
+    }
+    val videoDetailUiState by SharedContext.sharedVideoDetailViewModel.uiState.collectAsState()
+
+    LaunchedEffect(videoDetailUiState.pageState) {
+        if (videoDetailUiState.pageState == VideoDetailPageState.BOTTOM_PLAYER
+            && navController.currentDestination?.route == Screen.Main.route)
+            viewModel.init()
     }
 
     SubscriptionsContent(

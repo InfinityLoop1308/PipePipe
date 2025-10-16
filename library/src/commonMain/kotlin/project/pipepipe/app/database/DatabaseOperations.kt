@@ -12,7 +12,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 object DatabaseOperations {
-    suspend fun loadPlaylistsItemsFromDatabase(playlistId: String): List<StreamInfo> = withContext(Dispatchers.IO) {
+    suspend fun loadPlaylistsItemsFromDatabase(playlistId: Long): List<StreamInfo> = withContext(Dispatchers.IO) {
         return@withContext database.appDatabaseQueries.selectStreamsByPlaylist(playlistId.toLong()).executeAsList()
             .map { row ->
                 StreamInfo(
@@ -85,7 +85,7 @@ object DatabaseOperations {
     suspend fun getAllLocalPlaylists(): List<PlaylistInfo> = withContext(Dispatchers.IO) {
         val playlists = getAllLocalPlaylistsRaw()
         return@withContext playlists.map { playlist ->
-            val streamCount = loadPlaylistsItemsFromDatabase(playlist.uid.toString()).size
+            val streamCount = loadPlaylistsItemsFromDatabase(playlist.uid).size
             PlaylistInfo(
                 url = "local://playlist/${playlist.uid}",
                 name = playlist.name ?: "Unnamed Playlist",
@@ -102,7 +102,7 @@ object DatabaseOperations {
             val isLocal = row.playlist_type == "local"
 
             if (isLocal) {
-                val streamCount = loadPlaylistsItemsFromDatabase(row.uid.toString()).size
+                val streamCount = loadPlaylistsItemsFromDatabase(row.uid).size
                 PlaylistInfo(
                     url = "local://playlist/${row.uid}",
                     name = row.name ?: "Unnamed Playlist",
@@ -188,7 +188,7 @@ object DatabaseOperations {
 
     suspend fun getPlaylistInfoById(playlistId: String): PlaylistInfo? = withContext(Dispatchers.IO) {
         val playlist = getAllLocalPlaylistsRaw().find { it.uid == playlistId.toLong() } ?: return@withContext null
-        val streamCount = loadPlaylistsItemsFromDatabase(playlistId).size
+        val streamCount = loadPlaylistsItemsFromDatabase(playlist.uid).size
         return@withContext PlaylistInfo(
             url = "local://playlist/$playlistId",
             name = playlist.name ?: "Unnamed Playlist",
@@ -225,7 +225,7 @@ object DatabaseOperations {
 
     suspend fun getPinnedPlaylists(): List<PlaylistInfo> = withContext(Dispatchers.IO) {
         return@withContext database.appDatabaseQueries.selectPinnedPlaylists().executeAsList().map { playlist ->
-            val streamCount = loadPlaylistsItemsFromDatabase(playlist.uid.toString()).size
+            val streamCount = loadPlaylistsItemsFromDatabase(playlist.uid).size
             PlaylistInfo(
                 url = "local://playlist/${playlist.uid}",
                 name = playlist.name ?: "Unnamed Playlist",
