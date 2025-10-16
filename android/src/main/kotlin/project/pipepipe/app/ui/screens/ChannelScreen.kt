@@ -83,6 +83,7 @@ import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.ui.viewmodel.ChannelViewModel
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.ui.component.HtmlText
 import java.net.URLEncoder
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -96,8 +97,15 @@ fun ChannelScreen(
     val viewModel: ChannelViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
     val tabs = uiState.channelInfo?.tabs.orEmpty()
-    val tabTypes = remember(tabs) { tabs.map { it.type } }
-    val tabTitles = remember(tabs) { tabs.map { it.type.name } }
+    val hasDescription = !uiState.channelInfo?.description.isNullOrEmpty()
+    val tabTypes = remember(tabs, hasDescription) {
+        val types = tabs.map { it.type }.toMutableList()
+        if (hasDescription) {
+            types.add(ChannelTabType.INFO)
+        }
+        types
+    }
+    val tabTitles = remember(tabTypes) { tabTypes.map { it.name } }
     val hasTabs = tabTypes.isNotEmpty()
 
     val pagerState = rememberPagerState(pageCount = { if (hasTabs) tabTypes.size else 1 })
@@ -245,7 +253,7 @@ fun ChannelScreen(
                             scope.launch { pagerState.animateScrollToPage(index) }
                         },
                         modifier = Modifier.height(44.dp),
-                        text = { Text(text = StringResourceHelper.getTranslatedFilterString(item.name.lowercase()).uppercase()) }
+                        text = { Text(text = StringResourceHelper.getTranslatedTabString(item.name.lowercase()).uppercase()) }
                     )
                 }
             }
@@ -255,6 +263,21 @@ fun ChannelScreen(
                 modifier = Modifier.fillMaxSize().padding(top = 4.dp).padding(horizontal = 16.dp),
             ) { page ->
                 when (tabTypes.getOrNull(page)) {
+                    ChannelTabType.INFO -> {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(vertical = 16.dp)
+                        ) {
+                            item {
+                                HtmlText(
+                                    text = uiState.channelInfo?.description!!,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = supportingTextColor()
+                                )
+                            }
+                        }
+                    }
+
                     ChannelTabType.LIVES -> TabContent(
                         listState = liveListState,
                         items = uiState.liveTab.itemList,

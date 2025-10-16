@@ -61,4 +61,18 @@ object StringResourceHelper {
             else -> filter
         }
     }
+
+    @Composable
+    fun getTranslatedTabString(tab: String): String {
+        return when (tab) {
+            "videos" -> stringResource(MR.strings.channel_tab_videos)
+            "playlists" -> stringResource(MR.strings.channel_tab_playlists)
+            "channels" -> stringResource(MR.strings.channel_tab_channels)
+            "tracks" -> stringResource(MR.strings.channel_tab_tracks)
+            "shorts" -> stringResource(MR.strings.channel_tab_shorts)
+            "albums" -> stringResource(MR.strings.channel_tab_albums)
+            "info" -> stringResource(MR.strings.channel_tab_info)
+            else -> tab
+        }
+    }
 }
