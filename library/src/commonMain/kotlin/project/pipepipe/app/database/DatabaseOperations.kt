@@ -29,7 +29,7 @@ object DatabaseOperations {
                     joinId = row.join_id,
                     progress = row.progress_time,
                     isPaid = row.is_paid != 0L,
-                    shortFormContent = row.is_short != 0L
+                    isShort = row.is_short != 0L
                 )
             }
     }
@@ -51,7 +51,7 @@ object DatabaseOperations {
                 localLastViewDate = row.last_access_date,
                 localRepeatCount = row.repeat_count,
                 isPaid = row.is_paid != 0L,
-                shortFormContent = row.is_short != 0L
+                isShort = row.is_short != 0L
             )
         }
     }
@@ -77,7 +77,7 @@ object DatabaseOperations {
                 thumbnailUrl = row.thumbnail_url,
                 progress = row.progress_time,
                 isPaid = row.is_paid != 0L,
-                shortFormContent = row.is_short != 0L
+                isShort = row.is_short != 0L
             )
         }
     }
@@ -141,7 +141,7 @@ object DatabaseOperations {
                 thumbnail_url = streamInfo.thumbnailUrl,
                 upload_date = streamInfo.uploadDate ?: 0,
                 is_paid = if (streamInfo.isPaid) 1L else 0L,
-                is_short = if (streamInfo.shortFormContent) 1L else 0L,
+                is_short = if (streamInfo.isShort) 1L else 0L,
                 url = streamInfo.url
             )
         } else {
@@ -157,7 +157,7 @@ object DatabaseOperations {
                 streamInfo.thumbnailUrl,
                 streamInfo.uploadDate?:0,
                 if (streamInfo.isPaid) 1L else 0L,
-                if (streamInfo.shortFormContent) 1L else 0L
+                if (streamInfo.isShort) 1L else 0L
             )
         }
     }
@@ -452,12 +452,9 @@ object DatabaseOperations {
 
     suspend fun updateOrInsertStreamHistory(streamInfo: StreamInfo) = withContext(Dispatchers.IO) {
         val currentTime = System.currentTimeMillis()
-        var streamRow = getStreamByUrl(streamInfo.url)
-        if (streamRow == null) {
-            insertOrUpdateStream(streamInfo)
-            streamRow = getStreamByUrl(streamInfo.url)!!
-        }
-        updateStreamHistory(streamRow.url, currentTime)
+        insertOrUpdateStream(streamInfo)
+        val streamRow = getStreamByUrl(streamInfo.url)
+        updateStreamHistory(streamRow!!.url, currentTime)
     }
 
     suspend fun isSubscribed(url: String): Boolean = withContext(Dispatchers.IO) {

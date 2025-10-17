@@ -21,6 +21,11 @@ class PlaylistDetailViewModel : ViewModel() {
         }
     }
 
+    fun loadRemotePlaylistMoreItems (serviceId: String) {
+        viewModelScope.launch {
+            sharedViewModel.loadRemotePlaylistMoreItems(serviceId)
+        }
+    }
     fun updateSearchQuery(query: String) {
         viewModelScope.launch {
             sharedViewModel.updateSearchQuery(query)

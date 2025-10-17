@@ -23,6 +23,7 @@ import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.shared.infoitem.serviceId
 
 class VideoDetailViewModel()
     : BaseViewModel<VideoDetailUiState>(VideoDetailUiState()) {
@@ -47,10 +48,15 @@ class VideoDetailViewModel()
             setDanmakuEnabled(SharedContext.settingsManager.getBoolean("danmaku_enabled", false))
 
             val currentEntry = uiState.value.currentEntry
-            if (url == currentEntry?.streamInfo?.url) return@launch
+            val hasError = uiState.value.common.error != null
 
+            // If current entry has same URL and no error, skip reloading
+            if (url == currentEntry?.streamInfo?.url && !hasError) return@launch
+
+            // Check if there's an existing entry with this URL (but not if it's the current error entry)
             val existingIndex = uiState.value.streamInfoStack.indexOfFirst { it.streamInfo.url == url }
-            if (existingIndex != -1) {
+            if (existingIndex != -1 && !hasError) {
+                // Found existing entry and it's not an error, reuse it
                 val entry = uiState.value.streamInfoStack[existingIndex]
                 setState { state ->
                     val newStack = state.streamInfoStack.toMutableList().apply {
@@ -64,6 +70,9 @@ class VideoDetailViewModel()
                 }
                 return@launch
             }
+
+            // If current entry has an error, we'll replace it instead of pushing
+            val shouldReplaceErrorEntry = hasError
 
             var resolvedServiceId = serviceId ?: DatabaseOperations.getStreamByUrl(url)?.service_id
             setState {
@@ -79,19 +88,26 @@ class VideoDetailViewModel()
                 val newStreamInfo = (result.info as? StreamInfo)!!
                 val newEntry = VideoDetailEntry(newStreamInfo)
                 setState {
+                    val newStack = if (shouldReplaceErrorEntry) {
+                        // Replace the error entry with the new successful entry
+                        it.streamInfoStack.dropLast(1) + newEntry
+                    } else {
+                        // Push the new entry normally
+                        it.streamInfoStack + newEntry
+                    }
                     it.copy(
                         common = it.common.copy(
                             isLoading = false
                         ),
-                        streamInfoStack = it.streamInfoStack + newEntry
+                        streamInfoStack = newStack
                     )
                 }
                 DatabaseOperations.updateOrInsertStreamHistory(newStreamInfo)
 
-                if (newStreamInfo.commentInfo?.url != null) {
+                if (newStreamInfo.commentUrl != null) {
                     loadComments(newStreamInfo)
                 }
-                if (newStreamInfo.relatedItemInfo != null) {
+                if (newStreamInfo.relatedItemUrl != null) {
                     loadRelatedItems(newStreamInfo)
                 }
                 if (newStreamInfo.sponsorblockUrl != null) {
@@ -101,14 +117,29 @@ class VideoDetailViewModel()
                     loadDanmaku(newStreamInfo.danmakuUrl!!, newStreamInfo.serviceId)
                 }
             } else {
+                // Create an error entry with minimal StreamInfo
+                val errorStreamInfo = StreamInfo(
+                    url = url,
+                    serviceId = resolvedServiceId ?: ""
+                )
+                val errorEntry = VideoDetailEntry(errorStreamInfo)
+
                 setState {
+                    val newStack = if (shouldReplaceErrorEntry) {
+                        // Replace the old error entry with the new error entry
+                        it.streamInfoStack.dropLast(1) + errorEntry
+                    } else {
+                        // Push the new error entry normally
+                        it.streamInfoStack + errorEntry
+                    }
                     it.copy(
                         common = it.common.copy(
                             isLoading = false,
                             error = result.fatalError!!.let { fatalError ->
                                 ErrorInfo(fatalError.errorId!!, fatalError.code)
                             }
-                        )
+                        ),
+                        streamInfoStack = newStack
                     )
                 }
             }
@@ -118,6 +149,19 @@ class VideoDetailViewModel()
 
     fun navigateBack(): Boolean {
         SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
+
+        // If current entry has an error, pop it and clear error state
+        if (uiState.value.common.error != null) {
+            setState {
+                it.copy(
+                    common = CommonUiState(),
+                    streamInfoStack = it.streamInfoStack.dropLast(1)
+                )
+            }
+            return true
+        }
+
+        // Normal back navigation
         if (!uiState.value.canNavigateBack) {
             return false
         }
@@ -169,7 +213,7 @@ class VideoDetailViewModel()
     }
 
     suspend fun loadComments(streamInfo: StreamInfo) {
-        val url = streamInfo.commentInfo?.url ?: return
+        val url = streamInfo.commentUrl ?: return
         updateCurrentEntry { entry ->
             entry.copy(
                 cachedComments = entry.cachedComments.copy(
@@ -378,7 +422,7 @@ class VideoDetailViewModel()
     }
 
     suspend fun loadRelatedItems(streamInfo: StreamInfo) {
-        val url = streamInfo.relatedItemInfo!!.url
+        val url = streamInfo.relatedItemUrl
         updateCurrentEntry { entry ->
             entry.copy(
                 cachedRelatedItems = entry.cachedRelatedItems.copy(
@@ -409,7 +453,6 @@ class VideoDetailViewModel()
             return
         }
 
-        streamInfo.relatedItemInfo = result.info as RelatedItemInfo
 
         // Apply filters
         val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()

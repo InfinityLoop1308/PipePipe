@@ -71,6 +71,9 @@ import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.theme.getContrastingColor
 import project.pipepipe.app.ui.viewmodel.SearchViewModel
+import project.pipepipe.shared.infoitem.ChannelInfo
+import project.pipepipe.shared.infoitem.PlaylistInfo
+import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.url
 import project.pipepipe.shared.infoitem.serviceId
 
@@ -115,11 +118,12 @@ fun SearchScreen(
     }
 
 
-    fun performSearch(query: String? = null) {
+    fun performSearch(query: String? = null, overrideServiceId: String? = null) {
         val searchText = query ?: textFieldValue.text
         if (searchText.isNotEmpty()) {
             val searchUrl = generateQueryUrl(searchText, uiState.selectedSearchType!!)
-            viewModel.search(searchUrl, listState)
+            val serviceId = overrideServiceId ?: uiState.selectedService!!.serviceId
+            viewModel.search(searchUrl, listState, serviceId)
             focusManager.clearFocus()
             GlobalScope.launch {
                 DatabaseOperations.insertOrUpdateSearchHistory(searchText)
@@ -147,7 +151,7 @@ fun SearchScreen(
         } else {
             delay(300)
             viewModel.updateSearchQuery(initialQuery)
-            performSearch(initialQuery)
+            performSearch(initialQuery, initialServiceId)
         }
     }
 
@@ -280,7 +284,12 @@ fun SearchScreen(
                         CommonItem(
                             item = item,
                             onClick = {
-                                SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url, item.serviceId)
+                                when (item) {
+                                    is StreamInfo -> SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url, item.serviceId)
+                                    is PlaylistInfo -> navController.navigate(Screen.PlaylistDetail.createRoute(item.url, item.serviceId!!))
+                                    is ChannelInfo -> navController.navigate(Screen.Channel.createRoute(item.url, item.serviceId))
+                                    else -> error("Unexpected info")
+                                }
                             }
                         )
                         if (index < uniqueItems.lastIndex) {

@@ -253,6 +253,131 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
+    suspend fun loadPlaylistTabMoreItems(serviceId: String) {
+        val nextUrl = uiState.value.playlistTab.nextPageUrl ?: return
+        setState {
+            it.copy(
+                common = it.common.copy(isLoading = true)
+            )
+        }
+        val result = withContext(Dispatchers.IO) {
+            executeJobFlow(
+                SupportedJobType.FETCH_GIVEN_PAGE,
+                nextUrl,
+                serviceId
+            )
+        }
+
+        // Check for fatal error first
+        if (result.fatalError != null) {
+            setState {
+                it.copy(
+                    common = it.common.copy(
+                        isLoading = false,
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
+                    )
+                )
+            }
+            return
+        }
+
+        setState {
+            it.copy(
+                common = it.common.copy(
+                    isLoading = false,
+                    error = null
+                ),
+                playlistTab = it.playlistTab.copy(
+                    itemList = it.playlistTab.itemList + (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
+                    nextPageUrl = result.pagedData?.nextPageUrl
+                )
+            )
+        }
+    }
+
+    suspend fun loadChannelAlbumTab(url: String, serviceId: String) {
+        setState {
+            it.copy(
+                common = it.common.copy(isLoading = true)
+            )
+        }
+        val result = withContext(Dispatchers.IO) {
+            executeJobFlow(
+                SupportedJobType.FETCH_FIRST_PAGE,
+                url,
+                serviceId
+            )
+        }
+
+        // Check for fatal error first
+        if (result.fatalError != null) {
+            setState {
+                it.copy(
+                    common = it.common.copy(
+                        isLoading = false,
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
+                    )
+                )
+            }
+            return
+        }
+
+        setState {
+            it.copy(
+                common = it.common.copy(
+                    isLoading = false,
+                    error = null
+                ),
+                albumTab = ListUiState(
+                    itemList = (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
+                    nextPageUrl = result.pagedData?.nextPageUrl
+                )
+            )
+        }
+    }
+
+    suspend fun loadAlbumTabMoreItems(serviceId: String) {
+        val nextUrl = uiState.value.albumTab.nextPageUrl ?: return
+        setState {
+            it.copy(
+                common = it.common.copy(isLoading = true)
+            )
+        }
+        val result = withContext(Dispatchers.IO) {
+            executeJobFlow(
+                SupportedJobType.FETCH_GIVEN_PAGE,
+                nextUrl,
+                serviceId
+            )
+        }
+
+        // Check for fatal error first
+        if (result.fatalError != null) {
+            setState {
+                it.copy(
+                    common = it.common.copy(
+                        isLoading = false,
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
+                    )
+                )
+            }
+            return
+        }
+
+        setState {
+            it.copy(
+                common = it.common.copy(
+                    isLoading = false,
+                    error = null
+                ),
+                albumTab = it.albumTab.copy(
+                    itemList = it.albumTab.itemList + (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
+                    nextPageUrl = result.pagedData?.nextPageUrl
+                )
+            )
+        }
+    }
+
     suspend fun toggleSubscription(channelInfo: ChannelInfo) {
         val isCurrentlySubscribed = DatabaseOperations.isSubscribed(channelInfo.url)
 

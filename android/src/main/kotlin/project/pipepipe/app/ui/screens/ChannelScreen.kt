@@ -120,6 +120,7 @@ fun ChannelScreen(
         mapOf(
             ChannelTabType.LIVES to { viewModel.loadChannelLiveTab(uiState.channelInfo!!.tabs.first{it.type == ChannelTabType.LIVES}.url, serviceId) },
             ChannelTabType.PLAYLISTS to { viewModel.loadChannelPlaylistTab(uiState.channelInfo!!.tabs.first{it.type == ChannelTabType.PLAYLISTS}.url, serviceId) },
+            ChannelTabType.ALBUMS to { viewModel.loadChannelAlbumTab(uiState.channelInfo!!.tabs.first{it.type == ChannelTabType.ALBUMS}.url, serviceId) },
             // 在这里继续为其它 Tab 注册加载逻辑
         )
     }
@@ -313,7 +314,20 @@ fun ChannelScreen(
                         items = uiState.playlistTab.itemList,
                         isLoading = uiState.common.isLoading,
                         hasMore = uiState.playlistTab.nextPageUrl != null,
-                        onLoadMore = {},
+                        onLoadMore = { viewModel.loadPlaylistTabMoreItems(serviceId) },
+                        getUrl = { it.url },
+                        onItemClick = { item -> navController.navigate(
+                            "playlist?url=" + URLEncoder.encode(item.url, "UTF-8")
+                                    + if(item.serviceId != null) "&serviceId=${item.serviceId}" else ""
+                        )}
+                    )
+
+                    ChannelTabType.ALBUMS -> TabContent(
+                        listState = rememberLazyListState(),
+                        items = uiState.albumTab.itemList,
+                        isLoading = uiState.common.isLoading,
+                        hasMore = uiState.albumTab.nextPageUrl != null,
+                        onLoadMore = { viewModel.loadAlbumTabMoreItems(serviceId) },
                         getUrl = { it.url },
                         onItemClick = { item -> navController.navigate(
                             "playlist?url=" + URLEncoder.encode(item.url, "UTF-8")

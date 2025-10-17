@@ -61,6 +61,7 @@ import project.pipepipe.app.uistate.PlaylistSortMode
 import project.pipepipe.app.uistate.PlaylistType
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.ui.component.CustomTopBar
+import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.item.DisplayType
 import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.viewmodel.PlaylistDetailViewModel
@@ -103,6 +104,23 @@ fun PlaylistDetailScreen(
 
     LaunchedEffect(url) {
         viewModel.loadPlaylist(url, serviceId)
+    }
+
+    LaunchedEffect(listState, uiState.displayItems.size) {
+        snapshotFlow {
+            listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+        }.collect { lastVisibleIndex ->
+            if (lastVisibleIndex != null &&
+                uiState.playlistType == PlaylistType.REMOTE &&
+                !uiState.common.isLoading &&
+                uiState.list.nextPageUrl != null) {
+
+                val totalItems = uiState.displayItems.size
+                if (lastVisibleIndex >= totalItems - 5) {
+                    viewModel.loadRemotePlaylistMoreItems(serviceId!!)
+                }
+            }
+        }
     }
 
 
@@ -519,7 +537,19 @@ fun PlaylistDetailScreen(
         )
 
         when {
-            uiState.common.isLoading -> {
+            uiState.common.error != null -> {
+                ErrorComponent(
+                    error = uiState.common.error!!,
+                    onRetry = {
+                        scope.launch {
+                            val errorRow = DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
+                            viewModel.loadPlaylist(errorRow!!.request!!, serviceId)
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            uiState.common.isLoading && uiState.displayItems.isEmpty() -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -730,6 +760,19 @@ fun PlaylistDetailScreen(
                         }
                         if (index < uiState.displayItems.lastIndex) {
                             Spacer(Modifier.height(12.dp))
+                        }
+                    }
+
+                    if (uiState.common.isLoading && uiState.list.nextPageUrl != null) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }

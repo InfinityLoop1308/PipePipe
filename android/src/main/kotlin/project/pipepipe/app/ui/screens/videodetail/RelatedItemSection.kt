@@ -51,7 +51,7 @@ fun RelatedItemSection (
 
     if (relatedState.common.error != null) {
         ErrorComponent(
-            error = uiState.common.error!!,
+            error = relatedState.common.error!!,
             onRetry = {
                 uiState.currentStreamInfo?.let { streamInfo ->
                     coroutineScope.launch {

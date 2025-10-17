@@ -285,9 +285,9 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         TabConfig(
             title = stringResource(MR.strings.comments_tab_description),
             icon = Icons.AutoMirrored.Filled.Comment,
-            isAvailable = streamInfo?.commentInfo != null,
+            isAvailable = streamInfo?.commentUrl != null,
             content = {
-                streamInfo?.commentInfo?.let {
+                streamInfo?.commentUrl?.let {
                     CommentSection(
                         navController = navController,
                         onTimestampClick = { timestamp ->
@@ -303,7 +303,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         TabConfig(
             title = stringResource(MR.strings.related_videos),
             icon = Icons.Default.ArtTrack,
-            isAvailable = streamInfo?.relatedItemInfo != null,
+            isAvailable = streamInfo?.relatedItemUrl != null,
             content = { RelatedItemSection() }
         ),
         TabConfig(
@@ -433,7 +433,28 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                     .background(MaterialTheme.colorScheme.background)
                                     .statusBarsPadding()
                             ) {
-                                if (!uiState.common.isLoading && streamInfo != null && mediaController != null) {
+                                if (uiState.common.error != null) {
+                                    // Error state: show only ErrorComponent
+                                    ErrorComponent(
+                                        error = uiState.common.error!!,
+                                        onRetry = {
+                                            scope.launch {
+                                                val errorRow = DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
+                                                viewModel.loadVideoDetails(errorRow!!.request!!)
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } else if (streamInfo == null || uiState.common.isLoading) {
+                                    // Loading state: show loading indicator
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                } else if (mediaController != null) {
+                                    // Normal state: show full video detail UI
                                     Box(
                                         modifier = Modifier
                                             .aspectRatio(16f / 9f)
@@ -464,94 +485,68 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                             sponsorBlockSegments = uiState.currentSponsorBlock.segments
                                         )
                                     }
-                                }
 
-                                if (uiState.common.error != null) {
-                                    ErrorComponent(
-                                        error = uiState.common.error!!,
-                                        onRetry = {
-                                            scope.launch {
-                                                val errorRow = DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
-                                                viewModel.loadVideoDetails(errorRow!!.request!!)
-                                            }
-                                        },
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                } else {
                                     LazyColumn(
                                         modifier = Modifier
                                             .weight(1f)
                                             .nestedScroll(nestedScrollConnection1),
                                         state = listState
                                     ) {
-                                        if (streamInfo == null || uiState.common.isLoading) {
-                                            item {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(vertical = 32.dp),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    CircularProgressIndicator()
-                                                }
-                                            }
-                                        } else {
-                                            item { VideoTitleSection(name = streamInfo.name) }
-                                            item { VideoDetailSection(streamInfo = streamInfo, navController = navController) }
-                                            item {
-                                                ActionButtons(
-                                                    onPlayAudioClick = {
-                                                        mediaController?.let { controller ->
-                                                            controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-                                                            if (controller.getCurrentMediaItem()?.mediaId != streamInfo.url) {
-                                                                controller.playFromStreamInfo(streamInfo)
-                                                            } else if (!controller.isPlaying) {
-                                                                controller.play()
-                                                            }
+                                        item { VideoTitleSection(name = streamInfo.name) }
+                                        item { VideoDetailSection(streamInfo = streamInfo, navController = navController) }
+                                        item {
+                                            ActionButtons(
+                                                onPlayAudioClick = {
+                                                    mediaController?.let { controller ->
+                                                        controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+                                                        if (controller.getCurrentMediaItem()?.mediaId != streamInfo.url) {
+                                                            controller.playFromStreamInfo(streamInfo)
+                                                        } else if (!controller.isPlaying) {
+                                                            controller.play()
                                                         }
-                                                    },
-                                                    onAddToPlaylistClick = { showPlaylistPopup = true },
-                                                    streamInfo = streamInfo
-                                                )
-                                            }
-                                            item {
-                                                HorizontalPager(
-                                                    state = pagerState,
-                                                    modifier = Modifier
-                                                        .fillParentMaxHeight()
-                                                        .padding(horizontal = 16.dp)
-                                                        .padding(top = 8.dp),
-                                                    beyondViewportPageCount = 4
-                                                ) { page ->
-                                                    availableTabs[page].content()
-                                                }
+                                                    }
+                                                },
+                                                onAddToPlaylistClick = { showPlaylistPopup = true },
+                                                streamInfo = streamInfo
+                                            )
+                                        }
+                                        item {
+                                            HorizontalPager(
+                                                state = pagerState,
+                                                modifier = Modifier
+                                                    .fillParentMaxHeight()
+                                                    .padding(horizontal = 16.dp)
+                                                    .padding(top = 8.dp),
+                                                beyondViewportPageCount = 4
+                                            ) { page ->
+                                                availableTabs[page].content()
                                             }
                                         }
                                     }
-                                }
 
-                                if(!(streamInfo == null || uiState.common.isLoading) && availableTabs.isNotEmpty()) {
-                                    TabRow(
-                                        selectedTabIndex = pagerState.currentPage,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                    ) {
-                                        availableTabs.forEachIndexed { index, tab ->
-                                            Tab(
-                                                selected = pagerState.currentPage == index,
-                                                onClick = {
-                                                    scope.launch {
-                                                        pagerState.animateScrollToPage(index)
+                                    if (availableTabs.isNotEmpty()) {
+                                        TabRow(
+                                            selectedTabIndex = pagerState.currentPage,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                        ) {
+                                            availableTabs.forEachIndexed { index, tab ->
+                                                Tab(
+                                                    selected = pagerState.currentPage == index,
+                                                    onClick = {
+                                                        scope.launch {
+                                                            pagerState.animateScrollToPage(index)
+                                                        }
+                                                    },
+                                                    icon = {
+                                                        Icon(
+                                                            imageVector = tab.icon,
+                                                            contentDescription = tab.title,
+                                                            modifier = Modifier.size(22.dp)
+                                                        )
                                                     }
-                                                },
-                                                icon = {
-                                                    Icon(
-                                                        imageVector = tab.icon,
-                                                        contentDescription = tab.title,
-                                                        modifier = Modifier.size(22.dp)
-                                                    )
-                                                }
-                                            )
+                                                )
+                                            }
                                         }
                                     }
                                 }

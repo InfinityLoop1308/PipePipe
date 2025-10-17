@@ -81,7 +81,7 @@ object FilterHelper {
             }
 
             // Filter shorts
-            if (filterShorts && item.shortFormContent) {
+            if (filterShorts && item.isShort) {
                 return@filter false
             }
 

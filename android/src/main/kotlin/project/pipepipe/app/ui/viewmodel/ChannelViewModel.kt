@@ -42,6 +42,24 @@ class ChannelViewModel : ViewModel() {
         }
     }
 
+    fun loadPlaylistTabMoreItems(serviceId: String) {
+        viewModelScope.launch {
+            sharedViewModel.loadPlaylistTabMoreItems(serviceId)
+        }
+    }
+
+    fun loadChannelAlbumTab(url: String, serviceId: String) {
+        viewModelScope.launch {
+            sharedViewModel.loadChannelAlbumTab(url, serviceId)
+        }
+    }
+
+    fun loadAlbumTabMoreItems(serviceId: String) {
+        viewModelScope.launch {
+            sharedViewModel.loadAlbumTabMoreItems(serviceId)
+        }
+    }
+
     fun toggleSubscription(channelInfo: ChannelInfo) {
         viewModelScope.launch {
             sharedViewModel.toggleSubscription(channelInfo)

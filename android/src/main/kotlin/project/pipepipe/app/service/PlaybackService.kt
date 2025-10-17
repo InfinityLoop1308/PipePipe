@@ -413,6 +413,12 @@ class PlaybackService : MediaLibraryService() {
             }
 
             override fun onPlayerError(error: PlaybackException) {
+                if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
+                    player.seekToDefaultPosition()
+                    player.prepare()
+                    player.play()
+                    return
+                }
                 MainScope().launch {
                     DatabaseOperations.insertErrorLog(
                         stacktrace = error.stackTraceToString(),

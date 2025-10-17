@@ -114,6 +114,7 @@ data class ChannelUiState(
     val videoTab: ListUiState<StreamInfo> = ListUiState(),
     val liveTab: ListUiState<StreamInfo> = ListUiState(),
     val playlistTab: ListUiState<PlaylistInfo> = ListUiState(),
+    val albumTab: ListUiState<PlaylistInfo> = ListUiState(),
     val isSubscribed: Boolean = false
 ) : BaseUiState
 

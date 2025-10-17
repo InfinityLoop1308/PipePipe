@@ -39,7 +39,17 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
             val localHistory = DatabaseOperations.getSearchHistoryByPattern(query)
             var remoteSuggestionsReponse = service.suggestionPayload!!.let {
                 withContext(Dispatchers.IO) {
-                    executeClientTasksConcurrent(listOf(ClientTask(payload = service.suggestionPayload!!.copy(url = it.url + query))))[0].result
+                    try {
+                        executeClientTasksConcurrent(listOf(ClientTask(payload = service.suggestionPayload!!.copy(url = it.url + query))))[0].result
+                    } catch (e: Exception) {
+                        DatabaseOperations.insertErrorLog(
+                            e.stackTraceToString(),
+                            task = "GET_SUGGESTION",
+                            errorCode = "IGN_001",
+                            request = it.url + query
+                        )
+                        null
+                    }
                 }
             }
             if (remoteSuggestionsReponse != null && service.suggestionJsonBetween != null) {
@@ -198,7 +208,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
 
 
         // Apply filters
-        val shouldFilter = result.pagedData!!.itemList.get(0) is StreamInfo
+        val shouldFilter = result.pagedData!!.itemList.getOrNull(0) is StreamInfo
 
         val rawItems = (result.pagedData!!.itemList as? List<StreamInfo>) ?: emptyList()
         val (filteredItems, _) = if (shouldFilter) FilterHelper.filterStreamInfoList(

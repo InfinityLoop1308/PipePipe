@@ -164,26 +164,6 @@ fun VideoDetailSection(streamInfo: StreamInfo, navController: NavController) {
                         )
                     ),
                 )
-
-                streamInfo.dislikeCount?.let {
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    Icon(
-                        imageVector = Icons.Default.ThumbDown,
-                        contentDescription = stringResource(MR.strings.detail_dislikes_img_view_description),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = formatCount(streamInfo.dislikeCount),
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(start = 10.dp),
-                        style = TextStyle(
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
-                        ),
-                    )
-                }
             }
         }
     }

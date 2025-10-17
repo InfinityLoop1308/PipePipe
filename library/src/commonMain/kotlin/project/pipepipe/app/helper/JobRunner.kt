@@ -8,6 +8,7 @@ import project.pipepipe.shared.downloader.Downloader
 import project.pipepipe.shared.infoitem.CookieInfo
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.job.ClientTask
+import project.pipepipe.shared.job.ErrorDetail
 import project.pipepipe.shared.job.ExtractResult
 import project.pipepipe.shared.job.JobRequest
 import project.pipepipe.shared.job.JobStatus
@@ -62,7 +63,25 @@ suspend fun executeJobFlow(
             }
             JobStatus.CONTINUE -> {
                 val tasks = response.tasks ?: throw kotlin.IllegalStateException("Job must continue but no tasks were provided")
-                val taskResults = executeClientTasksConcurrent(tasks)
+                val taskResults = try {
+                    executeClientTasksConcurrent(tasks)  // 👈 可能抛出异常
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    val errorDetail =  ErrorDetail(
+                        code = "NET_001",
+                        stackTrace = e.stackTraceToString()
+                    )
+                    val errorId = DatabaseOperations.insertErrorLog(
+                        stacktrace = errorDetail.stackTrace,
+                        task = currentRequest.jobType.name,
+                        errorCode = "NET_001",
+                        request = currentRequest.url
+                    )
+
+                    return ExtractResult(
+                        fatalError = errorDetail.copy(errorId = errorId)
+                    )
+                }
 
                 // Cache the state on client side
                 if (response.state != null) {
@@ -133,15 +152,11 @@ suspend fun executeClientTasksConcurrent(
             },
             onError = { exception ->
                 exception.printStackTrace()
-                TaskResult(
-                    taskId = task.taskId,
-                    result = null,
-                    responseHeader = null,
-                )
+                throw exception
             }
         )
     }
 
     val results = downloader.executeAll(httpRequests, concurrency)
-    return results.mapNotNull { it.getOrNull() as? TaskResult }
+    return results.map { it.getOrThrow() as TaskResult }
 }

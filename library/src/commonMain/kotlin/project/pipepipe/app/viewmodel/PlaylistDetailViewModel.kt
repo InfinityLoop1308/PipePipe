@@ -159,19 +159,22 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             return
         }
 
+
         setState {
+            val newItemList = it.list.itemList + (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
             it.copy(
                 common = it.common.copy(
                     isLoading = false,
                     error = null
                 ),
                 list = it.list.copy(
-                    itemList = it.list.itemList + (result.pagedData?.itemList as? List<StreamInfo>).orEmpty(),
+                    itemList = newItemList,
                     nextPageUrl = result.pagedData?.nextPageUrl
                 ),
-                displayItems = it.list.itemList + (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+                displayItems = newItemList
             )
         }
+
     }
 
     fun updateSearchQuery(query: String) {
