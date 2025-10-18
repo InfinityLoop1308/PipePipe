@@ -54,6 +54,7 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.global.StringResourceHelper
 import project.pipepipe.app.utils.formatCount
 import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.app.utils.toDurationString
@@ -65,6 +66,8 @@ import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.item.DisplayType
 import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.viewmodel.PlaylistDetailViewModel
+import project.pipepipe.extractor.Router.getType
+import project.pipepipe.extractor.utils.RequestHelper.getQueryValue
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -89,6 +92,9 @@ fun PlaylistDetailScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var renameText by remember { mutableStateOf("") }
 
+    val titleText = if (url.getType() == "trending") StringResourceHelper.getTranslatedTrendingName(getQueryValue(url, "name")!!)
+                        else uiState.playlistInfo?.name ?: stringResource(MR.strings.playlist_title_default)
+
 
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -111,7 +117,7 @@ fun PlaylistDetailScreen(
             listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }.collect { lastVisibleIndex ->
             if (lastVisibleIndex != null &&
-                uiState.playlistType == PlaylistType.REMOTE &&
+                uiState.playlistType in listOf(PlaylistType.REMOTE, PlaylistType.TRENDING) &&
                 !uiState.common.isLoading &&
                 uiState.list.nextPageUrl != null) {
 
@@ -333,7 +339,7 @@ fun PlaylistDetailScreen(
                     )
                 } else {
                     Text(
-                        uiState.playlistInfo?.name ?: MR.strings.playlist_title_default.desc().toString(context = context),
+                        text = titleText,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Medium,
@@ -580,7 +586,7 @@ fun PlaylistDetailScreen(
                         .padding(horizontal = 16.dp)
                         .padding(top = 4.dp)
                 ) {
-                    if (uiState.playlistType != PlaylistType.HISTORY){
+                    if (uiState.playlistType != PlaylistType.HISTORY && uiState.playlistType != PlaylistType.TRENDING){
                         item {
                             Column(
                                 modifier = Modifier
@@ -753,7 +759,7 @@ fun PlaylistDetailScreen(
                                 displayType = when (uiState.playlistType) {
                                     PlaylistType.LOCAL -> DisplayType.NAME_ONLY
                                     PlaylistType.HISTORY -> DisplayType.STREAM_HISTORY
-                                    PlaylistType.REMOTE, PlaylistType.FEED  -> DisplayType.ORIGIN
+                                    PlaylistType.REMOTE, PlaylistType.FEED, PlaylistType.TRENDING  -> DisplayType.ORIGIN
                                 }
                             )
                         }

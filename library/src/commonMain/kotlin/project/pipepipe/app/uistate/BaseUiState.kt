@@ -128,7 +128,8 @@ enum class PlaylistType {
     LOCAL,
     HISTORY,
     FEED,
-    REMOTE
+    REMOTE,
+    TRENDING
 }
 
 data class PlaylistUiState(

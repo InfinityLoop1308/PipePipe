@@ -192,7 +192,14 @@ fun DashboardScreen(navController: NavController) {
                     uiState.trendingItems.forEachIndexed { index, trending ->
                         TrendingItemRow(
                             trending = trending,
-                            showDivider = index != uiState.trendingItems.lastIndex
+                            showDivider = index != uiState.trendingItems.lastIndex,
+                            onClick = {
+                                val route = Screen.PlaylistDetail.createRoute(
+                                    url = trending.url,
+                                    serviceId = trending.serviceId
+                                )
+                                navController.navigate(route)
+                            }
                         )
                     }
                 }
@@ -370,10 +377,15 @@ private fun PlaylistCard(
 private fun TrendingItemRow(
     trending: TrendingInfo,
     showDivider: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val translatedName = StringResourceHelper.getTranslatedTrendingName(trending.name)
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
         Text(
             text = "${trending.serviceId}: $translatedName",
             style = MaterialTheme.typography.titleSmall,

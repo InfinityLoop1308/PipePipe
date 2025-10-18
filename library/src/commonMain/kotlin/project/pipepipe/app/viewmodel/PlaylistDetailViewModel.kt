@@ -81,13 +81,16 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                 }
                 updateFeedLastUpdated(feedId)
             }
+            url.startsWith("trending://") -> {
+                loadRemotePlaylistDetail(url, serviceId!!, isTrending = true)
+            }
             else -> {
-                loadRemotePlaylistDetail(url, serviceId!!)
+                loadRemotePlaylistDetail(url, serviceId!!, isTrending = false)
             }
         }
     }
 
-    suspend fun loadRemotePlaylistDetail(url: String, serviceId: String) {
+    suspend fun loadRemotePlaylistDetail(url: String, serviceId: String, isTrending: Boolean = false) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true)
@@ -120,8 +123,8 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                     isLoading = false,
                     error = null
                 ),
-                playlistInfo = result.info as PlaylistInfo,
-                playlistType = PlaylistType.REMOTE,
+                playlistInfo = result.info as? PlaylistInfo,
+                playlistType = if (isTrending) PlaylistType.TRENDING else PlaylistType.REMOTE,
                 list = ListUiState(
                     itemList = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty(),
                     nextPageUrl = result.pagedData?.nextPageUrl
