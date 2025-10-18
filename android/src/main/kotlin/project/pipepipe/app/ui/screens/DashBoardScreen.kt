@@ -47,6 +47,7 @@ import project.pipepipe.app.ui.viewmodel.DashboardViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import dev.icerock.moko.resources.compose.stringResource
@@ -187,12 +188,12 @@ fun DashboardScreen(navController: NavController) {
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     uiState.trendingItems.forEachIndexed { index, trending ->
                         TrendingItemRow(
                             trending = trending,
-                            showDivider = index != uiState.trendingItems.lastIndex,
+                            showDivider = true,
                             onClick = {
                                 val route = Screen.PlaylistDetail.createRoute(
                                     url = trending.url,

@@ -36,7 +36,7 @@ private fun getCustomDarkColor(color: Color): Color {
 
 // 添加静态变量来存储当前主题状态
 private var currentMaterialYouEnabled = false
-private var currentCustomPrimaryColor = Color(0xFFFFFFFF)
+private var currentCustomPrimaryColor = Color(0xFFE53935)
 private var isDarkTheme = false
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -100,7 +100,7 @@ fun PipePipeTheme(
     }
 
     // Parse custom theme color
-    val customPrimaryColor = SponsorBlockUtils.parseHexColor(themeColorHex, Color.White)
+    val customPrimaryColor = SponsorBlockUtils.parseHexColor(themeColorHex, Color(0xFFE53935))
 
     // 更新全局状态
     currentMaterialYouEnabled = materialYouEnabled
