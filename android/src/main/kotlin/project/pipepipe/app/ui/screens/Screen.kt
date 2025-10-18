@@ -9,11 +9,16 @@ sealed class Screen(val route: String) {
     object Dashboard : Screen("dashboard")
     object BookmarkedPlaylist : Screen("bookmarked_playlist")
     object PlaylistDetail : Screen("playlist?url={url}&serviceId={serviceId}") {
-        fun createRoute(url: String, serviceId: String): String {
+        fun createRoute(url: String, serviceId: String? = null): String {
             val encodedUrl = URLEncoder.encode(url, "UTF-8")
-            return "playlist?url=${encodedUrl}&serviceId=${serviceId}"
+            return if (serviceId != null) {
+                "playlist?url=${encodedUrl}&serviceId=${serviceId}"
+            } else {
+                "playlist?url=${encodedUrl}"
+            }
         }
     }
+
     object History : Screen("history")
     object Settings : Screen("settings")
     object Search : Screen("search?query={query}&serviceId={serviceId}") {

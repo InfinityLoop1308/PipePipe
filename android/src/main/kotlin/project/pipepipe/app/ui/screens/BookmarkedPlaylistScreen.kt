@@ -93,13 +93,7 @@ fun BookmarkedPlaylistScreen(navController: NavController) {
                                 isDragging = isDragging,
                                 showDragHandle = true,
                                 onClick = {
-                                    val playlistId = playlist.url.substringAfterLast("/")
-                                    navController.navigate(
-                                        "playlist?url=" + URLEncoder.encode(
-                                            "local://playlist/$playlistId",
-                                            "UTF-8"
-                                        )
-                                    )
+                                    navController.navigate(Screen.PlaylistDetail.createRoute(playlist.url, playlist.serviceId))
                                 },
                                 dragHandleModifier = Modifier.draggableHandle(
                                     onDragStarted = {
