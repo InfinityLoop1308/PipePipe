@@ -343,7 +343,6 @@
 <string name="settings_appearance_theme_mode_light">Chiaro</string>
 <string name="download_dialog_message">Per offrire la migliore esperienza di riproduzione possibile, ci stiamo allontanando dal downloader legacy dell\'app. Questo ci permette di concentrare i nostri sforzi sulle prestazioni e la stabilità principali.\n\nConsigliamo di utilizzare Seal, un downloader open-source affidabile e potente basato su yt-dlp con oltre 22k stelle su GitHub. Una volta installato, le richieste di download verranno automaticamente indirizzate ad esso.</string>
 <string name="sleep_timer_minutes_unit">Minuti</string>
-<string name="streams_notification_count_new">%d nuovi</string>
 <string name="settings_player_music_random_disabled_summary">Abilita la modalità Lettore musicale per usare l\'ordine casuale</string>
 <string name="settings_section_gesture">Gesto</string>
 <string name="settings_gesture_brightness_summary">Attiva/disattiva i gesti di controllo della luminosità</string>
@@ -357,4 +356,14 @@
 <string name="play_queue">Coda di riproduzione</string>
 <string name="player_audio_language">Lingua audio</string>
 <string name="duration_long">Lunga</string>
+<string name="error_code_geo_001">Questo contenuto non è disponibile nella tua regione</string>
+<string name="error_code_block_001">Contenuto non disponibile</string>
+<string name="error_code_risk">%s ha negato il tuo accesso perché sospetta che tu sia un bot. Riprova più tardi o cambia il tuo IP (ad esempio, tramite una VPN)</string>
+<string name="error_code_priv_001">Video privato</string>
+<string name="error_code_paid_001">Questo contenuto è disponibile solo per gli utenti premium</string>
+<string name="error_code_paid_002">Questo contenuto è disponibile solo per i membri del canale</string>
+<string name="error_code_paid_003">Contenuto a pagamento</string>
+<string name="error_code_time_001">Questa trasmissione in diretta non è ancora iniziata</string>
+<string name="error_code_time_002">Questo video non è ancora stato pubblicato</string>
+<string name="unknown">Sconosciuto</string>
 </resources>
