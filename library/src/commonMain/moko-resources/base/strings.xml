@@ -373,4 +373,11 @@
 <string name="error_code_time_001">This live stream hasn\'t started yet</string>
 <string name="error_code_time_002">This video hasn\'t been published yet</string>
 <string name="unknown">Unknown</string>
+<!-- Comment item strings -->
+<string name="comment_user_avatar">User avatar</string>
+<string name="comment_pinned">Pinned comment</string>
+<string name="comment_likes">Likes</string>
+<string name="comment_creator_heart">Creator heart</string>
+<string name="comment_replies">%d replies</string>
+<string name="comment_view_pictures">View pictures (%d)</string>
 </resources>

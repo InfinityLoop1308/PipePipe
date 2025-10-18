@@ -364,4 +364,10 @@
 <string name="error_code_time_001">Ce direct n\'a pas encore commencé</string>
 <string name="error_code_time_002">Cette vidéo n\'a pas encore été publiée</string>
 <string name="unknown">Inconnu</string>
+<string name="comment_user_avatar">Avatar de l\'utilisateur</string>
+<string name="comment_pinned">Commentaire épinglé</string>
+<string name="comment_likes">J\'aime</string>
+<string name="comment_creator_heart">Cœur du créateur</string>
+<string name="comment_replies">%d réponses</string>
+<string name="comment_view_pictures">Voir les photos (%d)</string>
 </resources>

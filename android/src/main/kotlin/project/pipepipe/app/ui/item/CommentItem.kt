@@ -21,6 +21,9 @@ import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.HtmlText
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
+import project.pipepipe.app.utils.formatCount
 
 @Composable
 fun CommentItem(
@@ -46,7 +49,7 @@ fun CommentItem(
             // Avatar
             AsyncImage(
                 model = commentInfo.authorAvatarUrl,
-                contentDescription = "User avatar",
+                contentDescription = stringResource(MR.strings.comment_user_avatar),
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
@@ -66,7 +69,7 @@ fun CommentItem(
                     if(commentInfo.isPinned == true) {
                         Icon(
                             imageVector = Icons.Default.PushPin,
-                            contentDescription = "Pinned comment",
+                            contentDescription = stringResource(MR.strings.comment_pinned),
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -117,13 +120,13 @@ fun CommentItem(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ThumbUp,
-                            contentDescription = "Likes",
+                            contentDescription = stringResource(MR.strings.comment_likes),
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
                         Text(
-                            text = commentInfo.likeCount.toString(),
+                            text = formatCount(commentInfo.likeCount?.toLong()),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -132,7 +135,7 @@ fun CommentItem(
                     if (isHearted) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
-                            contentDescription = "Creator heart",
+                            contentDescription = stringResource(MR.strings.comment_creator_heart),
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.error
                         )
@@ -159,7 +162,7 @@ fun CommentItem(
                         val replyCount = commentInfo.replyCount ?: 0
                         if (commentInfo.replyInfo != null) {
                             Text(
-                                text = "$replyCount replies",
+                                text = stringResource(MR.strings.comment_replies, replyCount),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.clickable { onReplyButtonClick() }
@@ -185,7 +188,7 @@ fun CommentItem(
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "View pictures ($imageCount)",
+                                    text = stringResource(MR.strings.comment_view_pictures, imageCount),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.primary
                                 )

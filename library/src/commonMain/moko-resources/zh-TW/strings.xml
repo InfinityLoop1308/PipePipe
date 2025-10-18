@@ -364,4 +364,10 @@
 <string name="error_code_time_001">此直播尚未開始</string>
 <string name="error_code_time_002">此影片尚未發布</string>
 <string name="unknown">未知</string>
+<string name="comment_user_avatar">使用者頭像</string>
+<string name="comment_pinned">已釘選留言</string>
+<string name="comment_likes">讚</string>
+<string name="comment_creator_heart">創作者愛心</string>
+<string name="comment_replies">%d 則回覆</string>
+<string name="comment_view_pictures">查看圖片 (%d)</string>
 </resources>

@@ -364,4 +364,10 @@
 <string name="error_code_time_001">Dieser Livestream hat noch nicht begonnen</string>
 <string name="error_code_time_002">Dieses Video wurde noch nicht veröffentlicht</string>
 <string name="unknown">Unbekannt</string>
+<string name="comment_user_avatar">Benutzer-Avatar</string>
+<string name="comment_pinned">Angepinnter Kommentar</string>
+<string name="comment_likes">Gefällt mir</string>
+<string name="comment_creator_heart">Herz des Erstellers</string>
+<string name="comment_replies">%d Antworten</string>
+<string name="comment_view_pictures">Bilder ansehen (%d)</string>
 </resources>

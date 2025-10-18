@@ -364,4 +364,10 @@
 <string name="error_code_time_001">このライブストリームはまだ開始されていません</string>
 <string name="error_code_time_002">この動画はまだ公開されていません</string>
 <string name="unknown">不明</string>
+<string name="comment_user_avatar">ユーザーアバター</string>
+<string name="comment_pinned">固定コメント</string>
+<string name="comment_likes">いいね</string>
+<string name="comment_creator_heart">クリエイターのハート</string>
+<string name="comment_replies">%d 件の返信</string>
+<string name="comment_view_pictures">写真を見る (%d)</string>
 </resources>

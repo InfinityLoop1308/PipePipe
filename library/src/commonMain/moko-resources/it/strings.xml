@@ -366,4 +366,10 @@
 <string name="error_code_time_001">Questa trasmissione in diretta non è ancora iniziata</string>
 <string name="error_code_time_002">Questo video non è ancora stato pubblicato</string>
 <string name="unknown">Sconosciuto</string>
+<string name="comment_user_avatar">Avatar utente</string>
+<string name="comment_pinned">Commento fissato</string>
+<string name="comment_likes">Mi piace</string>
+<string name="comment_creator_heart">Cuore del creatore</string>
+<string name="comment_replies">%d risposte</string>
+<string name="comment_view_pictures">Visualizza immagini (%d)</string>
 </resources>

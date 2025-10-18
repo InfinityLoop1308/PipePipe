@@ -364,4 +364,10 @@
 <string name="error_code_time_001">Luồng trực tiếp này chưa bắt đầu</string>
 <string name="error_code_time_002">Video này chưa được xuất bản</string>
 <string name="unknown">Không xác định</string>
+<string name="comment_user_avatar">Ảnh đại diện người dùng</string>
+<string name="comment_pinned">Bình luận đã ghim</string>
+<string name="comment_likes">Lượt thích</string>
+<string name="comment_creator_heart">Tim của người tạo</string>
+<string name="comment_replies">%d trả lời</string>
+<string name="comment_view_pictures">Xem ảnh (%d)</string>
 </resources>
