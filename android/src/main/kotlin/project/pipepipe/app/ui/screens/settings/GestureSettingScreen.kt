@@ -129,10 +129,7 @@ fun GestureSettingScreen(
     }
     Column {
         CustomTopBar(
-            defaultTitleText = MR.strings.settings_section_gesture.desc().toString(context),
-            defaultNavigationOnClick = {
-                navController.popBackStack()
-            }
+            defaultTitleText = MR.strings.settings_section_gesture.desc().toString(context)
         )
 
         LazyColumn(

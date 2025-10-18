@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             navController = rememberNavController()
+            SharedContext.navController = navController
             val toastMessage by ToastManager.message.collectAsState()
             PipePipeTheme {
                 Surface(

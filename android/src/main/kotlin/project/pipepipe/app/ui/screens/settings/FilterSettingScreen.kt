@@ -165,8 +165,7 @@ fun FilterSettingScreen(
 
     Column {
         CustomTopBar(
-            defaultTitleText = filterTitle,
-            defaultNavigationOnClick = { navController.popBackStack() }
+            defaultTitleText = filterTitle
         )
 
         LazyColumn(
@@ -307,7 +306,6 @@ fun FilterByKeywordsScreen(
                     }
                 },
                 titlePadding = 0.dp,
-                defaultNavigationOnClick = { navController.popBackStack() },
                 actions = {
                     Row(horizontalArrangement = Arrangement.spacedBy((-6).dp)) {
                         if (isSearchActive) {

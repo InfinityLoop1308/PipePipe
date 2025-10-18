@@ -110,8 +110,7 @@ fun SponsorBlockSettingsScreen(
 
     Column {
         CustomTopBar(
-            defaultTitleText = stringResource(MR.strings.sponsor_block),
-            defaultNavigationOnClick = { navController.popBackStack() }
+            defaultTitleText = stringResource(MR.strings.sponsor_block)
         )
 
         LazyColumn(
@@ -549,8 +548,7 @@ fun SponsorBlockCategoriesSettingsScreen(
 
     Column {
         CustomTopBar(
-            defaultTitleText = stringResource(MR.strings.settings_category_sponsor_block_categories_title),
-            defaultNavigationOnClick = { navController.popBackStack() }
+            defaultTitleText = stringResource(MR.strings.settings_category_sponsor_block_categories_title)
         )
 
         LazyColumn(

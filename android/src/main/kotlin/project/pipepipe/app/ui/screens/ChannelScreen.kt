@@ -157,7 +157,6 @@ fun ChannelScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         CustomTopBar(
             defaultTitleText = uiState.channelInfo?.name ?: stringResource(MR.strings.channel),
-            defaultNavigationOnClick = { navController.popBackStack() },
             actions = {
                 Box {
                     IconButton(onClick = { showMoreMenu = true }) {

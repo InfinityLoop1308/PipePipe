@@ -216,7 +216,6 @@ fun SearchScreen(
                 )
             },
             titlePadding = 0.dp,
-            defaultNavigationOnClick = { navController.popBackStack() },
             actions = {
                 Row(horizontalArrangement = Arrangement.spacedBy((-10).dp)) {
                     if (uiState.searchQuery.isNotEmpty()) {

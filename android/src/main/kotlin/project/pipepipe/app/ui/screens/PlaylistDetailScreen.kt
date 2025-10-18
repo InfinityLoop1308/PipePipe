@@ -343,7 +343,6 @@ fun PlaylistDetailScreen(
                 }
             },
             titlePadding = 0.dp,
-            defaultNavigationOnClick = { navController.popBackStack() },
             actions = {
                 Row(horizontalArrangement = Arrangement.spacedBy((-6).dp)) {
                     if (isSearchActive) {

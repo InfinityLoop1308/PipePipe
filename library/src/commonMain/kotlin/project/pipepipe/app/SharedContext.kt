@@ -1,5 +1,6 @@
 package project.pipepipe.app
 
+import androidx.navigation.NavHostController
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +31,8 @@ object SharedContext {
     lateinit var settingsManager: SettingsManager
     val bottomSheetMenuViewModel = BottomSheetMenuViewModel()
     lateinit var sessionManager: SessionManager
+//    Safe in single-activity architecture where Activity lifecycle matches application lifecycle
+    lateinit var navController: NavHostController
 
     private val _playbackMode = MutableStateFlow(PlaybackMode.AUDIO_ONLY)
     val playbackMode: StateFlow<PlaybackMode> = _playbackMode.asStateFlow()

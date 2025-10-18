@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.theme.customTopBarColor
 import project.pipepipe.app.ui.theme.onCustomTopBarColor
 
@@ -38,7 +39,7 @@ fun CustomTopBar(
     title: (@Composable () -> Unit)? = null,
     defaultTitleText: String? = null,
     navigationIcon: @Composable (() -> Unit)? = null,
-    defaultNavigationOnClick: (() -> Unit)? = null,
+    defaultNavigationOnClick: (() -> Unit)? = { SharedContext.navController.navigateUp() },
     actions: @Composable RowScope.() -> Unit = {},
     height: Dp = 56.dp,
     shadowElevation: Dp = 3.dp,

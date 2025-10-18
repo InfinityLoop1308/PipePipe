@@ -52,9 +52,6 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             CustomTopBar(
-                defaultNavigationOnClick = {
-                    navController.popBackStack()
-                },
                 defaultTitleText = stringResource(MR.strings.settings)
             )
         }

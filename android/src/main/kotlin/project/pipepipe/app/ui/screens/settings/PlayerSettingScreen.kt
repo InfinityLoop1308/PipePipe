@@ -180,10 +180,7 @@ fun PlayerSettingScreen(
 
     Column {
         CustomTopBar(
-            defaultTitleText = stringResource(MR.strings.settings_category_player_title),
-            defaultNavigationOnClick = {
-                navController.popBackStack()
-            }
+            defaultTitleText = stringResource(MR.strings.settings_category_player_title)
         )
 
         LazyColumn(

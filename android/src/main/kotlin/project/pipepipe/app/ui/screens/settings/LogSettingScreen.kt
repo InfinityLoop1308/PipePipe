@@ -58,8 +58,7 @@ fun LogSettingScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
         CustomTopBar(
-            defaultTitleText = stringResource(MR.strings.log),
-            defaultNavigationOnClick = { navController.popBackStack() }
+            defaultTitleText = stringResource(MR.strings.log)
         )
 
         if (isLoading) {

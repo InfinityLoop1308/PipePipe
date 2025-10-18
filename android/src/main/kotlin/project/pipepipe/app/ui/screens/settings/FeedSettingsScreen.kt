@@ -202,10 +202,7 @@ fun FeedSettingsScreen(
 
     Column {
         CustomTopBar(
-            defaultTitleText = stringResource(MR.strings.settings_category_feed_title),
-            defaultNavigationOnClick = {
-                navController.popBackStack()
-            }
+            defaultTitleText = stringResource(MR.strings.settings_category_feed_title)
         )
 
         LazyColumn(

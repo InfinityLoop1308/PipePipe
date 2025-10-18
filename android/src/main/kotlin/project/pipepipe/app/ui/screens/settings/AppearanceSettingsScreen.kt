@@ -105,8 +105,7 @@ fun AppearanceSettingsScreen(
 
     Column {
         CustomTopBar(
-            defaultTitleText = stringResource(MR.strings.settings_section_appearance),
-            defaultNavigationOnClick = { navController.popBackStack() }
+            defaultTitleText = stringResource(MR.strings.settings_section_appearance)
         )
 
         LazyColumn(

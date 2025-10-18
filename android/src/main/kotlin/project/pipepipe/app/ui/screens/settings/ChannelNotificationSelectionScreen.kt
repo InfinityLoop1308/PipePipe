@@ -52,9 +52,6 @@ fun ChannelNotificationSelectionScreen(
     Column(modifier = modifier.fillMaxSize()) {
         CustomTopBar(
             defaultTitleText = stringResource(MR.strings.channels),
-            defaultNavigationOnClick = {
-                navController.popBackStack()
-            },
             actions = {
                 IconButton(
                     onClick = {

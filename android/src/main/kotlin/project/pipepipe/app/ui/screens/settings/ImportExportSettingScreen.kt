@@ -109,8 +109,7 @@ fun ImportExportSettingScreen(
 
     Column {
         CustomTopBar(
-            defaultTitleText = MR.strings.settings_section_import_export.desc().toString(context),
-            defaultNavigationOnClick = { navController.popBackStack() }
+            defaultTitleText = MR.strings.settings_section_import_export.desc().toString(context)
         )
 
         LazyColumn(
