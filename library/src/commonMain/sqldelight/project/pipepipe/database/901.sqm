@@ -199,7 +199,8 @@ CREATE TABLE error_log (
     stacktrace TEXT NOT NULL,
     request TEXT,
     task TEXT NOT NULL,
-    error_code TEXT NOT NULL
+    error_code TEXT NOT NULL,
+    service_id TEXT
 );
 
 CREATE INDEX index_error_log_timestamp ON error_log (timestamp DESC);

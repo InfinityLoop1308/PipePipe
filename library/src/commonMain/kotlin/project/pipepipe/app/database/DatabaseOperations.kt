@@ -520,13 +520,15 @@ object DatabaseOperations {
         task: String,
         errorCode: String,
         request: String? = null,
+        serviceId: String? = null,
     ): Long = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.insertErrorLog(
             Clock.System.now().toEpochMilliseconds(),
             stacktrace,
             request,
             task,
-            errorCode
+            errorCode,
+            serviceId
         )
         database.appDatabaseQueries.lastInsertRowId().executeAsOne()
     }

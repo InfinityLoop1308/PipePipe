@@ -45,7 +45,7 @@ fun DescriptionSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${stringResource(MR.strings.published_on)} ${formatAbsoluteTime(streamInfo.uploadDate!!)}",
+                    text = "${stringResource(MR.strings.published_on)} ${streamInfo.uploadDate?.let { formatAbsoluteTime(it) }?: stringResource(MR.strings.unknown_title)}",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(
                         alpha = if (MaterialTheme.colorScheme.surface.luminance() > 0.5f) 0.7f else 0.8f

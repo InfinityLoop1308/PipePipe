@@ -46,7 +46,8 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                             e.stackTraceToString(),
                             task = "GET_SUGGESTION",
                             errorCode = "IGN_001",
-                            request = it.url + query
+                            request = it.url + query,
+                            serviceId = service.serviceId
                         )
                         null
                     }
@@ -199,7 +200,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
                     )
                 )
             }
@@ -252,7 +253,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
                     )
                 )
             }

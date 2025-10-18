@@ -105,7 +105,8 @@ CREATE TABLE error_log (
     stacktrace TEXT NOT NULL,
     request TEXT,
     task TEXT NOT NULL,
-    error_code TEXT NOT NULL
+    error_code TEXT NOT NULL,
+    service_id TEXT
 );
 
 
@@ -500,8 +501,8 @@ SELECT * FROM feed_last_updated WHERE subscription_id = ?;
 
 -- Error log queries
 insertErrorLog:
-INSERT INTO error_log (timestamp, stacktrace, request, task, error_code)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO error_log (timestamp, stacktrace, request, task, error_code, service_id)
+VALUES (?, ?, ?, ?, ?, ?);
 
 deleteErrorLog:
 DELETE FROM error_log WHERE id = ?;

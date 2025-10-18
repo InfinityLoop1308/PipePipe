@@ -16,7 +16,8 @@ interface BaseUiState
 
 data class ErrorInfo(
     val errorId: Long,
-    val errorCode: String
+    val errorCode: String,
+    val serviceId: String
 )
 
 data class CommonUiState(

@@ -107,7 +107,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
                     )
                 )
             }
@@ -152,7 +152,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code)
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
                     )
                 )
             }

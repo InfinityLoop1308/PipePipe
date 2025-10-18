@@ -75,7 +75,8 @@ suspend fun executeJobFlow(
                         stacktrace = errorDetail.stackTrace,
                         task = currentRequest.jobType.name,
                         errorCode = "NET_001",
-                        request = currentRequest.url
+                        request = currentRequest.url,
+                        serviceId = currentRequest.serviceId
                     )
 
                     return ExtractResult(
@@ -105,7 +106,8 @@ suspend fun executeJobFlow(
                     stacktrace = fatalError.stackTrace,
                     task = currentRequest.jobType.name,
                     errorCode = fatalError.code,
-                    request = currentRequest.url
+                    request = currentRequest.url,
+                    serviceId = currentRequest.serviceId
                 )
                 return response.result!!.copy(fatalError = fatalError.copy(errorId = errorId))
             }
