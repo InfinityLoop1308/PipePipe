@@ -41,7 +41,7 @@
 
 ## Content Blocking Errors
 
-### BLOCK_001: Content Unavailable
+### UNAV_001: Content Unavailable
 **Description:** The requested content is not available.
 
 ---
@@ -78,14 +78,14 @@
 
 ## Error Code Categories
 
-| Category | Code Range | Description |
-|----------|------------|-------------|
-| Network | NET_xxx | Network connectivity and communication errors |
-| Parsing | PARSE_xxx | Data parsing and format errors |
+| Category     | Code Range | Description |
+|--------------|------------|-------------|
+| Network      | NET_xxx | Network connectivity and communication errors |
+| Parsing      | PARSE_xxx | Data parsing and format errors |
 | Risk Control | RISK_xxx | Platform risk control and security measures |
-| Request | REQ_xxx | General request and server errors |
-| Geographic | GEO_xxx | Geographic and regional restrictions |
-| Blocking | BLOCK_xxx | Content blocking and unavailability |
-| Privacy | PRIV_xxx | Privacy and access control errors |
-| Payment | PAID_xxx | Payment and subscription requirements |
-| Timing | TIME_xxx | Time-based access restrictions |
+| Request      | REQ_xxx | General request and server errors |
+| Geographic   | GEO_xxx | Geographic and regional restrictions |
+| Unavailable  | UNAV_xxx | Content  unavailability |
+| Privacy      | PRIV_xxx | Privacy and access control errors |
+| Payment      | PAID_xxx | Payment and subscription requirements |
+| Timing       | TIME_xxx | Time-based access restrictions |

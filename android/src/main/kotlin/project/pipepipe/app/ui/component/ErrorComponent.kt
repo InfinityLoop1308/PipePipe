@@ -46,7 +46,7 @@ fun ErrorComponent(
     // Map error codes to specific messages (for GEO_001 onwards)
     val titleText = when (error.errorCode) {
         "GEO_001" -> stringResource(MR.strings.error_code_geo_001)
-        "BLOCK_001" -> stringResource(MR.strings.error_code_block_001)
+        "UNAV_001" -> stringResource(MR.strings.error_code_block_001)
         "PRIV_001" -> stringResource(MR.strings.error_code_priv_001)
         "PAID_001" -> stringResource(MR.strings.error_code_paid_001)
         "PAID_002" -> stringResource(MR.strings.error_code_paid_002)
