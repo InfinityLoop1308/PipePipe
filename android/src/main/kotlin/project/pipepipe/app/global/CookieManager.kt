@@ -1,27 +1,13 @@
 package project.pipepipe.app.global
-import android.content.Context
-import android.content.SharedPreferences
 import kotlinx.serialization.json.Json
+import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.CookieInfo
 
-class CookieManager private constructor(context: Context): project.pipepipe.shared.downloader.CookieManager {
+class CookieManager: project.pipepipe.shared.downloader.CookieManager {
 
     companion object {
-        private const val PREFS_NAME = "cookie_manager_prefs"
         private const val COOKIE_PREFIX = "cookie_"
-
-        @Volatile
-        private var INSTANCE: CookieManager? = null
-
-        fun getInstance(context: Context): CookieManager {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: CookieManager(context.applicationContext).also { INSTANCE = it }
-            }
-        }
     }
-
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -34,7 +20,8 @@ class CookieManager private constructor(context: Context): project.pipepipe.shar
 
     override fun getCookieInfo(id: String): CookieInfo? {
         val key = COOKIE_PREFIX + id
-        val cookieInfoJson = sharedPreferences.getString(key, null) ?: return null
+        val cookieInfoJson = SharedContext.settingsManager.getString(key, "")
+        if (cookieInfoJson.isEmpty()) return null
 
         return try {
             json.decodeFromString<CookieInfo>(cookieInfoJson)
@@ -57,43 +44,47 @@ class CookieManager private constructor(context: Context): project.pipepipe.shar
             return false
         }
 
-        return sharedPreferences.edit()
-            .putString(key, cookieInfoJson)
-            .commit()
+        return try {
+            SharedContext.settingsManager.putString(key, cookieInfoJson)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
     fun setCookie(id: String, cookie: String?, timeOut: Long): Boolean {
         return setCookieInfo(id, CookieInfo(cookie, timeOut))
     }
     fun removeCookie(id: String): Boolean {
         val key = COOKIE_PREFIX + id
-        return sharedPreferences.edit()
-            .remove(key)
-            .commit()
+        return try {
+            SharedContext.settingsManager.remove(key)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
     fun cleanExpiredCookies(): Int {
         var cleanedCount = 0
 
-        val allEntries = sharedPreferences.all
-        val editor = sharedPreferences.edit()
+        val snapshot = SharedContext.settingsManager.snapshot()
 
-        for ((key, _) in allEntries) {
+        for ((key, _) in snapshot) {
             if (key.startsWith(COOKIE_PREFIX)) {
                 val id = key.removePrefix(COOKIE_PREFIX)
                 if (isCookieExpired(id)) {
-                    editor.remove(key)
+                    SharedContext.settingsManager.remove(key)
                     cleanedCount++
                 }
             }
         }
 
-        editor.apply()
         return cleanedCount
     }
     fun getValidCookieIds(): List<String> {
         val validIds = mutableListOf<String>()
 
-        val allEntries = sharedPreferences.all
-        for ((key, _) in allEntries) {
+        val snapshot = SharedContext.settingsManager.snapshot()
+        for ((key, _) in snapshot) {
             if (key.startsWith(COOKIE_PREFIX)) {
                 val id = key.removePrefix(COOKIE_PREFIX)
                 if (!isCookieExpired(id)) {
@@ -105,15 +96,12 @@ class CookieManager private constructor(context: Context): project.pipepipe.shar
         return validIds
     }
     fun clearAllCookies() {
-        val editor = sharedPreferences.edit()
-        val allEntries = sharedPreferences.all
+        val snapshot = SharedContext.settingsManager.snapshot()
 
-        for (key in allEntries.keys) {
+        for (key in snapshot.keys) {
             if (key.startsWith(COOKIE_PREFIX)) {
-                editor.remove(key)
+                SharedContext.settingsManager.remove(key)
             }
         }
-
-        editor.apply()
     }
 }

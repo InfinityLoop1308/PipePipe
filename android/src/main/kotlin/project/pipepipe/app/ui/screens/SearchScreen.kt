@@ -44,20 +44,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import project.pipepipe.app.MR
-import project.pipepipe.app.dataStore
 import project.pipepipe.app.global.StringResourceHelper
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.utils.generateQueryUrl
@@ -77,7 +72,8 @@ import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.url
 import project.pipepipe.shared.infoitem.serviceId
 
-private val SELECTED_SERVICE_KEY = stringPreferencesKey("selected_service")
+private const val SELECTED_SERVICE_KEY = "selected_service"
+private const val SUPPORTED_SERVICES_KEY = "supported_services"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,9 +108,9 @@ fun SearchScreen(
     }
 
 
-    val context = LocalContext.current
-    val serviceInfoList = runBlocking {
-        Json.decodeFromString<List<SupportedServiceInfo>>(context.dataStore.data.first()[stringPreferencesKey("supported_services")]!!)
+    val serviceInfoList = remember {
+        val jsonString = SharedContext.settingsManager.getString(SUPPORTED_SERVICES_KEY)
+        Json.decodeFromString<List<SupportedServiceInfo>>(jsonString)
     }
 
 
@@ -134,10 +130,10 @@ fun SearchScreen(
 
     LaunchedEffect(Unit) {
         if (uiState.selectedService == null && serviceInfoList.isNotEmpty()) { //todo: a page to show when serviceInfoList is empty
-            val savedServiceId = context.dataStore.data.first()[SELECTED_SERVICE_KEY]
-            val savedService = savedServiceId?.let { serviceId ->
-                serviceInfoList.find { it.serviceId == serviceId }
-            }
+            val savedServiceId = SharedContext.settingsManager.getString(SELECTED_SERVICE_KEY, "")
+            val savedService = if (savedServiceId.isNotEmpty()) {
+                serviceInfoList.find { it.serviceId == savedServiceId }
+            } else null
             val serviceToUse = savedService ?: serviceInfoList.first()
             viewModel.updateSelectedService(serviceToUse)
         }
@@ -374,11 +370,7 @@ fun SearchScreen(
                 val service = serviceInfoList.find { it.serviceId == serviceId }
                 service?.let {
                     viewModel.updateSelectedService(it)
-                    GlobalScope.launch {
-                        context.dataStore.edit { preferences ->
-                            preferences[SELECTED_SERVICE_KEY] = serviceId
-                        }
-                    }
+                    SharedContext.settingsManager.putString(SELECTED_SERVICE_KEY, serviceId)
                 }
             },
             onSearchTypeChange = { searchType ->

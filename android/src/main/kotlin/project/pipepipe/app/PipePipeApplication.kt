@@ -1,8 +1,6 @@
 package project.pipepipe.app
 
 import android.app.Application
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import kotlinx.coroutines.*
@@ -41,11 +39,11 @@ class PipePipeApplication : Application() {
 
         // Initialize SharedContext
         SharedContext.downloader = Downloader(HttpClient(OkHttp))
-        SharedContext.cookieManager = CookieManager.getInstance(this)
+        SharedContext.settingsManager = SettingsManager()
+        SharedContext.cookieManager = CookieManager()
         SharedContext.sessionManager = Cache4kSessionManager()
         SharedContext.sharedVideoDetailViewModel = VideoDetailViewModel()
         SharedContext.serverRequestHandler = Router::execute
-        SharedContext.settingsManager = SettingsManager()
 
         // Initialize Media and Notifications
         MediaCacheProvider.init(this)
@@ -67,9 +65,7 @@ class PipePipeApplication : Application() {
                         null
                     ).pagedData!!.itemList as List<SupportedServiceInfo>
                     val jsonString = Json.encodeToString(result)
-                    applicationContext.dataStore.edit { preferences ->
-                        preferences[stringPreferencesKey("supported_services")] = jsonString
-                    }
+                    SharedContext.settingsManager.putString("supported_services", jsonString)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
