@@ -380,4 +380,7 @@
 <string name="comment_creator_heart">Creator heart</string>
 <string name="comment_replies">%d replies</string>
 <string name="comment_view_pictures">View pictures (%d)</string>
+
+    <string name="trending">Trending</string>
+    <string name="recommended_lives">Recommended Lives</string>
 </resources>

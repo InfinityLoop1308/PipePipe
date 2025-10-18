@@ -75,4 +75,13 @@ object StringResourceHelper {
             else -> tab
         }
     }
+
+    @Composable
+    fun getTranslatedTrendingName(name: String): String {
+        return when (name) {
+            "Trending" -> stringResource(MR.strings.trending)
+            "Recommended Lives" -> stringResource(MR.strings.recommended_lives)
+            else -> name
+        }
+    }
 }

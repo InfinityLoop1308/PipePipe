@@ -10,6 +10,7 @@ import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
+import project.pipepipe.shared.infoitem.TrendingInfo
 import project.pipepipe.shared.infoitem.helper.SearchType
 
 interface BaseUiState
@@ -146,7 +147,8 @@ data class DashboardUiState(
     val common: CommonUiState = CommonUiState(),
     val feedGroups: List<Feed_group> = emptyList(),
     val historyItems: List<StreamInfo> = emptyList(),
-    val playlists: List<PlaylistInfo> = emptyList()
+    val playlists: List<PlaylistInfo> = emptyList(),
+    val trendingItems: List<TrendingInfo> = emptyList()
 ) : BaseUiState
 
 data class SubscriptionsUiState(

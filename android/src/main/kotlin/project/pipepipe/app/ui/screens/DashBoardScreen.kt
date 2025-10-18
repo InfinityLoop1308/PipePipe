@@ -55,7 +55,9 @@ import project.pipepipe.app.SharedContext
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import project.pipepipe.shared.infoitem.StreamType
+import project.pipepipe.shared.infoitem.TrendingInfo
 import project.pipepipe.app.utils.toDurationString
+import project.pipepipe.app.global.StringResourceHelper
 import java.net.URLEncoder
 
 
@@ -143,7 +145,7 @@ fun DashboardScreen(navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { navController.navigate(Screen.History.route)},
+                    .clickable { navController.navigate(Screen.History.route) },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -173,27 +175,29 @@ fun DashboardScreen(navController: NavController) {
         }
 
         Divider()
-//
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(horizontal = 16.dp, vertical = 16.dp)
-//        ) {
-//            Text(
-//                text = "Trendings",
-//                style = MaterialTheme.typography.titleMedium,
-//                fontWeight = FontWeight.SemiBold
-//            )
-//            Spacer(modifier = Modifier.height(12.dp))
-//            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-//                trendingItems.forEachIndexed { index, trending ->
-//                    TrendingItemRow(
-//                        trending = trending,
-//                        showDivider = index != trendingItems.lastIndex
-//                    )
-//                }
-//            }
-//        }
+
+        if (uiState.trendingItems.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+            ) {
+                Text(
+                    text = stringResource(MR.strings.trending),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    uiState.trendingItems.forEachIndexed { index, trending ->
+                        TrendingItemRow(
+                            trending = trending,
+                            showDivider = index != uiState.trendingItems.lastIndex
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -362,32 +366,25 @@ private fun PlaylistCard(
     }
 }
 
-//@Composable
-//private fun TrendingItemRow(
-//    trending: Trending,
-//    showDivider: Boolean,
-//    modifier: Modifier = Modifier
-//) {
-//    Column(modifier = modifier.fillMaxWidth()) {
-//        Text(
-//            text = trending.title,
-//            style = MaterialTheme.typography.titleSmall,
-//            fontWeight = FontWeight.Medium
-//        )
-//        trending.subtitle?.takeIf { it.isNotBlank() }?.let {
-//            Spacer(modifier = Modifier.height(4.dp))
-//            Text(
-//                text = it,
-//                style = MaterialTheme.typography.bodySmall,
-//                color = MaterialTheme.colorScheme.onSurfaceVariant
-//            )
-//        }
-//        if (showDivider) {
-//            Spacer(modifier = Modifier.height(12.dp))
-//            Divider()
-//        }
-//    }
-//}
+@Composable
+private fun TrendingItemRow(
+    trending: TrendingInfo,
+    showDivider: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val translatedName = StringResourceHelper.getTranslatedTrendingName(trending.name)
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = "${trending.serviceId}: $translatedName",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Medium
+        )
+        if (showDivider) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider()
+        }
+    }
+}
 
 @Composable
 private fun Thumbnail(
