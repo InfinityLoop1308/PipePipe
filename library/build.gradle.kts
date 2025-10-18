@@ -58,6 +58,7 @@ kotlin {
                 implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
                 implementation("dev.tmapps:konnection:1.4.5")
                 implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
+                implementation("io.coil-kt.coil3:coil-compose:3.3.0")
             }
         }
         androidMain {

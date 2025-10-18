@@ -440,7 +440,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                         onRetry = {
                                             scope.launch {
                                                 val errorRow = DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
-                                                viewModel.loadVideoDetails(errorRow!!.request!!)
+                                                viewModel.loadVideoDetails(errorRow!!.request!!, serviceId = errorRow.service_id)
                                             }
                                         },
                                         modifier = Modifier.fillMaxSize()

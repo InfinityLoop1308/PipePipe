@@ -425,6 +425,7 @@ fun PlayerControl(
                         bufferedPosition = state.bufferedPosition,
                         onSeek = callbacks.onSeek,
                         sponsorBlockSegments = state.sponsorBlockSegments,
+                        previewFrames = streamInfo.previewFrames,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 8.dp)
