@@ -249,7 +249,7 @@ private fun HistoryCard(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .background(Color.Red.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
-                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                            .padding(horizontal = 4.dp)
                     )
                 }
                 duration != null -> {
@@ -261,7 +261,7 @@ private fun HistoryCard(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .background(Color(0x99000000), RoundedCornerShape(4.dp))
-                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                            .padding(horizontal = 4.dp)
                     )
                 }
             }
