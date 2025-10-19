@@ -142,8 +142,8 @@ fun SearchScreen(
     LaunchedEffect(Unit) {
         // Only focus if no initial query is provided
         if (initialQuery == null) {
+            if (uiState.searchQuery.isEmpty())
             focusRequester.requestFocus()
-            viewModel.updateSearchQuery("")
         } else {
             delay(300)
             viewModel.updateSearchQuery(initialQuery)
