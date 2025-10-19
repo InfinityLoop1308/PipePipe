@@ -17,6 +17,8 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.SettingsManager
+import project.pipepipe.app.serialize.SavedTabsPayload
+import project.pipepipe.app.PipePipeApplication
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -29,18 +31,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
-@Serializable
-private data class SavedTabsPayload(
-    val tabs: List<SavedTabPayload> = emptyList()
-)
 
-@Serializable
-private data class SavedTabPayload(
-    @SerialName("tab_id") val tabId: Int,
-    @SerialName("playlist_id") val playlistId: Long? = null,
-    @SerialName("playlist_url") val playlistUrl: String? = null,
-    @SerialName("group_id") val groupId: Long? = null
-)
 
 class DatabaseImporter(
     private val context: Context,
@@ -177,6 +168,9 @@ class DatabaseImporter(
                         if (!savedTabsJson.isNullOrBlank()) {
                             pinItemsFromSavedTabs(savedTabsJson)
                         }
+
+                        // Re-initialize supported services to prevent being overwritten by old backup
+                        PipePipeApplication.initializeSupportedServices()
                     } else {
                         throw IllegalStateException(MR.strings.backup_settings_not_found.desc().toString(context = context))
                     }
@@ -210,9 +204,7 @@ class DatabaseImporter(
     }
 
     private suspend fun pinItemsFromSavedTabs(rawJson: String) {
-        val payload = runCatching {
-            savedTabsJsonParser.decodeFromString<SavedTabsPayload>(rawJson)
-        }.getOrElse { return }
+        val payload = savedTabsJsonParser.decodeFromString<SavedTabsPayload>(rawJson)
 
         // Pin playlists (tab_id = 8)
         val playlistTabs = payload.tabs.filter { it.tabId == PINNED_PLAYLIST_TAB_ID }
@@ -220,12 +212,12 @@ class DatabaseImporter(
         playlistTabs.forEach { tab ->
             when {
                 // Local playlist: use playlistId
-                tab.playlistId != null -> {
-                    DatabaseOperations.setPlaylistPinned(tab.playlistId, true)
+                tab.playlistId!! != -1L -> {
+                    DatabaseOperations.setPlaylistPinned(tab.playlistId!!, true)
                 }
                 // Remote playlist: use playlistUrl
                 tab.playlistUrl != null -> {
-                    val remotePlaylist = DatabaseOperations.getRemotePlaylistByUrl(tab.playlistUrl)
+                    val remotePlaylist = DatabaseOperations.getRemotePlaylistByUrl(tab.playlistUrl!!)
                     remotePlaylist?.uid?.let { playlistId ->
                         DatabaseOperations.setRemotePlaylistPinned(playlistId, true)
                     }

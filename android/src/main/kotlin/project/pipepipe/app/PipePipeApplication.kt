@@ -23,6 +23,24 @@ import project.pipepipe.app.viewmodel.VideoDetailViewModel
 class PipePipeApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
+    companion object {
+        suspend fun initializeSupportedServices() {
+            try {
+                withContext(Dispatchers.IO) {
+                    val result = executeJobFlow(
+                        SupportedJobType.GET_SUPPORTED_SERVICES,
+                        null,
+                        null
+                    ).pagedData!!.itemList as List<SupportedServiceInfo>
+                    val jsonString = Json.encodeToString(result)
+                    SharedContext.settingsManager.putString("supported_services", jsonString)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -57,19 +75,7 @@ class PipePipeApplication : Application() {
 
         // Async initialization
         applicationScope.launch {
-            try {
-                withContext(Dispatchers.IO) {
-                    val result = executeJobFlow(
-                        SupportedJobType.GET_SUPPORTED_SERVICES,
-                        null,
-                        null
-                    ).pagedData!!.itemList as List<SupportedServiceInfo>
-                    val jsonString = Json.encodeToString(result)
-                    SharedContext.settingsManager.putString("supported_services", jsonString)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            initializeSupportedServices()
         }
     }
 }
