@@ -19,6 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -55,48 +57,50 @@ fun CustomTopBar(
                 .statusBarsPadding()
                 .height(height),
         ) {
-            Row(
-                modifier = Modifier.fillMaxSize().background(backgroundColor),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (navigationIcon != null) {
-                    Box(modifier = Modifier.padding(start = 4.dp)) {
-                        navigationIcon()
-                    }
-                } else if (defaultNavigationOnClick != null) {
-                    IconButton(onClick = defaultNavigationOnClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(MR.strings.back),
-                            tint = onBackgroundColor
-                        )
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = titlePadding)
-                ) {
-                    if(title != null) {
-                        title()
-                    }else {
-                        Text(
-                            text = defaultTitleText!!,
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            fontSize = 18.sp,
-                            color = onBackgroundColor
-                        )
-                    }
-                }
-
+            CompositionLocalProvider(LocalContentColor provides onBackgroundColor) {
                 Row(
-                    horizontalArrangement = Arrangement.End,
-                    content = actions
-                )
+                    modifier = Modifier.fillMaxSize().background(backgroundColor),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (navigationIcon != null) {
+                        Box(modifier = Modifier.padding(start = 4.dp)) {
+                            navigationIcon()
+                        }
+                    } else if (defaultNavigationOnClick != null) {
+                        IconButton(onClick = defaultNavigationOnClick) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(MR.strings.back),
+                                tint = onBackgroundColor
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = titlePadding)
+                    ) {
+                        if(title != null) {
+                            title()
+                        }else {
+                            Text(
+                                text = defaultTitleText!!,
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 18.sp,
+                                color = onBackgroundColor
+                            )
+                        }
+                    }
+
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        content = actions
+                    )
+                }
             }
         }
 
