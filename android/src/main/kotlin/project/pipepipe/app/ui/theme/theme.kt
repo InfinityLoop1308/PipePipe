@@ -59,7 +59,7 @@ fun PipePipeTheme(
     }
 
     var themeColorHex by remember {
-        mutableStateOf(settingsManager.getString("theme_color_key", "#FFFFFF"))
+        mutableStateOf(settingsManager.getString("theme_color_key", "#E53935"))
     }
 
     // Add listeners for settings changes
