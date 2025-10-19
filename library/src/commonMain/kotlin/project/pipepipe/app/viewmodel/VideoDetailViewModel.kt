@@ -434,7 +434,7 @@ class VideoDetailViewModel()
                         error = null
                     ),
                     list = entry.cachedRelatedItems.list.copy(
-                        itemList = filteredItems,
+                        itemList = (result.info as? RelatedItemInfo)?.partitions?: filteredItems,
                         nextPageUrl = result.pagedData?.nextPageUrl,
                         firstVisibleItemIndex = 0,
                         firstVisibleItemScrollOffset = 0
