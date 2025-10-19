@@ -587,7 +587,7 @@ object DatabaseOperations {
     suspend fun insertOrReplaceRemotePlaylist(
         serviceId: String,
         name: String?,
-        url: String?,
+        url: String,
         thumbnailUrl: String?,
         uploader: String?,
         streamCount: Long?,
