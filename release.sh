@@ -79,11 +79,11 @@ git pull
 git pull git@codeberg.org:NullPointerException/PipePipe.git
 
 # Update version numbers in client build.gradle.kts
-update_version "build.gradle.kts" "$VERSION"
+update_version "android/build.gradle.kts" "$VERSION"
 
 # Handle versionCode increment and fastlane changelog
 if [ "$INCREMENT_VERSION_CODE" = true ]; then
-    NEW_VERSION_CODE=$(increment_version_code "build.gradle.kts")
+    NEW_VERSION_CODE=$(increment_version_code "android/build.gradle.kts")
 
     if [ -n "$NEW_VERSION_CODE" ]; then
         CHANGELOG_FILE="fastlane/metadata/android/en-US/changelogs/${NEW_VERSION_CODE}.txt"
@@ -102,7 +102,7 @@ else
 fi
 
 # Commit changes
-git add build.gradle.kts
+git add android/build.gradle.kts
 if [ "$INCREMENT_VERSION_CODE" = true ] && [ -n "$NEW_VERSION_CODE" ]; then
     git add "fastlane/metadata/android/en-US/changelogs/${NEW_VERSION_CODE}.txt"
 fi
