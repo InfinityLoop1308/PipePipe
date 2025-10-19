@@ -54,6 +54,7 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
         val dashUrl = extras.getString("KEY_DASH_URL")
         val hlsUrl = extras.getString("KEY_HLS_URL")
         val headers = extras.getSerializable("KEY_HEADER_MAP") as? MutableMap<String, String> ?: mutableMapOf()
+        val sponsorblockUrl = extras.getString("KEY_SPONSORBLOCK_URL")
 
         if (dashManifestString == null && dashUrl == null && hlsUrl == null) {
             return LazyUrlMediaSource(
@@ -61,7 +62,7 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
                 mediaSourceFactory = this,
             )
         }
-        return createActualMediaSource(mediaItem, dashManifestString, dashUrl, hlsUrl, headers)
+        return createActualMediaSource(mediaItem, dashManifestString, dashUrl, hlsUrl, headers, sponsorblockUrl)
     }
 
 
@@ -70,7 +71,8 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
         dashManifest: String?,
         dashUrl: String?,
         hlsUrl: String?,
-        headers: Map<String, String>
+        headers: Map<String, String>,
+        sponsorblockUrl: String?
     ): MediaSource {
 
         val requestHeaders = headers.toMutableMap().apply {
@@ -111,26 +113,27 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
                     Uri.parse("https://example.com/invalid.mpd"),
                     ByteArrayInputStream(dashManifest.toByteArray(StandardCharsets.UTF_8))
                 )
-                val dashMediaItem = mediaItem.copyWithStreamInfo(Uri.EMPTY, MimeTypes.APPLICATION_MPD)
+                val dashMediaItem = mediaItem.copyWithStreamInfo(Uri.EMPTY, MimeTypes.APPLICATION_MPD, sponsorblockUrl)
                 dashMediaSourceFactory.createMediaSource(manifest, dashMediaItem)
             }
             dashUrl != null -> {
                 val dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
-                val dashMediaItem = mediaItem.copyWithStreamInfo(dashUrl.toUri(), MimeTypes.APPLICATION_MPD)
+                val dashMediaItem = mediaItem.copyWithStreamInfo(dashUrl.toUri(), MimeTypes.APPLICATION_MPD, sponsorblockUrl)
                 dashMediaSourceFactory.createMediaSource(dashMediaItem)
             }
             hlsUrl != null -> {
                 val hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
-                val hlsMediaItem = mediaItem.copyWithStreamInfo(hlsUrl.toUri(), MimeTypes.APPLICATION_M3U8)
+                val hlsMediaItem = mediaItem.copyWithStreamInfo(hlsUrl.toUri(), MimeTypes.APPLICATION_M3U8, sponsorblockUrl)
                 hlsMediaSourceFactory.createMediaSource(hlsMediaItem)
             }
             else -> error("Either dashManifest, dashUrl, or hlsUrl must be provided")
         }
     }
 
-    private fun MediaItem.copyWithStreamInfo(uri: Uri, mimeType: String): MediaItem {
+    private fun MediaItem.copyWithStreamInfo(uri: Uri, mimeType: String, sponsorblockUrl: String?): MediaItem {
         val extras = Bundle().apply {
             putString("KEY_SERVICE_ID", mediaMetadata.extras!!.getString("KEY_SERVICE_ID"))
+            putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)
         }
         return MediaItem.Builder()
             .setUri(uri)
@@ -205,7 +208,8 @@ class LazyUrlMediaSource(
                     streamInfo.dashManifest,
                     streamInfo.dashUrl,
                     streamInfo.hlsUrl,
-                    streamInfo.headers
+                    streamInfo.headers,
+                    streamInfo.sponsorblockUrl
                 )
                 withContext(Dispatchers.Main) {
                     eventListeners.forEach { (listener, handler) ->
@@ -281,6 +285,7 @@ fun StreamInfo.toMediaItem(): MediaItem {
         putString("KEY_SERVICE_ID", serviceId)
         putSerializable("KEY_HEADER_MAP", headers)
         putBoolean("KEY_USE_CACHE", streamType != StreamType.LIVE_STREAM)
+        putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)
     }
     return MediaItem.Builder()
         .setUri("placeholder://stream")

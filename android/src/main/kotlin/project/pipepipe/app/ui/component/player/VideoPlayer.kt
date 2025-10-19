@@ -364,22 +364,8 @@ fun VideoPlayer(
             position.toDouble() in segment.startTime..segment.endTime
         }
         if (currentSegment != null && !skippedSegments.contains(currentSegment.uuid)) {
-            if (SponsorBlockHelper.shouldSkipSegment(currentSegment)) {
-                val skipToMs = (currentSegment.endTime).toLong()
-                mediaController.seekTo(skipToMs)
-                skippedSegments = skippedSegments + currentSegment.uuid
-                lastSkippedSegment = currentSegment
-
-                // 不显示 unskip 按钮（因为是自动跳过）
-
-                // Show notification
-                if (SponsorBlockHelper.isNotificationsEnabled()) {
-                    val categoryName = segmentDisplayNames[currentSegment.uuid] ?: ""
-                    ToastManager.show(playerSkippedText.replace("%s", categoryName))
-                }
-            }
-            // Show manual skip button
-            else if (SponsorBlockHelper.shouldShowSkipButton(currentSegment)) {
+            // Only show manual skip button (automatic skipping is handled by PlaybackService)
+            if (SponsorBlockHelper.shouldShowSkipButton(currentSegment)) {
                 currentSegmentToSkip = currentSegment
                 showSkipButton = true
             } else {
