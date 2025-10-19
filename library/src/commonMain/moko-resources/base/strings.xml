@@ -383,4 +383,5 @@
 
     <string name="trending">Trending</string>
     <string name="recommended_lives">Recommended Lives</string>
+    <string name="show_details">Show video details</string>
 </resources>

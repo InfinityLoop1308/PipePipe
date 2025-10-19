@@ -57,6 +57,7 @@ fun CommonItem(
     isDragging: Boolean = false,
     onNavigateTo: (() -> Unit)? = null,
     onDelete: (() -> Unit)? = null,
+    showProvideDetailButton: Boolean = false,
     showDragHandle: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
     displayType: DisplayType = DisplayType.ORIGIN
@@ -79,6 +80,7 @@ fun CommonItem(
                 onDelete = onDelete,
                 showDragHandle = showDragHandle,
                 dragHandleModifier = dragHandleModifier,
+                showProvideDetailButton = showProvideDetailButton,
                 displayType = displayType
             )
         }
@@ -174,6 +176,7 @@ private fun StreamOrPlaylistListItem(
     isDragging: Boolean = false,
     onNavigateTo: (() -> Unit)? = null,
     onDelete: (() -> Unit)? = null,
+    showProvideDetailButton: Boolean = false,
     showDragHandle: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
     displayType: DisplayType = DisplayType.ORIGIN
@@ -246,7 +249,8 @@ private fun StreamOrPlaylistListItem(
                                 StreamInfoWithCallback(
                                     item,
                                     onNavigateTo = onNavigateTo,
-                                    onDelete = onDelete
+                                    onDelete = onDelete,
+                                    showProvideDetailButton = showProvideDetailButton
                                 )
                             )
                         }

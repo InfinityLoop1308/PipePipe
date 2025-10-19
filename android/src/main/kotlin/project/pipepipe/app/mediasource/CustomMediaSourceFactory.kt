@@ -129,6 +129,9 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
     }
 
     private fun MediaItem.copyWithStreamInfo(uri: Uri, mimeType: String): MediaItem {
+        val extras = Bundle().apply {
+            putString("KEY_SERVICE_ID", mediaMetadata.extras!!.getString("KEY_SERVICE_ID"))
+        }
         return MediaItem.Builder()
             .setUri(uri)
             .setMimeType(mimeType)
@@ -138,6 +141,7 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
                 .setArtist(this.mediaMetadata.artist)
                 .setArtworkUri(this.mediaMetadata.artworkUri)
                 .setDurationMs(this.mediaMetadata.durationMs)
+                .setExtras(extras)
                 .build())
             .build()
     }

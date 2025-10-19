@@ -86,6 +86,8 @@ fun BottomSheetMenu(
                     onDismiss = onDismiss,
                     onNavigateTo = content.onNavigateTo,
                     onDelete = content.onDelete,
+                    disablePlayOperations = content.disablePlayOperations,
+                    showProvideDetailButton = content.showProvideDetailButton,
                     mediaController = mediaController,
                     onOpenChannel = {
                         content.streamInfo.uploaderUrl?.let {
@@ -182,6 +184,8 @@ private fun StreamInfoMenuItems(
     streamInfo: StreamInfo,
     onNavigateTo: (() -> Unit)? = null,
     onDelete: (() -> Unit)? = null,
+    disablePlayOperations: Boolean = false,
+    showProvideDetailButton: Boolean = false,
     onOpenChannel: (() -> Unit)
 ) {
     var showPlaylistPopup by remember { mutableStateOf(false) }
@@ -189,22 +193,25 @@ private fun StreamInfoMenuItems(
     val context = LocalContext.current
 
     val menuItems = buildList {
-        add(Triple(Icons.Default.PlayCircle, stringResource(MR.strings.bottom_sheet_background_play)) {
-            mediaController?.let { controller ->
-                controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-                controller.playFromStreamInfo(streamInfo)
-            }
-            onDismiss()
-        })
-        add(Triple(Icons.Default.Queue, stringResource(MR.strings.enqueue_stream)) {
-            mediaController?.let { controller ->
-                controller.addMediaItem(streamInfo.toMediaItem())
-                if (controller.mediaItemCount == 1) {
-                    controller.play()
+        if (!disablePlayOperations) {
+            add(Triple(Icons.Default.PlayCircle, stringResource(MR.strings.bottom_sheet_background_play)) {
+                mediaController?.let { controller ->
+                    controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+                    controller.playFromStreamInfo(streamInfo)
                 }
-            }
-            onDismiss()
-        })
+                onDismiss()
+            })
+            add(Triple(Icons.Default.Queue, stringResource(MR.strings.enqueue_stream)) {
+                mediaController?.let { controller ->
+                    controller.addMediaItem(streamInfo.toMediaItem())
+                    if (controller.mediaItemCount == 1) {
+                        controller.play()
+                    }
+                }
+                onDismiss()
+            })
+        }
+
 //        add(Triple(Icons.Default.PictureInPicture, stringResource(MR.strings.pip)) {
 //            mediaController?.let { PipHelper.enterPipMode(it, streamInfo, context) }
 //            onDismiss()
@@ -228,6 +235,13 @@ private fun StreamInfoMenuItems(
             context.startActivity(shareIntent)
             onDismiss()
         })
+        if (showProvideDetailButton) {
+            add(Triple(Icons.Default.Info, stringResource(MR.strings.show_details)) {
+                SharedContext.toggleShowPlayQueueVisibility()
+                SharedContext.sharedVideoDetailViewModel.loadVideoDetails(streamInfo.url, streamInfo.serviceId)
+                onDismiss()
+            })
+        }
         if (streamInfo.uploaderUrl != null) {
             add(Triple(Icons.Default.Person, stringResource(MR.strings.show_channel_details)) {
                 onOpenChannel()

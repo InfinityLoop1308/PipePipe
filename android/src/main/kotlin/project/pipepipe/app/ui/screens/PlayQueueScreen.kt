@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,8 +44,12 @@ import project.pipepipe.app.service.PlaybackService
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.ui.component.CustomTopBar
+import project.pipepipe.app.ui.component.BottomSheetMenu
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import androidx.navigation.compose.rememberNavController
+import project.pipepipe.shared.infoitem.StreamInfo
+import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -178,7 +183,26 @@ fun PlayQueueScreen() {
                         mediaItem = window.mediaItem,
                         isCurrentItem = index == currentMediaItemIndex,
                         onItemClick = {
+                            mediaController.seekToDefaultPosition(index)
                             mediaController.play()
+                        },
+                        onItemLongClick = {
+                            val streamInfo = StreamInfo(
+                                serviceId = window.mediaItem.mediaMetadata.extras!!.getString("KEY_SERVICE_ID")!!,
+                                url = window.mediaItem.mediaId,
+                                name = window.mediaItem.mediaMetadata.title?.toString() ?: "",
+                                thumbnailUrl = window.mediaItem.mediaMetadata.artworkUri?.toString(),
+                                uploaderName = window.mediaItem.mediaMetadata.artist?.toString(),
+                                duration = window.mediaItem.mediaMetadata.durationMs ?: 0
+                            )
+                            SharedContext.bottomSheetMenuViewModel.show(
+                                StreamInfoWithCallback(streamInfo,
+                                    onNavigateTo = null,
+                                    onDelete = null,
+                                    disablePlayOperations = true,
+                                    showProvideDetailButton = true
+                                )
+                            )
                         },
                         dragHandleModifier = Modifier.draggableHandle(
                             interactionSource = interactionSource
@@ -228,13 +252,17 @@ fun PlayQueueItem(
     mediaItem: MediaItem,
     isCurrentItem: Boolean,
     onItemClick: () -> Unit,
+    onItemLongClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     dragHandleModifier: Modifier
 ) {
 	Card(
 		modifier = Modifier
             .fillMaxWidth()
-            .clickable { onItemClick() },
+            .combinedClickable(
+                onClick = { onItemClick() },
+                onLongClick = { onItemLongClick() }
+            ),
 		colors = CardDefaults.cardColors(
 			containerColor = if (isCurrentItem)
 				MaterialTheme.colorScheme.primaryContainer

@@ -747,6 +747,8 @@ fun PlaylistDetailScreen(
                                         }
                                     }
                                 } else null,
+                                showProvideDetailButton = uiState.playlistType in listOf(PlaylistType.LOCAL, PlaylistType.FEED)
+                                        && SharedContext.settingsManager.getBoolean("auto_background_play_key"),
                                 dragHandleModifier = Modifier.draggableHandle(
                                     onDragStarted = {
                                         // Optional: Add haptic feedback
