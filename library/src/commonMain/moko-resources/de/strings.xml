@@ -373,4 +373,6 @@
 <string name="trending">Trend</string>
 <string name="recommended_lives">Empfohlene Lives</string>
 <string name="show_details">Videodetails anzeigen</string>
+<string name="playlist_menu_bookmark">Lesezeichen</string>
+<string name="playlist_menu_unbookmark">Lesezeichen entfernen</string>
 </resources>

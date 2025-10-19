@@ -373,4 +373,6 @@
 <string name="trending">热门</string>
 <string name="recommended_lives">推荐直播</string>
 <string name="show_details">显示视频详情</string>
+<string name="playlist_menu_bookmark">收藏</string>
+<string name="playlist_menu_unbookmark">取消收藏</string>
 </resources>

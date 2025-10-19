@@ -373,4 +373,6 @@
 <string name="trending">Tendencias</string>
 <string name="recommended_lives">En directo recomendado</string>
 <string name="show_details">Mostrar detalles del video</string>
+<string name="playlist_menu_bookmark">Marcar</string>
+<string name="playlist_menu_unbookmark">Desmarcar</string>
 </resources>

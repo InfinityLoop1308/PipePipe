@@ -176,6 +176,7 @@ WHERE EXISTS (
 
 ALTER TABLE playlists ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE feed_group ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE remote_playlists ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0;
 
 -- Drop the old tables
 DROP TABLE stream_history;

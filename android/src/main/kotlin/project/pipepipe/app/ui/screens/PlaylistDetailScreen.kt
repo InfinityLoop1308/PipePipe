@@ -405,7 +405,7 @@ fun PlaylistDetailScreen(
                             }
                         }
                     }
-                    if (!isSearchActive) {
+                    if (!isSearchActive && uiState.playlistType != PlaylistType.REMOTE) {
                         IconButton(
                             onClick = {
                                 isSearchActive = true
@@ -485,7 +485,11 @@ fun PlaylistDetailScreen(
 
                                     if (feedId != null && feedId != -1L) {
                                         DropdownMenuItem(
-                                            text = { Text(MR.strings.playlist_menu_rename.desc().toString(context = context)) },
+                                            text = {
+                                                Text(
+                                                    MR.strings.playlist_menu_rename.desc().toString(context = context)
+                                                )
+                                            },
                                             onClick = {
                                                 showMoreMenu = false
                                                 renameText = uiState.playlistInfo?.name ?: ""
@@ -496,7 +500,11 @@ fun PlaylistDetailScreen(
                                             }
                                         )
                                         DropdownMenuItem(
-                                            text = { Text(MR.strings.playlist_menu_delete.desc().toString(context = context)) },
+                                            text = {
+                                                Text(
+                                                    MR.strings.playlist_menu_delete.desc().toString(context = context)
+                                                )
+                                            },
                                             onClick = {
                                                 showMoreMenu = false
                                                 showDeleteDialog = true
@@ -509,7 +517,8 @@ fun PlaylistDetailScreen(
                                             text = {
                                                 Text(
                                                     if (uiState.playlistInfo?.isPinned == true) {
-                                                        MR.strings.playlist_menu_unpin.desc().toString(context = context)
+                                                        MR.strings.playlist_menu_unpin.desc()
+                                                            .toString(context = context)
                                                     } else {
                                                         MR.strings.playlist_menu_pin.desc().toString(context = context)
                                                     }
@@ -534,8 +543,107 @@ fun PlaylistDetailScreen(
                                         )
                                     }
                                 }
+                                PlaylistType.REMOTE -> {
+                                    val isBookmarked = uiState.playlistInfo?.uid != null
+
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                if (isBookmarked) {
+                                                    MR.strings.playlist_menu_unbookmark.desc().toString(context = context)
+                                                } else {
+                                                    MR.strings.playlist_menu_bookmark.desc().toString(context = context)
+                                                }
+                                            )
+                                        },
+                                        onClick = {
+                                            showMoreMenu = false
+                                            scope.launch {
+                                                if (isBookmarked) {
+                                                    DatabaseOperations.deleteRemotePlaylist(uiState.playlistInfo!!.uid!!)
+                                                    viewModel.loadPlaylist(url, serviceId)
+                                                } else {
+                                                    val playlistInfo = uiState.playlistInfo!!
+                                                    DatabaseOperations.insertOrReplaceRemotePlaylist(
+                                                        serviceId = playlistInfo.serviceId!!,
+                                                        name = playlistInfo.name,
+                                                        url = url,
+                                                        thumbnailUrl = playlistInfo.thumbnailUrl,
+                                                        uploader = playlistInfo.uploaderName,
+                                                        streamCount = playlistInfo.streamCount,
+                                                        isPinned = false
+                                                    )
+                                                    viewModel.loadPlaylist(url, serviceId)
+                                                }
+                                            }
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = if (isBookmarked) Icons.Default.BookmarkRemove else Icons.Default.BookmarkAdd,
+                                                contentDescription = null
+                                            )
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                if (uiState.playlistInfo?.isPinned == true) {
+                                                    MR.strings.playlist_menu_unpin.desc().toString(context = context)
+                                                } else {
+                                                    MR.strings.playlist_menu_pin.desc().toString(context = context)
+                                                }
+                                            )
+                                        },
+                                        onClick = {
+                                            showMoreMenu = false
+                                            scope.launch {
+                                                if (!isBookmarked) {
+                                                    // Auto-bookmark if not already bookmarked
+                                                    val playlistInfo = uiState.playlistInfo!!
+                                                    DatabaseOperations.insertOrReplaceRemotePlaylist(
+                                                        serviceId = playlistInfo.serviceId!!,
+                                                        name = playlistInfo.name,
+                                                        url = url,
+                                                        thumbnailUrl = playlistInfo.thumbnailUrl,
+                                                        uploader = playlistInfo.uploaderName,
+                                                        streamCount = playlistInfo.streamCount,
+                                                        isPinned = true
+                                                    )
+                                                } else {
+                                                    DatabaseOperations.setRemotePlaylistPinned(
+                                                        uiState.playlistInfo!!.uid!!,
+                                                        !(uiState.playlistInfo?.isPinned ?: false)
+                                                    )
+                                                }
+                                                viewModel.loadPlaylist(url, serviceId)
+                                            }
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Default.PushPin,
+                                                contentDescription = null
+                                            )
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = { Text(MR.strings.share.desc().toString(context = context)) },
+                                        onClick = {
+                                            showMoreMenu = false
+                                            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                type = "text/plain"
+                                                putExtra(android.content.Intent.EXTRA_TEXT, url)
+                                            }
+                                            context.startActivity(android.content.Intent.createChooser(intent, null))
+                                        },
+                                        leadingIcon = {
+                                            Icon(Icons.Default.Share, contentDescription = null)
+                                        }
+                                    )
+                                }
                                 else -> {
-                                    // No menu items for HISTORY and REMOTE types
+                                    // No menu items for HISTORY and TRENDING types
                                 }
                             }
                         }

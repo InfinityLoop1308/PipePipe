@@ -38,6 +38,7 @@ private data class SavedTabsPayload(
 private data class SavedTabPayload(
     @SerialName("tab_id") val tabId: Int,
     @SerialName("playlist_id") val playlistId: Long? = null,
+    @SerialName("playlist_url") val playlistUrl: String? = null,
     @SerialName("group_id") val groupId: Long? = null
 )
 
@@ -214,13 +215,22 @@ class DatabaseImporter(
         }.getOrElse { return }
 
         // Pin playlists (tab_id = 8)
-        val playlistIdsToPin = payload.tabs
-            .filter { it.tabId == PINNED_PLAYLIST_TAB_ID }
-            .mapNotNull { it.playlistId }
-            .distinct()
+        val playlistTabs = payload.tabs.filter { it.tabId == PINNED_PLAYLIST_TAB_ID }
 
-        playlistIdsToPin.forEach { playlistId ->
-            DatabaseOperations.setPlaylistPinned(playlistId, true)
+        playlistTabs.forEach { tab ->
+            when {
+                // Local playlist: use playlistId
+                tab.playlistId != null -> {
+                    DatabaseOperations.setPlaylistPinned(tab.playlistId, true)
+                }
+                // Remote playlist: use playlistUrl
+                tab.playlistUrl != null -> {
+                    val remotePlaylist = DatabaseOperations.getRemotePlaylistByUrl(tab.playlistUrl)
+                    remotePlaylist?.uid?.let { playlistId ->
+                        DatabaseOperations.setRemotePlaylistPinned(playlistId, true)
+                    }
+                }
+            }
         }
 
         // Pin feed groups (tab_id = 9)

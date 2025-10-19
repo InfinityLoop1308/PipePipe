@@ -243,16 +243,32 @@ object DatabaseOperations {
 
 
     suspend fun getPinnedPlaylists(): List<PlaylistInfo> = withContext(Dispatchers.IO) {
-        return@withContext database.appDatabaseQueries.selectPinnedPlaylists().executeAsList().map { playlist ->
-            val streamCount = loadPlaylistsItemsFromDatabase(playlist.uid).size
-            PlaylistInfo(
-                url = "local://playlist/${playlist.uid}",
-                name = playlist.name ?: "Unnamed Playlist",
-                thumbnailUrl = playlist.thumbnail_url,
-                streamCount = streamCount.toLong(),
-                isPinned = true,
-                uid = playlist.uid
-            )
+        return@withContext database.appDatabaseQueries.selectPinnedPlaylistsCombined().executeAsList().map { row ->
+            val isLocal = row.playlist_type == "local"
+
+            if (isLocal) {
+                val streamCount = loadPlaylistsItemsFromDatabase(row.uid).size
+                PlaylistInfo(
+                    url = "local://playlist/${row.uid}",
+                    name = row.name ?: "Unnamed Playlist",
+                    thumbnailUrl = row.thumbnail_url,
+                    streamCount = streamCount.toLong(),
+                    isPinned = true,
+                    uid = row.uid,
+                    serviceId = null
+                )
+            } else {
+                PlaylistInfo(
+                    url = row.url ?: "",
+                    name = row.name ?: "Unnamed Playlist",
+                    thumbnailUrl = row.thumbnail_url,
+                    uploaderName = row.uploader,
+                    streamCount = row.stream_count ?: 0L,
+                    isPinned = true,
+                    uid = row.uid,
+                    serviceId = row.service_id
+                )
+            }
         }
     }
 
@@ -562,5 +578,64 @@ object DatabaseOperations {
 
     suspend fun getErrorLogById(id: Long) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.selectErrorLogById(id).executeAsOneOrNull()
+    }
+
+    suspend fun getRemotePlaylistByUrl(url: String) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.selectRemotePlaylistByUrl(url).executeAsOneOrNull()
+    }
+
+    suspend fun insertOrReplaceRemotePlaylist(
+        serviceId: String,
+        name: String?,
+        url: String?,
+        thumbnailUrl: String?,
+        uploader: String?,
+        streamCount: Long?,
+        isPinned: Boolean
+    ) = withContext(Dispatchers.IO) {
+        incrementAllPlaylistsDisplayIndexes()
+        database.appDatabaseQueries.insertOrReplaceRemotePlaylist(
+            serviceId,
+            name,
+            url,
+            thumbnailUrl,
+            uploader,
+            0L,
+            streamCount,
+            if (isPinned) 1L else 0L
+        )
+    }
+
+    suspend fun setRemotePlaylistPinned(playlistId: Long, isPinned: Boolean) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.updateRemotePlaylistPinnedState(
+            if (isPinned) 1L else 0L,
+            playlistId
+        )
+    }
+
+    suspend fun deleteRemotePlaylist(playlistId: Long) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.deleteRemotePlaylist(playlistId)
+    }
+
+    suspend fun getMaxPlaylistDisplayIndex(): Long = withContext(Dispatchers.IO) {
+        val maxLocal = database.appDatabaseQueries.selectAllPlaylists().executeAsList()
+            .maxOfOrNull { it.display_index } ?: -1L
+        val maxRemote = database.appDatabaseQueries.selectAllRemotePlaylists().executeAsList()
+            .maxOfOrNull { it.display_index } ?: -1L
+        return@withContext maxOf(maxLocal, maxRemote)
+    }
+
+    suspend fun incrementAllPlaylistsDisplayIndexes() = withContext(Dispatchers.IO) {
+        database.transaction {
+            database.appDatabaseQueries.incrementAllPlaylistDisplayIndexes()
+            // Increment remote playlists display indexes
+            val remotePlaylists = database.appDatabaseQueries.selectAllRemotePlaylists().executeAsList()
+            remotePlaylists.forEach { playlist ->
+                database.appDatabaseQueries.updateRemotePlaylistDisplayIndex(
+                    playlist.display_index + 1,
+                    playlist.uid
+                )
+            }
+        }
     }
 }

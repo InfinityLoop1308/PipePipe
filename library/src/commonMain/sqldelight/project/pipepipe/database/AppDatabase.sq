@@ -65,7 +65,8 @@ CREATE TABLE remote_playlists (
     thumbnail_url TEXT,
     uploader TEXT,
     display_index INTEGER NOT NULL DEFAULT 0,
-    stream_count INTEGER
+    stream_count INTEGER,
+    is_pinned INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE feed (
@@ -252,7 +253,7 @@ SELECT
     name,
     thumbnail_url,
     display_index,
-    0 AS is_pinned,
+    is_pinned,
     'remote' AS playlist_type,
     service_id,
     uploader,
@@ -369,8 +370,55 @@ insertRemotePlaylist:
 INSERT INTO remote_playlists (service_id, name, url, thumbnail_url, uploader, display_index, stream_count)
 VALUES (?, ?, ?, ?, ?, ?, ?);
 
+insertOrReplaceRemotePlaylist:
+INSERT OR REPLACE INTO remote_playlists (service_id, name, url, thumbnail_url, uploader, display_index, stream_count, is_pinned)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
 deleteRemotePlaylist:
 DELETE FROM remote_playlists WHERE uid = ?;
+
+selectRemotePlaylistByUrl:
+SELECT * FROM remote_playlists WHERE url = ?;
+
+updateRemotePlaylistPinnedState:
+UPDATE remote_playlists
+SET is_pinned = ?
+WHERE uid = ?;
+
+selectPinnedRemotePlaylists:
+SELECT * FROM remote_playlists
+WHERE is_pinned = 1
+ORDER BY display_index;
+
+selectPinnedPlaylistsCombined:
+SELECT
+    uid,
+    name,
+    thumbnail_url,
+    display_index,
+    is_pinned,
+    'local' AS playlist_type,
+    NULL AS service_id,
+    NULL AS uploader,
+    NULL AS stream_count,
+    NULL AS url
+FROM playlists
+WHERE is_pinned = 1
+UNION ALL
+SELECT
+    uid,
+    name,
+    thumbnail_url,
+    display_index,
+    is_pinned,
+    'remote' AS playlist_type,
+    service_id,
+    uploader,
+    stream_count,
+    url
+FROM remote_playlists
+WHERE is_pinned = 1
+ORDER BY display_index;
 
 -- Database verification queries
 selectSubscriptionsCount:

@@ -375,4 +375,6 @@
 <string name="trending">Tendenze</string>
 <string name="recommended_lives">Live consigliati</string>
 <string name="show_details">Mostra dettagli video</string>
+<string name="playlist_menu_bookmark">Segnalibro</string>
+<string name="playlist_menu_unbookmark">Rimuovi segnalibro</string>
 </resources>

@@ -130,7 +130,7 @@ fun DashboardScreen(navController: NavController) {
                 ) { playlist ->
                     PlaylistCard(
                         playlist = playlist,
-                        onClick = { navController.navigate("playlist?url=" + URLEncoder.encode(playlist.url, "UTF-8")) }
+                        onClick = { navController.navigate(Screen.PlaylistDetail.createRoute(playlist.url, playlist.serviceId)) }
                     )
                 }
             }

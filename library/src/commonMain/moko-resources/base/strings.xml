@@ -74,6 +74,8 @@
 <string name="playlist_menu_delete">Delete Playlist</string>
 <string name="playlist_menu_pin">Pin to Top</string>
 <string name="playlist_menu_unpin">Unpin</string>
+<string name="playlist_menu_bookmark">Bookmark</string>
+<string name="playlist_menu_unbookmark">Unbookmark</string>
 <string name="playlist_empty_search_result">No results found for \"%s\"</string>
 <string name="playlist_empty_no_streams">No videos found in this playlist</string>
 <string name="playlist_info_summary">%s videos • %s</string>

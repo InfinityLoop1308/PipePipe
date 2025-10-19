@@ -373,4 +373,6 @@
 <string name="trending">人気</string>
 <string name="recommended_lives">おすすめのライブ</string>
 <string name="show_details">動画の詳細を表示</string>
+<string name="playlist_menu_bookmark">ブックマーク</string>
+<string name="playlist_menu_unbookmark">ブックマーク解除</string>
 </resources>

@@ -373,4 +373,6 @@
 <string name="trending">Đang thịnh hành</string>
 <string name="recommended_lives">Trực tiếp được đề xuất</string>
 <string name="show_details">Hiển thị chi tiết video</string>
+<string name="playlist_menu_bookmark">Đánh dấu</string>
+<string name="playlist_menu_unbookmark">Bỏ đánh dấu</string>
 </resources>
