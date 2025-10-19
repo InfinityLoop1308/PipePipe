@@ -38,6 +38,7 @@ import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.StacktraceDialog
 import java.text.SimpleDateFormat
 import java.util.*
+import android.os.Build
 
 @Composable
 fun LogSettingScreen(
@@ -229,9 +230,59 @@ private fun ErrorLogItem(
     }
 }
 
+private fun getOsString(): String {
+    return (System.getProperty("os.name")?: "Linux") +
+            " " + Build.VERSION.BASE_OS.ifEmpty { "Android" } +
+            " " + Build.VERSION.RELEASE +
+            " - " + Build.VERSION.SDK_INT
+}
+
+private fun getDeviceString(): String {
+    return "${Build.MANUFACTURER} ${Build.MODEL} (${Build.DEVICE})"
+}
+
+private fun getAppVersionString(context: Context): String {
+    return try {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode
+        } else {
+            @Suppress("DEPRECATION")
+            packageInfo.versionCode.toLong()
+        }
+        "${packageInfo.versionName} ($versionCode)"
+    } catch (e: Exception) {
+        "Unknown"
+    }
+}
+
+private fun getSystemLanguage(): String {
+    return Locale.getDefault().toString() // 例如: "en_US", "zh_CN"
+}
+
+private fun getSystemTimezone(): String {
+    val timeZone = TimeZone.getDefault()
+    return "${timeZone.id} (UTC${getTimezoneOffset(timeZone)})" // 例如: "Asia/Shanghai (UTC+8:00)"
+}
+
+private fun getTimezoneOffset(timeZone: TimeZone): String {
+    val offset = timeZone.rawOffset / (1000 * 60 * 60) // 转换为小时
+    val minutes = (timeZone.rawOffset % (1000 * 60 * 60)) / (1000 * 60)
+    return if (offset >= 0) {
+        if (minutes != 0) "+$offset:${String.format("%02d", minutes)}" else "+$offset:00"
+    } else {
+        if (minutes != 0) "$offset:${String.format("%02d", -minutes)}" else "$offset:00"
+    }
+}
+
 fun copyLogToClipboard(context: Context, log: project.pipepipe.database.Error_log) {
     val json = buildJsonObject {
+        put("os", getOsString())
+        put("device", getDeviceString())
+        put("app_version", getAppVersionString(context))
         put("timestamp", log.timestamp)
+        put("language", getSystemLanguage())
+        put("timezone", getSystemTimezone())
         put("task", log.task)
         put("request", log.request)
         put("stacktrace", log.stacktrace)
@@ -246,7 +297,12 @@ fun copyLogToClipboard(context: Context, log: project.pipepipe.database.Error_lo
 
 fun sendLogEmail(context: Context, log: project.pipepipe.database.Error_log) {
     val json = buildJsonObject {
+        put("os", getOsString())
+        put("device", getDeviceString())
+        put("app_version", getAppVersionString(context))
         put("timestamp", log.timestamp)
+        put("language", getSystemLanguage())
+        put("timezone", getSystemTimezone())
         put("task", log.task)
         put("request", log.request)
         put("stacktrace", log.stacktrace)
