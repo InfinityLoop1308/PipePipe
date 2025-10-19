@@ -207,6 +207,25 @@ object DatabaseOperations {
         database.appDatabaseQueries.insertStreamAtEndOfPlaylist(playlistId, streamId)
     }
 
+    suspend fun addStreamsToPlaylist(playlistId: Long, streamInfoList: List<StreamInfo>) = withContext(Dispatchers.IO) {
+        // First, ensure all streams exist in database (outside transaction)
+        val streamIds = streamInfoList.mapNotNull { streamInfo ->
+            var stream = getStreamByUrl(streamInfo.url)
+            if (stream == null) {
+                insertOrUpdateStream(streamInfo)
+                stream = getStreamByUrl(streamInfo.url)
+            }
+            stream?.uid
+        }
+
+        // Then insert all into playlist in a single transaction
+        database.transaction {
+            streamIds.forEach { streamId ->
+                database.appDatabaseQueries.insertStreamAtEndOfPlaylist(playlistId, streamId)
+            }
+        }
+    }
+
     suspend fun renamePlaylist(playlistId: Long, newName: String) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.updatePlaylistName(newName, playlistId)
     }

@@ -65,6 +65,7 @@ import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.item.DisplayType
 import project.pipepipe.app.ui.item.CommonItem
+import project.pipepipe.app.ui.theme.onCustomTopBarColor
 import project.pipepipe.app.ui.viewmodel.PlaylistDetailViewModel
 import project.pipepipe.extractor.Router.getType
 import project.pipepipe.extractor.utils.RequestHelper.getQueryValue
@@ -320,7 +321,8 @@ fun PlaylistDetailScreen(
                                         includeFontPadding = false
                                     )
                                 ),
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
+                                color = onCustomTopBarColor()
                             )
                         },
                         modifier = Modifier
@@ -344,7 +346,8 @@ fun PlaylistDetailScreen(
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Medium,
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = onCustomTopBarColor()
                     )
                 }
             },

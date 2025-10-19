@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -45,11 +46,15 @@ import project.pipepipe.app.SharedContext
 import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.BottomSheetMenu
+import project.pipepipe.app.ui.component.PlaylistSelectorPopup
+import project.pipepipe.app.ui.component.player.SpeedPitchDialog
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import androidx.navigation.compose.rememberNavController
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.StreamInfoWithCallback
+import androidx.media3.common.PlaybackParameters
+import project.pipepipe.app.ui.theme.onCustomTopBarColor
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -95,6 +100,10 @@ fun PlayQueueScreen() {
 	var duration by remember { mutableStateOf(0L) }
 	var repeatMode by remember { mutableStateOf(mediaController.repeatMode) }
 	var shuffleModeEnabled by remember { mutableStateOf(mediaController.shuffleModeEnabled) }
+	var currentSpeed by remember { mutableFloatStateOf(mediaController.playbackParameters.speed) }
+	var currentPitch by remember { mutableFloatStateOf(mediaController.playbackParameters.pitch) }
+	var showPlaylistSelector by remember { mutableStateOf(false) }
+	var showSpeedPitchDialog by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
@@ -131,6 +140,11 @@ fun PlayQueueScreen() {
 		override fun onShuffleModeEnabledChanged(newShuffleModeEnabled: Boolean) {
 			shuffleModeEnabled = newShuffleModeEnabled
 		}
+
+		override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+			currentSpeed = playbackParameters.speed
+			currentPitch = playbackParameters.pitch
+		}
 	}
 
 	DisposableEffect(mediaController) {
@@ -161,7 +175,30 @@ fun PlayQueueScreen() {
 		@OptIn(ExperimentalMaterial3Api::class)
         CustomTopBar(
             defaultTitleText = stringResource(MR.strings.play_queue),
-            defaultNavigationOnClick = { SharedContext.toggleShowPlayQueueVisibility() }
+            defaultNavigationOnClick = { SharedContext.toggleShowPlayQueueVisibility() },
+
+            actions = {
+                IconButton(
+                    onClick = {
+                        showPlaylistSelector = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.PlaylistAdd,
+                        contentDescription = stringResource(MR.strings.add_to_playlist)
+                    )
+                }
+                TextButton(
+                    onClick = { showSpeedPitchDialog = true }
+                ) {
+                    Text(
+                        text = if (currentSpeed == 1f) "1x" else String.format("%.1fx", currentSpeed),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = onCustomTopBarColor()
+                    )
+                }
+
+            }
         )
 
         LazyColumn(
@@ -244,6 +281,44 @@ fun PlayQueueScreen() {
 				mediaController.shuffleModeEnabled = !shuffleModeEnabled
 			}
 		)
+
+		// Playlist Selector Dialog
+		if (showPlaylistSelector) {
+			val queueStreams = (0 until timeline.windowCount).mapNotNull { index ->
+				val window = timeline.getWindow(index, androidx.media3.common.Timeline.Window())
+				try {
+					StreamInfo(
+						serviceId = window.mediaItem.mediaMetadata.extras!!.getString("KEY_SERVICE_ID")!!,
+						url = window.mediaItem.mediaId,
+						name = window.mediaItem.mediaMetadata.title?.toString() ?: "",
+						thumbnailUrl = window.mediaItem.mediaMetadata.artworkUri?.toString(),
+						uploaderName = window.mediaItem.mediaMetadata.artist?.toString(),
+						duration = window.mediaItem.mediaMetadata.durationMs ?: 0
+					)
+				} catch (e: Exception) {
+					null
+				}
+			}
+
+			PlaylistSelectorPopup(
+				streamInfoList = queueStreams,
+				onDismiss = { showPlaylistSelector = false },
+				onPlaylistSelected = { showPlaylistSelector = false }
+			)
+		}
+
+		// Speed Pitch Dialog
+		if (showSpeedPitchDialog) {
+			SpeedPitchDialog(
+				currentSpeed = currentSpeed,
+				currentPitch = currentPitch,
+				onDismiss = { showSpeedPitchDialog = false },
+				onApply = { speed, pitch ->
+					val params = PlaybackParameters(speed, pitch)
+					mediaController.playbackParameters = params
+				}
+			)
+		}
 	}
 }
 

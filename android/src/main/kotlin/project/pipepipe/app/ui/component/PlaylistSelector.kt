@@ -27,7 +27,8 @@ import project.pipepipe.app.ui.item.CommonItem
 
 @Composable
 fun PlaylistSelectorPopup(
-    streamInfo: StreamInfo,
+    streamInfo: StreamInfo? = null,
+    streamInfoList: List<StreamInfo>? = null,
     onDismiss: () -> Unit,
     onPlaylistSelected: () -> Unit
 ) {
@@ -35,6 +36,9 @@ fun PlaylistSelectorPopup(
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var showNewPlaylistDialog by remember { mutableStateOf(false) }
+
+    // Support both single stream and multiple streams
+    val streams = streamInfoList ?: listOfNotNull(streamInfo)
 
     LaunchedEffect(Unit) {
         playlists = getAllLocalPlaylists()
@@ -119,7 +123,7 @@ fun PlaylistSelectorPopup(
                                             item = playlist,
                                             onClick = {
                                                 GlobalScope.launch {
-                                                    addStreamToPlaylist(streamInfo, playlist)
+                                                    addStreamsToPlaylist(streams, playlist)
                                                 }
                                                 onPlaylistSelected()
                                                 ToastManager.show(addedText)
@@ -153,7 +157,7 @@ fun PlaylistSelectorPopup(
             onDismiss = { showNewPlaylistDialog = false },
             onConfirm = { playlistName ->
                 GlobalScope.launch  {
-                    createNewPlaylistAndAddStream(playlistName, streamInfo)
+                    createNewPlaylistAndAddStreams(playlistName, streams)
                 }
                 showNewPlaylistDialog = false
                 onPlaylistSelected()
@@ -201,34 +205,21 @@ private fun NewPlaylistDialog(
     )
 }
 
-private suspend fun addStreamToPlaylist(
-    streamInfo: StreamInfo,
+private suspend fun addStreamsToPlaylist(
+    streams: List<StreamInfo>,
     playlist: PlaylistInfo
 ) {
-    var stream = DatabaseOperations.getStreamByUrl(streamInfo.url)
-    if (stream == null) {
-        DatabaseOperations.insertOrUpdateStream(streamInfo)
-        stream = DatabaseOperations.getStreamByUrl(streamInfo.url)
-    }
-    DatabaseOperations.addStreamToPlaylist(playlist.uid!!, stream!!.uid)
+    DatabaseOperations.addStreamsToPlaylist(playlist.uid!!, streams)
 }
 
-private suspend fun createNewPlaylistAndAddStream(
+private suspend fun createNewPlaylistAndAddStreams(
     playlistName: String,
-    streamInfo: StreamInfo
+    streams: List<StreamInfo>
 ) {
     val playlistId = DatabaseOperations.insertPlaylistAtTop(
         name = playlistName,
-        thumbnailUrl = streamInfo.thumbnailUrl,
+        thumbnailUrl = streams.firstOrNull()?.thumbnailUrl,
     )
 
-    var stream = DatabaseOperations.getStreamByUrl(streamInfo.url)
-    if (stream == null) {
-        DatabaseOperations.insertOrUpdateStream(streamInfo)
-        stream = DatabaseOperations.getStreamByUrl(streamInfo.url)
-    }
-
-    if (stream != null) {
-        DatabaseOperations.addStreamToPlaylist(playlistId, stream.uid)
-    }
+    DatabaseOperations.addStreamsToPlaylist(playlistId, streams)
 }
