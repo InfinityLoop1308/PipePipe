@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -37,12 +36,9 @@ import project.pipepipe.app.ui.item.CommentItem
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.SharedContext
 
-/**
- * LazyListScope extension for comment list content (without the LazyColumn wrapper)
- * Used by CommentSection to combine with common header
- */
 @OptIn(ExperimentalFoundationApi::class)
-fun LazyListScope.commentListContent(
+@Composable
+fun CommentList(
     comments: List<CommentInfo>,
     isLoading: Boolean,
     hasMoreComments: Boolean,
@@ -50,77 +46,101 @@ fun LazyListScope.commentListContent(
     onLoadMore: () -> Unit,
     showStickyHeader: Boolean = false,
     onBackClick: () -> Unit = {},
-    navController: NavHostController,
-    onTimestampClick: (Long) -> Unit
+    modifier: Modifier = Modifier,
+    listState: LazyListState,
+    onTimestampClick: (Long) -> Unit,
+    navController: NavHostController
 ) {
-    val uniqueItems = comments.distinctBy { it.url }
+    val uniqueItems = remember(comments) { comments.distinctBy { it.url } }
 
-    if (isLoading && comments.isEmpty()) {
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+    LaunchedEffect(listState, hasMoreComments, isLoading) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            val totalItemsCount = layoutInfo.totalItemsCount
+            lastVisibleIndex to totalItemsCount
         }
-    } else {
-        if (showStickyHeader) {
-            stickyHeader {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier.clickable { onBackClick() }
-                    )
-                    Text(
-                        text = "Replies",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(start = 16.dp)
-                    )
+            .distinctUntilChanged()
+            .collect { (lastVisibleIndex, totalItemsCount) ->
+                val isAtBottom = totalItemsCount > 0 && lastVisibleIndex == totalItemsCount - 1
+                if (isAtBottom && hasMoreComments && !isLoading) {
+                    onLoadMore()
                 }
             }
-        } else {
-            item { Spacer(modifier = Modifier.height(8.dp)) }
-        }
+    }
 
-        items(
-            items = uniqueItems,
-            key = { it.url!! }
-        ) { comment ->
-            CommentItem(
-                commentInfo = comment,
-                onReplyButtonClick = { onShowReplies(comment) },
-                onChannelAvatarClick = {
-                    comment.authorUrl?.let {
-                        navController.navigate(Screen.Channel.createRoute(it, comment.serviceId!!))
-                        SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+    CompositionLocalProvider(LocalOverscrollFactory provides null) {
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+            state = listState
+        ) {
+            if (isLoading && comments.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
-                },
-                onTimestampClick = onTimestampClick,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-        }
+                }
+            } else {
+                if (showStickyHeader) {
+                    stickyHeader {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(bottom = 16.dp, top = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                modifier = Modifier.clickable { onBackClick() }
+                            )
+                            Text(
+                                text = "Replies",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
+                } else {
+                    item { Spacer(modifier = Modifier.height(8.dp)) }
+                }
 
-        if (isLoading && comments.isNotEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+                items(
+                    items = uniqueItems,
+                    key = { it.url!! }
+                ) { comment ->
+                    CommentItem(
+                        commentInfo = comment,
+                        onReplyButtonClick = { onShowReplies(comment) },
+                        onChannelAvatarClick = {
+                            comment.authorUrl?.let {
+                                navController.navigate(Screen.Channel.createRoute(it, comment.serviceId!!))
+                                SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+                            }
+                        },
+                        onTimestampClick = onTimestampClick
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
+                if (isLoading && comments.isNotEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
                 }
             }
         }

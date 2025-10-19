@@ -1,29 +1,27 @@
 package project.pipepipe.app.ui.screens.videodetail
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.ErrorComponent
-import project.pipepipe.app.ui.list.commentListContent
-import project.pipepipe.shared.infoitem.StreamInfo
+import project.pipepipe.app.ui.list.CommentList
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CommentSection(
-    streamInfo: StreamInfo,
-    navController: NavHostController,
-    onPlayAudioClick: () -> Unit,
-    onAddToPlaylistClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onTimestampClick: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    navController: NavHostController,
 ) {
     val viewModel = SharedContext.sharedVideoDetailViewModel
     val uiState by viewModel.uiState.collectAsState()
@@ -60,56 +58,24 @@ fun CommentSection(
     
     val serviceId = uiState.currentStreamInfo?.serviceId
 
-    if (commentsState.common.error != null) {
-        ErrorComponent(
-            error = commentsState.common.error!!,
-            onRetry = {
-                uiState.currentStreamInfo?.let { streamInfo ->
-                    coroutineScope.launch {
-                        viewModel.loadComments(streamInfo)
-                    }
-                }
-            },
-            modifier = modifier.fillMaxSize(),
-            shouldStartFromTop = true
-        )
-    } else {
-        when {
-            commentsState.parentComment != null -> {
-                // Replies view with common header
-                LaunchedEffect(repliesListState, commentsState.replies.nextPageUrl, commentsState.common.isLoading) {
-                    snapshotFlow {
-                        val layoutInfo = repliesListState.layoutInfo
-                        val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-                        val totalItemsCount = layoutInfo.totalItemsCount
-                        lastVisibleIndex to totalItemsCount
-                    }
-                        .distinctUntilChanged()
-                        .collect { (lastVisibleIndex, totalItemsCount) ->
-                            val isAtBottom = totalItemsCount > 0 && lastVisibleIndex == totalItemsCount - 1
-                            val hasMoreReplies = commentsState.replies.nextPageUrl != null
-                            if (isAtBottom && hasMoreReplies && !commentsState.common.isLoading) {
-                                serviceId?.let {
-                                    viewModel.loadMoreReplies(it)
-                                }
-                            }
+    Box(modifier = modifier.fillMaxSize()) {
+        if (commentsState.common.error != null) {
+            ErrorComponent(
+                error = commentsState.common.error!!,
+                onRetry = {
+                    uiState.currentStreamInfo?.let { streamInfo ->
+                        coroutineScope.launch {
+                            viewModel.loadComments(streamInfo)
                         }
-                }
-
-                LazyColumn(
-                    modifier = modifier.fillMaxSize(),
-                    state = repliesListState
-                ) {
-                    // Common header
-                    videoDetailCommonHeader(
-                        streamInfo = streamInfo,
-                        navController = navController,
-                        onPlayAudioClick = onPlayAudioClick,
-                        onAddToPlaylistClick = onAddToPlaylistClick
-                    )
-
-                    // Replies content (inline from CommentList)
-                    commentListContent(
+                    }
+                },
+                modifier = Modifier.fillMaxSize(),
+                shouldStartFromTop = true
+            )
+        } else {
+            when {
+                commentsState.parentComment != null -> {
+                    CommentList(
                         comments = commentsState.replies.itemList,
                         isLoading = commentsState.common.isLoading,
                         hasMoreComments = commentsState.replies.nextPageUrl != null,
@@ -123,49 +89,16 @@ fun CommentSection(
                         },
                         showStickyHeader = true,
                         onBackClick = { viewModel.backToCommentList() },
+                        listState = repliesListState,
                         navController = navController,
                         onTimestampClick = onTimestampClick
                     )
-                }
-                BackHandler {
-                    viewModel.backToCommentList()
-                }
-            }
-            else -> {
-                // Comments list with common header
-                LaunchedEffect(commentsListState, commentsState.comments.nextPageUrl, commentsState.common.isLoading) {
-                    snapshotFlow {
-                        val layoutInfo = commentsListState.layoutInfo
-                        val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-                        val totalItemsCount = layoutInfo.totalItemsCount
-                        lastVisibleIndex to totalItemsCount
+                    BackHandler() {
+                        viewModel.backToCommentList()
                     }
-                        .distinctUntilChanged()
-                        .collect { (lastVisibleIndex, totalItemsCount) ->
-                            val isAtBottom = totalItemsCount > 0 && lastVisibleIndex == totalItemsCount - 1
-                            val hasMoreComments = commentsState.comments.nextPageUrl != null
-                            if (isAtBottom && hasMoreComments && !commentsState.common.isLoading) {
-                                serviceId?.let {
-                                    viewModel.loadMoreComments(it)
-                                }
-                            }
-                        }
                 }
-
-                LazyColumn(
-                    modifier = modifier.fillMaxSize(),
-                    state = commentsListState
-                ) {
-                    // Common header
-                    videoDetailCommonHeader(
-                        streamInfo = streamInfo,
-                        navController = navController,
-                        onPlayAudioClick = onPlayAudioClick,
-                        onAddToPlaylistClick = onAddToPlaylistClick
-                    )
-
-                    // Comments content (inline from CommentList)
-                    commentListContent(
+                else -> {
+                    CommentList(
                         comments = commentsState.comments.itemList,
                         isLoading = commentsState.common.isLoading,
                         hasMoreComments = commentsState.comments.nextPageUrl != null,
@@ -183,8 +116,8 @@ fun CommentSection(
                                 }
                             }
                         },
-                        showStickyHeader = false,
                         onBackClick = { },
+                        listState = commentsListState,
                         navController = navController,
                         onTimestampClick = onTimestampClick
                     )
