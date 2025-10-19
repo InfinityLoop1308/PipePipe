@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.screens.videodetail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.session.MediaController
 import androidx.navigation.NavHostController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
@@ -24,23 +26,33 @@ import project.pipepipe.app.viewmodel.VideoDetailViewModel
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.app.ui.screens.Screen
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DescriptionSection(
     streamInfo: StreamInfo,
     navController: NavHostController,
-    onTimestampClick: (Long)-> Unit
+    onPlayAudioClick: () -> Unit,
+    onAddToPlaylistClick: () -> Unit,
+    onTimestampClick: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel = SharedContext.sharedVideoDetailViewModel
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 4.dp)
     ) {
+        // Common header
+        videoDetailCommonHeader(
+            streamInfo = streamInfo,
+            navController = navController,
+            onPlayAudioClick = onPlayAudioClick,
+            onAddToPlaylistClick = onAddToPlaylistClick
+        )
 
         // Top row: Published date and thumbnail button
         item {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -78,7 +90,7 @@ fun DescriptionSection(
                     text = description.content ?: stringResource(MR.strings.no_items),
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.5.sp),
                     color = supportingTextColor(),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
                     onHashtagClick = {
                         viewModel.showAsBottomPlayer()
                         navController.navigate(Screen.Search.createRoute(it, streamInfo.serviceId))
@@ -94,7 +106,7 @@ fun DescriptionSection(
             if (tags.isNotEmpty()) {
                 item {
                     FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(
                             space = 6.dp,
                             alignment = Alignment.CenterHorizontally

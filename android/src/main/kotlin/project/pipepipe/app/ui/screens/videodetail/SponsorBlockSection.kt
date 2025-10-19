@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.screens.videodetail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,23 +18,31 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.media3.session.MediaController
+import androidx.navigation.NavHostController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
+import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import java.util.UUID
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SponsorBlockSection(
+    streamInfo: StreamInfo,
+    navController: NavHostController,
+    onPlayAudioClick: () -> Unit,
+    onAddToPlaylistClick: () -> Unit,
     segments: List<SponsorBlockSegmentInfo> = emptyList(),
     modifier: Modifier = Modifier,
     onStart: () -> Long?,
-    onEnd: () -> Long?,
+    onEnd: () -> Long?
 ) {
     val skipMarked = remember { mutableStateOf(true) }
 //    val whitelistChannel = remember { mutableStateOf(false) }
@@ -61,6 +70,14 @@ fun SponsorBlockSection(
         contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
+        // Common header
+        videoDetailCommonHeader(
+            streamInfo = streamInfo,
+            navController = navController,
+            onPlayAudioClick = onPlayAudioClick,
+            onAddToPlaylistClick = onAddToPlaylistClick
+        )
+
         item {
             ControlRow(
                 currentRange = currentRange,
@@ -104,7 +121,7 @@ fun SponsorBlockSection(
         }
 
         item {
-            Divider(modifier = Modifier.padding(vertical = 10.dp))
+            Divider(modifier = Modifier.padding(horizontal = 16.dp).padding(vertical = 10.dp))
         }
 
         item {
@@ -124,13 +141,13 @@ fun SponsorBlockSection(
 //        }
 
         item {
-            Divider(modifier = Modifier.padding(vertical = 10.dp))
+            Divider(modifier = Modifier.padding(horizontal = 16.dp).padding(vertical = 10.dp))
         }
 
         if (segments.isEmpty()) {
             item {
                 Box(
-                    modifier = Modifier
+                    modifier = Modifier.padding(horizontal = 16.dp)
                         .fillMaxWidth()
                         .padding(32.dp),
                     contentAlignment = Alignment.Center
@@ -197,7 +214,7 @@ private fun ControlRow(
     onCategorySelected: (SponsorBlockCategory) -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = Modifier.padding(horizontal = 16.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -265,7 +282,7 @@ private fun ToggleRow(
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = Modifier.padding(horizontal = 16.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -289,7 +306,7 @@ private fun SegmentRow(
     val categoryName = SponsorBlockUtils.getCategoryName(segment.category)
 
     Row(
-        modifier = Modifier
+        modifier = Modifier.padding(horizontal = 16.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {

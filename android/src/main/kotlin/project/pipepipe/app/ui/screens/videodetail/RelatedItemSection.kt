@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.screens.videodetail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,14 +19,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.media3.session.MediaController
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.item.CommonItem
+import project.pipepipe.shared.infoitem.StreamInfo
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RelatedItemSection (
-    modifier: Modifier = Modifier,
+fun RelatedItemSection(
+    streamInfo: StreamInfo,
+    navController: NavHostController,
+    onPlayAudioClick: () -> Unit,
+    onAddToPlaylistClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val viewModel = SharedContext.sharedVideoDetailViewModel
     val uiState by viewModel.uiState.collectAsState()
@@ -66,8 +75,15 @@ fun RelatedItemSection (
         LazyColumn(
             modifier = modifier.fillMaxSize(),
             state = relatedItemsListState,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Common header
+            videoDetailCommonHeader(
+                streamInfo = streamInfo,
+                navController = navController,
+                onPlayAudioClick = onPlayAudioClick,
+                onAddToPlaylistClick = onAddToPlaylistClick
+            )
+
             if (relatedState.common.isLoading) {
                 item {
                     Box(
@@ -82,11 +98,12 @@ fun RelatedItemSection (
             } else {
                 items(
                     items = relatedState.list.itemList,
-                    key = { it.url }
+                    key = { it.url },
                 ) { item ->
                     CommonItem(
                         item = item,
-                        onClick = { viewModel.loadVideoDetails(item.url, item.serviceId) }
+                        onClick = { viewModel.loadVideoDetails(item.url, item.serviceId) },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
             }

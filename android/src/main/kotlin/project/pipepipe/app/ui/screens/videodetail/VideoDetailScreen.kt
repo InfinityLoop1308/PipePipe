@@ -9,11 +9,11 @@ import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -21,23 +21,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
-import androidx.compose.material.icons.filled.ArtTrack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
@@ -59,29 +50,30 @@ import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import project.pipepipe.app.mediasource.toMediaItem
-import project.pipepipe.app.service.PlaybackService
-import project.pipepipe.app.service.playFromStreamInfo
-
-import project.pipepipe.app.service.setPlaybackMode
-import project.pipepipe.app.service.stopService
+import project.pipepipe.app.MR
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.uistate.VideoDetailPageState
-import project.pipepipe.app.ui.component.ActionButtons
-import project.pipepipe.app.ui.component.ErrorComponent
-import project.pipepipe.app.ui.component.player.PlayerGestureSettings
-import project.pipepipe.app.ui.component.PlaylistSelectorPopup
-import project.pipepipe.app.ui.component.VideoDetailSection
-import project.pipepipe.app.ui.component.player.VideoPlayer
-import project.pipepipe.app.ui.component.VideoTitleSection
-import dev.icerock.moko.resources.compose.stringResource
-import project.pipepipe.app.MR
 import project.pipepipe.app.helper.NetworkStateHelper
-import kotlin.math.min
+import project.pipepipe.app.mediasource.toMediaItem
+import project.pipepipe.app.service.PlaybackService
+import project.pipepipe.app.service.playFromStreamInfo
+import project.pipepipe.app.service.setPlaybackMode
+import project.pipepipe.app.service.stopService
+import project.pipepipe.app.ui.component.ErrorComponent
+import project.pipepipe.app.ui.component.PlaylistSelectorPopup
+import project.pipepipe.app.ui.component.player.PlayerGestureSettings
+import project.pipepipe.app.ui.component.player.VideoPlayer
+import project.pipepipe.app.uistate.VideoDetailPageState
+
+data class TabConfig(
+    val title: String,
+    val icon: ImageVector,
+    val isAvailable: Boolean
+)
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -113,23 +105,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     val bottomSheetContentHeight = 64.dp
     val bottomSheetContentHeightPx = with(density) { bottomSheetContentHeight.toPx() }
     val navBarHeightPx = WindowInsets.navigationBars.getBottom(density)
-    val listState = rememberLazyListState()
-
-    val nestedScrollConnection1 = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                if (available.y < 0) {
-                    val consumed = min(-available.y, listState.layoutInfo.visibleItemsInfo.last().offset.toFloat())
-                    scope.launch {
-                        listState.scrollBy(consumed)
-                    }
-                    return Offset(0f, if(consumed > 0)available.y else 0f)
-                } else {
-                    return Offset.Zero
-                }
-            }
-        }
-    }
 
     val draggableState = remember(uiState.pageState) {
         AnchoredDraggableState(
@@ -274,105 +249,27 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 
 
 
-    data class TabConfig(
-        val title: String,
-        val icon: ImageVector,
-        val isAvailable: Boolean,
-        val content: @Composable () -> Unit
-    )
-
     val allTabs = listOf(
         TabConfig(
             title = stringResource(MR.strings.comments_tab_description),
             icon = Icons.AutoMirrored.Filled.Comment,
-            isAvailable = streamInfo?.commentUrl != null,
-            content = {
-                streamInfo?.commentUrl?.let {
-                    CommentSection(
-                        navController = navController,
-                        onTimestampClick = { timestamp ->
-                            mediaController?.let {
-                                if (it.currentMediaItem?.mediaId == streamInfo.url) {
-                                    it.seekTo(timestamp * 1000)
-                                }
-                            }
-                        })
-                }
-            }
+            isAvailable = streamInfo?.commentUrl != null
         ),
         TabConfig(
             title = stringResource(MR.strings.related_videos),
             icon = Icons.Default.ArtTrack,
-            isAvailable = streamInfo?.relatedItemUrl != null,
-            content = { RelatedItemSection() }
+            isAvailable = streamInfo?.relatedItemUrl != null
         ),
         TabConfig(
             title = stringResource(MR.strings.sponsor_block),
-            icon = Icons.Default.Shield, // 或使用其他合适的图标
-            isAvailable = streamInfo?.sponsorblockUrl != null,
-            content = {
-                val sponsorBlockState = uiState.currentSponsorBlock
-                if (sponsorBlockState.common.isLoading) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    SponsorBlockSection(
-                        segments = sponsorBlockState.segments,
-                        modifier = Modifier.fillMaxSize(),
-                        onStart = { mediaController?.currentPosition },
-                        onEnd = { mediaController?.currentPosition },
-                    )
-                }
-            }
+            icon = Icons.Default.Shield,
+            isAvailable = streamInfo?.sponsorblockUrl != null
         ),
         TabConfig(
             title = stringResource(MR.strings.description_tab),
             icon = Icons.Default.Description,
-            isAvailable = streamInfo != null,
-            content = {
-                streamInfo?.let {
-                    DescriptionSection(
-                        streamInfo = it,
-                        navController = navController,
-                        onTimestampClick = { timestamp ->
-                            mediaController?.let {
-                                if (it.currentMediaItem?.mediaId == streamInfo.url) {
-                                    it.seekTo(timestamp * 1000)
-                                }
-                            }
-                        }
-                    )
-                }
-            }
+            isAvailable = streamInfo != null
         )
-//        TabConfig(
-//            title = "Description",
-//            isAvailable = false,
-//            content = {
-//                Text(
-//                    "Video Description Area\n(To be implemented)",
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
-//            }
-//        ),
-//        TabConfig(
-//            title = "More",
-//            isAvailable = false,
-//            content = {
-//                Text(
-//                    "More Info Area\n(To be implemented)",
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
-//            }
-//        )
     )
 
     val availableTabs = allTabs.filter { it.isAvailable }
@@ -486,66 +383,109 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                         )
                                     }
 
-                                    LazyColumn(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .nestedScroll(nestedScrollConnection1),
-                                        state = listState
-                                    ) {
-                                        item { VideoTitleSection(name = streamInfo.name) }
-                                        item { VideoDetailSection(streamInfo = streamInfo, navController = navController) }
-                                        item {
-                                            ActionButtons(
-                                                onPlayAudioClick = {
-                                                    mediaController?.let { controller ->
-                                                        controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-                                                        if (controller.getCurrentMediaItem()?.mediaId != streamInfo.url) {
-                                                            controller.playFromStreamInfo(streamInfo)
-                                                        } else if (!controller.isPlaying) {
-                                                            controller.play()
-                                                        }
-                                                    }
-                                                },
-                                                onAddToPlaylistClick = { showPlaylistPopup = true },
-                                                streamInfo = streamInfo
-                                            )
-                                        }
-                                        item {
-                                            HorizontalPager(
-                                                state = pagerState,
-                                                modifier = Modifier
-                                                    .fillParentMaxHeight()
-                                                    .padding(horizontal = 16.dp)
-                                                    .padding(top = 8.dp),
-                                                beyondViewportPageCount = 4
-                                            ) { page ->
-                                                availableTabs[page].content()
-                                            }
-                                        }
-                                    }
-
-                                    if (availableTabs.isNotEmpty()) {
-                                        TabRow(
-                                            selectedTabIndex = pagerState.currentPage,
+                                    // HorizontalPager with TabRow at bottom
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        HorizontalPager(
+                                            state = pagerState,
                                             modifier = Modifier
-                                                .fillMaxWidth()
-                                        ) {
-                                            availableTabs.forEachIndexed { index, tab ->
-                                                Tab(
-                                                    selected = pagerState.currentPage == index,
-                                                    onClick = {
-                                                        scope.launch {
-                                                            pagerState.animateScrollToPage(index)
+                                                .weight(1f),
+                                            beyondViewportPageCount = 4
+                                        ) { page ->
+                                            val tabIndex = availableTabs[page]
+                                            val onPlayAudioClick: () -> Unit = {
+                                                mediaController?.let { controller ->
+                                                    controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+                                                    if (controller.getCurrentMediaItem()?.mediaId != streamInfo.url) {
+                                                        controller.playFromStreamInfo(streamInfo)
+                                                    } else if (!controller.isPlaying) {
+                                                        controller.play()
+                                                    }
+                                                }
+                                            }
+                                            val onAddToPlaylistClick: () -> Unit = { showPlaylistPopup = true }
+                                            val onTimestampClick: (Long) -> Unit = { timestamp ->
+                                                mediaController?.let {
+                                                    if (it.currentMediaItem?.mediaId == streamInfo.url) {
+                                                        it.seekTo(timestamp * 1000)
+                                                    }
+                                                }
+                                            }
+
+                                            when(page) {
+                                                allTabs.indexOfFirst { it.title == stringResource(MR.strings.comments_tab_description) && it.isAvailable } -> {
+                                                    CommentSection(
+                                                        streamInfo = streamInfo,
+                                                        navController = navController,
+                                                        onPlayAudioClick = onPlayAudioClick,
+                                                        onAddToPlaylistClick = onAddToPlaylistClick,
+                                                        onTimestampClick = onTimestampClick
+                                                    )
+                                                }
+                                                allTabs.indexOfFirst { it.title == stringResource(MR.strings.related_videos) && it.isAvailable } -> {
+                                                    RelatedItemSection(
+                                                        streamInfo = streamInfo,
+                                                        navController = navController,
+                                                        onPlayAudioClick = onPlayAudioClick,
+                                                        onAddToPlaylistClick = onAddToPlaylistClick
+                                                    )
+                                                }
+                                                allTabs.indexOfFirst { it.title == stringResource(MR.strings.sponsor_block) && it.isAvailable } -> {
+                                                    val sponsorBlockState = uiState.currentSponsorBlock
+                                                    if (sponsorBlockState.common.isLoading) {
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .fillMaxSize()
+                                                                .padding(32.dp),
+                                                            contentAlignment = Alignment.Center
+                                                        ) {
+                                                            CircularProgressIndicator()
                                                         }
-                                                    },
-                                                    icon = {
-                                                        Icon(
-                                                            imageVector = tab.icon,
-                                                            contentDescription = tab.title,
-                                                            modifier = Modifier.size(22.dp)
+                                                    } else {
+                                                        SponsorBlockSection(
+                                                            streamInfo = streamInfo,
+                                                            navController = navController,
+                                                            onPlayAudioClick = onPlayAudioClick,
+                                                            onAddToPlaylistClick = onAddToPlaylistClick,
+                                                            segments = sponsorBlockState.segments,
+                                                            onStart = { mediaController?.currentPosition },
+                                                            onEnd = { mediaController?.currentPosition }
                                                         )
                                                     }
-                                                )
+                                                }
+                                                allTabs.indexOfFirst { it.title == stringResource(MR.strings.description_tab) && it.isAvailable } -> {
+                                                    DescriptionSection(
+                                                        streamInfo = streamInfo,
+                                                        navController = navController,
+                                                        onPlayAudioClick = onPlayAudioClick,
+                                                        onAddToPlaylistClick = onAddToPlaylistClick,
+                                                        onTimestampClick = onTimestampClick
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        if (availableTabs.isNotEmpty()) {
+                                            TabRow(
+                                                selectedTabIndex = pagerState.currentPage,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                availableTabs.forEachIndexed { index, tab ->
+                                                    Tab(
+                                                        selected = pagerState.currentPage == index,
+                                                        onClick = {
+                                                            scope.launch {
+                                                                pagerState.animateScrollToPage(index)
+                                                            }
+                                                        },
+                                                        icon = {
+                                                            Icon(
+                                                                imageVector = tab.icon,
+                                                                contentDescription = tab.title,
+                                                                modifier = Modifier.size(22.dp)
+                                                            )
+                                                        }
+                                                    )
+                                                }
                                             }
                                         }
                                     }
