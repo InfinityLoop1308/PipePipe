@@ -375,4 +375,7 @@
 <string name="show_details">Afficher les détails de la vidéo</string>
 <string name="playlist_menu_bookmark">Marque-page</string>
 <string name="playlist_menu_unbookmark">Supprimer le marque-page</string>
+<string name="empty_pinned_feed_groups">Aucun groupe de flux épinglé pour l\'instant</string>
+<string name="empty_pinned_playlists">Aucune playlist épinglée pour l\'instant</string>
+<string name="empty_history">Aucun historique de visionnage pour l\'instant</string>
 </resources>

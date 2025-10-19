@@ -375,4 +375,7 @@
 <string name="show_details">Videodetails anzeigen</string>
 <string name="playlist_menu_bookmark">Lesezeichen</string>
 <string name="playlist_menu_unbookmark">Lesezeichen entfernen</string>
+<string name="empty_pinned_feed_groups">Noch keine angehefteten Feed-Gruppen</string>
+<string name="empty_pinned_playlists">Noch keine angehefteten Wiedergabelisten</string>
+<string name="empty_history">Noch kein Wiedergabeverlauf</string>
 </resources>

@@ -377,4 +377,7 @@
 <string name="show_details">Mostra dettagli video</string>
 <string name="playlist_menu_bookmark">Segnalibro</string>
 <string name="playlist_menu_unbookmark">Rimuovi segnalibro</string>
+<string name="empty_pinned_feed_groups">Nessun gruppo di feed bloccato ancora</string>
+<string name="empty_pinned_playlists">Nessuna playlist bloccata ancora</string>
+<string name="empty_history">Nessuna cronologia di visualizzazione ancora</string>
 </resources>

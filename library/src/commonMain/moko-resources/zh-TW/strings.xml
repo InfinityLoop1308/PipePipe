@@ -375,4 +375,7 @@
 <string name="show_details">顯示影片詳細資訊</string>
 <string name="playlist_menu_bookmark">加入書籤</string>
 <string name="playlist_menu_unbookmark">取消書籤</string>
+<string name="empty_pinned_feed_groups">尚未有釘選的動態消息群組</string>
+<string name="empty_pinned_playlists">尚未有釘選的播放清單</string>
+<string name="empty_history">尚未有觀看紀錄</string>
 </resources>

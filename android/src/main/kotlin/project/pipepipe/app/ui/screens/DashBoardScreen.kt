@@ -93,17 +93,25 @@ fun DashboardScreen(navController: NavController) {
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(12.dp))
-            ChannelGroupsRow(
-                channelGroups = uiState.feedGroups,
-                onAllGroupsClick = { },
-                onChannelGroupClick = { group ->
-                    val route = Screen.Feed.createRoute(
-                        id = group.uid,
-                        name = group.name
-                    )
-                    navController.navigate(route)
-                }
-            )
+            if (uiState.feedGroups.isEmpty()) {
+                Text(
+                    text = stringResource(MR.strings.empty_pinned_feed_groups),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                ChannelGroupsRow(
+                    channelGroups = uiState.feedGroups,
+                    onAllGroupsClick = { },
+                    onChannelGroupClick = { group ->
+                        val route = Screen.Feed.createRoute(
+                            id = group.uid,
+                            name = group.name
+                        )
+                        navController.navigate(route)
+                    }
+                )
+            }
         }
 
 
@@ -120,18 +128,26 @@ fun DashboardScreen(navController: NavController) {
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(16.dp))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 4.dp)
-            ) {
-                items(
-                    items = uiState.playlists,
-                    key = { it.url }
-                ) { playlist ->
-                    PlaylistCard(
-                        playlist = playlist,
-                        onClick = { navController.navigate(Screen.PlaylistDetail.createRoute(playlist.url, playlist.serviceId)) }
-                    )
+            if (uiState.playlists.isEmpty()) {
+                Text(
+                    text = stringResource(MR.strings.empty_pinned_playlists),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
+                ) {
+                    items(
+                        items = uiState.playlists,
+                        key = { it.url }
+                    ) { playlist ->
+                        PlaylistCard(
+                            playlist = playlist,
+                            onClick = { navController.navigate(Screen.PlaylistDetail.createRoute(playlist.url, playlist.serviceId)) }
+                        )
+                    }
                 }
             }
         }
@@ -162,15 +178,23 @@ fun DashboardScreen(navController: NavController) {
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 4.dp)
-            ) {
-                items(uiState.historyItems) { item ->
-                    HistoryCard(
-                        item = item,
-                        onClick = { SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url) }
-                    )
+            if (uiState.historyItems.isEmpty()) {
+                Text(
+                    text = stringResource(MR.strings.empty_history),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
+                ) {
+                    items(uiState.historyItems) { item ->
+                        HistoryCard(
+                            item = item,
+                            onClick = { SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url) }
+                        )
+                    }
                 }
             }
         }

@@ -375,4 +375,7 @@
 <string name="show_details">動画の詳細を表示</string>
 <string name="playlist_menu_bookmark">ブックマーク</string>
 <string name="playlist_menu_unbookmark">ブックマーク解除</string>
+<string name="empty_pinned_feed_groups">固定されたフィードグループはまだありません</string>
+<string name="empty_pinned_playlists">固定されたプレイリストはまだありません</string>
+<string name="empty_history">視聴履歴はまだありません</string>
 </resources>

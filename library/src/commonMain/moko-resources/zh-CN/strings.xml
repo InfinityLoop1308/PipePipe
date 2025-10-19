@@ -375,4 +375,7 @@
 <string name="show_details">显示视频详情</string>
 <string name="playlist_menu_bookmark">收藏</string>
 <string name="playlist_menu_unbookmark">取消收藏</string>
+<string name="empty_pinned_feed_groups">暂无置顶的动态分组</string>
+<string name="empty_pinned_playlists">暂无置顶的播放列表</string>
+<string name="empty_history">暂无观看历史</string>
 </resources>

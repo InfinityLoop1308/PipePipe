@@ -386,4 +386,7 @@
     <string name="trending">Trending</string>
     <string name="recommended_lives">Recommended Lives</string>
     <string name="show_details">Show video details</string>
+    <string name="empty_pinned_feed_groups">No pinned feed groups yet</string>
+    <string name="empty_pinned_playlists">No pinned playlists yet</string>
+    <string name="empty_history">No watch history yet</string>
 </resources>
