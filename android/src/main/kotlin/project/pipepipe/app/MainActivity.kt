@@ -229,6 +229,10 @@ class MainActivity : ComponentActivity() {
         return enterPictureInPictureMode(params)
     }
 
+    private fun handleExitPip() {
+        SharedContext.exitPipMode()
+        SharedContext.sharedVideoDetailViewModel.showAsDetailPage()
+    }
 
 
     override fun onPictureInPictureModeChanged(
@@ -237,10 +241,17 @@ class MainActivity : ComponentActivity() {
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         if (!isInPictureInPictureMode) {
-            SharedContext.exitPipMode()
-            SharedContext.sharedVideoDetailViewModel.showAsDetailPage()
+            handleExitPip()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (SharedContext.isInPipMode.value && !isInPictureInPictureMode) {
+            handleExitPip() // for unknown reason, onPictureInPictureModeChanged not triggered on some devices.
+        }
+    }
+
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
