@@ -2,6 +2,7 @@ package project.pipepipe.app.ui.component.player
 
 import android.content.Context
 import android.media.AudioManager
+import android.view.WindowManager
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -496,6 +497,11 @@ fun VideoPlayer(
         val listener = object : Player.Listener {
             override fun onIsPlayingChanged(playing: Boolean) {
                 isPlaying = playing
+                if (playing) {
+                    activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -556,9 +562,14 @@ fun VideoPlayer(
 
         mediaController.addListener(listener)
 
+        if (mediaController.isPlaying) {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
         onDispose {
             mediaController.removeListener(listener)
             unskipButtonJob?.cancel()
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 

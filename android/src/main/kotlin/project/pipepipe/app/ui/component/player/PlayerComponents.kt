@@ -129,7 +129,6 @@ fun VideoSurface(
             },
             update = { playerView ->
                 playerView.player = mediaController
-                playerView.keepScreenOn = mediaController.isPlaying
             },
             modifier = Modifier.fillMaxSize()
         )
