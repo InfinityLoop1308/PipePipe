@@ -41,7 +41,10 @@ import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import project.pipepipe.app.ui.screens.Screen.Channel
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.GlobalScope
+import project.pipepipe.app.MainActivity
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.global.PipHelper
+import project.pipepipe.app.ui.component.player.findActivity
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.app.uistate.VideoDetailPageState
 
@@ -191,6 +194,7 @@ private fun StreamInfoMenuItems(
     var showPlaylistPopup by remember { mutableStateOf(false) }
     var showDownloadDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val activity = context.findActivity() as MainActivity
 
     val menuItems = buildList {
         if (!disablePlayOperations) {
@@ -212,10 +216,10 @@ private fun StreamInfoMenuItems(
             })
         }
 
-//        add(Triple(Icons.Default.PictureInPicture, stringResource(MR.strings.pip)) {
-//            mediaController?.let { PipHelper.enterPipMode(it, streamInfo, context) }
-//            onDismiss()
-//        })
+        add(Triple(Icons.Default.PictureInPicture, stringResource(MR.strings.pip)) {
+            mediaController?.let { PipHelper.enterPipMode(it, streamInfo, activity) }
+            onDismiss()
+        })
         add(Triple(Icons.AutoMirrored.Filled.PlaylistAdd, stringResource(MR.strings.add_to_playlist)) {
             showPlaylistPopup = true
         })

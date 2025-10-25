@@ -48,8 +48,6 @@ import project.pipepipe.app.ui.screens.videodetail.VideoDetailScreen
 import project.pipepipe.app.ui.theme.PipePipeTheme
 
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
 class MainActivity : ComponentActivity() {
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var mediaController: MediaController? = null
@@ -231,7 +229,11 @@ class MainActivity : ComponentActivity() {
 
     private fun handleExitPip() {
         SharedContext.exitPipMode()
-        SharedContext.sharedVideoDetailViewModel.showAsDetailPage()
+        if (SharedContext.sharedVideoDetailViewModel.uiState.value.currentStreamInfo?.url == mediaController?.currentMediaItem?.mediaId) {
+            SharedContext.sharedVideoDetailViewModel.showAsDetailPage()
+        } else {
+            SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+        }
     }
 
 

@@ -12,6 +12,7 @@ import project.pipepipe.app.uistate.VideoDetailPageState
 
 object PipHelper {
     fun enterPipMode(mediaController: MediaController, streamInfo: StreamInfo, context: Context) {
+        SharedContext.sharedVideoDetailViewModel.loadVideoDetails(streamInfo.url,  streamInfo.serviceId)
         SharedContext.enterPipmode()
         mediaController.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
         mediaController.playFromStreamInfo(streamInfo)
