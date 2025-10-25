@@ -12,7 +12,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -22,12 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
-import androidx.compose.material.icons.filled.ArtTrack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,7 +43,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -60,28 +53,23 @@ import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import project.pipepipe.app.mediasource.toMediaItem
-import project.pipepipe.app.service.PlaybackService
-import project.pipepipe.app.service.playFromStreamInfo
-
-import project.pipepipe.app.service.setPlaybackMode
-import project.pipepipe.app.service.stopService
+import project.pipepipe.app.MR
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.uistate.VideoDetailPageState
-import project.pipepipe.app.ui.component.ActionButtons
-import project.pipepipe.app.ui.component.ErrorComponent
-import project.pipepipe.app.ui.component.player.PlayerGestureSettings
-import project.pipepipe.app.ui.component.PlaylistSelectorPopup
-import project.pipepipe.app.ui.component.VideoDetailSection
-import project.pipepipe.app.ui.component.player.VideoPlayer
-import project.pipepipe.app.ui.component.VideoTitleSection
-import dev.icerock.moko.resources.compose.stringResource
-import project.pipepipe.app.MR
 import project.pipepipe.app.helper.NetworkStateHelper
+import project.pipepipe.app.mediasource.toMediaItem
+import project.pipepipe.app.service.PlaybackService
+import project.pipepipe.app.service.playFromStreamInfo
+import project.pipepipe.app.service.setPlaybackMode
+import project.pipepipe.app.service.stopService
+import project.pipepipe.app.ui.component.*
+import project.pipepipe.app.ui.component.player.PlayerGestureSettings
+import project.pipepipe.app.ui.component.player.VideoPlayer
+import project.pipepipe.app.uistate.VideoDetailPageState
 import kotlin.math.min
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -115,6 +103,8 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     val bottomSheetContentHeightPx = with(density) { bottomSheetContentHeight.toPx() }
     val navBarHeightPx = WindowInsets.navigationBars.getBottom(density)
     val listState = rememberLazyListState()
+
+    val colorScheme = MaterialTheme.colorScheme
 
     val nestedScrollConnection1 = remember {
         object : NestedScrollConnection {
@@ -246,7 +236,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 
             when (uiState.pageState) {
                 VideoDetailPageState.FULLSCREEN_PLAYER -> {
-                    insetsController.hide(WindowInsetsCompat.Type.systemBars())
                     insetsController.systemBarsBehavior =
                         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
@@ -263,8 +252,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     if (isAutoRotateDisabled) {
                         act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                     }
-
-                    insetsController.show(WindowInsetsCompat.Type.systemBars())
                 }
             }
         }

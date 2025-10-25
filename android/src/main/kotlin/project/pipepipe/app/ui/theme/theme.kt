@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.SharedContext
 
@@ -34,7 +35,6 @@ private fun getCustomDarkColor(color: Color): Color {
     }
 }
 
-// 添加静态变量来存储当前主题状态
 private var currentMaterialYouEnabled = false
 private var currentCustomPrimaryColor = Color(0xFFE53935)
 private var isDarkTheme = false
@@ -49,7 +49,7 @@ fun PipePipeTheme(
     val view = LocalView.current
     val settingsManager = SharedContext.settingsManager
 
-    // Read appearance settings
+
     var materialYouEnabled by remember {
         mutableStateOf(settingsManager.getBoolean("material_you_enabled_key", false))
     }
@@ -62,7 +62,6 @@ fun PipePipeTheme(
         mutableStateOf(settingsManager.getString("theme_color_key", "#E53935"))
     }
 
-    // Add listeners for settings changes
     DisposableEffect(Unit) {
         val materialYouListener = settingsManager.addBooleanListener(
             "material_you_enabled_key",
@@ -92,17 +91,14 @@ fun PipePipeTheme(
         }
     }
 
-    // Determine dark theme based on theme mode
     isDarkTheme = when (themeMode) {
         "light" -> false
         "dark" -> true
         else -> darkTheme // "system" or default
     }
 
-    // Parse custom theme color
     val customPrimaryColor = SponsorBlockUtils.parseHexColor(themeColorHex, Color(0xFFE53935))
 
-    // 更新全局状态
     currentMaterialYouEnabled = materialYouEnabled
     currentCustomPrimaryColor = customPrimaryColor
 
@@ -123,21 +119,7 @@ fun PipePipeTheme(
     SideEffect {
         val window = (view.context as? android.app.Activity)?.window ?: return@SideEffect
         val insetsController = WindowCompat.getInsetsController(window, view)
-
-        val topBarColor = if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
-            colorScheme.surface
-        } else {
-            if (isDarkTheme) {
-                getCustomDarkColor(currentCustomPrimaryColor)
-            } else {
-                currentCustomPrimaryColor
-            }
-        }
-
-        val useLightIcons = topBarColor.luminance() < 0.5f
-
-        insetsController.isAppearanceLightStatusBars = !useLightIcons
-        insetsController.isAppearanceLightNavigationBars = !isDarkTheme
+        applySystemBarColors(insetsController, colorScheme)
     }
 
     MaterialTheme(colorScheme = colorScheme, content = content)
@@ -175,7 +157,21 @@ fun onCustomTopBarColor(): Color {
 
 fun getContrastingColor(backgroundColor: Color): Color {
     val luminance = backgroundColor.luminance()
-    // WCAG 标准：亮度大于0.5使用深色文字,否则使用浅色文字
     return if (luminance > 0.5f) Color.Black.copy(alpha = 0.87f)
     else Color.White.copy(alpha = 0.95f)
+}
+
+fun applySystemBarColors(insetsController: WindowInsetsControllerCompat, colorScheme: androidx.compose.material3.ColorScheme) {
+    val topBarColor = if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
+        colorScheme.surface
+    } else {
+        if (isDarkTheme) {
+            getCustomDarkColor(currentCustomPrimaryColor)
+        } else {
+            currentCustomPrimaryColor
+        }
+    }
+    val useLightIcons = topBarColor.luminance() < 0.5f
+    insetsController.isAppearanceLightStatusBars = !useLightIcons
+    insetsController.isAppearanceLightNavigationBars = !isDarkTheme
 }

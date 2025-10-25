@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -102,7 +103,7 @@ class MainActivity : ComponentActivity() {
                                 .padding(bottom = animatedExtraPadding)
                         )
 
-                        VideoDetailScreen(modifier = Modifier.navigationBarsPadding(), navController = navController)
+                        VideoDetailScreen(modifier = Modifier.navigationBarsPadding().statusBarsPadding(), navController = navController)
                         if (showPlayQueue) {
                             PlayQueueScreen()
                         }

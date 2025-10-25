@@ -50,6 +50,7 @@ import project.pipepipe.app.ui.component.player.PlayerHelper.ResolutionInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.SubtitleInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.applyDefaultResolution
 import project.pipepipe.app.ui.component.player.PlayerHelper.forEachIndexed
+import project.pipepipe.app.ui.theme.applySystemBarColors
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -80,7 +81,7 @@ fun VideoPlayer(
     onToggleDanmaku: () -> Unit,
     sponsorBlockSegments: List<SponsorBlockSegmentInfo> = emptyList()
 ) {
-    var isControlsVisible by remember { mutableStateOf(true) }
+    var isControlsVisible by remember { mutableStateOf(false) }
     var showResolutionMenu by remember { mutableStateOf(false) }
     var showSpeedPitchDialog by remember { mutableStateOf(false) }
     var showSleepTimerDialog by remember { mutableStateOf(false) }
@@ -585,7 +586,7 @@ fun VideoPlayer(
             delay(500)  // Check more frequently for better responsiveness
         }
     }
-    val isDarkTheme = isSystemInDarkTheme()
+    val colorScheme = MaterialTheme.colorScheme
     LaunchedEffect(isControlsVisible, isFullscreenMode) {
         windowInsetsController?.let { controller ->
             if (isFullscreenMode) {
@@ -603,9 +604,7 @@ fun VideoPlayer(
                     )
                 }
             } else {
-                controller.isAppearanceLightStatusBars = !isDarkTheme
-                controller.isAppearanceLightNavigationBars = !isDarkTheme
-
+                applySystemBarColors(controller, colorScheme)
                 controller.show(
                     WindowInsetsCompat.Type.statusBars() or
                             WindowInsetsCompat.Type.navigationBars()
@@ -783,7 +782,10 @@ fun VideoPlayer(
                         onSeek = { position ->
                             mediaController.seekTo(position)
                         },
-                        onFullScreenClick = onFullScreenClicked,
+                        onFullScreenClick = {
+                            isControlsVisible = false
+                            onFullScreenClicked()
+                        },
                         onClose = {
                             mediaController.stopService()
                             SharedContext.sharedVideoDetailViewModel.hide()
