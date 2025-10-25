@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -236,6 +237,12 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         }
         activity?.let { act ->
             val insetsController = WindowCompat.getInsetsController(act.window, view)
+            val isAutoRotateDisabled = Settings.System.getInt(
+                act.contentResolver,
+                Settings.System.ACCELEROMETER_ROTATION,
+                0
+            ) == 0
+
 
             when (uiState.pageState) {
                 VideoDetailPageState.FULLSCREEN_PLAYER -> {
@@ -243,7 +250,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     insetsController.systemBarsBehavior =
                         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-                    if (act.resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+                    if (isAutoRotateDisabled && act.resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
                         act.requestedOrientation = if(streamInfo.isPortrait) {
                             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                         } else {
@@ -253,7 +260,10 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                 }
 
                 else -> {
-                    act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    if (isAutoRotateDisabled) {
+                        act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    }
+
                     insetsController.show(WindowInsetsCompat.Type.systemBars())
                 }
             }
