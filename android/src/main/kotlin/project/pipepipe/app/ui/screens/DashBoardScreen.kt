@@ -93,25 +93,23 @@ fun DashboardScreen(navController: NavController) {
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.height(12.dp))
-            if (uiState.feedGroups.isEmpty()) {
-                Text(
-                    text = stringResource(MR.strings.empty_pinned_feed_groups),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            } else {
-                ChannelGroupsRow(
-                    channelGroups = uiState.feedGroups,
-                    onAllGroupsClick = { },
-                    onChannelGroupClick = { group ->
-                        val route = Screen.Feed.createRoute(
-                            id = group.uid,
-                            name = group.name
-                        )
-                        navController.navigate(route)
-                    }
-                )
-            }
+            ChannelGroupsRow(
+                channelGroups = uiState.feedGroups,
+                onAllGroupsClick = {
+                    val route = Screen.Feed.createRoute(
+                        id = -1,
+                        name = null,
+                    )
+                    navController.navigate(route)
+                },
+                onChannelGroupClick = { group ->
+                    val route = Screen.Feed.createRoute(
+                        id = group.uid,
+                        name = group.name
+                    )
+                    navController.navigate(route)
+                }
+            )
         }
 
 

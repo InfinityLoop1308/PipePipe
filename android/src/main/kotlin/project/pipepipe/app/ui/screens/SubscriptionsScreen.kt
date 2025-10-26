@@ -166,7 +166,6 @@ private fun SubscriptionsContent(
                     onChannelGroupClick = { group ->
                         onChannelGroupClick(group.uid, group.name)
                     },
-                    showAll = true
                 )
             }
         }
@@ -239,20 +238,17 @@ fun ChannelGroupsRow(
     channelGroups: List<Feed_group>,
     onAllGroupsClick: () -> Unit,
     onChannelGroupClick: (Feed_group) -> Unit,
-    showAll: Boolean = false
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        if (showAll) {
-            item(key = "all") {
-                ChannelGroupCard(
-                    title = stringResource(MR.strings.all),
-                    iconId = 0,
-                    onClick = onAllGroupsClick
-                )
-            }
+        item(key = "all") {
+            ChannelGroupCard(
+                title = stringResource(MR.strings.all),
+                iconId = 0,
+                onClick = onAllGroupsClick
+            )
         }
 
         items(channelGroups, key = { it.uid }) { group ->
