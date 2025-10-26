@@ -380,4 +380,13 @@
 <string name="empty_history">Noch kein Wiedergabeverlauf</string>
 <string name="settings_appearance_pure_black_title">Reiner schwarzer Dunkelmodus</string>
 <string name="settings_appearance_pure_black_summary">Verwenden Sie einen rein schwarzen Hintergrund im Dunkelmodus</string>
+<string name="subscription_export_json_title">Abonnements exportieren (JSON)</string>
+<string name="subscription_export_json_summary">Kanalabonnements als JSON-Datei exportieren</string>
+<string name="subscription_import_json_title">Abonnements importieren (JSON)</string>
+<string name="subscription_import_json_summary">Kanalabonnements aus JSON-Datei importieren</string>
+<string name="subscription_import_confirm_message">Abonnements importieren? Bestehende Abonnements werden nicht gelöscht.</string>
+<string name="subscription_export_success">Abonnements erfolgreich exportiert</string>
+<string name="subscription_import_success">Erfolgreich %d Abonnements importiert</string>
+<string name="subscription_import_failed">Import fehlgeschlagen: %s</string>
+<string name="subscription_export_failed">Export fehlgeschlagen: %s</string>
 </resources>

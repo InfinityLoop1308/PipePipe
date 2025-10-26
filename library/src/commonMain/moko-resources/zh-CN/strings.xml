@@ -380,4 +380,13 @@
 <string name="empty_history">暂无观看历史</string>
 <string name="settings_appearance_pure_black_title">纯黑深色模式</string>
 <string name="settings_appearance_pure_black_summary">在深色模式下使用纯黑背景</string>
+<string name="subscription_export_json_title">导出订阅 (JSON)</string>
+<string name="subscription_export_json_summary">将频道订阅导出为 JSON 文件</string>
+<string name="subscription_import_json_title">导入订阅 (JSON)</string>
+<string name="subscription_import_json_summary">从 JSON 文件导入频道订阅</string>
+<string name="subscription_import_confirm_message">导入订阅？现有订阅不会被删除。</string>
+<string name="subscription_export_success">订阅导出成功</string>
+<string name="subscription_import_success">成功导入 %d 个订阅</string>
+<string name="subscription_import_failed">导入失败：%s</string>
+<string name="subscription_export_failed">导出失败：%s</string>
 </resources>

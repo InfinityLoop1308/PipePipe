@@ -382,4 +382,13 @@
 <string name="empty_history">Nessuna cronologia di visualizzazione ancora</string>
 <string name="settings_appearance_pure_black_title">Modalità scura nero puro</string>
 <string name="settings_appearance_pure_black_summary">Usa uno sfondo nero puro in modalità scura</string>
+<string name="subscription_export_json_title">Esporta iscrizioni (JSON)</string>
+<string name="subscription_export_json_summary">Esporta le iscrizioni al canale come file JSON</string>
+<string name="subscription_import_json_title">Importa iscrizioni (JSON)</string>
+<string name="subscription_import_json_summary">Importa le iscrizioni al canale da file JSON</string>
+<string name="subscription_import_confirm_message">Importare le iscrizioni? Le iscrizioni esistenti non verranno eliminate.</string>
+<string name="subscription_export_success">Iscrizioni esportate con successo</string>
+<string name="subscription_import_success">Importate con successo %d iscrizioni</string>
+<string name="subscription_import_failed">Importazione fallita: %s</string>
+<string name="subscription_export_failed">Esportazione fallita: %s</string>
 </resources>

@@ -29,9 +29,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.desc.desc
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import project.pipepipe.app.database.DatabaseImporter
+import project.pipepipe.app.database.SubscriptionJsonHelper
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.MR
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.ui.component.CategoryPreference
 import project.pipepipe.app.ui.component.ClickablePreference
 import project.pipepipe.app.ui.component.CustomTopBar
@@ -52,6 +59,9 @@ fun ImportExportSettingScreen(
     var showImportDialog by remember { mutableStateOf(false) }
     var importDatabaseSelected by remember { mutableStateOf(true) }
     var importSettingsSelected by remember { mutableStateOf(true) }
+
+    var pendingJsonImportUri by remember { mutableStateOf<Uri?>(null) }
+    var showJsonImportDialog by remember { mutableStateOf(false) }
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/zip")
@@ -81,7 +91,46 @@ fun ImportExportSettingScreen(
         }
     }
 
-    val preferenceItems = remember(exportLauncher, importLauncher, dateFormat) {
+    val exportJsonLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let {
+            runCatching {
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                context.contentResolver.takePersistableUriPermission(it, flags)
+            }
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val count = SubscriptionJsonHelper.exportToJson(context, it)
+                    ToastManager.show(
+                        MR.strings.subscription_export_success.desc().toString(context)
+                    )
+                } catch (e: Exception) {
+                    GlobalScope.launch{ DatabaseOperations.insertErrorLog(e.stackTraceToString(), "EXPORT", "UNKNOWN_999") }
+                    ToastManager.show(
+                        MR.strings.subscription_export_failed.desc().toString(context)
+                            .format(e.message ?: "Unknown error")
+                    )
+                }
+            }
+        }
+    }
+
+    val importJsonLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            runCatching {
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                context.contentResolver.takePersistableUriPermission(it, flags)
+            }
+            pendingJsonImportUri = it
+            showJsonImportDialog = true
+        }
+    }
+
+    val preferenceItems = remember(exportLauncher, importLauncher, exportJsonLauncher, importJsonLauncher, dateFormat) {
         listOf(
             PreferenceItem.CategoryPref(
                 key = "backup_category",
@@ -102,6 +151,27 @@ fun ImportExportSettingScreen(
                 summary = MR.strings.settings_import_export_import_summary.desc().toString(context),
                 onClick = {
                     importLauncher.launch(arrayOf("application/zip"))
+                }
+            ),
+            PreferenceItem.CategoryPref(
+                key = "subscriptions_category",
+                title = MR.strings.tab_subscriptions.desc().toString(context)
+            ),
+            PreferenceItem.ClickablePref(
+                key = "export_subscriptions_json_pref",
+                title = MR.strings.subscription_export_json_title.desc().toString(context),
+                summary = MR.strings.subscription_export_json_summary.desc().toString(context),
+                onClick = {
+                    val fileName = "PipePipeSubscriptions-${dateFormat.format(Date())}.json"
+                    exportJsonLauncher.launch(fileName)
+                }
+            ),
+            PreferenceItem.ClickablePref(
+                key = "import_subscriptions_json_pref",
+                title = MR.strings.subscription_import_json_title.desc().toString(context),
+                summary = MR.strings.subscription_import_json_summary.desc().toString(context),
+                onClick = {
+                    importJsonLauncher.launch(arrayOf("application/json"))
                 }
             )
         )
@@ -176,6 +246,57 @@ fun ImportExportSettingScreen(
                     onClick = {
                         showImportDialog = false
                         pendingImportUri = null
+                    }
+                ) {
+                    Text(MR.strings.cancel.desc().toString(context))
+                }
+            }
+        )
+    }
+
+    if (showJsonImportDialog && pendingJsonImportUri != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showJsonImportDialog = false
+                pendingJsonImportUri = null
+            },
+            title = { Text(MR.strings.subscription_import_json_title.desc().toString(context)) },
+            text = {
+                Text(text = MR.strings.subscription_import_confirm_message.desc().toString(context))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val targetUri = pendingJsonImportUri
+                        if (targetUri != null) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    val count = SubscriptionJsonHelper.importFromJson(context, targetUri)
+                                    ToastManager.show(
+                                        MR.strings.subscription_import_success.desc().toString(context)
+                                            .format(count)
+                                    )
+                                } catch (e: Exception) {
+                                    GlobalScope.launch{ DatabaseOperations.insertErrorLog(e.stackTraceToString(), "IMPORT", "UNKNOWN_999") }
+                                    ToastManager.show(
+                                        MR.strings.subscription_import_failed.desc().toString(context)
+                                            .format(e.message ?: "Unknown error")
+                                    )
+                                }
+                            }
+                        }
+                        showJsonImportDialog = false
+                        pendingJsonImportUri = null
+                    }
+                ) {
+                    Text(MR.strings.import_title.desc().toString(context))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showJsonImportDialog = false
+                        pendingJsonImportUri = null
                     }
                 ) {
                     Text(MR.strings.cancel.desc().toString(context))

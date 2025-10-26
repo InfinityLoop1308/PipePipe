@@ -380,4 +380,13 @@
 <string name="empty_history">Aucun historique de visionnage pour l\'instant</string>
 <string name="settings_appearance_pure_black_title">Mode sombre noir pur</string>
 <string name="settings_appearance_pure_black_summary">Utiliser un arrière-plan noir pur en mode sombre</string>
+<string name="subscription_export_json_title">Exporter les abonnements (JSON)</string>
+<string name="subscription_export_json_summary">Exporter les abonnements de chaîne en tant que fichier JSON</string>
+<string name="subscription_import_json_title">Importer les abonnements (JSON)</string>
+<string name="subscription_import_json_summary">Importer les abonnements de chaîne à partir d\'un fichier JSON</string>
+<string name="subscription_import_confirm_message">Importer les abonnements ? Les abonnements existants ne seront pas supprimés.</string>
+<string name="subscription_export_success">Abonnements exportés avec succès</string>
+<string name="subscription_import_success">Importation réussie de %d abonnements</string>
+<string name="subscription_import_failed">Échec de l\'importation : %s</string>
+<string name="subscription_export_failed">Échec de l\'exportation : %s</string>
 </resources>

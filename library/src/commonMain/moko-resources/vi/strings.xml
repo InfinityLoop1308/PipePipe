@@ -380,4 +380,13 @@
 <string name="empty_history">Chưa có lịch sử xem</string>
 <string name="settings_appearance_pure_black_title">Chế độ tối đen tuyền</string>
 <string name="settings_appearance_pure_black_summary">Sử dụng nền đen tuyền trong chế độ tối</string>
+<string name="subscription_export_json_title">Xuất đăng ký (JSON)</string>
+<string name="subscription_export_json_summary">Xuất đăng ký kênh dưới dạng tệp JSON</string>
+<string name="subscription_import_json_title">Nhập đăng ký (JSON)</string>
+<string name="subscription_import_json_summary">Nhập đăng ký kênh từ tệp JSON</string>
+<string name="subscription_import_confirm_message">Nhập đăng ký? Các đăng ký hiện có sẽ không bị xóa.</string>
+<string name="subscription_export_success">Đăng ký đã được xuất thành công</string>
+<string name="subscription_import_success">Đã nhập thành công %d đăng ký</string>
+<string name="subscription_import_failed">Không thể nhập: %s</string>
+<string name="subscription_export_failed">Không thể xuất: %s</string>
 </resources>

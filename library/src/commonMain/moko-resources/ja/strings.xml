@@ -380,4 +380,13 @@
 <string name="empty_history">視聴履歴はまだありません</string>
 <string name="settings_appearance_pure_black_title">純粋な黒のダークモード</string>
 <string name="settings_appearance_pure_black_summary">ダークモードで純粋な黒の背景を使用する</string>
+<string name="subscription_export_json_title">購読のエクスポート (JSON)</string>
+<string name="subscription_export_json_summary">チャンネル購読をJSONファイルとしてエクスポート</string>
+<string name="subscription_import_json_title">購読のインポート (JSON)</string>
+<string name="subscription_import_json_summary">JSONファイルからチャンネル購読をインポート</string>
+<string name="subscription_import_confirm_message">購読をインポートしますか？既存の購読は削除されません。</string>
+<string name="subscription_export_success">購読が正常にエクスポートされました</string>
+<string name="subscription_import_success">%d件の購読が正常にインポートされました</string>
+<string name="subscription_import_failed">インポートに失敗しました: %s</string>
+<string name="subscription_export_failed">エクスポートに失敗しました: %s</string>
 </resources>

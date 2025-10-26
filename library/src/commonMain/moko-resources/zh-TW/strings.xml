@@ -380,4 +380,13 @@
 <string name="empty_history">尚未有觀看紀錄</string>
 <string name="settings_appearance_pure_black_title">純黑深色模式</string>
 <string name="settings_appearance_pure_black_summary">在深色模式中使用純黑背景</string>
+<string name="subscription_export_json_title">匯出訂閱 (JSON)</string>
+<string name="subscription_export_json_summary">將頻道訂閱匯出為 JSON 檔案</string>
+<string name="subscription_import_json_title">匯入訂閱 (JSON)</string>
+<string name="subscription_import_json_summary">從 JSON 檔案匯入頻道訂閱</string>
+<string name="subscription_import_confirm_message">匯入訂閱？現有訂閱將不會被刪除。</string>
+<string name="subscription_export_success">訂閱已成功匯出</string>
+<string name="subscription_import_success">已成功匯入 %d 個訂閱</string>
+<string name="subscription_import_failed">匯入失敗：%s</string>
+<string name="subscription_export_failed">匯出失敗：%s</string>
 </resources>

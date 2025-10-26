@@ -380,4 +380,13 @@
 <string name="empty_history">Aún no hay historial de reproducciones</string>
 <string name="settings_appearance_pure_black_title">Modo oscuro negro puro</string>
 <string name="settings_appearance_pure_black_summary">Usar fondo negro puro en modo oscuro</string>
+<string name="subscription_export_json_title">Exportar suscripciones (JSON)</string>
+<string name="subscription_export_json_summary">Exportar suscripciones de canal como archivo JSON</string>
+<string name="subscription_import_json_title">Importar suscripciones (JSON)</string>
+<string name="subscription_import_json_summary">Importar suscripciones de canal desde archivo JSON</string>
+<string name="subscription_import_confirm_message">¿Importar suscripciones? Las suscripciones existentes no se eliminarán.</string>
+<string name="subscription_export_success">Suscripciones exportadas con éxito</string>
+<string name="subscription_import_success">Se importaron %d suscripciones con éxito</string>
+<string name="subscription_import_failed">Error al importar: %s</string>
+<string name="subscription_export_failed">Error al exportar: %s</string>
 </resources>

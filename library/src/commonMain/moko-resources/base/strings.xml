@@ -391,4 +391,13 @@
     <string name="empty_pinned_feed_groups">No pinned feed groups yet</string>
     <string name="empty_pinned_playlists">No pinned playlists yet</string>
     <string name="empty_history">No watch history yet</string>
+    <string name="subscription_export_json_title">Export subscriptions (JSON)</string>
+    <string name="subscription_export_json_summary">Export channel subscriptions as JSON file</string>
+    <string name="subscription_import_json_title">Import subscriptions (JSON)</string>
+    <string name="subscription_import_json_summary">Import channel subscriptions from JSON file</string>
+    <string name="subscription_import_confirm_message">Import subscriptions? Existing subscriptions will not be deleted.</string>
+    <string name="subscription_export_success">Subscriptions exported successfully</string>
+    <string name="subscription_import_success">Successfully imported %d subscriptions</string>
+    <string name="subscription_import_failed">Failed to import: %s</string>
+    <string name="subscription_export_failed">Failed to export: %s</string>
 </resources>
