@@ -1,5 +1,8 @@
 package project.pipepipe.app.ui.component
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -26,17 +30,26 @@ import java.text.NumberFormat
 import java.util.*
 import project.pipepipe.shared.infoitem.StreamType
 import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.desc.desc
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.utils.formatCount
 
 @Composable
 fun VideoTitleSection(name: String?) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText(null, name)
+                clipboard.setPrimaryClip(clip)
+
+                ToastManager.show(MR.strings.msg_copied.desc().toString(context = context))
+            }
             .padding(start = 16.dp, end = 4.dp)
     ) {
         Text(
