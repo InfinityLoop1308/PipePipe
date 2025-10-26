@@ -673,7 +673,7 @@ fun PlaylistDetailScreen(
                     CircularProgressIndicator()
                 }
             }
-            uiState.displayItems.isEmpty() -> {
+            uiState.displayItems.isEmpty() && uiState.playlistType != PlaylistType.FEED -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
