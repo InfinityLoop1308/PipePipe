@@ -141,7 +141,7 @@ fun ImportExportSettingScreen(
                 title = MR.strings.settings_import_export_export_title.desc().toString(context),
                 summary = MR.strings.settings_import_export_export_summary.desc().toString(context),
                 onClick = {
-                    val fileName = "PipePipeBackup-${dateFormat.format(Date())}.zip"
+                    val fileName = "PipePipe5-Backup-${dateFormat.format(Date())}.zip"
                     exportLauncher.launch(fileName)
                 }
             ),
@@ -162,7 +162,7 @@ fun ImportExportSettingScreen(
                 title = MR.strings.subscription_export_json_title.desc().toString(context),
                 summary = MR.strings.subscription_export_json_summary.desc().toString(context),
                 onClick = {
-                    val fileName = "PipePipeSubscriptions-${dateFormat.format(Date())}.json"
+                    val fileName = "PipePipe5-Subscriptions-${dateFormat.format(Date())}.json"
                     exportJsonLauncher.launch(fileName)
                 }
             ),
