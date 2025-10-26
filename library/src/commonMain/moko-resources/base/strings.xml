@@ -280,6 +280,8 @@
 <string name="settings_appearance_material_you_title">Material You</string>
 <string name="settings_appearance_material_you_summary">Use dynamic colors from your wallpaper</string>
 <string name="settings_appearance_material_you_disabled_summary">Requires Android 12 or later</string>
+<string name="settings_appearance_pure_black_title">Pure black dark mode</string>
+<string name="settings_appearance_pure_black_summary">Use pure black background in dark mode</string>
 <string name="view_details">View Details</string>
 <string name="msg_copied">Copied to clipboard</string>
 <string name="stacktrace">StackTrace</string>

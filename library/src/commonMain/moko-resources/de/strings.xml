@@ -378,4 +378,6 @@
 <string name="empty_pinned_feed_groups">Noch keine angehefteten Feed-Gruppen</string>
 <string name="empty_pinned_playlists">Noch keine angehefteten Wiedergabelisten</string>
 <string name="empty_history">Noch kein Wiedergabeverlauf</string>
+<string name="settings_appearance_pure_black_title">Reiner schwarzer Dunkelmodus</string>
+<string name="settings_appearance_pure_black_summary">Verwenden Sie einen rein schwarzen Hintergrund im Dunkelmodus</string>
 </resources>

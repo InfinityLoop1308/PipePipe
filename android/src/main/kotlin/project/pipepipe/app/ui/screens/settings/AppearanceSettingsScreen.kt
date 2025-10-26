@@ -56,6 +56,11 @@ fun AppearanceSettingsScreen(
         mutableStateOf(settingsManager.getBoolean("material_you_enabled_key", false))
     }
 
+    // State for Pure Black
+    val pureBlackEnabledState = remember {
+        mutableStateOf(settingsManager.getBoolean("pure_black_key", false))
+    }
+
     // State for theme color
     val themeColorState = remember {
         mutableStateOf(settingsManager.getString("theme_color_key", PRESET_COLORS[0]))
@@ -79,6 +84,9 @@ fun AppearanceSettingsScreen(
         stringResource(MR.strings.settings_appearance_material_you_disabled_summary)
     }
 
+    val pureBlackTitle = stringResource(MR.strings.settings_appearance_pure_black_title)
+    val pureBlackSummary = stringResource(MR.strings.settings_appearance_pure_black_summary)
+
     val preferenceItems = listOf(
         PreferenceItem.ListPref(
             key = "theme_mode_key",
@@ -96,11 +104,21 @@ fun AppearanceSettingsScreen(
             onValueChange = {
                 materialYouEnabledState.value = it
             }
+        ),
+        PreferenceItem.SwitchPref(
+            key = "pure_black_key",
+            title = pureBlackTitle,
+            summary = pureBlackSummary,
+            defaultValue = false,
+            onValueChange = {
+                pureBlackEnabledState.value = it
+            }
         )
     )
 
     val switchStateMap: Map<String, MutableState<Boolean>> = mapOf(
-        "material_you_enabled_key" to materialYouEnabledState
+        "material_you_enabled_key" to materialYouEnabledState,
+        "pure_black_key" to pureBlackEnabledState
     )
 
     Column {

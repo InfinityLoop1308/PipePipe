@@ -378,4 +378,6 @@
 <string name="empty_pinned_feed_groups">固定されたフィードグループはまだありません</string>
 <string name="empty_pinned_playlists">固定されたプレイリストはまだありません</string>
 <string name="empty_history">視聴履歴はまだありません</string>
+<string name="settings_appearance_pure_black_title">純粋な黒のダークモード</string>
+<string name="settings_appearance_pure_black_summary">ダークモードで純粋な黒の背景を使用する</string>
 </resources>

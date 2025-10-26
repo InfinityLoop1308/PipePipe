@@ -36,6 +36,7 @@ private fun getCustomDarkColor(color: Color): Color {
 }
 
 private var currentMaterialYouEnabled = false
+private var currentPureBlackEnabled = false
 private var currentCustomPrimaryColor = Color(0xFFE53935)
 private var isDarkTheme = false
 
@@ -54,6 +55,10 @@ fun PipePipeTheme(
         mutableStateOf(settingsManager.getBoolean("material_you_enabled_key", false))
     }
 
+    var pureBlackEnabled by remember {
+        mutableStateOf(settingsManager.getBoolean("pure_black_key", false))
+    }
+
     var themeMode by remember {
         mutableStateOf(settingsManager.getString("theme_mode_key", "system"))
     }
@@ -68,6 +73,13 @@ fun PipePipeTheme(
             false
         ) { newValue ->
             materialYouEnabled = newValue
+        }
+
+        val pureBlackListener = settingsManager.addBooleanListener(
+            "pure_black_key",
+            false
+        ) { newValue ->
+            pureBlackEnabled = newValue
         }
 
         val themeModeListener = settingsManager.addStringListener(
@@ -86,6 +98,7 @@ fun PipePipeTheme(
 
         onDispose {
             materialYouListener?.deactivate()
+            pureBlackListener?.deactivate()
             themeModeListener?.deactivate()
             themeColorListener?.deactivate()
         }
@@ -100,17 +113,34 @@ fun PipePipeTheme(
     val customPrimaryColor = SponsorBlockUtils.parseHexColor(themeColorHex, Color(0xFFE53935))
 
     currentMaterialYouEnabled = materialYouEnabled
+    currentPureBlackEnabled = pureBlackEnabled
     currentCustomPrimaryColor = customPrimaryColor
 
     val colorScheme = if (materialYouEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         if (isDarkTheme) {
-            dynamicDarkColorScheme(context)
+            val baseDarkScheme = dynamicDarkColorScheme(context)
+            if (pureBlackEnabled) {
+                baseDarkScheme.copy(
+                    background = Color.Black,
+                    surface = Color.Black
+                )
+            } else {
+                baseDarkScheme
+            }
         } else {
             dynamicLightColorScheme(context)
         }
     } else {
         if (isDarkTheme) {
-            darkColorScheme()
+            val baseDarkScheme = darkColorScheme()
+            if (pureBlackEnabled) {
+                baseDarkScheme.copy(
+                    background = Color.Black,
+                    surface = Color.Black
+                )
+            } else {
+                baseDarkScheme
+            }
         } else {
             lightColorScheme()
         }
@@ -135,7 +165,9 @@ fun supportingTextColor(): Color {
 
 @Composable
 fun customTopBarColor(): Color {
-    return if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
+    return if (currentPureBlackEnabled && isDarkTheme) {
+        Color.Black
+    } else if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
         MaterialTheme.colorScheme.surface
     } else {
         if (isDarkTheme) {
@@ -162,7 +194,9 @@ fun getContrastingColor(backgroundColor: Color): Color {
 }
 
 fun applySystemBarColors(insetsController: WindowInsetsControllerCompat, colorScheme: androidx.compose.material3.ColorScheme) {
-    val topBarColor = if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
+    val topBarColor = if (currentPureBlackEnabled && isDarkTheme) {
+        Color.Black
+    } else if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
         colorScheme.surface
     } else {
         if (isDarkTheme) {

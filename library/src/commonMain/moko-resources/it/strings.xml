@@ -380,4 +380,6 @@
 <string name="empty_pinned_feed_groups">Nessun gruppo di feed bloccato ancora</string>
 <string name="empty_pinned_playlists">Nessuna playlist bloccata ancora</string>
 <string name="empty_history">Nessuna cronologia di visualizzazione ancora</string>
+<string name="settings_appearance_pure_black_title">Modalità scura nero puro</string>
+<string name="settings_appearance_pure_black_summary">Usa uno sfondo nero puro in modalità scura</string>
 </resources>
