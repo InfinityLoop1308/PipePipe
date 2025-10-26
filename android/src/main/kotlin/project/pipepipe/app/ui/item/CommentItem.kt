@@ -97,6 +97,7 @@ fun CommentItem(
                     contentAlignment = Alignment.CenterStart
                 ) {
                     HtmlText(
+                        color = MaterialTheme.colorScheme.onSurface,
                         text = commentInfo.content!!,
                         fontSize = 12.sp,
                         style = TextStyle(

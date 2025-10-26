@@ -34,9 +34,9 @@ import project.pipepipe.app.helper.getHtmlHelper
 @Composable
 fun HtmlText(
     text: String,
+    color: Color,
     modifier: Modifier = Modifier,
     style: TextStyle = LocalTextStyle.current,
-    color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
     onHashtagClick: ((String) -> Unit)? = null,
     onTimestampClick: ((Long) -> Unit)? = null
