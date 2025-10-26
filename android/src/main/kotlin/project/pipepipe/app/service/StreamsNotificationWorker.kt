@@ -24,6 +24,8 @@ import project.pipepipe.database.Subscriptions
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 import project.pipepipe.app.R as AppR
 
 data class ChannelStreamsData(
@@ -35,6 +37,7 @@ class StreamsNotificationWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
+
 
     override suspend fun doWork(): Result {
         // Check if notifications are enabled
@@ -51,43 +54,57 @@ class StreamsNotificationWorker(
                 return Result.success()
             }
 
-            val newStreamsMap = mutableMapOf<String, ChannelStreamsData>()
-            val failedChannels = mutableListOf<String>()
+            // Load service fetch intervals
+            val serviceFetchIntervals = loadServiceFetchIntervals()
 
-            subscriptions.forEach { subscription ->
-                val result = withContext(Dispatchers.IO) {
-                    executeJobFlow(
-                        SupportedJobType.FETCH_INFO,
-                        subscription.url,
-                        subscription.service_id
-                    )
-                }
+            // Thread-safe data structures
+            val newStreamsMap = ConcurrentHashMap<String, ChannelStreamsData>()
+            val failedChannels = Collections.synchronizedList(mutableListOf<String>())
 
-                if (result.pagedData != null) {
-                    val newStreams = result.pagedData!!.itemList as List<StreamInfo>
-
-                    // Get the last updated time for this subscription
-                    val lastUpdated = DatabaseOperations.getFeedLastUpdated(subscription.uid)
-
-                    // Filter for streams published after last_updated
-                    val actualNewStreams = newStreams.filter { stream ->
-                        val uploadDate = stream.uploadDate
-                        uploadDate != null && (lastUpdated == null || uploadDate > lastUpdated)
-                    }
-
-                    if (actualNewStreams.isNotEmpty()) {
-                        newStreamsMap[subscription.name ?: "Unknown"] = ChannelStreamsData(
-                            subscription = subscription,
-                            streams = actualNewStreams
+            // Process subscriptions concurrently with service-level rate limiting
+            processSubscriptionsConcurrently(
+                subscriptions = subscriptions,
+                serviceFetchIntervals = serviceFetchIntervals,
+                maxConcurrency = 5
+            ) { subscription ->
+                try {
+                    val result = withContext(Dispatchers.IO) {
+                        executeJobFlow(
+                            SupportedJobType.FETCH_INFO,
+                            subscription.url,
+                            subscription.service_id
                         )
                     }
 
-                    // Update the feed
-                    DatabaseOperations.updateSubscriptionFeed(
-                        subscription.url!!,
-                        newStreams
-                    )
-                } else {
+                    if (result.pagedData != null) {
+                        val newStreams = result.pagedData!!.itemList as List<StreamInfo>
+
+                        // Get the last updated time for this subscription
+                        val lastUpdated = DatabaseOperations.getFeedLastUpdated(subscription.uid)
+
+                        // Filter for streams published after last_updated
+                        val actualNewStreams = newStreams.filter { stream ->
+                            val uploadDate = stream.uploadDate
+                            uploadDate != null && (lastUpdated == null || uploadDate > lastUpdated)
+                        }
+
+                        if (actualNewStreams.isNotEmpty()) {
+                            newStreamsMap[subscription.name ?: "Unknown"] = ChannelStreamsData(
+                                subscription = subscription,
+                                streams = actualNewStreams
+                            )
+                        }
+
+                        // Update the feed
+                        DatabaseOperations.updateSubscriptionFeed(
+                            subscription.url!!,
+                            newStreams
+                        )
+                    } else {
+                        subscription.name?.let { failedChannels.add(it) }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                     subscription.name?.let { failedChannels.add(it) }
                 }
             }
@@ -104,6 +121,7 @@ class StreamsNotificationWorker(
 
             Result.success()
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.failure()
         }
     }

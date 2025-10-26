@@ -14,6 +14,10 @@ import androidx.work.workDataOf
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
@@ -21,6 +25,8 @@ import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
+import java.util.Collections
+import java.util.concurrent.atomic.AtomicInteger
 import project.pipepipe.app.R as AppR
 
 class FeedWorker(
@@ -31,6 +37,7 @@ class FeedWorker(
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return createForegroundInfo(0, 0, 0, 0)
     }
+
 
     override suspend fun doWork(): Result {
         setForeground(createForegroundInfo(0))
@@ -59,57 +66,101 @@ class FeedWorker(
             val total = subscriptions.size
             if (total == 0) {
                 ToastManager.show(MR.strings.feed_all_subscriptions_up_to_date.desc().toString(context = applicationContext))
-            }
-            var completed = 0
-            var failedCount = 0
-            val failedChannels = mutableListOf<String>()
-
-            subscriptions.forEach { subscription ->
-                val result = withContext(Dispatchers.IO) {
-                    executeJobFlow(
-                        SupportedJobType.FETCH_INFO,
-                        subscription.url,
-                        subscription.service_id
-                    )
-                }
-
-                if (result.pagedData != null) {
-                    DatabaseOperations.updateSubscriptionFeed(
-                        subscription.url!!,
-                        result.pagedData!!.itemList as List<StreamInfo>
-                    )
-                } else {
-                    failedCount++
-                    subscription.name?.let { failedChannels.add(it) }
-                }
-
-                completed++
-                val progress = (completed * 100) / total
-
-                // 更新进度
-                setProgress(workDataOf(
-                    "progress" to progress,
-                    "completed" to completed,
-                    "total" to total,
-                    "failed" to failedCount
+                return Result.success(workDataOf(
+                    "completed" to 0,
+                    "failed" to 0,
+                    "total" to 0
                 ))
-
-                // 更新前台通知
-                setForeground(createForegroundInfo(progress, completed, total, failedCount))
             }
+
+            // Load service fetch intervals
+            val serviceFetchIntervals = loadServiceFetchIntervals()
+
+            // Thread-safe counters
+            val completedCount = AtomicInteger(0)
+            val failedCount = AtomicInteger(0)
+            val failedChannels = Collections.synchronizedList(mutableListOf<String>())
+
+            coroutineScope {
+                // Start background progress update coroutine
+                val progressJob = launch {
+                    while (isActive) {
+                        delay(500) // Update every 500ms
+                        val current = completedCount.get()
+                        val failed = failedCount.get()
+                        val progress = (current * 100) / total
+
+                        setProgress(workDataOf(
+                            "progress" to progress,
+                            "completed" to current,
+                            "total" to total,
+                            "failed" to failed
+                        ))
+
+                        setForeground(createForegroundInfo(progress, current, total, failed))
+                    }
+                }
+
+                // Process subscriptions concurrently with service-level rate limiting
+                processSubscriptionsConcurrently(
+                    subscriptions = subscriptions,
+                    serviceFetchIntervals = serviceFetchIntervals,
+                    maxConcurrency = 5
+                ) { subscription ->
+                    try {
+                        val result = withContext(Dispatchers.IO) {
+                            executeJobFlow(
+                                SupportedJobType.FETCH_INFO,
+                                subscription.url,
+                                subscription.service_id
+                            )
+                        }
+
+                        if (result.pagedData != null) {
+                            DatabaseOperations.updateSubscriptionFeed(
+                                subscription.url!!,
+                                result.pagedData!!.itemList as List<StreamInfo>
+                            )
+                        } else {
+                            failedCount.incrementAndGet()
+                            subscription.name?.let { failedChannels.add(it) }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        failedCount.incrementAndGet()
+                        subscription.name?.let { failedChannels.add(it) }
+                    }
+
+                    completedCount.incrementAndGet()
+                }
+
+                // Cancel progress update job
+                progressJob.cancel()
+            }
+
+            // Final update
+            val finalCompleted = completedCount.get()
+            val finalFailed = failedCount.get()
+            setProgress(workDataOf(
+                "progress" to 100,
+                "completed" to finalCompleted,
+                "total" to total,
+                "failed" to finalFailed
+            ))
+            setForeground(createForegroundInfo(100, finalCompleted, total, finalFailed))
 
             DatabaseOperations.deleteFeedStreamsOlderThan(13)
 
             // If there are failures, show persistent notification. Otherwise cancel it.
-            if (failedCount > 0) {
+            if (finalFailed > 0) {
                 showFailureNotification(failedChannels)
             } else {
                 cancelNotification()
             }
 
             Result.success(workDataOf(
-                "completed" to completed,
-                "failed" to failedCount,
+                "completed" to finalCompleted,
+                "failed" to finalFailed,
                 "total" to total
             ))
         } catch (e: Exception) {
