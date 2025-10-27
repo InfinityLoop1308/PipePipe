@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -333,21 +334,48 @@ fun PlaylistDetailScreen(
                 }
             }
         )
-
-        PlaylistContent(
-            uiState = uiState,
-            viewModel = viewModel,
-            listState = listState,
-            reorderableLazyListState = reorderableLazyListState,
-            isSearchActive = isSearchActive,
-            url = url,
-            serviceId = serviceId,
-            scope = scope,
-            onStartPlayAll = { index, shuffle -> startPlayAll(index, shuffle) },
-            onClearSearchFocus = {
-                isSearchActive = false
-                viewModel.updateSearchQuery("")
+        if (uiState.playlistType == PlaylistType.FEED) {
+            PullToRefreshBox(
+                isRefreshing = uiState.isRefreshing,
+                onRefresh = {
+                    if (!uiState.isRefreshing) {
+                        val feedId = url.substringAfterLast("/").substringBefore("?").toLong()
+                        FeedUpdateManager.startFeedUpdate(context, feedId)
+                    }
+                }
+            ) {
+                PlaylistContent(
+                    uiState = uiState,
+                    viewModel = viewModel,
+                    listState = listState,
+                    reorderableLazyListState = reorderableLazyListState,
+                    isSearchActive = isSearchActive,
+                    url = url,
+                    serviceId = serviceId,
+                    scope = scope,
+                    onStartPlayAll = { index, shuffle -> startPlayAll(index, shuffle) },
+                    onClearSearchFocus = {
+                        isSearchActive = false
+                        viewModel.updateSearchQuery("")
+                    }
+                )
             }
-        )
+        } else {
+            PlaylistContent(
+                uiState = uiState,
+                viewModel = viewModel,
+                listState = listState,
+                reorderableLazyListState = reorderableLazyListState,
+                isSearchActive = isSearchActive,
+                url = url,
+                serviceId = serviceId,
+                scope = scope,
+                onStartPlayAll = { index, shuffle -> startPlayAll(index, shuffle) },
+                onClearSearchFocus = {
+                    isSearchActive = false
+                    viewModel.updateSearchQuery("")
+                }
+            )
+        }
     }
 }

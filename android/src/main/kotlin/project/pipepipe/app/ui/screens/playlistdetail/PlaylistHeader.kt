@@ -98,17 +98,10 @@ fun PlaylistHeaderSection(
                     onClick = onRefreshClick,
                     enabled = !isRefreshing
                 ) {
-                    if (isRefreshing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = stringResource(MR.strings.refresh_feed)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = stringResource(MR.strings.refresh_feed)
+                    )
                 }
             }
             HorizontalDivider(
