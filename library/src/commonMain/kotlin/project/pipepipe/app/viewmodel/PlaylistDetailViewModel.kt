@@ -19,6 +19,11 @@ import kotlin.collections.plus
 class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()) {
 
     suspend fun loadPlaylist(url: String, serviceId: String? = null) {
+        setState {
+            it.copy(
+                common = it.common.copy(isLoading = true)
+            )
+        }
         val sortMode = runCatching{ PlaylistSortMode.valueOf(SharedContext.settingsManager.getString("playlist_sort_mode_key")) }
             .getOrDefault(PlaylistSortMode.ORIGIN)
         when {
@@ -91,11 +96,6 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
     }
 
     suspend fun loadRemotePlaylistDetail(url: String, serviceId: String, isTrending: Boolean = false) {
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
         val result = withContext(Dispatchers.IO) {
             executeJobFlow(
                 SupportedJobType.FETCH_INFO,
