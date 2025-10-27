@@ -109,6 +109,10 @@ fun PlaylistDetailScreen(
 
     val feedWorkState by FeedUpdateManager.workState.collectAsState()
 
+    val shouldShowMoreMenuButton = !((uiState.playlistType == PlaylistType.FEED
+            && url.substringAfterLast("/").substringBefore("?").toLongOrNull() == -1L)
+            || uiState.playlistType == PlaylistType.HISTORY)
+
     LaunchedEffect(url) {
         viewModel.loadPlaylist(url, serviceId)
     }
@@ -417,73 +421,23 @@ fun PlaylistDetailScreen(
                             )
                         }
                     }
-                    Box {
-                        IconButton(
-                            onClick = { showMoreMenu = true }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = MR.strings.playlist_action_more.desc().toString(context = context)
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = showMoreMenu,
-                            onDismissRequest = { showMoreMenu = false }
-                        ) {
-                            when (uiState.playlistType) {
-                                PlaylistType.LOCAL -> {
-                                    DropdownMenuItem(
-                                        text = { Text(MR.strings.playlist_menu_rename.desc().toString(context = context)) },
-                                        onClick = {
-                                            showMoreMenu = false
-                                            renameText = uiState.playlistInfo?.name ?: ""
-                                            showRenameDialog = true
-                                        },
-                                        leadingIcon = {
-                                            Icon(Icons.Default.Edit, contentDescription = null)
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        text = { Text(MR.strings.playlist_menu_delete.desc().toString(context = context)) },
-                                        onClick = {
-                                            showMoreMenu = false
-                                            showDeleteDialog = true
-                                        },
-                                        leadingIcon = {
-                                            Icon(Icons.Default.Delete, contentDescription = null)
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                if (uiState.playlistInfo?.isPinned == true) {
-                                                    MR.strings.playlist_menu_unpin.desc().toString(context = context)
-                                                } else {
-                                                    MR.strings.playlist_menu_pin.desc().toString(context = context)
-                                                }
-                                            )
-                                        },
-                                        onClick = {
-                                            showMoreMenu = false
-                                            scope.launch {
-                                                DatabaseOperations.setPlaylistPinned(
-                                                    uiState.playlistInfo!!.uid!!,
-                                                    !uiState.playlistInfo!!.isPinned
-                                                )
-                                            }
-                                        },
-                                        leadingIcon = {
-                                            Icon(
-                                                imageVector = Icons.Default.PushPin,
-                                                contentDescription = null
-                                            )
-                                        }
-                                    )
-                                }
-                                PlaylistType.FEED -> {
-                                    val feedId = url.substringAfterLast("/").substringBefore("?").toLongOrNull()
-
-                                    if (feedId != null && feedId != -1L) {
+                    if (shouldShowMoreMenuButton){
+                        Box {
+                            IconButton(
+                                onClick = { showMoreMenu = true }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = MR.strings.playlist_action_more.desc()
+                                        .toString(context = context)
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = showMoreMenu,
+                                onDismissRequest = { showMoreMenu = false }
+                            ) {
+                                when (uiState.playlistType) {
+                                    PlaylistType.LOCAL -> {
                                         DropdownMenuItem(
                                             text = {
                                                 Text(
@@ -527,11 +481,10 @@ fun PlaylistDetailScreen(
                                             onClick = {
                                                 showMoreMenu = false
                                                 scope.launch {
-                                                    DatabaseOperations.setFeedGroupPinned(
-                                                        feedId,
-                                                        !(uiState.playlistInfo?.isPinned ?: false)
+                                                    DatabaseOperations.setPlaylistPinned(
+                                                        uiState.playlistInfo!!.uid!!,
+                                                        !uiState.playlistInfo!!.isPinned
                                                     )
-                                                    viewModel.loadPlaylist(url, serviceId)
                                                 }
                                             },
                                             leadingIcon = {
@@ -542,108 +495,186 @@ fun PlaylistDetailScreen(
                                             }
                                         )
                                     }
-                                }
-                                PlaylistType.REMOTE -> {
-                                    val isBookmarked = uiState.playlistInfo?.uid != null
 
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                if (isBookmarked) {
-                                                    MR.strings.playlist_menu_unbookmark.desc().toString(context = context)
-                                                } else {
-                                                    MR.strings.playlist_menu_bookmark.desc().toString(context = context)
+                                    PlaylistType.FEED -> {
+                                        val feedId = url.substringAfterLast("/").substringBefore("?").toLongOrNull()
+
+                                        if (feedId != null && feedId != -1L) {
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        MR.strings.playlist_menu_rename.desc()
+                                                            .toString(context = context)
+                                                    )
+                                                },
+                                                onClick = {
+                                                    showMoreMenu = false
+                                                    renameText = uiState.playlistInfo?.name ?: ""
+                                                    showRenameDialog = true
+                                                },
+                                                leadingIcon = {
+                                                    Icon(Icons.Default.Edit, contentDescription = null)
                                                 }
                                             )
-                                        },
-                                        onClick = {
-                                            showMoreMenu = false
-                                            scope.launch {
-                                                if (isBookmarked) {
-                                                    DatabaseOperations.deleteRemotePlaylist(uiState.playlistInfo!!.uid!!)
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        MR.strings.playlist_menu_delete.desc()
+                                                            .toString(context = context)
+                                                    )
+                                                },
+                                                onClick = {
+                                                    showMoreMenu = false
+                                                    showDeleteDialog = true
+                                                },
+                                                leadingIcon = {
+                                                    Icon(Icons.Default.Delete, contentDescription = null)
+                                                }
+                                            )
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        if (uiState.playlistInfo?.isPinned == true) {
+                                                            MR.strings.playlist_menu_unpin.desc()
+                                                                .toString(context = context)
+                                                        } else {
+                                                            MR.strings.playlist_menu_pin.desc()
+                                                                .toString(context = context)
+                                                        }
+                                                    )
+                                                },
+                                                onClick = {
+                                                    showMoreMenu = false
+                                                    scope.launch {
+                                                        DatabaseOperations.setFeedGroupPinned(
+                                                            feedId,
+                                                            !(uiState.playlistInfo?.isPinned ?: false)
+                                                        )
+                                                        viewModel.loadPlaylist(url, serviceId)
+                                                    }
+                                                },
+                                                leadingIcon = {
+                                                    Icon(
+                                                        imageVector = Icons.Default.PushPin,
+                                                        contentDescription = null
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    }
+
+                                    PlaylistType.REMOTE -> {
+                                        val isBookmarked = uiState.playlistInfo?.uid != null
+
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    if (isBookmarked) {
+                                                        MR.strings.playlist_menu_unbookmark.desc()
+                                                            .toString(context = context)
+                                                    } else {
+                                                        MR.strings.playlist_menu_bookmark.desc()
+                                                            .toString(context = context)
+                                                    }
+                                                )
+                                            },
+                                            onClick = {
+                                                showMoreMenu = false
+                                                scope.launch {
+                                                    if (isBookmarked) {
+                                                        DatabaseOperations.deleteRemotePlaylist(uiState.playlistInfo!!.uid!!)
+                                                        viewModel.loadPlaylist(url, serviceId)
+                                                    } else {
+                                                        val playlistInfo = uiState.playlistInfo!!
+                                                        DatabaseOperations.insertOrReplaceRemotePlaylist(
+                                                            serviceId = playlistInfo.serviceId!!,
+                                                            name = playlistInfo.name,
+                                                            url = url,
+                                                            thumbnailUrl = playlistInfo.thumbnailUrl,
+                                                            uploader = playlistInfo.uploaderName,
+                                                            streamCount = playlistInfo.streamCount,
+                                                            isPinned = false
+                                                        )
+                                                        viewModel.loadPlaylist(url, serviceId)
+                                                    }
+                                                }
+                                            },
+                                            leadingIcon = {
+                                                Icon(
+                                                    imageVector = if (isBookmarked) Icons.Default.BookmarkRemove else Icons.Default.BookmarkAdd,
+                                                    contentDescription = null
+                                                )
+                                            }
+                                        )
+
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    if (uiState.playlistInfo?.isPinned == true) {
+                                                        MR.strings.playlist_menu_unpin.desc()
+                                                            .toString(context = context)
+                                                    } else {
+                                                        MR.strings.playlist_menu_pin.desc().toString(context = context)
+                                                    }
+                                                )
+                                            },
+                                            onClick = {
+                                                showMoreMenu = false
+                                                scope.launch {
+                                                    if (!isBookmarked) {
+                                                        // Auto-bookmark if not already bookmarked
+                                                        val playlistInfo = uiState.playlistInfo!!
+                                                        DatabaseOperations.insertOrReplaceRemotePlaylist(
+                                                            serviceId = playlistInfo.serviceId!!,
+                                                            name = playlistInfo.name,
+                                                            url = url,
+                                                            thumbnailUrl = playlistInfo.thumbnailUrl,
+                                                            uploader = playlistInfo.uploaderName,
+                                                            streamCount = playlistInfo.streamCount,
+                                                            isPinned = true
+                                                        )
+                                                    } else {
+                                                        DatabaseOperations.setRemotePlaylistPinned(
+                                                            uiState.playlistInfo!!.uid!!,
+                                                            !(uiState.playlistInfo?.isPinned ?: false)
+                                                        )
+                                                    }
                                                     viewModel.loadPlaylist(url, serviceId)
-                                                } else {
-                                                    val playlistInfo = uiState.playlistInfo!!
-                                                    DatabaseOperations.insertOrReplaceRemotePlaylist(
-                                                        serviceId = playlistInfo.serviceId!!,
-                                                        name = playlistInfo.name,
-                                                        url = url,
-                                                        thumbnailUrl = playlistInfo.thumbnailUrl,
-                                                        uploader = playlistInfo.uploaderName,
-                                                        streamCount = playlistInfo.streamCount,
-                                                        isPinned = false
-                                                    )
-                                                    viewModel.loadPlaylist(url, serviceId)
                                                 }
+                                            },
+                                            leadingIcon = {
+                                                Icon(
+                                                    imageVector = Icons.Default.PushPin,
+                                                    contentDescription = null
+                                                )
                                             }
-                                        },
-                                        leadingIcon = {
-                                            Icon(
-                                                imageVector = if (isBookmarked) Icons.Default.BookmarkRemove else Icons.Default.BookmarkAdd,
-                                                contentDescription = null
-                                            )
-                                        }
-                                    )
+                                        )
 
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                if (uiState.playlistInfo?.isPinned == true) {
-                                                    MR.strings.playlist_menu_unpin.desc().toString(context = context)
-                                                } else {
-                                                    MR.strings.playlist_menu_pin.desc().toString(context = context)
-                                                }
-                                            )
-                                        },
-                                        onClick = {
-                                            showMoreMenu = false
-                                            scope.launch {
-                                                if (!isBookmarked) {
-                                                    // Auto-bookmark if not already bookmarked
-                                                    val playlistInfo = uiState.playlistInfo!!
-                                                    DatabaseOperations.insertOrReplaceRemotePlaylist(
-                                                        serviceId = playlistInfo.serviceId!!,
-                                                        name = playlistInfo.name,
-                                                        url = url,
-                                                        thumbnailUrl = playlistInfo.thumbnailUrl,
-                                                        uploader = playlistInfo.uploaderName,
-                                                        streamCount = playlistInfo.streamCount,
-                                                        isPinned = true
+                                        DropdownMenuItem(
+                                            text = { Text(MR.strings.share.desc().toString(context = context)) },
+                                            onClick = {
+                                                showMoreMenu = false
+                                                val intent =
+                                                    android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                        type = "text/plain"
+                                                        putExtra(android.content.Intent.EXTRA_TEXT, url)
+                                                    }
+                                                context.startActivity(
+                                                    android.content.Intent.createChooser(
+                                                        intent,
+                                                        null
                                                     )
-                                                } else {
-                                                    DatabaseOperations.setRemotePlaylistPinned(
-                                                        uiState.playlistInfo!!.uid!!,
-                                                        !(uiState.playlistInfo?.isPinned ?: false)
-                                                    )
-                                                }
-                                                viewModel.loadPlaylist(url, serviceId)
+                                                )
+                                            },
+                                            leadingIcon = {
+                                                Icon(Icons.Default.Share, contentDescription = null)
                                             }
-                                        },
-                                        leadingIcon = {
-                                            Icon(
-                                                imageVector = Icons.Default.PushPin,
-                                                contentDescription = null
-                                            )
-                                        }
-                                    )
+                                        )
+                                    }
 
-                                    DropdownMenuItem(
-                                        text = { Text(MR.strings.share.desc().toString(context = context)) },
-                                        onClick = {
-                                            showMoreMenu = false
-                                            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                                                type = "text/plain"
-                                                putExtra(android.content.Intent.EXTRA_TEXT, url)
-                                            }
-                                            context.startActivity(android.content.Intent.createChooser(intent, null))
-                                        },
-                                        leadingIcon = {
-                                            Icon(Icons.Default.Share, contentDescription = null)
-                                        }
-                                    )
-                                }
-                                else -> {
-                                    // No menu items for HISTORY and TRENDING types
+                                    else -> {
+                                        // No menu items for HISTORY and TRENDING types
+                                    }
                                 }
                             }
                         }
