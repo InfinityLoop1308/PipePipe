@@ -1,0 +1,126 @@
+-- Migration 902: Fix schema inconsistencies from migration 901
+-- Fixes:
+-- 1. subscriptions.service_id type (INTEGER -> TEXT) and notification_mode DEFAULT value
+-- 2. streams.service_id type (INTEGER -> TEXT)
+-- 3. remote_playlists.service_id type (INTEGER -> TEXT) and display_index DEFAULT value
+-- 4. playlists.display_index DEFAULT value
+-- 5. Add missing index on search_history
+
+-- ============================================================
+-- Part 1: Rebuild subscriptions table with correct types and DEFAULT values
+-- ============================================================
+
+CREATE TABLE subscriptions_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id TEXT NOT NULL,
+    url TEXT,
+    name TEXT,
+    avatar_url TEXT,
+    subscriber_count INTEGER,
+    description TEXT,
+    notification_mode INTEGER NOT NULL DEFAULT 1
+);
+
+-- Copy data from old table (service_id is already TEXT after 901 migration)
+INSERT INTO subscriptions_new (uid, service_id, url, name, avatar_url, subscriber_count, description, notification_mode)
+SELECT uid, service_id, url, name, avatar_url, subscriber_count, description, notification_mode
+FROM subscriptions;
+
+DROP TABLE subscriptions;
+
+ALTER TABLE subscriptions_new RENAME TO subscriptions;
+
+CREATE UNIQUE INDEX index_subscriptions_service_id_url ON subscriptions (service_id, url);
+
+-- ============================================================
+-- Part 2: Rebuild streams table with correct service_id type
+-- ============================================================
+
+CREATE TABLE streams_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id TEXT NOT NULL,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    stream_type TEXT NOT NULL,
+    view_count INTEGER,
+    duration INTEGER NOT NULL,
+    uploader TEXT NOT NULL,
+    uploader_url TEXT,
+    thumbnail_url TEXT,
+    upload_date INTEGER,
+    last_access_date INTEGER,
+    repeat_count INTEGER NOT NULL DEFAULT 0,
+    progress_time INTEGER NOT NULL DEFAULT 0,
+    is_paid INTEGER NOT NULL DEFAULT 0,
+    is_short INTEGER NOT NULL DEFAULT 0
+);
+
+-- Copy data from old table (service_id is already TEXT after 901 migration)
+INSERT INTO streams_new (uid, service_id, url, title, stream_type, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, last_access_date, repeat_count, progress_time, is_paid, is_short)
+SELECT uid, service_id, url, title, stream_type, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, last_access_date, repeat_count, progress_time, is_paid, is_short
+FROM streams;
+
+DROP TABLE streams;
+
+ALTER TABLE streams_new RENAME TO streams;
+
+CREATE UNIQUE INDEX index_streams_service_id_url ON streams (service_id, url);
+CREATE INDEX index_streams_last_access_date ON streams (last_access_date);
+
+-- ============================================================
+-- Part 3: Rebuild remote_playlists table with correct types and DEFAULT values
+-- ============================================================
+
+CREATE TABLE remote_playlists_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id TEXT NOT NULL,
+    name TEXT,
+    url TEXT,
+    thumbnail_url TEXT,
+    uploader TEXT,
+    display_index INTEGER NOT NULL DEFAULT 0,
+    stream_count INTEGER,
+    is_pinned INTEGER NOT NULL DEFAULT 0
+);
+
+-- Copy data from old table (service_id is already TEXT after 901 migration)
+INSERT INTO remote_playlists_new (uid, service_id, name, url, thumbnail_url, uploader, display_index, stream_count, is_pinned)
+SELECT uid, service_id, name, url, thumbnail_url, uploader, display_index, stream_count, is_pinned
+FROM remote_playlists;
+
+DROP TABLE remote_playlists;
+
+ALTER TABLE remote_playlists_new RENAME TO remote_playlists;
+
+CREATE INDEX index_remote_playlists_name ON remote_playlists (name);
+CREATE UNIQUE INDEX index_remote_playlists_service_id_url ON remote_playlists (service_id, url);
+
+-- ============================================================
+-- Part 4: Rebuild playlists table with correct DEFAULT values
+-- ============================================================
+
+CREATE TABLE playlists_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT,
+    thumbnail_url TEXT,
+    display_index INTEGER NOT NULL DEFAULT 0,
+    is_pinned INTEGER NOT NULL DEFAULT 0
+);
+
+-- Copy data from old table
+INSERT INTO playlists_new (uid, name, thumbnail_url, display_index, is_pinned)
+SELECT uid, name, thumbnail_url, display_index, is_pinned
+FROM playlists;
+
+DROP TABLE playlists;
+
+ALTER TABLE playlists_new RENAME TO playlists;
+
+CREATE INDEX index_playlists_name ON playlists (name);
+
+-- ============================================================
+-- Part 5: Add missing non-unique index on search_history
+-- ============================================================
+
+-- This index may already exist from 901, so we use IF NOT EXISTS
+CREATE INDEX IF NOT EXISTS index_search_history_search ON search_history (search);
