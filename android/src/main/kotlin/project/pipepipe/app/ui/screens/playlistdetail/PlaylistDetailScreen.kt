@@ -74,8 +74,12 @@ fun PlaylistDetailScreen(
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    val titleText = if (url.getType() == "trending") StringResourceHelper.getTranslatedTrendingName(getQueryValue(url, "name")!!)
-                        else uiState.playlistInfo?.name ?: stringResource(MR.strings.playlist_title_default)
+    val titleTextRaw =
+        if (url.getType() == "trending") StringResourceHelper.getTranslatedTrendingName(getQueryValue(url, "name")!!)
+        else uiState.playlistInfo?.name ?: context.getString(MR.strings.playlist_title_default.resourceId)
+
+
+    val titleText = remember(url, uiState.playlistInfo?.name) {titleTextRaw}
 
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -213,6 +217,14 @@ fun PlaylistDetailScreen(
         )
     }
 
+    if (isSearchActive) {
+        BackHandler {
+            focusManager.clearFocus()
+            isSearchActive = false
+            viewModel.updateSearchQuery("")
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -224,17 +236,9 @@ fun PlaylistDetailScreen(
                 }
             }
     ) {
-        if (isSearchActive) {
-            BackHandler {
-                focusManager.clearFocus()
-                isSearchActive = false
-                viewModel.updateSearchQuery("")
-            }
-        }
-
         CustomTopBar(
-            title = {
-                if (isSearchActive) {
+            title = if (isSearchActive) {
+                {
                     OutlinedTextField(
                         value = uiState.searchQuery,
                         onValueChange = { viewModel.updateSearchQuery(it) },
@@ -264,7 +268,9 @@ fun PlaylistDetailScreen(
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         keyboardActions = KeyboardActions(onSearch = { /* Search is live, no action needed */ })
                     )
-                } else {
+                }
+            } else {
+                {
                     Text(
                         text = titleText,
                         maxLines = 1,
