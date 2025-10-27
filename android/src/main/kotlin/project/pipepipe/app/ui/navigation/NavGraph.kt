@@ -10,11 +10,11 @@ import androidx.navigation.compose.composable
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import project.pipepipe.app.ui.screens.ChannelScreen
-import project.pipepipe.app.ui.screens.PlaylistDetailScreen
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.ui.screens.SearchScreen
 import project.pipepipe.app.ui.screens.SettingsScreen
 import project.pipepipe.app.ui.screens.TabNavigationScreen
+import project.pipepipe.app.ui.screens.playlistdetail.PlaylistDetailScreen
 import project.pipepipe.app.ui.screens.settings.AppearanceSettingsScreen
 import project.pipepipe.app.ui.screens.settings.ChannelNotificationSelectionScreen
 import project.pipepipe.app.ui.screens.settings.FeedSettingsScreen
