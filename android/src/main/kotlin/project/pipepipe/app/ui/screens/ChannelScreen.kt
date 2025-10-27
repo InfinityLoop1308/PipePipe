@@ -133,7 +133,7 @@ fun ChannelScreen(
 
         // Load notification mode
         val subscription = DatabaseOperations.getSubscriptionByUrl(channelUrl)
-        notificationMode = subscription?.notification_mode ?: 0L
+        notificationMode = subscription?.notification_mode ?: 1L
     }
 
     LaunchedEffect(tabTypes, pagerState, deferredTabLoaders) {
