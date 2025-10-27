@@ -391,4 +391,5 @@
 <string name="subscription_import_success">Importate con successo %d iscrizioni</string>
 <string name="subscription_import_failed">Importazione fallita: %s</string>
 <string name="subscription_export_failed">Esportazione fallita: %s</string>
+<string name="duplicate_in_playlist">Le playlist in grigio contengono già questo video.</string>
 </resources>

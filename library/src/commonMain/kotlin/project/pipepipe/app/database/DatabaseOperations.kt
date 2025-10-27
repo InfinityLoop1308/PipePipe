@@ -82,17 +82,19 @@ object DatabaseOperations {
         }
     }
 
-    suspend fun getAllLocalPlaylists(): List<PlaylistInfo> = withContext(Dispatchers.IO) {
+    suspend fun getAllLocalPlaylists(streamInfo: StreamInfo?): List<PlaylistInfo> = withContext(Dispatchers.IO) {
         val playlists = getAllLocalPlaylistsRaw()
         return@withContext playlists.map { playlist ->
-            val streamCount = loadPlaylistsItemsFromDatabase(playlist.uid).size
+            val streams = loadPlaylistsItemsFromDatabase(playlist.uid)
+            val streamCount = streams.size
             PlaylistInfo(
                 url = "local://playlist/${playlist.uid}",
                 name = playlist.name ?: "Unnamed Playlist",
                 thumbnailUrl = playlist.thumbnail_url,
                 streamCount = streamCount.toLong(),
                 isPinned = playlist.is_pinned != 0L,
-                uid = playlist.uid
+                uid = playlist.uid,
+                shouldUseSecondaryColor = streams.contains(streamInfo)
             )
         }
     }

@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -60,7 +61,8 @@ fun CommonItem(
     showProvideDetailButton: Boolean = false,
     showDragHandle: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
-    displayType: DisplayType = DisplayType.ORIGIN
+    displayType: DisplayType = DisplayType.ORIGIN,
+    shouldUseSecondaryColor: Boolean = false,
 ) {
     when (item) {
         is ChannelInfo -> {
@@ -73,7 +75,9 @@ fun CommonItem(
         else -> {
             StreamOrPlaylistListItem(
                 item = item,
-                modifier = modifier,
+                modifier = modifier.alpha(
+                    alpha = if (shouldUseSecondaryColor) 0.6f else 1f
+                ),
                 onClick = onClick,
                 isDragging = isDragging,
                 onNavigateTo = onNavigateTo,
@@ -179,7 +183,7 @@ private fun StreamOrPlaylistListItem(
     showProvideDetailButton: Boolean = false,
     showDragHandle: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
-    displayType: DisplayType = DisplayType.ORIGIN
+    displayType: DisplayType = DisplayType.ORIGIN,
 ) {
     var thumbnailUrl: String? = null
     var title: String

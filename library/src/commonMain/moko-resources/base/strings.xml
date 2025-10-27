@@ -400,4 +400,5 @@
     <string name="subscription_import_success">Successfully imported %d subscriptions</string>
     <string name="subscription_import_failed">Failed to import: %s</string>
     <string name="subscription_export_failed">Failed to export: %s</string>
+    <string name="duplicate_in_playlist">Grayed-out playlists already contain this video.</string>
 </resources>

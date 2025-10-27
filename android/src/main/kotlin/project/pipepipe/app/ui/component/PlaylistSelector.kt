@@ -8,22 +8,29 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.GlobalScope
 import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.database.DatabaseOperations.getAllLocalPlaylists
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.app.ui.item.CommonItem
+import project.pipepipe.app.ui.theme.supportingTextColor
 
 @Composable
 fun PlaylistSelectorPopup(
@@ -41,7 +48,7 @@ fun PlaylistSelectorPopup(
     val streams = streamInfoList ?: listOfNotNull(streamInfo)
 
     LaunchedEffect(Unit) {
-        playlists = getAllLocalPlaylists()
+        playlists = DatabaseOperations.getAllLocalPlaylists(streamInfo)
         isLoading = false
     }
     val addedText = stringResource(MR.strings.added)
@@ -86,7 +93,8 @@ fun PlaylistSelectorPopup(
                                         .clickable { showNewPlaylistDialog = true },
                                     shape = RoundedCornerShape(8.dp),
                                     colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+                                            .compositeOver(MaterialTheme.colorScheme.primaryContainer)
                                     )
                                 ) {
                                     Row(
@@ -111,7 +119,22 @@ fun PlaylistSelectorPopup(
                                     }
                                 }
                             }
-
+                            item {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = stringResource(MR.strings.duplicate_in_playlist),
+                                    color = supportingTextColor(),
+                                    fontSize = 13.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    style = TextStyle(
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
+                                    )
+                                )
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                            }
                             if (playlists.isNotEmpty()) {
                                 items(playlists) { playlist ->
                                     Card(
@@ -127,7 +150,8 @@ fun PlaylistSelectorPopup(
                                                 }
                                                 onPlaylistSelected()
                                                 ToastManager.show(addedText)
-                                            }
+                                            },
+                                            shouldUseSecondaryColor = playlist.shouldUseSecondaryColor
                                         )
                                     }
                                 }

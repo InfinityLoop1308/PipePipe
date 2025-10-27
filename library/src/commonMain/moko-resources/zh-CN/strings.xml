@@ -389,4 +389,5 @@
 <string name="subscription_import_success">成功导入 %d 个订阅</string>
 <string name="subscription_import_failed">导入失败：%s</string>
 <string name="subscription_export_failed">导出失败：%s</string>
+<string name="duplicate_in_playlist">灰色的播放列表已包含此视频。</string>
 </resources>

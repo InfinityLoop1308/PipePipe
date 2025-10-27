@@ -389,4 +389,5 @@
 <string name="subscription_import_success">Erfolgreich %d Abonnements importiert</string>
 <string name="subscription_import_failed">Import fehlgeschlagen: %s</string>
 <string name="subscription_export_failed">Export fehlgeschlagen: %s</string>
+<string name="duplicate_in_playlist">Ausgegraute Wiedergabelisten enthalten dieses Video bereits.</string>
 </resources>

@@ -389,4 +389,5 @@
 <string name="subscription_import_success">Se importaron %d suscripciones con éxito</string>
 <string name="subscription_import_failed">Error al importar: %s</string>
 <string name="subscription_export_failed">Error al exportar: %s</string>
+<string name="duplicate_in_playlist">Las listas de reproducción atenuadas ya contienen este video.</string>
 </resources>

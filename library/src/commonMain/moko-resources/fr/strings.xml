@@ -389,4 +389,5 @@
 <string name="subscription_import_success">Importation réussie de %d abonnements</string>
 <string name="subscription_import_failed">Échec de l\'importation : %s</string>
 <string name="subscription_export_failed">Échec de l\'exportation : %s</string>
+<string name="duplicate_in_playlist">Les playlists grisées contiennent déjà cette vidéo.</string>
 </resources>
