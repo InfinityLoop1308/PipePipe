@@ -1,7 +1,5 @@
-
 package project.pipepipe.app.ui.screens
 
-import com.squareup.wire.Service
 import java.net.URLEncoder
 
 sealed class Screen(val route: String) {

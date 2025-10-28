@@ -235,30 +235,8 @@ class MainActivity : ComponentActivity() {
             else -> null
         } ?: return
 
-        val jsonString = SharedContext.settingsManager.getString("supported_services", "[]")
-        val services = Json.decodeFromString<List<SupportedServiceInfo>>(jsonString)
-
-        val result = ExternalUrlPatternHelper.matchUrl(url, services)
-
-        if (result != null) {
-            val (serviceId, urlType) = result
-
-            when (urlType) {
-                ExternalUrlType.STREAM -> {
-                    SharedContext.sharedVideoDetailViewModel.loadVideoDetails(url, serviceId)
-                }
-                ExternalUrlType.CHANNEL -> {
-                    SharedContext.navController.navigate(
-                        Screen.Channel.createRoute(url, serviceId)
-                    )
-                }
-                ExternalUrlType.PLAYLIST -> {
-                    SharedContext.navController.navigate(
-                        Screen.PlaylistDetail.createRoute(url, serviceId)
-                    )
-                }
-            }
-        } else {
+        // Try to handle the URL using the unified helper
+        if (!ExternalUrlPatternHelper.tryHandleUrl(url)) {
             showUnrecognizedUrlDialog(url)
         }
 

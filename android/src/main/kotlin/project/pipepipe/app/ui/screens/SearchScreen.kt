@@ -57,6 +57,7 @@ import project.pipepipe.app.global.StringResourceHelper
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.utils.generateQueryUrl
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.helper.ExternalUrlPatternHelper
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
 import project.pipepipe.shared.infoitem.helper.SearchFilterItem
 import project.pipepipe.shared.infoitem.helper.SearchType
@@ -117,6 +118,14 @@ fun SearchScreen(
     fun performSearch(query: String? = null, overrideServiceId: String? = null) {
         val searchText = query ?: textFieldValue.text
         if (searchText.isNotEmpty()) {
+            if (searchText.startsWith("http://")  || searchText.startsWith("https://")) {
+                if (ExternalUrlPatternHelper.tryHandleUrl(searchText)) {
+                    focusManager.clearFocus()
+                    return
+                }
+            }
+
+            // Normal search flow
             val searchUrl = generateQueryUrl(searchText, uiState.selectedSearchType!!)
             val serviceId = overrideServiceId ?: uiState.selectedService!!.serviceId
             viewModel.search(searchUrl, listState, serviceId)
