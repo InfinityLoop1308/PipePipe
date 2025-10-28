@@ -47,6 +47,11 @@ import project.pipepipe.app.ui.navigation.NavGraph
 import project.pipepipe.app.ui.screens.PlayQueueScreen
 import project.pipepipe.app.ui.screens.videodetail.VideoDetailScreen
 import project.pipepipe.app.ui.theme.PipePipeTheme
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+import project.pipepipe.shared.infoitem.SupportedServiceInfo
+import project.pipepipe.app.helper.ExternalUrlPatternHelper
+import project.pipepipe.shared.infoitem.ExternalUrlType
 
 
 class MainActivity : ComponentActivity() {
@@ -71,6 +76,7 @@ class MainActivity : ComponentActivity() {
         checkIntentForFeedFailures(intent)
         checkIntentForStreamsFailures(intent)
         checkIntentForChannelNavigation(intent)
+        handleDeepLink(intent)
 
         setContent {
             navController = rememberNavController()
@@ -147,6 +153,7 @@ class MainActivity : ComponentActivity() {
         checkIntentForFeedFailures(intent)
         checkIntentForStreamsFailures(intent)
         checkIntentForChannelNavigation(intent)
+        handleDeepLink(intent)
     }
 
     private fun checkIntentForChannelNavigation(intent: Intent) {
@@ -215,6 +222,59 @@ class MainActivity : ComponentActivity() {
             intent.removeExtra("show_streams_failures")
             intent.removeExtra("failed_channels")
         }
+    }
+
+    private fun handleDeepLink(intent: Intent) {
+        val url = when (intent.action) {
+            Intent.ACTION_VIEW -> intent.data?.toString()
+            Intent.ACTION_SEND -> {
+                if (intent.type == "text/plain") {
+                    intent.getStringExtra(Intent.EXTRA_TEXT)
+                } else null
+            }
+            else -> null
+        } ?: return
+
+        val jsonString = SharedContext.settingsManager.getString("supported_services", "[]")
+        val services = Json.decodeFromString<List<SupportedServiceInfo>>(jsonString)
+
+        val result = ExternalUrlPatternHelper.matchUrl(url, services)
+
+        if (result != null) {
+            val (serviceId, urlType) = result
+
+            when (urlType) {
+                ExternalUrlType.STREAM -> {
+                    SharedContext.sharedVideoDetailViewModel.loadVideoDetails(url, serviceId)
+                }
+                ExternalUrlType.CHANNEL -> {
+                    SharedContext.navController.navigate(
+                        Screen.Channel.createRoute(url, serviceId)
+                    )
+                }
+                ExternalUrlType.PLAYLIST -> {
+                    SharedContext.navController.navigate(
+                        Screen.PlaylistDetail.createRoute(url, serviceId)
+                    )
+                }
+            }
+        } else {
+            showUnrecognizedUrlDialog(url)
+        }
+
+        // Clear intent data/extras to prevent reprocessing
+        when (intent.action) {
+            Intent.ACTION_VIEW -> intent.data = null
+            Intent.ACTION_SEND -> intent.removeExtra(Intent.EXTRA_TEXT)
+        }
+    }
+
+    private fun showUnrecognizedUrlDialog(url: String) {
+        AlertDialog.Builder(this)
+            .setTitle(MR.strings.url_not_recognized_title.desc().toString(this))
+            .setMessage(MR.strings.url_not_recognized_message.desc().toString(this).format(url))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 
     /**

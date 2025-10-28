@@ -401,4 +401,6 @@
     <string name="subscription_import_failed">Failed to import: %s</string>
     <string name="subscription_export_failed">Failed to export: %s</string>
     <string name="duplicate_in_playlist">Grayed-out playlists already contain this video.</string>
+    <string name="url_not_recognized_title">Unrecognized URL</string>
+    <string name="url_not_recognized_message">Unable to recognize the following link:\n%s</string>
 </resources>

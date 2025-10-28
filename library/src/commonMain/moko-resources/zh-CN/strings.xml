@@ -390,4 +390,6 @@
 <string name="subscription_import_failed">导入失败：%s</string>
 <string name="subscription_export_failed">导出失败：%s</string>
 <string name="duplicate_in_playlist">灰色的播放列表已包含此视频。</string>
+<string name="url_not_recognized_title">无法识别的网址</string>
+<string name="url_not_recognized_message">无法识别以下链接：\n%s</string>
 </resources>

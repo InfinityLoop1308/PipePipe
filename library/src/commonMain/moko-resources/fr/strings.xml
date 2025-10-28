@@ -390,4 +390,6 @@
 <string name="subscription_import_failed">Échec de l\'importation : %s</string>
 <string name="subscription_export_failed">Échec de l\'exportation : %s</string>
 <string name="duplicate_in_playlist">Les playlists grisées contiennent déjà cette vidéo.</string>
+<string name="url_not_recognized_title">URL non reconnue</string>
+<string name="url_not_recognized_message">Impossible de reconnaître le lien suivant :\n%s</string>
 </resources>

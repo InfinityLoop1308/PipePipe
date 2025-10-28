@@ -390,4 +390,6 @@
 <string name="subscription_import_failed">Import fehlgeschlagen: %s</string>
 <string name="subscription_export_failed">Export fehlgeschlagen: %s</string>
 <string name="duplicate_in_playlist">Ausgegraute Wiedergabelisten enthalten dieses Video bereits.</string>
+<string name="url_not_recognized_title">Nicht erkannte URL</string>
+<string name="url_not_recognized_message">Der folgende Link konnte nicht erkannt werden:\n%s</string>
 </resources>

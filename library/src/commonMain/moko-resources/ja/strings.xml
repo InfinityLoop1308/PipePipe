@@ -390,4 +390,6 @@
 <string name="subscription_import_failed">インポートに失敗しました: %s</string>
 <string name="subscription_export_failed">エクスポートに失敗しました: %s</string>
 <string name="duplicate_in_playlist">グレー表示されたプレイリストには、すでにこの動画が含まれています。</string>
+<string name="url_not_recognized_title">認識されないURL</string>
+<string name="url_not_recognized_message">以下のリンクを認識できません:\n%s</string>
 </resources>
