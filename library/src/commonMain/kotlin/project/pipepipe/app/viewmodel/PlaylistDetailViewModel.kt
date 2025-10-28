@@ -132,6 +132,9 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             playlistInfo
         }
 
+        val items = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            .distinctBy { it.url }
+
         setState {
             it.copy(
                 common = it.common.copy(
@@ -141,10 +144,10 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                 playlistInfo = finalPlaylistInfo,
                 playlistType = if (isTrending) PlaylistType.TRENDING else PlaylistType.REMOTE,
                 list = ListUiState(
-                    itemList = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty(),
+                    itemList = items,
                     nextPageUrl = result.pagedData?.nextPageUrl
                 ),
-                displayItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+                displayItems = items
             )
         }
     }
@@ -179,17 +182,19 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
 
 
         setState {
-            val newItemList = it.list.itemList + (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val newItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val combinedList = (it.list.itemList + newItems)
+                .distinctBy { item -> item.url }
             it.copy(
                 common = it.common.copy(
                     isLoading = false,
                     error = null
                 ),
                 list = it.list.copy(
-                    itemList = newItemList,
+                    itemList = combinedList,
                     nextPageUrl = result.pagedData?.nextPageUrl
                 ),
-                displayItems = newItemList
+                displayItems = combinedList
             )
         }
 
