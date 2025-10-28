@@ -6,7 +6,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
-import project.pipepipe.app.ui.component.sanitizeHexColorInput
+import project.pipepipe.app.helper.ColorHelper
 
 /**
  * Utility object for SponsorBlock related constants and functions
@@ -46,11 +46,11 @@ object SponsorBlockUtils {
             SponsorBlockCategory.PENDING -> "sponsor_block_category_pending_color_key" to COLOR_PENDING_DEFAULT
         }
 
-        val hexColor = sanitizeHexColorInput(
+        val hexColor = ColorHelper.sanitizeHexColorInput(
             settingsManager.getString(colorKey, defaultColor)
         ) ?: defaultColor
 
-        return parseHexColor(hexColor)
+        return ColorHelper.parseHexColor(hexColor)
     }
 
     /**
@@ -71,31 +71,6 @@ object SponsorBlockUtils {
             SponsorBlockCategory.PREVIEW -> stringResource(MR.strings.sponsor_block_category_preview)
             SponsorBlockCategory.FILLER -> stringResource(MR.strings.sponsor_block_category_filler)
             SponsorBlockCategory.PENDING -> stringResource(MR.strings.missions_header_pending)
-        }
-    }
-
-    /**
-     * Parse a hex color string to a Compose Color
-     * Supports both #RRGGBB and #AARRGGBB formats
-     * @param hex The hex color string (with or without # prefix)
-     * @return The parsed Color, or white if parsing fails
-     */
-    fun parseHexColor(hex: String?, fallBack: Color = Color.White): Color {
-        return try {
-            val cleanHex = hex!!.trim().removePrefix("#")
-            if (cleanHex.length != 6 && cleanHex.length != 8) {
-                return Color.White
-            }
-
-            val argb = when (cleanHex.length) {
-                6 -> 0xFF000000L or cleanHex.toLong(16)
-                8 -> cleanHex.toLong(16)
-                else -> return Color.White
-            }.toInt()
-
-            Color(argb)
-        } catch (e: Exception) {
-            fallBack
         }
     }
 }

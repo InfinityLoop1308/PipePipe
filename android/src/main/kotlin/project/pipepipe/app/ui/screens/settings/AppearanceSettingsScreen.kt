@@ -27,7 +27,7 @@ import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ListPreference
 import project.pipepipe.app.ui.component.SwitchPreference
-import project.pipepipe.app.ui.component.player.SponsorBlockUtils
+import project.pipepipe.app.helper.ColorHelper
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.SharedContext
 
@@ -198,7 +198,7 @@ private fun InlineColorPalette(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     PRESET_COLORS.forEach { colorHex ->
-                        val color = SponsorBlockUtils.parseHexColor(colorHex, Color.Gray)
+                        val color = ColorHelper.parseHexColor(colorHex, Color.Gray)
                         val isSelected = currentColor.equals(colorHex, ignoreCase = true)
 
                         Box(
@@ -221,7 +221,7 @@ private fun InlineColorPalette(
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = null,
-                                    tint = if (isLightColor(color)) Color.Black else Color.White,
+                                    tint = if (ColorHelper.isLightColor(color)) Color.Black else Color.White,
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -243,11 +243,4 @@ private fun InlineColorPalette(
             }
         }
     }
-}
-
-
-private fun isLightColor(color: Color): Boolean {
-    // Calculate relative luminance
-    val luminance = 0.299 * color.red + 0.587 * color.green + 0.114 * color.blue
-    return luminance > 0.5f
 }

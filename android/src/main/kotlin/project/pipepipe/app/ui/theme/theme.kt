@@ -22,15 +22,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ColorHelper
 
 private fun getCustomDarkColor(color: Color): Color {
     return when (color) {
-        SponsorBlockUtils.parseHexColor("#e53935") -> SponsorBlockUtils.parseHexColor("#992722")
-        SponsorBlockUtils.parseHexColor("#f57c00") -> SponsorBlockUtils.parseHexColor("#a35300")
-        SponsorBlockUtils.parseHexColor("#9e9e9e") -> SponsorBlockUtils.parseHexColor("#878787")
-        SponsorBlockUtils.parseHexColor("#FB7299") -> SponsorBlockUtils.parseHexColor("#D94E74")
+        ColorHelper.parseHexColor("#e53935") -> ColorHelper.parseHexColor("#992722")
+        ColorHelper.parseHexColor("#f57c00") -> ColorHelper.parseHexColor("#a35300")
+        ColorHelper.parseHexColor("#9e9e9e") -> ColorHelper.parseHexColor("#878787")
+        ColorHelper.parseHexColor("#FB7299") -> ColorHelper.parseHexColor("#D94E74")
         else -> color
     }
 }
@@ -110,7 +110,7 @@ fun PipePipeTheme(
         else -> darkTheme // "system" or default
     }
 
-    val customPrimaryColor = SponsorBlockUtils.parseHexColor(themeColorHex, Color(0xFFE53935))
+    val customPrimaryColor = ColorHelper.parseHexColor(themeColorHex, Color(0xFFE53935))
 
     currentMaterialYouEnabled = materialYouEnabled
     currentPureBlackEnabled = pureBlackEnabled
@@ -183,14 +183,8 @@ fun onCustomTopBarColor(): Color {
     return if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
         LocalContentColor.current
     } else {
-        getContrastingColor(currentCustomPrimaryColor)
+        ColorHelper.getContrastingColor(currentCustomPrimaryColor)
     }
-}
-
-fun getContrastingColor(backgroundColor: Color): Color {
-    val luminance = backgroundColor.luminance()
-    return if (luminance > 0.5f) Color.Black.copy(alpha = 0.87f)
-    else Color.White.copy(alpha = 0.95f)
 }
 
 fun applySystemBarColors(insetsController: WindowInsetsControllerCompat, colorScheme: androidx.compose.material3.ColorScheme) {

@@ -23,7 +23,8 @@ import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.theme.supportingTextColor
-import java.util.Locale
+import project.pipepipe.app.helper.ColorHelper
+import project.pipepipe.app.helper.ColorHelper.parseHexColorOrNull
 
 @Composable
 fun SwitchPreference(
@@ -385,15 +386,15 @@ fun ColorPreference(
     modifier: Modifier = Modifier
 ) {
     val normalizedCurrentColor = remember(item.currentColor, item.defaultColor) {
-        sanitizeHexColorInput(item.currentColor)
-            ?: sanitizeHexColorInput(item.defaultColor)
+        ColorHelper.sanitizeHexColorInput(item.currentColor)
+            ?: ColorHelper.sanitizeHexColorInput(item.defaultColor)
             ?: "#FFFFFF"
     }
     var showDialog by remember { mutableStateOf(false) }
     var dialogText by remember(normalizedCurrentColor) { mutableStateOf(normalizedCurrentColor) }
 
     val summaryText = item.summary ?: normalizedCurrentColor
-    val swatchColor = parseColorOrNull(normalizedCurrentColor) ?: MaterialTheme.colorScheme.primary
+    val swatchColor = parseHexColorOrNull(normalizedCurrentColor) ?: MaterialTheme.colorScheme.primary
 
     PreferenceTemplate(
         title = item.title,
@@ -413,8 +414,8 @@ fun ColorPreference(
     )
 
     if (showDialog) {
-        val sanitizedInput = sanitizeHexColorInput(dialogText)
-        val dialogPreviewColor = parseColorOrNull(sanitizedInput ?: dialogText) ?: swatchColor
+        val sanitizedInput = ColorHelper.sanitizeHexColorInput(dialogText)
+        val dialogPreviewColor = parseHexColorOrNull(sanitizedInput ?: dialogText) ?: swatchColor
 
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -423,7 +424,7 @@ fun ColorPreference(
                 Column {
                     OutlinedTextField(
                         value = dialogText,
-                        onValueChange = { dialogText = it.uppercase(Locale.US) },
+                        onValueChange = { dialogText = it.uppercase() },
                         label = { Text("#RRGGBB or #AARRGGBB") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
@@ -459,29 +460,6 @@ fun ColorPreference(
     }
 }
 
-private val HEX_COLOR_REGEX = Regex("^#?[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$")
-
-internal fun sanitizeHexColorInput(raw: String): String? {
-    val trimmed = raw.trim()
-    if (trimmed.isEmpty() || !HEX_COLOR_REGEX.matches(trimmed)) return null
-    val normalized = trimmed.removePrefix("#").uppercase(Locale.US)
-    return "#$normalized"
-}
-
-private fun parseColorOrNull(hex: String): Color? =
-    runCatching { parseHexColor(hex) }.getOrNull()
-
-private fun parseHexColor(value: String): Color? {
-    val sanitized = value.trim().removePrefix("#")
-    if (sanitized.length != 6 && sanitized.length != 8) return null
-
-    val argb = when (sanitized.length) {
-        6 -> 0xFF000000L or sanitized.toLong(16)
-        else -> sanitized.toLong(16)           
-    }.toInt()
-
-    return Color(argb)
-}
 
 @Composable
 private fun ColorSwatch(

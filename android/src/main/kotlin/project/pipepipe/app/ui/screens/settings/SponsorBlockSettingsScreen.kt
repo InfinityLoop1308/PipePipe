@@ -24,7 +24,7 @@ import project.pipepipe.app.ui.component.ColorPreference
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ListPreference
 import project.pipepipe.app.ui.component.SwitchPreference
-import project.pipepipe.app.ui.component.sanitizeHexColorInput
+import project.pipepipe.app.helper.ColorHelper
 import project.pipepipe.app.ui.screens.Screen.SponsorBlockCategorySettings
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import kotlin.collections.buildList
@@ -179,7 +179,7 @@ fun SponsorBlockCategoriesSettingsScreen(
 
     val sponsorColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_sponsor_color_key",
                     COLOR_SPONSOR_DEFAULT
@@ -189,7 +189,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val introColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_intro_color_key",
                     COLOR_INTRO_DEFAULT
@@ -199,7 +199,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val outroColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_outro_color_key",
                     COLOR_OUTRO_DEFAULT
@@ -209,7 +209,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val interactionColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_interaction_color_key",
                     COLOR_INTERACTION_DEFAULT
@@ -219,7 +219,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val highlightColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_highlight_color_key",
                     COLOR_HIGHLIGHT_DEFAULT
@@ -229,7 +229,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val selfPromoColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_self_promo_color_key",
                     COLOR_SELF_PROMO_DEFAULT
@@ -239,7 +239,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val nonMusicColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_non_music_color_key",
                     COLOR_NON_MUSIC_DEFAULT
@@ -249,7 +249,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val previewColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_preview_color_key",
                     COLOR_PREVIEW_DEFAULT
@@ -259,7 +259,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val fillerColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_filler_color_key",
                     COLOR_FILLER_DEFAULT
@@ -269,7 +269,7 @@ fun SponsorBlockCategoriesSettingsScreen(
     }
     val pendingColorState = remember {
         mutableStateOf(
-            sanitizeHexColorInput(
+            ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
                     "sponsor_block_category_pending_color_key",
                     COLOR_PENDING_DEFAULT

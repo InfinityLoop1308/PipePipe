@@ -32,6 +32,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ColorHelper
 import project.pipepipe.app.utils.formatCount
 import project.pipepipe.shared.infoitem.Info
 import project.pipepipe.shared.infoitem.PlaylistInfo
@@ -329,7 +330,7 @@ private fun StreamOrPlaylistListItem(
                     lineHeight = 18.sp,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .background(SponsorBlockUtils.parseHexColor("#FFD700"), RoundedCornerShape(4.dp))
+                        .background(ColorHelper.parseHexColor("#FFD700"), RoundedCornerShape(4.dp))
                         .padding(horizontal = 4.dp, vertical = 0.dp)
                 )
             }
