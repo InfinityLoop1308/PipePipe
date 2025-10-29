@@ -27,9 +27,11 @@ import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ListPreference
 import project.pipepipe.app.ui.component.SwitchPreference
+import project.pipepipe.app.ui.component.ClickablePreference
 import project.pipepipe.app.helper.ColorHelper
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.ui.screens.Screen
 
 // Preset theme colors
 private val PRESET_COLORS = listOf(
@@ -87,6 +89,9 @@ fun AppearanceSettingsScreen(
     val pureBlackTitle = stringResource(MR.strings.settings_appearance_pure_black_title)
     val pureBlackSummary = stringResource(MR.strings.settings_appearance_pure_black_summary)
 
+    val customizeTabsTitle = stringResource(MR.strings.customize_tabs)
+    val customizeTabsSummary = stringResource(MR.strings.customize_tabs_summary)
+
     val preferenceItems = listOf(
         PreferenceItem.ListPref(
             key = "theme_mode_key",
@@ -112,6 +117,13 @@ fun AppearanceSettingsScreen(
             defaultValue = false,
             onValueChange = {
                 pureBlackEnabledState.value = it
+            }
+        ),
+        PreferenceItem.ClickablePref(
+            title = customizeTabsTitle,
+            summary = customizeTabsSummary,
+            onClick = {
+                navController.navigate(Screen.TabCustomization.route)
             }
         )
     )
@@ -147,6 +159,7 @@ fun AppearanceSettingsScreen(
                             SwitchPreference(item = item)
                         }
                     }
+                    is PreferenceItem.ClickablePref -> ClickablePreference(item = item)
                     else -> Unit
                 }
             }

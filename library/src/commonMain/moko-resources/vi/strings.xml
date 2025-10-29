@@ -392,4 +392,16 @@
 <string name="duplicate_in_playlist">Các danh sách phát bị làm mờ đã chứa video này.</string>
 <string name="url_not_recognized_title">URL không được nhận dạng</string>
 <string name="url_not_recognized_message">Không thể nhận dạng liên kết sau:\n%s</string>
+<string name="tab_already_exists">Tab này đã tồn tại.</string>
+<string name="all_feed_title">Có gì mới</string>
+<string name="blank_page_hint">Chạm vào kính lúp để bắt đầu.</string>
+<string name="customize_tabs">Tùy chỉnh các tab</string>
+<string name="customize_tabs_summary">Cấu hình các tab giao diện chính</string>
+<string name="add_tab">Thêm tab</string>
+<string name="select_tab_type">Chọn loại tab</string>
+<string name="blank_page">Trang trống</string>
+<string name="select_item">Chọn mục</string>
+<string name="cannot_remove_tab">Tab này luôn có sẵn.</string>
+<string name="description_tab">Mô tả</string>
+<string name="published_on">Được xuất bản vào</string>
 </resources>

@@ -356,6 +356,11 @@ object DatabaseOperations {
         database.appDatabaseQueries.selectAllFeedGroups().executeAsList()
     }
 
+    suspend fun getFeedGroupById(groupId: Long) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.selectAllFeedGroups().executeAsList()
+            .find { it.uid == groupId }
+    }
+
     suspend fun setFeedGroupPinned(groupId: Long, isPinned: Boolean) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.updateFeedGroupPinnedState(
             if (isPinned) 1L else 0L,

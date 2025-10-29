@@ -392,4 +392,16 @@
 <string name="duplicate_in_playlist">灰色的播放列表已包含此视频。</string>
 <string name="url_not_recognized_title">无法识别的网址</string>
 <string name="url_not_recognized_message">无法识别以下链接：\n%s</string>
+<string name="tab_already_exists">此标签页已存在。</string>
+<string name="all_feed_title">最新动态</string>
+<string name="blank_page_hint">轻触放大镜即可开始。</string>
+<string name="customize_tabs">自定义标签页</string>
+<string name="customize_tabs_summary">配置主界面标签页</string>
+<string name="add_tab">添加标签页</string>
+<string name="select_tab_type">选择标签页类型</string>
+<string name="blank_page">空白页</string>
+<string name="select_item">选择项目</string>
+<string name="cannot_remove_tab">此标签页始终可用。</string>
+<string name="description_tab">描述</string>
+<string name="published_on">发布于</string>
 </resources>

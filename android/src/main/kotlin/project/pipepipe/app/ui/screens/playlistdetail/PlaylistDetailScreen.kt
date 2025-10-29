@@ -63,11 +63,12 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun PlaylistDetailScreen(
     navController: NavController,
     url: String,
+    useAsTab: Boolean = false,
     serviceId: String? = null
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-    val viewModel: PlaylistDetailViewModel = viewModel()
+    val viewModel: PlaylistDetailViewModel = viewModel(key = url)
     val uiState by viewModel.uiState.collectAsState()
 
     var isSearchActive by remember { mutableStateOf(false) }
@@ -237,103 +238,105 @@ fun PlaylistDetailScreen(
                 }
             }
     ) {
-        CustomTopBar(
-            title = if (isSearchActive) {
-                {
-                    OutlinedTextField(
-                        value = uiState.searchQuery,
-                        onValueChange = { viewModel.updateSearchQuery(it) },
-                        placeholder = {
-                            Text(
-                                text = MR.strings.search.desc().toString(context = context),
-                                style = TextStyle(
-                                    platformStyle = PlatformTextStyle(
-                                        includeFontPadding = false
-                                    )
-                                ),
-                                fontSize = 16.sp,
-                                color = onCustomTopBarColor()
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester),
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent
-                        ),
-                        textStyle = TextStyle(fontSize = 16.sp),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(onSearch = { /* Search is live, no action needed */ })
-                    )
-                }
-            } else {
-                {
-                    Text(
-                        text = titleText,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = onCustomTopBarColor()
-                    )
-                }
-            },
-            titlePadding = 0.dp,
-            actions = {
-                Row(horizontalArrangement = Arrangement.spacedBy((-6).dp)) {
-                    if (isSearchActive) {
-                        IconButton(onClick = {
-                            if (uiState.searchQuery.isEmpty()) {
-                                isSearchActive = false
-                            } else {
-                                viewModel.updateSearchQuery("")
+        if (!useAsTab) {
+            CustomTopBar(
+                title = if (isSearchActive) {
+                    {
+                        OutlinedTextField(
+                            value = uiState.searchQuery,
+                            onValueChange = { viewModel.updateSearchQuery(it) },
+                            placeholder = {
+                                Text(
+                                    text = MR.strings.search.desc().toString(context = context),
+                                    style = TextStyle(
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = onCustomTopBarColor()
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester),
+                            singleLine = true,
+                            colors = TextFieldDefaults.colors(
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent
+                            ),
+                            textStyle = TextStyle(fontSize = 16.sp),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                            keyboardActions = KeyboardActions(onSearch = { /* Search is live, no action needed */ })
+                        )
+                    }
+                } else {
+                    {
+                        Text(
+                            text = titleText,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = onCustomTopBarColor()
+                        )
+                    }
+                },
+                titlePadding = 0.dp,
+                actions = {
+                    Row(horizontalArrangement = Arrangement.spacedBy((-6).dp)) {
+                        if (isSearchActive) {
+                            IconButton(onClick = {
+                                if (uiState.searchQuery.isEmpty()) {
+                                    isSearchActive = false
+                                } else {
+                                    viewModel.updateSearchQuery("")
+                                }
+                            }) {
+                                Icon(
+                                    Icons.Default.Clear,
+                                    contentDescription = MR.strings.clear.desc().toString(context = context)
+                                )
                             }
-                        }) {
-                            Icon(
-                                Icons.Default.Clear,
-                                contentDescription = MR.strings.clear.desc().toString(context = context)
+                        }
+                        if (uiState.playlistType == PlaylistType.LOCAL) {
+                            SortMenuButton(
+                                currentSortMode = uiState.sortMode,
+                                onSortModeChange = { viewModel.updateSortMode(it) }
+                            )
+                        }
+                        if (!isSearchActive && uiState.playlistType != PlaylistType.REMOTE) {
+                            IconButton(
+                                onClick = {
+                                    isSearchActive = true
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = MR.strings.search.desc().toString(context = context)
+                                )
+                            }
+                        }
+                        if (shouldShowMoreMenuButton) {
+                            PlaylistMoreMenu(
+                                playlistType = uiState.playlistType,
+                                playlistUid = uiState.playlistInfo?.uid,
+                                playlistName = uiState.playlistInfo?.name ?: "",
+                                isPinned = uiState.playlistInfo?.isPinned ?: false,
+                                url = url,
+                                onRenameClick = { showRenameDialog = true },
+                                onDeleteClick = { showDeleteDialog = true },
+                                onReloadPlaylist = { viewModel.loadPlaylist(url, serviceId) },
+                                scope = scope
                             )
                         }
                     }
-                    if (uiState.playlistType == PlaylistType.LOCAL){
-                        SortMenuButton(
-                            currentSortMode = uiState.sortMode,
-                            onSortModeChange = { viewModel.updateSortMode(it) }
-                        )
-                    }
-                    if (!isSearchActive && uiState.playlistType != PlaylistType.REMOTE) {
-                        IconButton(
-                            onClick = {
-                                isSearchActive = true
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = MR.strings.search.desc().toString(context = context)
-                            )
-                        }
-                    }
-                    if (shouldShowMoreMenuButton){
-                        PlaylistMoreMenu(
-                            playlistType = uiState.playlistType,
-                            playlistUid = uiState.playlistInfo?.uid,
-                            playlistName = uiState.playlistInfo?.name ?: "",
-                            isPinned = uiState.playlistInfo?.isPinned ?: false,
-                            url = url,
-                            onRenameClick = { showRenameDialog = true },
-                            onDeleteClick = { showDeleteDialog = true },
-                            onReloadPlaylist = { viewModel.loadPlaylist(url, serviceId) },
-                            scope = scope
-                        )
-                    }
                 }
-            }
-        )
+            )
+        }
         if (uiState.playlistType == PlaylistType.FEED) {
             PullToRefreshBox(
                 isRefreshing = uiState.isRefreshing,
@@ -361,6 +364,7 @@ fun PlaylistDetailScreen(
                 )
             }
         } else {
+            Spacer(modifier = Modifier.height(4.dp))
             PlaylistContent(
                 uiState = uiState,
                 viewModel = viewModel,

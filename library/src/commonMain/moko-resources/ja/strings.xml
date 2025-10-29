@@ -392,4 +392,16 @@
 <string name="duplicate_in_playlist">グレー表示されたプレイリストには、すでにこの動画が含まれています。</string>
 <string name="url_not_recognized_title">認識されないURL</string>
 <string name="url_not_recognized_message">以下のリンクを認識できません:\n%s</string>
+<string name="tab_already_exists">このタブはすでに存在します。</string>
+<string name="all_feed_title">新着情報</string>
+<string name="blank_page_hint">開始するには虫眼鏡をタップしてください。</string>
+<string name="customize_tabs">タブをカスタマイズ</string>
+<string name="customize_tabs_summary">メインインターフェースのタブを設定します</string>
+<string name="add_tab">タブを追加</string>
+<string name="select_tab_type">タブの種類を選択</string>
+<string name="blank_page">空白のページ</string>
+<string name="select_item">項目を選択</string>
+<string name="cannot_remove_tab">このタブは常に利用可能です。</string>
+<string name="description_tab">説明</string>
+<string name="published_on">公開日</string>
 </resources>

@@ -17,8 +17,12 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.SettingsManager
+import project.pipepipe.app.helper.MainScreenTabConfig
+import project.pipepipe.app.helper.MainScreenTabConfigDefaults
 import project.pipepipe.app.serialize.SavedTabsPayload
+import project.pipepipe.app.serialize.SavedTabPayload
 import project.pipepipe.app.PipePipeApplication
+import java.net.URLEncoder
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -49,6 +53,7 @@ class DatabaseImporter(
         private val SETTINGS_ZIP_ENTRY_ALIASES = setOf("pipepipe.settings", "newpipe.settings")
 
         private const val SAVED_TABS_KEY = "saved_tabs_key"
+        private const val CUSTOM_TABS_CONFIG_KEY = "custom_tabs_config_key"
         private const val PINNED_PLAYLIST_TAB_ID = 8
         private const val PINNED_FEED_GROUP_TAB_ID = 9
 
@@ -56,6 +61,11 @@ class DatabaseImporter(
             ignoreUnknownKeys = true
             isLenient = true
             coerceInputValues = true
+        }
+
+        private val tabConfigJsonParser = Json {
+            ignoreUnknownKeys = false
+            isLenient = false
         }
     }
 
@@ -167,6 +177,7 @@ class DatabaseImporter(
 
                         if (!savedTabsJson.isNullOrBlank()) {
                             pinItemsFromSavedTabs(savedTabsJson)
+                            convertSavedTabsToNewConfig(savedTabsJson)
                         }
 
                         // Re-initialize supported services to prevent being overwritten by old backup
@@ -234,6 +245,112 @@ class DatabaseImporter(
         feedGroupIdsToPin.forEach { groupId ->
             DatabaseOperations.setFeedGroupPinned(groupId, true)
         }
+    }
+
+    private suspend fun convertSavedTabsToNewConfig(rawJson: String) {
+        val payload = savedTabsJsonParser.decodeFromString<SavedTabsPayload>(rawJson)
+
+        val routes = mutableSetOf<String>()
+        val newTabs = mutableListOf<MainScreenTabConfig>()
+
+        // Convert each old tab to new route format
+        payload.tabs.forEach { tab ->
+            val route = convertTabToRoute(tab)
+            // Skip duplicates and null routes
+            if (route != null && !routes.contains(route)) {
+                routes.add(route)
+                val isDefault = route in listOf(
+                    MainScreenTabConfigDefaults.DASHBOARD_ROUTE,
+                    MainScreenTabConfigDefaults.SUBSCRIPTIONS_ROUTE,
+                    MainScreenTabConfigDefaults.BOOKMARKED_PLAYLISTS_ROUTE
+                )
+                newTabs.add(MainScreenTabConfig(route, isDefault))
+            }
+        }
+
+        // Ensure all default tabs are present
+        val defaultRoutes = listOf(
+            MainScreenTabConfigDefaults.DASHBOARD_ROUTE,
+            MainScreenTabConfigDefaults.SUBSCRIPTIONS_ROUTE,
+            MainScreenTabConfigDefaults.BOOKMARKED_PLAYLISTS_ROUTE
+        )
+
+        defaultRoutes.forEach { defaultRoute ->
+            if (!routes.contains(defaultRoute)) {
+                newTabs.add(MainScreenTabConfig(defaultRoute, isDefault = true))
+                routes.add(defaultRoute)
+            }
+        }
+
+        // Save to settings
+        val jsonString = tabConfigJsonParser.encodeToString(
+            kotlinx.serialization.builtins.ListSerializer(MainScreenTabConfig.serializer()),
+            newTabs
+        )
+        settingsManager.putString(CUSTOM_TABS_CONFIG_KEY, jsonString)
+    }
+
+    private suspend fun convertTabToRoute(tab: SavedTabPayload): String? {
+        return when (tab.tabId) {
+            0 -> "blank"
+            1 -> MainScreenTabConfigDefaults.SUBSCRIPTIONS_ROUTE
+            2 -> "feed/-1"
+            3 -> MainScreenTabConfigDefaults.BOOKMARKED_PLAYLISTS_ROUTE
+            4 -> "history"
+            5 -> null // Skip KIOSK tabs
+            6 -> convertChannelTab(tab)
+            7 -> MainScreenTabConfigDefaults.DASHBOARD_ROUTE
+            8 -> convertPlaylistTab(tab)
+            9 -> convertChannelGroupTab(tab)
+            else -> null
+        }
+    }
+
+    private suspend fun convertChannelTab(tab: SavedTabPayload): String? {
+        val url = tab.channelUrl ?: return null
+
+        // Query database for channel info
+        val subscription = DatabaseOperations.getSubscriptionByUrl(url) ?: return null
+
+        val encodedUrl = URLEncoder.encode(url, "UTF-8")
+        val encodedName = URLEncoder.encode(subscription.name ?: "Unknown", "UTF-8")
+
+        return "channel?url=$encodedUrl&serviceId=${subscription.service_id}&name=$encodedName"
+    }
+
+    private suspend fun convertPlaylistTab(tab: SavedTabPayload): String? {
+        // Local playlist
+        if (tab.playlistId != null && tab.playlistId != -1L) {
+            val playlist = DatabaseOperations.getPlaylistInfoById(tab.playlistId.toString())
+                ?: return null
+
+            val encodedUrl = URLEncoder.encode(playlist.url, "UTF-8")
+            val encodedName = URLEncoder.encode(playlist.name, "UTF-8")
+            // Local playlists don't have serviceId, use a placeholder
+            return "playlist?url=$encodedUrl&name=$encodedName"
+        }
+
+        // Remote playlist - query database using URL
+        if (tab.playlistUrl != null) {
+            val remotePlaylist = DatabaseOperations.getRemotePlaylistByUrl(tab.playlistUrl!!)
+                ?: return null
+
+            val encodedUrl = URLEncoder.encode(tab.playlistUrl!!, "UTF-8")
+            val encodedName = URLEncoder.encode(remotePlaylist.name ?: "Unknown", "UTF-8")
+
+            return "playlist?url=$encodedUrl&name=$encodedName&serviceId=${remotePlaylist.service_id}"
+        }
+
+        return null
+    }
+
+    private suspend fun convertChannelGroupTab(tab: SavedTabPayload): String? {
+        val groupId = tab.groupId ?: return null
+        val groupName = tab.groupName ?: "Unknown"
+        val feedGroup = DatabaseOperations.getFeedGroupById(groupId)
+        val iconId = feedGroup?.icon_id?.toInt() ?: 0
+        val encodedName = URLEncoder.encode(groupName, "UTF-8")
+        return "feed/$groupId?name=$encodedName&iconId=$iconId"
     }
 
     fun importDatabase(uri: Uri) {

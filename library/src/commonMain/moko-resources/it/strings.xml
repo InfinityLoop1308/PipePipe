@@ -394,4 +394,14 @@
 <string name="duplicate_in_playlist">Le playlist in grigio contengono già questo video.</string>
 <string name="url_not_recognized_title">URL non riconosciuto</string>
 <string name="url_not_recognized_message">Impossibile riconoscere il seguente link:\n%s</string>
+<string name="tab_already_exists">Questa scheda esiste già.</string>
+<string name="all_feed_title">Novità</string>
+<string name="blank_page_hint">Tocca la lente d\'ingrandimento per iniziare.</string>
+<string name="customize_tabs">Personalizza schede</string>
+<string name="customize_tabs_summary">Configura le schede dell\'interfaccia principale</string>
+<string name="add_tab">Aggiungi scheda</string>
+<string name="select_tab_type">Seleziona tipo di scheda</string>
+<string name="blank_page">Pagina vuota</string>
+<string name="select_item">Seleziona elemento</string>
+<string name="cannot_remove_tab">Questa scheda è sempre disponibile.</string>
 </resources>

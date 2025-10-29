@@ -392,4 +392,16 @@
 <string name="duplicate_in_playlist">Ausgegraute Wiedergabelisten enthalten dieses Video bereits.</string>
 <string name="url_not_recognized_title">Nicht erkannte URL</string>
 <string name="url_not_recognized_message">Der folgende Link konnte nicht erkannt werden:\n%s</string>
+<string name="customize_tabs">Tabs anpassen</string>
+<string name="customize_tabs_summary">Hauptschnittstellen-Tabs konfigurieren</string>
+<string name="add_tab">Tab hinzufügen</string>
+<string name="select_tab_type">Tab-Typ auswählen</string>
+<string name="blank_page">Leere Seite</string>
+<string name="select_item">Element auswählen</string>
+<string name="published_on">Veröffentlicht am</string>
+<string name="cannot_remove_tab">Dieser Tab ist immer verfügbar.</string>
+<string name="tab_already_exists">Dieser Tab existiert bereits.</string>
+<string name="description_tab">Beschreibung</string>
+<string name="blank_page_hint">Tippen Sie auf die Lupe, um zu beginnen.</string>
+<string name="all_feed_title">Was gibt\'s Neues</string>
 </resources>

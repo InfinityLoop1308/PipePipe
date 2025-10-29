@@ -128,7 +128,22 @@ Input:
 
     def get_translated_dict(self, content, language, extra_note=""):
         """获取翻译后的字典对象"""
-        return json.loads(self.translate(content, language, extra_note))
+        translated_text = self.translate(content, language, extra_note)
+
+        # 清理可能的 markdown 代码块标记
+        translated_text = translated_text.strip()
+        if translated_text.startswith("```"):
+            # 移除第一行的 ```json 或 ```
+            lines = translated_text.split('\n')
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            # 移除最后一行的 ```
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            translated_text = '\n'.join(lines)
+
+        return json.loads(translated_text)
+
 
 
 from bs4 import BeautifulSoup

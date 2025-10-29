@@ -392,4 +392,16 @@
 <string name="duplicate_in_playlist">Las listas de reproducción atenuadas ya contienen este video.</string>
 <string name="url_not_recognized_title">URL no reconocida</string>
 <string name="url_not_recognized_message">No se puede reconocer el siguiente enlace:\n%s</string>
+<string name="tab_already_exists">Esta pestaña ya existe.</string>
+<string name="all_feed_title">¿Qué hay de nuevo?</string>
+<string name="blank_page_hint">Toca la lupa para empezar.</string>
+<string name="customize_tabs">Personalizar pestañas</string>
+<string name="customize_tabs_summary">Configurar pestañas de la interfaz principal</string>
+<string name="add_tab">Añadir pestaña</string>
+<string name="select_tab_type">Seleccionar tipo de pestaña</string>
+<string name="blank_page">Página en blanco</string>
+<string name="select_item">Seleccionar elemento</string>
+<string name="cannot_remove_tab">Esta pestaña siempre está disponible.</string>
+<string name="description_tab">Descripción</string>
+<string name="published_on">Publicado el</string>
 </resources>

@@ -91,7 +91,8 @@ import java.net.URLEncoder
 fun ChannelScreen(
     navController: NavController,
     channelUrl: String,
-    serviceId: String
+    serviceId: String,
+    useAsTab: Boolean = false
 ) {
     val context = LocalContext.current
     val viewModel: ChannelViewModel = viewModel()
@@ -155,73 +156,75 @@ fun ChannelScreen(
 
 
     Column(modifier = Modifier.fillMaxSize()) {
-        CustomTopBar(
-            defaultTitleText = uiState.channelInfo?.name ?: stringResource(MR.strings.channel),
-            actions = {
-                Box {
-                    IconButton(onClick = { showMoreMenu = true }) {
-                        Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
-                    }
-                    DropdownMenu(
-                        expanded = showMoreMenu,
-                        onDismissRequest = { showMoreMenu = false }
-                    ) {
-                        // Notification toggle - only show when subscribed
-                        if (uiState.isSubscribed) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        stringResource(
-                                            if (notificationMode == 1L) MR.strings.channel_disable_notifications
-                                            else MR.strings.channel_enable_notifications
+        if (!useAsTab) {
+            CustomTopBar(
+                defaultTitleText = uiState.channelInfo?.name ?: stringResource(MR.strings.channel),
+                actions = {
+                    Box {
+                        IconButton(onClick = { showMoreMenu = true }) {
+                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+                        }
+                        DropdownMenu(
+                            expanded = showMoreMenu,
+                            onDismissRequest = { showMoreMenu = false }
+                        ) {
+                            // Notification toggle - only show when subscribed
+                            if (uiState.isSubscribed) {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            stringResource(
+                                                if (notificationMode == 1L) MR.strings.channel_disable_notifications
+                                                else MR.strings.channel_enable_notifications
+                                            )
                                         )
-                                    )
-                                },
+                                    },
+                                    onClick = {
+                                        showMoreMenu = false
+                                        scope.launch {
+                                            val newMode = if (notificationMode == 1L) 0L else 1L
+                                            DatabaseOperations.updateSubscriptionNotificationMode(
+                                                channelUrl,
+                                                newMode
+                                            )
+                                            notificationMode = newMode
+                                        }
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = if (notificationMode == 1L) Icons.Default.NotificationsOff else Icons.Default.Notifications,
+                                            contentDescription = null
+                                        )
+                                    }
+                                )
+                            }
+
+                            // Share
+                            DropdownMenuItem(
+                                text = { Text(stringResource(MR.strings.share)) },
                                 onClick = {
                                     showMoreMenu = false
-                                    scope.launch {
-                                        val newMode = if (notificationMode == 1L) 0L else 1L
-                                        DatabaseOperations.updateSubscriptionNotificationMode(
-                                            channelUrl,
-                                            newMode
-                                        )
-                                        notificationMode = newMode
+                                    val sendIntent = Intent().apply {
+                                        action = Intent.ACTION_SEND
+                                        putExtra(Intent.EXTRA_TEXT, channelUrl)
+                                        putExtra(Intent.EXTRA_TITLE, uiState.channelInfo?.name ?: "")
+                                        type = "text/plain"
                                     }
+                                    val shareIntent = Intent.createChooser(sendIntent, null)
+                                    context.startActivity(shareIntent)
                                 },
                                 leadingIcon = {
                                     Icon(
-                                        imageVector = if (notificationMode == 1L) Icons.Default.NotificationsOff else Icons.Default.Notifications,
+                                        imageVector = Icons.Default.Share,
                                         contentDescription = null
                                     )
                                 }
                             )
                         }
-
-                        // Share
-                        DropdownMenuItem(
-                            text = { Text(stringResource(MR.strings.share)) },
-                            onClick = {
-                                showMoreMenu = false
-                                val sendIntent = Intent().apply {
-                                    action = Intent.ACTION_SEND
-                                    putExtra(Intent.EXTRA_TEXT, channelUrl)
-                                    putExtra(Intent.EXTRA_TITLE, uiState.channelInfo?.name ?: "")
-                                    type = "text/plain"
-                                }
-                                val shareIntent = Intent.createChooser(sendIntent, null)
-                                context.startActivity(shareIntent)
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Share,
-                                    contentDescription = null
-                                )
-                            }
-                        )
                     }
                 }
-            }
-        )
+            )
+        }
 
         if (uiState.common.isLoading && uiState.channelInfo == null) {
             Box(

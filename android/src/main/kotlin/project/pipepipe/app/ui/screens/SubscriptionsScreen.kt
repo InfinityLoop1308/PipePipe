@@ -66,6 +66,8 @@ import project.pipepipe.database.Subscriptions
 import project.pipepipe.app.utils.formatCount
 import project.pipepipe.app.ui.viewmodel.SubscriptionsViewModel
 import project.pipepipe.app.uistate.VideoDetailPageState
+import project.pipepipe.app.helper.MainScreenTabHelper
+import project.pipepipe.app.helper.MainScreenTabHelper.categoryIconFor
 import java.net.URLEncoder
 
 @Composable
@@ -337,8 +339,9 @@ private fun SubscriptionsHeader(
 }
 
 @Composable
-private fun SubscriptionRow(
+fun SubscriptionRow(
     subscription: Subscriptions,
+    useHorizontalPadding: Boolean = true,
     onClick: () -> Unit
 ) {
     val subscribersLabel = subscription.subscriber_count
@@ -349,7 +352,7 @@ private fun SubscriptionRow(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = (if (useHorizontalPadding)16 else 0).dp)
             .padding(bottom = 18.dp, top = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -480,46 +483,3 @@ private fun CreateFeedGroupDialog(
         }
     )
 }
-
-fun categoryIconFor(id: Int): ImageVector =
-    when (id) {
-        1 -> Icons.Default.MusicNote
-        2 -> Icons.Default.School
-        3 -> Icons.Default.FitnessCenter
-        4 -> Icons.Default.SatelliteAlt
-        5 -> Icons.Default.Computer
-        6 -> Icons.Default.VideogameAsset
-        7 -> Icons.Default.DirectionsBike
-        8 -> Icons.Default.Campaign
-        9 -> Icons.Default.Favorite
-        10 -> Icons.Default.DirectionsCar
-        11 -> Icons.Default.Motorcycle
-        12 -> Icons.Default.TrendingUp
-        13 -> Icons.Default.Movie
-        14 -> Icons.Default.Backup
-        15 -> Icons.Default.Palette
-        16 -> Icons.Default.Person
-        17 -> Icons.Default.People
-        18 -> Icons.Default.AttachMoney
-        19 -> Icons.Default.ChildCare
-        20 -> Icons.Default.Fastfood
-        21 -> Icons.Default.InsertEmoticon
-        22 -> Icons.Default.Explore
-        23 -> Icons.Default.Restaurant
-        24 -> Icons.Default.Mic
-        25 -> Icons.Default.Headset
-        26 -> Icons.Default.Radio
-        27 -> Icons.Default.ShoppingCart
-        28 -> Icons.Default.WatchLater
-        29 -> Icons.Default.Work
-        30 -> Icons.Default.Whatshot
-        31 -> Icons.Default.Tv
-        32 -> Icons.Default.Bookmark
-        33 -> Icons.Default.Pets
-        34 -> Icons.Default.Public
-        35 -> Icons.Default.Stars
-        36 -> Icons.Default.WbSunny
-        37 -> Icons.Default.RssFeed
-        0, 38 -> Icons.Default.Subscriptions
-        else -> Icons.Default.Subscriptions
-    }

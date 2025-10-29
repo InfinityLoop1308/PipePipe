@@ -1,61 +1,55 @@
 package project.pipepipe.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.SpaceDashboard
-import androidx.compose.material.icons.filled.Subscriptions
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
-import project.pipepipe.app.MR
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.MainScreenTabConfig
+import project.pipepipe.app.helper.MainScreenTabConfigDefaults
+import project.pipepipe.app.helper.MainScreenTabHelper
+import project.pipepipe.app.ui.screens.playlistdetail.PlaylistDetailScreen
 import project.pipepipe.app.ui.theme.customTopBarColor
 import project.pipepipe.app.ui.theme.onCustomTopBarColor
 
-private data class TabItem(
-    val title: String,
-    val icon: ImageVector
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabNavigationScreen(navController: NavController) {
-    val tabs = listOf(
-        TabItem(stringResource(MR.strings.dashboard), Icons.Default.SpaceDashboard),
-        TabItem(stringResource(MR.strings.tab_subscriptions), Icons.Default.Subscriptions),
-        TabItem(stringResource(MR.strings.tab_bookmarks), Icons.Default.Bookmark)
-    )
-    val pagerState = rememberPagerState(pageCount = { tabs.size })
+    val settingsManager = SharedContext.settingsManager
+
+    // Load saved tabs or use defaults
+    val tabConfigs by remember {
+        mutableStateOf(
+            try {
+                val jsonString = settingsManager.getString("custom_tabs_config_key")
+                if (jsonString.isNotEmpty()) {
+                    Json.decodeFromString<List<MainScreenTabConfig>>(jsonString)
+                } else {
+                    MainScreenTabConfigDefaults.getDefaultTabs()
+                }
+            } catch (e: Exception) {
+                MainScreenTabConfigDefaults.getDefaultTabs()
+            }
+        )
+    }
+
+    val pagerState = rememberPagerState(pageCount = { tabConfigs.size })
     val scope = rememberCoroutineScope()
 
     Column(
@@ -85,7 +79,7 @@ fun TabNavigationScreen(navController: NavController) {
             }
 
             Text(
-                text = tabs[pagerState.currentPage].title,
+                text = MainScreenTabHelper.getTabDisplayName(tabConfigs[pagerState.currentPage].route),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 color = onCustomTopBarColor()
@@ -105,7 +99,7 @@ fun TabNavigationScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             containerColor = customTopBarColor()
         ) {
-            tabs.forEachIndexed { index, tab ->
+            tabConfigs.forEachIndexed { index, tabConfig ->
                 Tab(
                     selected = pagerState.currentPage == index,
                     onClick = {
@@ -115,8 +109,8 @@ fun TabNavigationScreen(navController: NavController) {
                     },
                     icon = {
                         Icon(
-                            imageVector = tab.icon,
-                            contentDescription = tab.title,
+                            imageVector = MainScreenTabHelper.getTabIcon(tabConfig.route),
+                            contentDescription = MainScreenTabHelper.getTabDisplayName(tabConfig.route),
                             modifier = Modifier.size(22.dp),
                             tint = onCustomTopBarColor()
                         )
@@ -130,10 +124,62 @@ fun TabNavigationScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             beyondViewportPageCount = 3
         ) { page ->
-            when (page) {
-                0 -> DashboardScreen(navController = navController)
-                1 -> SubscriptionsScreen(navController = navController)
-                2 -> BookmarkedPlaylistScreen(navController = navController)
+            val route = tabConfigs[page].route
+            val baseRoute = route.substringBefore('?')
+println(route)
+            when {
+                route == "dashboard" -> DashboardScreen(navController = navController)
+                route == "subscriptions" -> SubscriptionsScreen(navController = navController)
+                route == "bookmarked_playlists" -> BookmarkedPlaylistScreen(navController = navController)
+                route == "blank" -> BlankPageScreen()
+                route == "history" -> PlaylistDetailScreen(
+                    url = "local://history",
+                    useAsTab = true,
+                    navController = navController
+                )
+                baseRoute.startsWith("feed/") -> {
+                    val feedId = baseRoute.substringAfter("feed/")
+                    val params = route.substringAfter('?', "")
+                    val nameParam = if (params.isNotEmpty()) {
+                        params.split('&').find { it.startsWith("name=") }?.substringAfter("name=")
+                    } else null
+                    val encodedUrl = if (nameParam != null) {
+                        "local://feed/$feedId?name=$nameParam"
+                    } else {
+                        "local://feed/$feedId"
+                    }
+                    PlaylistDetailScreen(
+                        url = encodedUrl,
+                        useAsTab = true,
+                        navController = navController
+                    )
+                }
+                baseRoute == "playlist" ||  route.startsWith("trending://")  -> {
+                    val params = route.substringAfter('?', "")
+                    val urlParam = params.split('&').find { it.startsWith("url=") }?.substringAfter("url=")
+                    val serviceIdParam = params.split('&').find { it.startsWith("serviceId=") }?.substringAfter("serviceId=")
+                    if (urlParam != null) {
+                        PlaylistDetailScreen(
+                            url = java.net.URLDecoder.decode(urlParam, "UTF-8"),
+                            useAsTab = true,
+                            navController = navController,
+                            serviceId = serviceIdParam
+                        )
+                    }
+                }
+                baseRoute == "channel" -> {
+                    val params = route.substringAfter('?', "")
+                    val urlParam = params.split('&').find { it.startsWith("url=") }?.substringAfter("url=")
+                    val serviceIdParam = params.split('&').find { it.startsWith("serviceId=") }?.substringAfter("serviceId=")
+                    if (urlParam != null && serviceIdParam != null) {
+                        ChannelScreen(
+                            navController = navController,
+                            channelUrl = java.net.URLDecoder.decode(urlParam, "UTF-8"),
+                            serviceId = serviceIdParam,
+                            useAsTab = true
+                        )
+                    }
+                }
             }
         }
     }

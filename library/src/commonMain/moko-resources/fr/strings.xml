@@ -392,4 +392,16 @@
 <string name="duplicate_in_playlist">Les playlists grisées contiennent déjà cette vidéo.</string>
 <string name="url_not_recognized_title">URL non reconnue</string>
 <string name="url_not_recognized_message">Impossible de reconnaître le lien suivant :\n%s</string>
+<string name="customize_tabs">Personnaliser les onglets</string>
+<string name="customize_tabs_summary">Configurer les onglets de l\'interface principale</string>
+<string name="add_tab">Ajouter un onglet</string>
+<string name="select_tab_type">Sélectionner le type d\'onglet</string>
+<string name="blank_page">Page blanche</string>
+<string name="select_item">Sélectionner un élément</string>
+<string name="published_on">Publié le</string>
+<string name="cannot_remove_tab">Cet onglet est toujours disponible.</string>
+<string name="tab_already_exists">Cet onglet existe déjà.</string>
+<string name="description_tab">Description</string>
+<string name="blank_page_hint">Appuyez sur la loupe pour commencer.</string>
+<string name="all_feed_title">Quoi de neuf</string>
 </resources>
