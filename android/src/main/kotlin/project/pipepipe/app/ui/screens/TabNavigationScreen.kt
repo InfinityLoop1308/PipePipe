@@ -52,6 +52,13 @@ fun TabNavigationScreen(navController: NavController) {
     val pagerState = rememberPagerState(pageCount = { tabConfigs.size })
     val scope = rememberCoroutineScope()
 
+    // Automatically adjust currentPage if it goes out of bounds
+    LaunchedEffect(tabConfigs.size) {
+        if (tabConfigs.isNotEmpty() && pagerState.currentPage >= tabConfigs.size) {
+            pagerState.scrollToPage(tabConfigs.size - 1)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,12 +85,16 @@ fun TabNavigationScreen(navController: NavController) {
                 )
             }
 
-            Text(
-                text = MainScreenTabHelper.getTabDisplayName(tabConfigs[pagerState.currentPage].route),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                color = onCustomTopBarColor()
-            )
+            // Safe access to tab config with boundary check
+            if (tabConfigs.isNotEmpty()) {
+                val safeIndex = pagerState.currentPage.coerceIn(0, tabConfigs.size - 1)
+                Text(
+                    text = MainScreenTabHelper.getTabDisplayName(tabConfigs[safeIndex].route),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = onCustomTopBarColor()
+                )
+            }
 
             IconButton(onClick = { navController.navigate(Screen.Search.createRoute()) }) {
                 Icon(
