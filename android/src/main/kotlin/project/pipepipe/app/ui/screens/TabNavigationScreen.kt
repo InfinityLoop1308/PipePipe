@@ -126,7 +126,6 @@ fun TabNavigationScreen(navController: NavController) {
         ) { page ->
             val route = tabConfigs[page].route
             val baseRoute = route.substringBefore('?')
-println(route)
             when {
                 route == "dashboard" -> DashboardScreen(navController = navController)
                 route == "subscriptions" -> SubscriptionsScreen(navController = navController)
