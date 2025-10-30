@@ -37,6 +37,7 @@ object MainScreenTabHelper {
     fun getTabIcon(route: String): ImageVector {
         val baseRoute = route.substringBefore('?')
         return when {
+            route.contains("url=trending") -> Icons.Default.Whatshot
             route == "dashboard" -> Icons.Default.SpaceDashboard
             route == "subscriptions" -> Icons.Default.Subscriptions
             route == "bookmarked_playlists" || route.startsWith("playlist") -> Icons.Default.Bookmark
@@ -50,7 +51,6 @@ object MainScreenTabHelper {
                 val iconId = iconIdParam?.toIntOrNull() ?: 0
                 categoryIconFor(iconId)
             }
-            route.startsWith("trending") -> Icons.Default.Whatshot
             else -> Icons.Default.Tab
         }
     }
