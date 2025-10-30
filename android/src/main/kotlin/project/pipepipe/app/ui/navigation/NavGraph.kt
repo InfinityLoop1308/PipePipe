@@ -15,6 +15,7 @@ import project.pipepipe.app.ui.screens.SearchScreen
 import project.pipepipe.app.ui.screens.SettingsScreen
 import project.pipepipe.app.ui.screens.TabNavigationScreen
 import project.pipepipe.app.ui.screens.playlistdetail.PlaylistDetailScreen
+import project.pipepipe.app.ui.screens.settings.AboutScreen
 import project.pipepipe.app.ui.screens.settings.AppearanceSettingsScreen
 import project.pipepipe.app.ui.screens.settings.ChannelNotificationSelectionScreen
 import project.pipepipe.app.ui.screens.settings.FeedSettingsScreen
@@ -102,6 +103,9 @@ fun NavGraph(
         }
         composable(Screen.UpdateSettings.route) {
             UpdateSettingsScreen(navController = navController)
+        }
+        composable(Screen.AboutSettings.route) {
+            AboutScreen(navController = navController)
         }
         composable(Screen.Search.route) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")

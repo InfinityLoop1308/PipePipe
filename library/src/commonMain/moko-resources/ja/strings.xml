@@ -425,4 +425,14 @@
 <string name="app_update_notification_title">新しいPipePipeバージョンが利用可能です</string>
 <string name="update_show_prerelease_title">プレリリースバージョンを含める</string>
 <string name="app_update_unavailable">アプリは最新です</string>
+<string name="settings_section_about">概要</string>
+<string name="app_name">PipePipe</string>
+<string name="about_view_on_github">GitHubで表示</string>
+<string name="about_contribute_title">貢献する</string>
+<string name="about_app_description">NewPipeを再構築：より速く、より安定し、より多くの機能を搭載。</string>
+<string name="about_donate_title">寄付する</string>
+<string name="about_contribute_description">PipePipeはコミュニティによって構築されています。機能のアイデアや翻訳から主要なコード改善まで、あらゆる種類の貢献を歓迎します。</string>
+<string name="about_app_version">バージョン %s</string>
+<string name="about_become_supporter">サポーターになる</string>
+<string name="about_donate_description">PipePipeをご利用いただきありがとうございます！もしお役に立てたなら、Ko-Fiでサポーターになることをご検討ください。皆様のサポートは私にとって重要であり、よりエキサイティングな新機能を追加するのに役立ちます。どんな小さな貢献でも大歓迎です！😇</string>
 </resources>

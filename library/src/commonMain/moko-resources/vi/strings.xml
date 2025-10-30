@@ -425,4 +425,14 @@
 <string name="app_update_notification_title">Phiên bản PipePipe mới đã có sẵn</string>
 <string name="update_show_prerelease_title">Bao gồm các phiên bản tiền phát hành</string>
 <string name="app_update_unavailable">Ứng dụng đã được cập nhật</string>
+<string name="settings_section_about">Giới thiệu</string>
+<string name="app_name">PipePipe</string>
+<string name="about_view_on_github">Xem trên GitHub</string>
+<string name="about_contribute_title">Đóng góp</string>
+<string name="about_app_description">NewPipe, được tái hình dung: nhanh hơn, ổn định hơn và tích hợp nhiều tính năng hơn.</string>
+<string name="about_donate_title">Quyên góp</string>
+<string name="about_contribute_description">PipePipe được xây dựng bởi cộng đồng. Chúng tôi hoan nghênh mọi đóng góp, từ ý tưởng tính năng và bản dịch đến những cải tiến lớn về mã nguồn.</string>
+<string name="about_app_version">Phiên bản %s</string>
+<string name="about_become_supporter">Trở thành Người ủng hộ</string>
+<string name="about_donate_description">Cảm ơn bạn đã sử dụng PipePipe! Nếu bạn thấy ứng dụng hữu ích, vui lòng cân nhắc trở thành người ủng hộ trên Ko-Fi. Sự ủng hộ của bạn rất quan trọng đối với tôi và giúp tôi bổ sung thêm nhiều tính năng mới thú vị. Mọi đóng góp đều có giá trị! 😇</string>
 </resources>

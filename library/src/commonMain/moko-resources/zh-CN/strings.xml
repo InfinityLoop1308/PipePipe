@@ -425,4 +425,14 @@
 <string name="app_update_notification_title">有新的 PipePipe 版本可用</string>
 <string name="update_show_prerelease_title">包含预发布版本</string>
 <string name="app_update_unavailable">应用已是最新版本</string>
+<string name="settings_section_about">关于</string>
+<string name="app_name">PipePipe</string>
+<string name="about_view_on_github">在 GitHub 上查看</string>
+<string name="about_contribute_title">贡献</string>
+<string name="about_app_description">NewPipe，重新构想：更快、更稳定，并拥有更多功能。</string>
+<string name="about_donate_title">捐赠</string>
+<string name="about_contribute_description">PipePipe 由社区构建。我们欢迎各种形式的贡献，从功能想法和翻译到主要的改进代码。</string>
+<string name="about_app_version">版本 %s</string>
+<string name="about_become_supporter">成为支持者</string>
+<string name="about_donate_description">感谢您使用 PipePipe！如果您觉得它有用，请考虑在 Ko-Fi 上成为支持者。您的支持对我非常重要，并帮助我添加更多令人兴奋的新功能。点滴支持都弥足珍贵！😇</string>
 </resources>

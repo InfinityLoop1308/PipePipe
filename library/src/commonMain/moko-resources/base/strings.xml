@@ -435,4 +435,15 @@
     <string name="app_update_notification_message">Version %s is ready to download</string>
     <string name="update_show_prerelease_title">Include pre-release versions</string>
     <string name="update_show_prerelease_summary">Show beta and test versions in update checks</string>
+    <!-- About screen -->
+    <string name="app_name">PipePipe</string>
+    <string name="settings_section_about">About</string>
+    <string name="about_app_version">Version %s</string>
+    <string name="about_app_description">NewPipe, reimagined: faster, more stable, and packed with more features.</string>
+    <string name="about_contribute_title">Contribute</string>
+    <string name="about_contribute_description">PipePipe is built by the community. We welcome contributions of all kinds, from feature ideas and translations to major code improvements.</string>
+    <string name="about_view_on_github">View on GitHub</string>
+    <string name="about_donate_title">Donate</string>
+    <string name="about_donate_description">Thank you for using PipePipe! If you find it useful, please consider becoming a supporter on Ko-Fi. Your support is important to me and helps me add more exciting new features. Every bit counts! 😇</string>
+    <string name="about_become_supporter">Become a Supporter</string>
 </resources>

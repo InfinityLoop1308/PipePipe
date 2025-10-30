@@ -58,4 +58,5 @@ sealed class Screen(val route: String) {
     object ChannelNotificationSelection: Screen("channel_notification_selection")
     object TabCustomization: Screen("tab_customization")
     object UpdateSettings: Screen("update_settings")
+    object AboutSettings: Screen("about_settings")
 }

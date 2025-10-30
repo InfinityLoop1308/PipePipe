@@ -425,4 +425,14 @@
 <string name="app_update_notification_title">Nueva versión de PipePipe disponible</string>
 <string name="update_show_prerelease_title">Incluir versiones preliminares</string>
 <string name="app_update_unavailable">La aplicación está actualizada</string>
+<string name="settings_section_about">Acerca de</string>
+<string name="app_name">PipePipe</string>
+<string name="about_view_on_github">Ver en GitHub</string>
+<string name="about_contribute_title">Contribuir</string>
+<string name="about_app_description">NewPipe, reinventado: más rápido, más estable y con más funciones.</string>
+<string name="about_donate_title">Donar</string>
+<string name="about_contribute_description">PipePipe está construido por la comunidad. Agradecemos contribuciones de todo tipo, desde ideas de funciones y traducciones hasta mejoras importantes en el código.</string>
+<string name="about_app_version">Versión %s</string>
+<string name="about_become_supporter">Conviértete en un patrocinador</string>
+<string name="about_donate_description">¡Gracias por usar PipePipe! Si lo encuentras útil, considera convertirte en un patrocinador en Ko-Fi. Tu apoyo es importante para mí y me ayuda a añadir más funciones nuevas y emocionantes. ¡Cada pequeña contribución cuenta! 😇</string>
 </resources>
