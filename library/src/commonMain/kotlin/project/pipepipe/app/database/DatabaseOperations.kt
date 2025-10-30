@@ -282,10 +282,9 @@ object DatabaseOperations {
     suspend fun reorderPlaylistItem(orderedJoinIds: List<Long>) = withContext(Dispatchers.IO) {
         database.transaction {
             // First, shift all join_index values to avoid conflicts
-            val offset = orderedJoinIds.size * 1000L // Use a large offset
             orderedJoinIds.forEachIndexed { index, joinId ->
                 database.appDatabaseQueries.updatePlaylistStreamOrder(
-                    join_index = offset + index,
+                    join_index = -(index.toLong() + 1),
                     id = joinId
                 )
             }

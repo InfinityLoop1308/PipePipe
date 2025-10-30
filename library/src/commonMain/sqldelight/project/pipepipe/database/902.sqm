@@ -124,3 +124,15 @@ CREATE INDEX index_playlists_name ON playlists (name);
 
 -- This index may already exist from 901, so we use IF NOT EXISTS
 CREATE INDEX IF NOT EXISTS index_search_history_search ON search_history (search);
+
+-- ============================================================
+-- Part 6: Clean up orphaned records in playlist_stream_join and feed tables
+-- ============================================================
+
+-- Delete playlist_stream_join records where the stream_id does not exist in streams table
+DELETE FROM playlist_stream_join
+WHERE stream_id NOT IN (SELECT uid FROM streams);
+
+-- Delete feed records where the stream_id does not exist in streams table
+DELETE FROM feed
+WHERE stream_id NOT IN (SELECT uid FROM streams);

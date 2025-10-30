@@ -48,7 +48,7 @@ class PlaylistDetailViewModel : ViewModel() {
         sharedViewModel.reorderItems(fromIndex, toIndex)
         viewModelScope.launch {
             uiState.value.list.itemList.let { items ->
-                val orderedJoinIds = items.mapNotNull { it.joinId }
+                val orderedJoinIds = items.map { it.joinId!! }
                 DatabaseOperations.reorderPlaylistItem(orderedJoinIds)
             }
         }
