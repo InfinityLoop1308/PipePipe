@@ -200,6 +200,19 @@ private fun StreamInfoMenuItems(
     var showDownloadDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val activity = context.findActivity() as MainActivity
+    var isSubscribed by remember { mutableStateOf(false) }
+    var isBlocked by remember { mutableStateOf(false) }
+
+    LaunchedEffect(streamInfo.uploaderUrl) {
+        streamInfo.uploaderUrl?.let { url ->
+            isSubscribed = DatabaseOperations.isSubscribed(url)
+        }
+        streamInfo.uploaderName?.let { name ->
+            val blockedChannels = SharedContext.settingsManager.getStringSet("filter_by_channel_key_set", emptySet())
+            isBlocked = blockedChannels.contains(name)
+        }
+    }
+
 
     val menuItems = buildList {
         if (!disablePlayOperations) {
@@ -256,22 +269,40 @@ private fun StreamInfoMenuItems(
                 onOpenChannel()
                 onDismiss()
             })
-            add(Triple(Icons.Default.Subscriptions, stringResource(MR.strings.bottom_sheet_subscribe_channel)) {
-                GlobalScope.launch {
-                    streamInfo.uploaderUrl?.let { url ->
-                        DatabaseOperations.insertOrUpdateSubscription(ChannelInfo(
-                            serviceId = streamInfo.serviceId,
-                            url = url,
-                            name = streamInfo.uploaderName!!,
-                            thumbnailUrl = null,
-                            subscriberCount = null
-                        ))
+            if (!isSubscribed) {
+                add(Triple(Icons.Default.Subscriptions, stringResource(MR.strings.bottom_sheet_subscribe_channel)) {
+                    GlobalScope.launch {
+                        streamInfo.uploaderUrl?.let { url ->
+                            DatabaseOperations.insertOrUpdateSubscription(
+                                ChannelInfo(
+                                    serviceId = streamInfo.serviceId,
+                                    url = url,
+                                    name = streamInfo.uploaderName!!,
+                                    thumbnailUrl = streamInfo.thumbnailUrl,
+                                    subscriberCount = streamInfo.uploaderSubscriberCount
+                                )
+                            )
+                        }
+                        isSubscribed = true
                     }
-                }
-                ToastManager.show(doneText)
-                onDismiss()
-            })
-            add(Triple(Icons.Default.Block, stringResource(MR.strings.bottom_sheet_block_channel)) { /* TODO */ onDismiss() })
+                    ToastManager.show(doneText)
+                    onDismiss()
+                })
+            }
+            if (!isBlocked) {
+                add(Triple(Icons.Default.Block, stringResource(MR.strings.bottom_sheet_block_channel)) {
+                    streamInfo.uploaderName?.let { name ->
+                        val currentSet =
+                            SharedContext.settingsManager.getStringSet("filter_by_channel_key_set", emptySet())
+                        if (!currentSet.contains(name)) {
+                            SharedContext.settingsManager.putStringSet("filter_by_channel_key_set", currentSet + name)
+                            isBlocked = true
+                        }
+                        ToastManager.show(doneText)
+                    }
+                    onDismiss()
+                })
+            }
         }
 
         if (onNavigateTo != null) {
