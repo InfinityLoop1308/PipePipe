@@ -246,7 +246,7 @@ private fun StreamInfoMenuItems(
                 onDismiss()
             })
         }
-        if (streamInfo.uploaderUrl != null) {
+        if (streamInfo.uploaderUrl != null && streamInfo.uploaderName != null) {
             add(Triple(Icons.Default.Person, stringResource(MR.strings.show_channel_details)) {
                 onOpenChannel()
                 onDismiss()
@@ -257,7 +257,7 @@ private fun StreamInfoMenuItems(
                         DatabaseOperations.insertOrUpdateSubscription(ChannelInfo(
                             serviceId = streamInfo.serviceId,
                             url = url,
-                            name = streamInfo.uploaderName ?: context.getString(MR.strings.bottom_sheet_unknown_channel.resourceId),
+                            name = streamInfo.uploaderName!!,
                             thumbnailUrl = null,
                             subscriberCount = null
                         ))

@@ -80,7 +80,7 @@ fun PlaylistDetailScreen(
 
     val titleTextRaw =
         if (url.getType() == "trending") StringResourceHelper.getTranslatedTrendingName(getQueryValue(url, "name")!!)
-        else uiState.playlistInfo?.name ?: context.getString(MR.strings.playlist_title_default.resourceId)
+        else uiState.playlistInfo?.name ?: stringResource(MR.strings.playlist_title_default)
 
 
     val titleText = remember(url, uiState.playlistInfo?.name) {titleTextRaw}
