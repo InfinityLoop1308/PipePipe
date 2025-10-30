@@ -414,4 +414,15 @@
 <string name="tab">Scheda</string>
 <string name="settings_appearance_grid_columns_title">Colonne della griglia</string>
 <string name="grid">Griglia</string>
+<string name="settings_section_update">Aggiornamenti</string>
+<string name="update_checking">Ricerca aggiornamenti…</string>
+<string name="update_check_manual_summary">Verifica manualmente la presenza di nuove versioni</string>
+<string name="update_check_manual_title">Verifica aggiornamenti</string>
+<string name="app_update_notification_message">La versione %s è pronta per il download</string>
+<string name="update_app_enabled_title">Verifica aggiornamenti</string>
+<string name="update_app_enabled_summary">Verifica automaticamente la presenza di nuove versioni dell\'app</string>
+<string name="update_show_prerelease_summary">Mostra le versioni beta e di test nelle verifiche degli aggiornamenti</string>
+<string name="app_update_notification_title">Nuova versione di PipePipe disponibile</string>
+<string name="update_show_prerelease_title">Includi versioni pre-release</string>
+<string name="app_update_unavailable">L\'app è aggiornata</string>
 </resources>

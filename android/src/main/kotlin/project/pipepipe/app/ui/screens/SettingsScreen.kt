@@ -41,7 +41,7 @@ fun SettingsScreen(
 //            SettingsSection(Icons.Default.Public, "Content"),
 //            SettingsSection(Icons.Default.Person, "Account"),
             SettingsSection(Icons.Default.Notifications, MR.strings.settings_category_feed_title.desc().toString(context = context), Screen.FeedSettings),
-//            SettingsSection(Icons.Default.SystemUpdateAlt, "Updates"),
+            SettingsSection(Icons.Default.SystemUpdateAlt, MR.strings.settings_section_update.desc().toString(context = context), Screen.UpdateSettings),
             SettingsSection(Icons.Default.Save, MR.strings.settings_section_import_export.desc().toString(context = context), Screen.ImportExportSettings),
             SettingsSection(Icons.Default.FilterAlt, MR.strings.settings_section_filter.desc().toString(context = context), Screen.FilterSettings),
             SettingsSection(Icons.Default.Shield, MR.strings.sponsor_block.desc().toString(context = context), Screen.SponsorBlockSettings),

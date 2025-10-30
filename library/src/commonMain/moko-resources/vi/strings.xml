@@ -414,4 +414,15 @@
 <string name="tab">Tab</string>
 <string name="settings_appearance_grid_columns_title">Cột lưới</string>
 <string name="grid">Lưới</string>
+<string name="settings_section_update">Cập nhật</string>
+<string name="update_checking">Đang kiểm tra cập nhật…</string>
+<string name="update_check_manual_summary">Kiểm tra thủ công các phiên bản mới</string>
+<string name="update_check_manual_title">Kiểm tra cập nhật</string>
+<string name="app_update_notification_message">Phiên bản %s đã sẵn sàng để tải xuống</string>
+<string name="update_app_enabled_title">Kiểm tra cập nhật</string>
+<string name="update_app_enabled_summary">Tự động kiểm tra các phiên bản ứng dụng mới</string>
+<string name="update_show_prerelease_summary">Hiển thị các phiên bản beta và thử nghiệm trong kiểm tra cập nhật</string>
+<string name="app_update_notification_title">Phiên bản PipePipe mới đã có sẵn</string>
+<string name="update_show_prerelease_title">Bao gồm các phiên bản tiền phát hành</string>
+<string name="app_update_unavailable">Ứng dụng đã được cập nhật</string>
 </resources>

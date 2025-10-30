@@ -414,4 +414,15 @@
 <string name="tab">Onglet</string>
 <string name="settings_appearance_grid_columns_title">Colonnes de la grille</string>
 <string name="grid">Grille</string>
+<string name="settings_section_update">Mises à jour</string>
+<string name="update_checking">Vérification des mises à jour…</string>
+<string name="update_check_manual_summary">Vérifier manuellement les nouvelles versions</string>
+<string name="update_check_manual_title">Vérifier les mises à jour</string>
+<string name="app_update_notification_message">La version %s est prête à être téléchargée</string>
+<string name="update_app_enabled_title">Vérifier les mises à jour</string>
+<string name="update_app_enabled_summary">Vérifier automatiquement les nouvelles versions de l\'application</string>
+<string name="update_show_prerelease_summary">Afficher les versions bêta et de test lors des vérifications de mises à jour</string>
+<string name="app_update_notification_title">Nouvelle version de PipePipe disponible</string>
+<string name="update_show_prerelease_title">Inclure les versions préliminaires</string>
+<string name="app_update_unavailable">L\'application est à jour</string>
 </resources>

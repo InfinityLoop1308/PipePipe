@@ -423,4 +423,16 @@
     <string name="newpipe_backup_warning_title">NewPipe Backup Detected</string>
     <string name="newpipe_backup_warning_message">You are importing a NewPipe backup. Please note that NewPipe and PipePipe backups are not fully compatible.</string>
     <string name="hint_continue">Continue</string>
+    <!-- Update settings -->
+    <string name="settings_section_update">Updates</string>
+    <string name="update_app_enabled_title">Check for updates</string>
+    <string name="update_app_enabled_summary">Automatically check for new app versions</string>
+    <string name="update_check_manual_title">Check for updates</string>
+    <string name="update_check_manual_summary">Manually check for new versions</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="app_update_unavailable">App is up to date</string>
+    <string name="app_update_notification_title">New PipePipe version available</string>
+    <string name="app_update_notification_message">Version %s is ready to download</string>
+    <string name="update_show_prerelease_title">Include pre-release versions</string>
+    <string name="update_show_prerelease_summary">Show beta and test versions in update checks</string>
 </resources>

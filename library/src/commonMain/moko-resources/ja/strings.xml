@@ -414,4 +414,15 @@
 <string name="tab">タブ</string>
 <string name="settings_appearance_grid_columns_title">グリッドの列</string>
 <string name="grid">グリッド</string>
+<string name="settings_section_update">アップデート</string>
+<string name="update_checking">アップデートを確認中…</string>
+<string name="update_check_manual_summary">手動で新しいバージョンを確認する</string>
+<string name="update_check_manual_title">アップデートを確認</string>
+<string name="app_update_notification_message">バージョン%sをダウンロードする準備ができました</string>
+<string name="update_app_enabled_title">アップデートを確認</string>
+<string name="update_app_enabled_summary">新しいアプリのバージョンを自動的に確認する</string>
+<string name="update_show_prerelease_summary">アップデート確認時にベータ版とテスト版を表示する</string>
+<string name="app_update_notification_title">新しいPipePipeバージョンが利用可能です</string>
+<string name="update_show_prerelease_title">プレリリースバージョンを含める</string>
+<string name="app_update_unavailable">アプリは最新です</string>
 </resources>

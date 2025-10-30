@@ -414,4 +414,15 @@
 <string name="tab">Pestaña</string>
 <string name="settings_appearance_grid_columns_title">Columnas de la cuadrícula</string>
 <string name="grid">Cuadrícula</string>
+<string name="settings_section_update">Actualizaciones</string>
+<string name="update_checking">Buscando actualizaciones…</string>
+<string name="update_check_manual_summary">Buscar nuevas versiones manualmente</string>
+<string name="update_check_manual_title">Buscar actualizaciones</string>
+<string name="app_update_notification_message">La versión %s está lista para descargar</string>
+<string name="update_app_enabled_title">Buscar actualizaciones</string>
+<string name="update_app_enabled_summary">Buscar nuevas versiones de la aplicación automáticamente</string>
+<string name="update_show_prerelease_summary">Mostrar versiones beta y de prueba en las comprobaciones de actualización</string>
+<string name="app_update_notification_title">Nueva versión de PipePipe disponible</string>
+<string name="update_show_prerelease_title">Incluir versiones preliminares</string>
+<string name="app_update_unavailable">La aplicación está actualizada</string>
 </resources>

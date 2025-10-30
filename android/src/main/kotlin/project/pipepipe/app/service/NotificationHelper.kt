@@ -19,6 +19,7 @@ object NotificationHelper {
         createFeedNotificationChannel(context)
         createSleepTimerNotificationChannel(context)
         createStreamsNotificationChannel(context)
+        createAppUpdateNotificationChannel(context)
     }
 
     private fun createFeedNotificationChannel(context: Context) {
@@ -51,6 +52,19 @@ object NotificationHelper {
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
             description = MR.strings.enable_streams_notifications_summary.desc().toString(context = context)
+            setShowBadge(true)
+        }
+        val manager = context.getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
+    }
+
+    private fun createAppUpdateNotificationChannel(context: Context) {
+        val channel = NotificationChannel(
+            "app_update",
+            MR.strings.settings_section_update.desc().toString(context = context),
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = MR.strings.update_app_enabled_summary.desc().toString(context = context)
             setShowBadge(true)
         }
         val manager = context.getSystemService(NotificationManager::class.java)

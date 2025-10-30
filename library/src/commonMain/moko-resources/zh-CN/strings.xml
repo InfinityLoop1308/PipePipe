@@ -414,4 +414,15 @@
 <string name="tab">选项卡</string>
 <string name="settings_appearance_grid_columns_title">网格列</string>
 <string name="grid">网格</string>
+<string name="settings_section_update">更新</string>
+<string name="update_checking">正在检查更新…</string>
+<string name="update_check_manual_summary">手动检查新版本</string>
+<string name="update_check_manual_title">检查更新</string>
+<string name="app_update_notification_message">版本 %s 已准备好下载</string>
+<string name="update_app_enabled_title">检查更新</string>
+<string name="update_app_enabled_summary">自动检查新应用版本</string>
+<string name="update_show_prerelease_summary">在更新检查中显示测试版和预发布版本</string>
+<string name="app_update_notification_title">有新的 PipePipe 版本可用</string>
+<string name="update_show_prerelease_title">包含预发布版本</string>
+<string name="app_update_unavailable">应用已是最新版本</string>
 </resources>

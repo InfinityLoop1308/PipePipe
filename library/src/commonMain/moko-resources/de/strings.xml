@@ -414,4 +414,15 @@
 <string name="tab">Registerkarte</string>
 <string name="settings_appearance_grid_columns_title">Rasterspalten</string>
 <string name="grid">Raster</string>
+<string name="settings_section_update">Updates</string>
+<string name="update_checking">Suche nach Updates…</string>
+<string name="update_check_manual_summary">Manuell nach neuen Versionen suchen</string>
+<string name="update_check_manual_title">Nach Updates suchen</string>
+<string name="app_update_notification_message">Version %s steht zum Download bereit</string>
+<string name="update_app_enabled_title">Nach Updates suchen</string>
+<string name="update_app_enabled_summary">Automatisch nach neuen App-Versionen suchen</string>
+<string name="update_show_prerelease_summary">Beta- und Testversionen bei der Update-Suche anzeigen</string>
+<string name="app_update_notification_title">Neue PipePipe-Version verfügbar</string>
+<string name="update_show_prerelease_title">Vorabversionen einschließen</string>
+<string name="app_update_unavailable">App ist auf dem neuesten Stand</string>
 </resources>

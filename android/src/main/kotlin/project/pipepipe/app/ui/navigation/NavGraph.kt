@@ -27,6 +27,7 @@ import project.pipepipe.app.ui.screens.settings.PlayerSettingScreen
 import project.pipepipe.app.ui.screens.settings.SponsorBlockCategoriesSettingsScreen
 import project.pipepipe.app.ui.screens.settings.SponsorBlockSettingsScreen
 import project.pipepipe.app.ui.screens.settings.TabCustomizationScreen
+import project.pipepipe.app.ui.screens.settings.UpdateSettingsScreen
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -98,6 +99,9 @@ fun NavGraph(
         }
         composable(Screen.TabCustomization.route) {
             TabCustomizationScreen()
+        }
+        composable(Screen.UpdateSettings.route) {
+            UpdateSettingsScreen(navController = navController)
         }
         composable(Screen.Search.route) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")
