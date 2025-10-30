@@ -35,7 +35,6 @@ object MainScreenTabHelper {
      * Get icon for a tab based on its route
      */
     fun getTabIcon(route: String): ImageVector {
-        val baseRoute = route.substringBefore('?')
         return when {
             route.contains("url=trending") -> Icons.Default.Whatshot
             route == "dashboard" -> Icons.Default.SpaceDashboard
