@@ -1,19 +1,8 @@
 package project.pipepipe.app.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -22,36 +11,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import android.content.Intent
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.NotificationsOff
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,21 +32,22 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.distinctUntilChanged
-import project.pipepipe.app.MR
 import kotlinx.coroutines.launch
-import project.pipepipe.app.global.StringResourceHelper
+import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.global.StringResourceHelper
+import project.pipepipe.app.ui.component.CustomTopBar
+import project.pipepipe.app.ui.component.FeedGroupSelectionDialog
+import project.pipepipe.app.ui.component.HtmlText
+import project.pipepipe.app.ui.component.ResponsiveTabs
+import project.pipepipe.app.ui.item.CommonItem
+import project.pipepipe.app.ui.theme.supportingTextColor
+import project.pipepipe.app.ui.viewmodel.ChannelViewModel
 import project.pipepipe.app.utils.formatCount
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.shared.infoitem.ChannelTabType
 import project.pipepipe.shared.infoitem.Info
-import project.pipepipe.app.ui.component.CustomTopBar
-import project.pipepipe.app.ui.component.FeedGroupSelectionDialog
-import project.pipepipe.app.ui.item.CommonItem
-import project.pipepipe.app.ui.theme.supportingTextColor
-import project.pipepipe.app.ui.viewmodel.ChannelViewModel
-import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.ui.component.HtmlText
 import java.net.URLEncoder
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -248,16 +212,13 @@ fun ChannelScreen(
                     }
                 )
             }
-            TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier.height(44.dp)) {
-                tabTypes.forEachIndexed { index, item ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            scope.launch { pagerState.animateScrollToPage(index) }
-                        },
-                        modifier = Modifier.height(44.dp),
-                        text = { Text(text = StringResourceHelper.getTranslatedTabString(item.name.lowercase()).uppercase()) }
-                    )
+            if (tabTypes.isNotEmpty()){
+                ResponsiveTabs(
+                    titles = tabTypes.map { StringResourceHelper.getTranslatedTabString(it.name.lowercase()).uppercase() },
+                    selectedIndex = pagerState.currentPage,
+                    modifier = Modifier.height(44.dp)
+                ) { index ->
+                    scope.launch { pagerState.animateScrollToPage(index) }
                 }
             }
 
