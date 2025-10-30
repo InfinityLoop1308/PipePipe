@@ -404,4 +404,7 @@
 <string name="description_tab">Description</string>
 <string name="blank_page_hint">Appuyez sur la loupe pour commencer.</string>
 <string name="all_feed_title">Quoi de neuf</string>
+<string name="newpipe_backup_warning_title">Sauvegarde NewPipe détectée</string>
+<string name="newpipe_backup_warning_message">Vous importez une sauvegarde NewPipe. Veuillez noter que les sauvegardes NewPipe et PipePipe ne sont pas entièrement compatibles.</string>
+<string name="hint_continue">Continuer</string>
 </resources>

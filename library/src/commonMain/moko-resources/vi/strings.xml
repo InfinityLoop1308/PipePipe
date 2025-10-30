@@ -404,4 +404,7 @@
 <string name="cannot_remove_tab">Tab này luôn có sẵn.</string>
 <string name="description_tab">Mô tả</string>
 <string name="published_on">Được xuất bản vào</string>
+<string name="newpipe_backup_warning_title">Đã phát hiện bản sao lưu NewPipe</string>
+<string name="newpipe_backup_warning_message">Bạn đang nhập bản sao lưu NewPipe. Xin lưu ý rằng bản sao lưu NewPipe và PipePipe không hoàn toàn tương thích.</string>
+<string name="hint_continue">Tiếp tục</string>
 </resources>

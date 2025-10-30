@@ -404,4 +404,7 @@
 <string name="description_tab">Beschreibung</string>
 <string name="blank_page_hint">Tippen Sie auf die Lupe, um zu beginnen.</string>
 <string name="all_feed_title">Was gibt\'s Neues</string>
+<string name="newpipe_backup_warning_title">NewPipe-Sicherung erkannt</string>
+<string name="newpipe_backup_warning_message">Sie importieren eine NewPipe-Sicherung. Bitte beachten Sie, dass NewPipe- und PipePipe-Sicherungen nicht vollständig kompatibel sind.</string>
+<string name="hint_continue">Weiter</string>
 </resources>

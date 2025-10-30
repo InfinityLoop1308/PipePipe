@@ -404,4 +404,7 @@
 <string name="cannot_remove_tab">Esta pestaña siempre está disponible.</string>
 <string name="description_tab">Descripción</string>
 <string name="published_on">Publicado el</string>
+<string name="newpipe_backup_warning_title">Copia de seguridad de NewPipe detectada</string>
+<string name="newpipe_backup_warning_message">Estás importando una copia de seguridad de NewPipe. Ten en cuenta que las copias de seguridad de NewPipe y PipePipe no son totalmente compatibles.</string>
+<string name="hint_continue">Continuar</string>
 </resources>

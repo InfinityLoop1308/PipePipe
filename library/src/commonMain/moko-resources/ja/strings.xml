@@ -404,4 +404,7 @@
 <string name="cannot_remove_tab">このタブは常に利用可能です。</string>
 <string name="description_tab">説明</string>
 <string name="published_on">公開日</string>
+<string name="newpipe_backup_warning_title">NewPipeのバックアップを検出しました</string>
+<string name="newpipe_backup_warning_message">NewPipeのバックアップをインポートしています。NewPipeとPipePipeのバックアップは完全に互換性があるわけではないことにご注意ください。</string>
+<string name="hint_continue">続行</string>
 </resources>

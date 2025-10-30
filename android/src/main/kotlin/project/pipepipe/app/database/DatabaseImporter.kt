@@ -115,6 +115,44 @@ class DatabaseImporter(
         }
     }
 
+    fun checkBackupVersion(uri: Uri): Int? {
+        try {
+            context.contentResolver.openInputStream(uri)?.use { stream ->
+                ZipInputStream(BufferedInputStream(stream)).use { zip ->
+                    var entry: ZipEntry? = zip.nextEntry
+                    while (entry != null) {
+                        val entryName = entry.name
+                        if (entryName in DATABASE_ZIP_ENTRY_ALIASES) {
+                            val tempFile = File(context.cacheDir, "temp_check_${System.currentTimeMillis()}.db")
+                            try {
+                                FileOutputStream(tempFile).use { output ->
+                                    zip.copyTo(output)
+                                }
+                                val db = SQLiteDatabase.openDatabase(
+                                    tempFile.path,
+                                    null,
+                                    SQLiteDatabase.OPEN_READONLY
+                                )
+                                val version = db.version
+                                db.close()
+                                return version
+                            } finally {
+                                if (tempFile.exists()) {
+                                    tempFile.delete()
+                                }
+                            }
+                        }
+                        zip.closeEntry()
+                        entry = zip.nextEntry
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     fun importBackup(
         uri: Uri,
         importDatabase: Boolean,
@@ -135,6 +173,7 @@ class DatabaseImporter(
 
             var databaseImported = false
             var settingsImported = false
+            var dbBackupFile: File? = null
 
             try {
                 context.contentResolver.openInputStream(uri)?.use { stream ->
@@ -144,7 +183,9 @@ class DatabaseImporter(
                             val entryName = entry.name
                             when {
                                 importDatabase && !databaseImported && entryName in DATABASE_ZIP_ENTRY_ALIASES -> {
-                                    databaseImported = writeDatabaseEntry(zip, dbFile)
+                                    val result = writeDatabaseEntry(zip, dbFile)
+                                    databaseImported = result.first
+                                    dbBackupFile = result.second
                                 }
                                 importSettings && !settingsImported && entryName in SETTINGS_ZIP_ENTRY_ALIASES -> {
                                     settingsImported = writeSettingsEntry(zip, tempSettingsFile)
@@ -159,9 +200,17 @@ class DatabaseImporter(
 
                 if (importDatabase) {
                     if (databaseImported) {
-                        fixImportedDatabaseVersion(dbFile)
-                        deleteCompanionWalFiles(dbFile)
-                        verifyImportedDatabase()
+                        try {
+                            fixImportedDatabaseVersion(dbFile)
+                            deleteCompanionWalFiles(dbFile)
+                            verifyImportedDatabase()
+                            // Verification successful, delete backup
+                            dbBackupFile?.delete()
+                        } catch (e: Exception) {
+                            // Verification failed, restore backup
+                            restoreDatabaseBackup(dbFile, dbBackupFile)
+                            throw e
+                        }
                     } else {
                         throw IllegalStateException(MR.strings.backup_database_not_found.desc().toString(context = context))
                     }
@@ -357,15 +406,16 @@ class DatabaseImporter(
         importBackup(uri, importDatabase = true, importSettings = false)
     }
 
-    private fun writeDatabaseEntry(zip: ZipInputStream, target: File): Boolean {
+    private fun writeDatabaseEntry(zip: ZipInputStream, target: File): Pair<Boolean, File?> {
         DataBaseDriverManager.reset(context)
 
+        var backupFile: File? = null
         if (target.exists()) {
-            val backup = File(
+            backupFile = File(
                 target.parentFile,
                 "pipepipe_backup_${System.currentTimeMillis()}.db"
             )
-            target.copyTo(backup, overwrite = true)
+            target.copyTo(backupFile, overwrite = true)
         } else {
             target.parentFile?.takeIf { !it.exists() }?.mkdirs()
         }
@@ -373,7 +423,7 @@ class DatabaseImporter(
         FileOutputStream(target).use { output ->
             zip.copyTo(output)
         }
-        return true
+        return Pair(true, backupFile)
     }
 
     private fun writeSettingsEntry(zip: ZipInputStream, tempFile: File): Boolean {
@@ -431,6 +481,23 @@ class DatabaseImporter(
         }
     }
 
+    private fun restoreDatabaseBackup(currentFile: File, backupFile: File?) {
+        if (backupFile != null && backupFile.exists()) {
+            // Delete failed import
+            if (currentFile.exists()) {
+                currentFile.delete()
+            }
+            deleteCompanionWalFiles(currentFile)
+
+            // Restore backup
+            backupFile.copyTo(currentFile, overwrite = true)
+            backupFile.delete()
+
+            // Reinitialize database driver with restored database
+            DataBaseDriverManager.reset(context)
+        }
+    }
+
     private fun fixImportedDatabaseVersion(databaseFile: File) {
         val appSchemaVersion = AppDatabase.Schema.version.toInt()
         val db = SQLiteDatabase.openDatabase(
@@ -440,6 +507,54 @@ class DatabaseImporter(
         )
 
         val importedVersion = db.version
+
+        // Handle special migrations for old versions before changing version number
+        when (importedVersion) {
+            6 -> {
+                // Migration from version 6: fix bilibili URLs
+                db.execSQL("UPDATE streams" +
+                        " SET url = REPLACE(url, 'https://bilibili.com', 'https://www.bilibili.com/video')" +
+                        " WHERE url LIKE 'https://bilibili.com/%'")
+            }
+            7, 8, 9 -> {
+                // Migration from versions 7, 8, 9: convert thumbnail_stream_id to thumbnail_url
+                db.execSQL("CREATE TABLE IF NOT EXISTS `playlists_new`" +
+                        "(uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "name TEXT, " +
+                        "display_index INTEGER NOT NULL DEFAULT 0, " +
+                        "thumbnail_url TEXT)")
+
+                db.execSQL("INSERT INTO playlists_new" +
+                        " SELECT p.uid, p.name, p.display_index, s.thumbnail_url " +
+                        " FROM playlists p " +
+                        " LEFT JOIN streams s ON p.thumbnail_stream_id = s.uid")
+
+                db.execSQL("DROP TABLE playlists")
+                db.execSQL("ALTER TABLE playlists_new RENAME TO playlists")
+                db.execSQL("CREATE INDEX IF NOT EXISTS " +
+                        "`index_playlists_name` ON `playlists` (`name`)")
+
+                // Handle remote_playlists table
+                db.execSQL("CREATE TABLE `remote_playlists_tmp` " +
+                        "(`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`service_id` INTEGER NOT NULL, `name` TEXT, `url` TEXT, " +
+                        "`thumbnail_url` TEXT, `uploader` TEXT, " +
+                        "`display_index` INTEGER NOT NULL DEFAULT 0," +
+                        "`stream_count` INTEGER)")
+                db.execSQL("INSERT INTO `remote_playlists_tmp` (`uid`, `service_id`, " +
+                        "`name`, `url`, `thumbnail_url`, `uploader`, `stream_count`)" +
+                        "SELECT `uid`, `service_id`, `name`, `url`, `thumbnail_url`, `uploader`, " +
+                        "`stream_count` FROM `remote_playlists`")
+
+                db.execSQL("DROP TABLE `remote_playlists`")
+                db.execSQL("ALTER TABLE `remote_playlists_tmp` RENAME TO `remote_playlists`")
+                db.execSQL("CREATE INDEX `index_remote_playlists_name` " +
+                        "ON `remote_playlists` (`name`)")
+                db.execSQL("CREATE UNIQUE INDEX `index_remote_playlists_service_id_url` " +
+                        "ON `remote_playlists` (`service_id`, `url`)")
+            }
+        }
+
         if (importedVersion > appSchemaVersion) {
             db.version = appSchemaVersion
         }

@@ -57,6 +57,7 @@ fun ImportExportSettingScreen(
 
     var pendingImportUri by remember { mutableStateOf<Uri?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
+    var showNewPipeWarningDialog by remember { mutableStateOf(false) }
     var importDatabaseSelected by remember { mutableStateOf(true) }
     var importSettingsSelected by remember { mutableStateOf(true) }
 
@@ -87,7 +88,18 @@ fun ImportExportSettingScreen(
             pendingImportUri = it
             importDatabaseSelected = true
             importSettingsSelected = true
-            showImportDialog = true
+
+            // Check if this is a NewPipe backup (versions 7, 8, 9)
+            CoroutineScope(Dispatchers.IO).launch {
+                val version = databaseImporter.checkBackupVersion(it)
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (version in listOf(7, 8, 9)) {
+                        showNewPipeWarningDialog = true
+                    } else {
+                        showImportDialog = true
+                    }
+                }
+            }
         }
     }
 
@@ -198,6 +210,39 @@ fun ImportExportSettingScreen(
                 }
             }
         }
+    }
+
+    if (showNewPipeWarningDialog && pendingImportUri != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showNewPipeWarningDialog = false
+                pendingImportUri = null
+            },
+            title = { Text(MR.strings.newpipe_backup_warning_title.desc().toString(context)) },
+            text = {
+                Text(MR.strings.newpipe_backup_warning_message.desc().toString(context))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showNewPipeWarningDialog = false
+                        showImportDialog = true
+                    }
+                ) {
+                    Text(MR.strings.hint_continue.desc().toString(context))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showNewPipeWarningDialog = false
+                        pendingImportUri = null
+                    }
+                ) {
+                    Text(MR.strings.cancel.desc().toString(context))
+                }
+            }
+        )
     }
 
     if (showImportDialog && pendingImportUri != null) {

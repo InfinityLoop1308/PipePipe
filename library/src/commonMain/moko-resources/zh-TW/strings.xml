@@ -404,4 +404,7 @@
 <string name="description_tab">說明</string>
 <string name="cannot_remove_tab">此分頁始終可用。</string>
 <string name="published_on">發佈於</string>
+<string name="newpipe_backup_warning_title">偵測到 NewPipe 備份</string>
+<string name="newpipe_backup_warning_message">您正在匯入 NewPipe 備份。請注意，NewPipe 和 PipePipe 備份並非完全相容。</string>
+<string name="hint_continue">繼續</string>
 </resources>
