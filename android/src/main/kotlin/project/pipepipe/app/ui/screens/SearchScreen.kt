@@ -266,7 +266,7 @@ fun SearchScreen(
                         .padding(horizontal = 16.dp),
                     state = listState
                 ) {
-                    if (uiState.common.isLoading) {
+                    if (uiState.common.isLoading && uiState.list.itemList.isEmpty()) {
                         item {
                             Box(
                                 modifier = Modifier
@@ -301,7 +301,7 @@ fun SearchScreen(
                         }
                     }
 
-                    if (uiState.common.isLoading && uiState.list.nextPageUrl != null) {
+                    if (uiState.common.isLoading && uiState.list.itemList.isNotEmpty()) {
                         item {
                             Box(
                                 modifier = Modifier

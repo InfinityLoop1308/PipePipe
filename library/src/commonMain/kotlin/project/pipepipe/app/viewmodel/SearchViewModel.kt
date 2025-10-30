@@ -5,7 +5,10 @@ import kotlinx.coroutines.withContext
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.FilterHelper
+import project.pipepipe.app.helper.executeClientTasksConcurrent
+import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.uistate.ErrorInfo
+import project.pipepipe.app.uistate.ListUiState
 import project.pipepipe.app.uistate.SearchSuggestion
 import project.pipepipe.app.uistate.SearchUiState
 import project.pipepipe.shared.infoitem.StreamInfo
@@ -14,8 +17,6 @@ import project.pipepipe.shared.infoitem.helper.SearchFilterItem
 import project.pipepipe.shared.infoitem.helper.SearchType
 import project.pipepipe.shared.job.ClientTask
 import project.pipepipe.shared.job.SupportedJobType
-import project.pipepipe.app.helper.executeClientTasksConcurrent
-import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.shared.utils.json.requireArray
 import project.pipepipe.shared.utils.json.requireString
 
@@ -183,7 +184,8 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
     suspend fun search(url: String, serviceId: String) {
         setState {
             it.copy(
-                common = it.common.copy(isLoading = true)
+                common = it.common.copy(isLoading = true),
+                list = ListUiState()
             )
         }
         val result = withContext(Dispatchers.IO) {
