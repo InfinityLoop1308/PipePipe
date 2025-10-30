@@ -95,9 +95,8 @@ object FilterHelper {
 
         val filteredCount = items.size - filteredItems.size
 
-        // Show toast if more than 1 item was filtered
-        if (filteredCount > 1) {
-            ToastManager.show("$filteredCount items filtered")
+        if (filteredCount > 0) {
+            ToastManager.show("$filteredCount items filtered", 1500)
         }
 
         return Pair(filteredItems, filteredCount)
