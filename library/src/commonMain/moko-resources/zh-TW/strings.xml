@@ -304,7 +304,7 @@
 <string name="add_keyword">新增關鍵字</string>
 <string name="subscribers_text">訂閱者</string>
 <string name="settings_player_music_random_summary">啟用音樂播放器模式時隨機播放本地播放清單</string>
-<string name="playlist_menu_pin">釘選到頂部</string>
+<string name="playlist_menu_pin">釘選到儀表板</string>
 <string name="pinned_playlists">已釘選的播放清單</string>
 <string name="no_bookmarked_playlists">找不到已加入書籤的播放清單</string>
 <string name="feed_group_add_title">新增至動態消息群組</string>

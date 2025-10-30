@@ -232,7 +232,7 @@
 <string name="settings_gesture_seek_duration_title">Durata ricerca</string>
 <string name="speed_pitch_speed_label">Velocità: %s</string>
 <string name="settings_gesture_swipe_seek_summary">Attiva/disattiva i gesti di scorrimento per la ricerca</string>
-<string name="playlist_menu_pin">Fissa in alto</string>
+<string name="playlist_menu_pin">Fissa alla DashBoard</string>
 <string name="playlist_selector_empty">Nessuna playlist trovata. Crea la tua prima playlist!</string>
 <string name="expand">Espandi</string>
 <string name="playlist_delete_title">Elimina playlist</string>

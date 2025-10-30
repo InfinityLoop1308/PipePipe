@@ -304,7 +304,7 @@
 <string name="add_keyword">Schlüsselwort hinzufügen</string>
 <string name="subscribers_text">Abonnenten</string>
 <string name="settings_player_music_random_summary">Lokale Playlist-Wiedergabe mischen, wenn der Musik-Player-Modus aktiviert ist</string>
-<string name="playlist_menu_pin">Oben anpinnen</string>
+<string name="playlist_menu_pin">An Dashboard anheften</string>
 <string name="pinned_playlists">Angepinnte Playlists</string>
 <string name="no_bookmarked_playlists">Keine gespeicherten Playlists gefunden</string>
 <string name="feed_group_add_title">Zu Feed-Gruppen hinzufügen</string>

@@ -72,7 +72,7 @@
 <string name="sort_origin_reverse">Original (Reverse)</string>
 <string name="playlist_menu_rename">Rename Playlist</string>
 <string name="playlist_menu_delete">Delete Playlist</string>
-<string name="playlist_menu_pin">Pin to Top</string>
+<string name="playlist_menu_pin">Pin to DashBoard</string>
 <string name="playlist_menu_unpin">Unpin</string>
 <string name="playlist_menu_bookmark">Bookmark</string>
 <string name="playlist_menu_unbookmark">Unbookmark</string>

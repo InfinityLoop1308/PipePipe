@@ -304,7 +304,7 @@
 <string name="add_keyword">キーワードを追加</string>
 <string name="subscribers_text">登録者</string>
 <string name="settings_player_music_random_summary">音楽プレーヤーモードが有効な場合、ローカルプレイリストの再生をシャッフルします</string>
-<string name="playlist_menu_pin">トップにピン留め</string>
+<string name="playlist_menu_pin">ダッシュボードにピン留めする</string>
 <string name="pinned_playlists">ピン留めされたプレイリスト</string>
 <string name="no_bookmarked_playlists">ブックマークされたプレイリストが見つかりません</string>
 <string name="feed_group_add_title">フィードグループに追加</string>

@@ -304,7 +304,7 @@
 <string name="add_keyword">Thêm từ khóa</string>
 <string name="subscribers_text">người đăng ký</string>
 <string name="settings_player_music_random_summary">Xáo trộn phát lại danh sách phát cục bộ khi Chế độ trình phát nhạc được bật</string>
-<string name="playlist_menu_pin">Ghim lên đầu</string>
+<string name="playlist_menu_pin">Ghim vào Bảng điều khiển</string>
 <string name="pinned_playlists">Danh sách phát đã ghim</string>
 <string name="no_bookmarked_playlists">Không tìm thấy danh sách phát đã đánh dấu</string>
 <string name="feed_group_add_title">Thêm vào nhóm nguồn cấp dữ liệu</string>

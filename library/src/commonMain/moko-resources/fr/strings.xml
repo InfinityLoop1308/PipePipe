@@ -304,7 +304,7 @@
 <string name="add_keyword">Ajouter un mot-clé</string>
 <string name="subscribers_text">abonnés</string>
 <string name="settings_player_music_random_summary">Mélanger la lecture des playlists locales lorsque le mode lecteur de musique est activé</string>
-<string name="playlist_menu_pin">Épingler en haut</string>
+<string name="playlist_menu_pin">Épingler au Tableau de bord</string>
 <string name="pinned_playlists">Playlists épinglées</string>
 <string name="no_bookmarked_playlists">Aucune playlist mise en favori trouvée</string>
 <string name="feed_group_add_title">Ajouter aux groupes de flux</string>
