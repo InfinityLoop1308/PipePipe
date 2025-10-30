@@ -127,9 +127,6 @@ private fun ChannelListItem(
             .height(itemHeight)
             .combinedClickable(
                 onClick = { onClick() },
-                onLongClick = {
-                    SharedContext.bottomSheetMenuViewModel.show(item)
-                }
             )
             .padding(horizontal = 2.dp, vertical = 5.dp)
     ) {

@@ -120,20 +120,6 @@ fun BottomSheetMenu(
                 )
             }
             else -> {
-                Text(stringResource(MR.strings.bottom_sheet_menu_title, content.toString()), style = MaterialTheme.typography.titleLarge)
-                Spacer(Modifier.height(16.dp))
-                Text(stringResource(MR.strings.enqueue_next_stream), modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { /* TODO */ onDismiss() }
-                    .padding(vertical = 8.dp))
-                Text(stringResource(MR.strings.enqueue_stream), modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { /* TODO */ onDismiss() }
-                    .padding(vertical = 8.dp))
-                Text(stringResource(MR.strings.download), modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { /* TODO */ onDismiss() }
-                    .padding(vertical = 8.dp))
             }
         }
     }
