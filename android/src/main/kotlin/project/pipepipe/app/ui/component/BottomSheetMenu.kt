@@ -44,6 +44,7 @@ import kotlinx.coroutines.GlobalScope
 import project.pipepipe.app.MainActivity
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.global.PipHelper
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.ui.component.player.findActivity
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.app.uistate.VideoDetailPageState
@@ -58,6 +59,8 @@ fun BottomSheetMenu(
     val context = LocalContext.current
     var mediaController by remember { mutableStateOf<MediaController?>(null) }
     var controllerFuture by remember { mutableStateOf<ListenableFuture<MediaController>?>(null) }
+
+    val doneText = stringResource(MR.strings.done)
 
     LaunchedEffect(Unit) {
         val sessionToken = SessionToken(context, ComponentName(context, PlaybackService::class.java))
@@ -104,7 +107,8 @@ fun BottomSheetMenu(
                         if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState != VideoDetailPageState.HIDDEN) {
                             SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
                         }
-                    }
+                    },
+                    doneText = doneText
                 )
             }
             is PlaylistInfo -> {
@@ -189,7 +193,8 @@ private fun StreamInfoMenuItems(
     onDelete: (() -> Unit)? = null,
     disablePlayOperations: Boolean = false,
     showProvideDetailButton: Boolean = false,
-    onOpenChannel: (() -> Unit)
+    onOpenChannel: (() -> Unit),
+    doneText: String
 ) {
     var showPlaylistPopup by remember { mutableStateOf(false) }
     var showDownloadDialog by remember { mutableStateOf(false) }
@@ -263,6 +268,7 @@ private fun StreamInfoMenuItems(
                         ))
                     }
                 }
+                ToastManager.show(doneText)
                 onDismiss()
             })
             add(Triple(Icons.Default.Block, stringResource(MR.strings.bottom_sheet_block_channel)) { /* TODO */ onDismiss() })

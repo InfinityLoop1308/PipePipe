@@ -35,7 +35,7 @@
 <string name="pause">Tạm dừng</string>
 <string name="next">Tiếp theo</string>
 <string name="playback_reset">Đặt lại</string>
-<string name="recaptcha_done_button">Xong</string>
+<string name="done">Xong</string>
 <string name="notification_action_shuffle">Xáo trộn</string>
 <string name="channel_tab_livestreams">Trực tiếp</string>
 <string name="subscribe_button_title">Đăng ký</string>

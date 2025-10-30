@@ -35,7 +35,7 @@
 <string name="pause">暂停</string>
 <string name="next">下一个</string>
 <string name="playback_reset">重置</string>
-<string name="recaptcha_done_button">完成</string>
+<string name="done">完成</string>
 <string name="notification_action_shuffle">随机</string>
 <string name="channel_tab_livestreams">直播</string>
 <string name="subscribe_button_title">订阅</string>

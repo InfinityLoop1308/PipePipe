@@ -143,7 +143,7 @@
 <string name="log">Log</string>
 <string name="filter">Filter</string>
 <string name="playback_reset">Reset</string>
-<string name="recaptcha_done_button">Done</string>
+<string name="done">Done</string>
 <string name="perform_search">Perform Search</string>
 <string name="select_service">Select Service</string>
 <string name="search_type">Search Type</string>

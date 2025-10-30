@@ -490,7 +490,7 @@ fun FilterCard(
                         }
                         onDismiss()
                     }) {
-                        Text(if (searchQuery.isEmpty()) stringResource(MR.strings.recaptcha_done_button) else stringResource(MR.strings.perform_search))
+                        Text(if (searchQuery.isEmpty()) stringResource(MR.strings.done) else stringResource(MR.strings.perform_search))
                     }
                 }
             }

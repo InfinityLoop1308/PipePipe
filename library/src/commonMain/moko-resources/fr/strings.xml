@@ -35,7 +35,7 @@
 <string name="pause">Pause</string>
 <string name="next">Suivant</string>
 <string name="playback_reset">Réinitialiser</string>
-<string name="recaptcha_done_button">Terminé</string>
+<string name="done">Terminé</string>
 <string name="notification_action_shuffle">Mélanger</string>
 <string name="channel_tab_livestreams">En direct</string>
 <string name="subscribe_button_title">S\'abonner</string>
