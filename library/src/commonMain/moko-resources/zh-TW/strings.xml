@@ -407,4 +407,11 @@
 <string name="newpipe_backup_warning_title">偵測到 NewPipe 備份</string>
 <string name="newpipe_backup_warning_message">您正在匯入 NewPipe 備份。請注意，NewPipe 和 PipePipe 備份並非完全相容。</string>
 <string name="hint_continue">繼續</string>
+<string name="settings_appearance_grid_layout_summary">以網格佈局顯示播放列表項目</string>
+<string name="settings_appearance_grid_layout_title">播放列表的網格佈局</string>
+<string name="theme">主題</string>
+<string name="settings_appearance_grid_columns_summary">網格佈局中的列數</string>
+<string name="tab">分頁</string>
+<string name="settings_appearance_grid_columns_title">網格列</string>
+<string name="grid">網格</string>
 </resources>

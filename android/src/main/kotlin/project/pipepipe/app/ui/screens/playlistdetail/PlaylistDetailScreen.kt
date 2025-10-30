@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -56,6 +57,7 @@ import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.extractor.Router.getType
 import project.pipepipe.extractor.utils.RequestHelper.getQueryValue
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import sh.calvin.reorderable.rememberReorderableLazyGridState
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,6 +89,12 @@ fun PlaylistDetailScreen(
     val listState = rememberLazyListState()
 
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
+        viewModel.reorderItems(from.index - 1, to.index - 1)
+    }
+
+    val gridState = rememberLazyGridState()
+
+    val reorderableLazyGridState = rememberReorderableLazyGridState(gridState) { from, to ->
         viewModel.reorderItems(from.index - 1, to.index - 1)
     }
 
@@ -352,6 +360,8 @@ fun PlaylistDetailScreen(
                     viewModel = viewModel,
                     listState = listState,
                     reorderableLazyListState = reorderableLazyListState,
+                    gridState = gridState,
+                    reorderableLazyGridState = reorderableLazyGridState,
                     isSearchActive = isSearchActive,
                     url = url,
                     serviceId = serviceId,
@@ -370,6 +380,8 @@ fun PlaylistDetailScreen(
                 viewModel = viewModel,
                 listState = listState,
                 reorderableLazyListState = reorderableLazyListState,
+                gridState = gridState,
+                reorderableLazyGridState = reorderableLazyGridState,
                 isSearchActive = isSearchActive,
                 url = url,
                 serviceId = serviceId,

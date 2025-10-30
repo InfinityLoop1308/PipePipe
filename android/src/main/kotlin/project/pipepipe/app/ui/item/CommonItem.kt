@@ -20,6 +20,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +66,7 @@ fun CommonItem(
     dragHandleModifier: Modifier = Modifier,
     displayType: DisplayType = DisplayType.ORIGIN,
     shouldUseSecondaryColor: Boolean = false,
+    isGridLayout: Boolean = false,
 ) {
     when (item) {
         is ChannelInfo -> {
@@ -74,20 +77,37 @@ fun CommonItem(
             )
         }
         else -> {
-            StreamOrPlaylistListItem(
-                item = item,
-                modifier = modifier.alpha(
-                    alpha = if (shouldUseSecondaryColor) 0.6f else 1f
-                ),
-                onClick = onClick,
-                isDragging = isDragging,
-                onNavigateTo = onNavigateTo,
-                onDelete = onDelete,
-                showDragHandle = showDragHandle,
-                dragHandleModifier = dragHandleModifier,
-                showProvideDetailButton = showProvideDetailButton,
-                displayType = displayType
-            )
+            if (isGridLayout) {
+                StreamOrPlaylistGridItem(
+                    item = item,
+                    modifier = modifier.alpha(
+                        alpha = if (shouldUseSecondaryColor) 0.6f else 1f
+                    ),
+                    onClick = onClick,
+                    isDragging = isDragging,
+                    onNavigateTo = onNavigateTo,
+                    onDelete = onDelete,
+                    showProvideDetailButton = showProvideDetailButton,
+                    showDragHandle = showDragHandle,
+                    dragHandleModifier = dragHandleModifier,
+                    displayType = displayType
+                )
+            } else {
+                StreamOrPlaylistListItem(
+                    item = item,
+                    modifier = modifier.alpha(
+                        alpha = if (shouldUseSecondaryColor) 0.6f else 1f
+                    ),
+                    onClick = onClick,
+                    isDragging = isDragging,
+                    onNavigateTo = onNavigateTo,
+                    onDelete = onDelete,
+                    showDragHandle = showDragHandle,
+                    dragHandleModifier = dragHandleModifier,
+                    showProvideDetailButton = showProvideDetailButton,
+                    displayType = displayType
+                )
+            }
         }
     }
 }
@@ -422,6 +442,252 @@ private fun StreamOrPlaylistListItem(
                     .align(Alignment.CenterVertically)
                     .padding(8.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun StreamOrPlaylistGridItem(
+    item: Info,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    isDragging: Boolean = false,
+    onNavigateTo: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
+    showProvideDetailButton: Boolean = false,
+    showDragHandle: Boolean = false,
+    dragHandleModifier: Modifier = Modifier,
+    displayType: DisplayType = DisplayType.ORIGIN,
+) {
+    var thumbnailUrl: String? = null
+    var title: String
+    var uploaderName: String? = null
+    var duration: Long? = null
+    var uploadTimeText: String? = null
+    var views: Long? = null
+    var progress: Long? = null
+    var streamCount: Long? = null
+    var isLive: Boolean = false
+
+    when (item) {
+        is StreamInfo -> {
+            duration = item.duration
+            uploadTimeText = item.uploadDate?.let { formatRelativeTime(it) }
+            views = item.viewCount
+            progress = item.progress
+            thumbnailUrl = item.thumbnailUrl
+            uploaderName = item.uploaderName
+            title = item.name!!
+            isLive = item.streamType == StreamType.LIVE_STREAM
+        }
+        is PlaylistInfo -> {
+            streamCount = item.streamCount
+            thumbnailUrl = item.thumbnailUrl
+            uploaderName = item.uploaderName
+            title = item.name
+        }
+        else -> throw Exception("Invalid item")
+    }
+
+    val viewsText = stringResource(MR.strings.video_info_views)
+    val watchingText = stringResource(MR.strings.video_info_watching)
+    val additionalDetails = buildString {
+        when (displayType) {
+            DisplayType.ORIGIN -> {
+                views?.let { append("${formatCount(it)} ${if (!isLive) viewsText else watchingText}") }
+                if (!uploadTimeText.isNullOrEmpty() && views != null) {
+                    append(" • ")
+                }
+                uploadTimeText?.let { append(it) }
+            }
+            DisplayType.STREAM_HISTORY -> {
+                item as StreamInfo
+                item.localRepeatCount?.let { append("${formatCount(it)} $viewsText") }
+                if (item.localLastViewDate != null && item.localRepeatCount != null) {
+                    append(" • ")
+                }
+                item.localLastViewDate?.let { append(formatAbsoluteTime(it)) }
+            }
+            DisplayType.NAME_ONLY -> {}
+        }
+    }.takeIf { it.isNotEmpty() }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = {
+                    when (item) {
+                        is StreamInfo -> {
+                            SharedContext.bottomSheetMenuViewModel.show(
+                                StreamInfoWithCallback(
+                                    item,
+                                    onNavigateTo = onNavigateTo,
+                                    onDelete = onDelete,
+                                    showProvideDetailButton = showProvideDetailButton
+                                )
+                            )
+                        }
+                        is PlaylistInfo -> {
+                            SharedContext.bottomSheetMenuViewModel.show(item)
+                        }
+                        else -> {}
+                    }
+                }
+            )
+    ) {
+        // Thumbnail with 16:9 aspect ratio
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(16f / 9f)
+                .clip(RoundedCornerShape(8.dp))
+        ) {
+            AsyncImage(
+                model = thumbnailUrl,
+                contentDescription = null,
+                modifier = Modifier.matchParentSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            if (isLive) {
+                Text(
+                    text = stringResource(MR.strings.duration_live).uppercase(),
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    lineHeight = 18.sp,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .background(Color.Red.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 0.dp)
+                )
+            } else if (duration != null) {
+                Text(
+                    text = duration.toDurationString(),
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    lineHeight = 18.sp,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .background(Color(0x99000000), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 0.dp)
+                )
+            }
+
+            if (item is StreamInfo && item.isPaid) {
+                Text(
+                    text = stringResource(MR.strings.paid_video).uppercase(),
+                    color = Color.Black,
+                    fontSize = 10.sp,
+                    lineHeight = 18.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .background(ColorHelper.parseHexColor("#FFD700"), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 0.dp)
+                )
+            }
+
+            if (progress != null && duration != null) {
+                LinearProgressIndicator(
+                    progress = { progress / duration / 1000f },
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .fillMaxWidth()
+                        .height(3.dp),
+                    color = Color.Red,
+                    trackColor = Color(0x33FFFFFF),
+                    drawStopIndicator = {}
+                )
+            }
+
+            if (streamCount != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.25f)
+                        .align(Alignment.CenterEnd)
+                        .background(Color(0x80000000)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                        Text(
+                            text = "$streamCount",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Title with drag handle
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = title,
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = false
+                    )
+                ),
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+            )
+
+            if (showDragHandle) {
+                Icon(
+                    imageVector = Icons.Default.DragHandle,
+                    contentDescription = stringResource(MR.strings.detail_drag_description),
+                    modifier = dragHandleModifier
+                        .align(Alignment.TopEnd).scale(0.8f),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                )
+            }
+        }
+
+        // Uploader name
+        uploaderName?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = uploaderName,
+                style = MaterialTheme.typography.bodySmall,
+                fontSize = 11.sp,
+                color = supportingTextColor(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+            )
+        }
+
+        // Additional details
+        if (additionalDetails != null) {
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = additionalDetails,
+                style = MaterialTheme.typography.bodySmall,
+                fontSize = 11.sp,
+                color = supportingTextColor(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
             )
         }
     }

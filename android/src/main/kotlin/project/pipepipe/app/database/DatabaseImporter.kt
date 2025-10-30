@@ -221,6 +221,23 @@ class DatabaseImporter(
                         val snapshot = deserializeSettingsSnapshot(tempSettingsFile)
                         settingsManager.restoreFrom(snapshot)
 
+                        // Convert old list_view_mode to new grid layout settings
+                        val listViewMode = snapshot["list_view_mode_key"] as? String
+                        when (listViewMode) {
+                            "grid", "large_grid", "auto" -> {
+                                settingsManager.putBoolean("grid_layout_enabled_key", true)
+                                settingsManager.putString("grid_columns_key", "4")
+                            }
+                            "card" -> {
+                                settingsManager.putBoolean("grid_layout_enabled_key", true)
+                                settingsManager.putString("grid_columns_key", "1")
+                            }
+                            "list" -> {
+                                settingsManager.putBoolean("grid_layout_enabled_key", false)
+                            }
+                            // For "auto", "list" or any other values, do nothing
+                        }
+
                         val savedTabsJson = extractSavedTabsJson(snapshot)
                             ?: settingsManager.getString(SAVED_TABS_KEY).takeIf { it.isNotBlank() }
 

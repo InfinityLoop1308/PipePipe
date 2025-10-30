@@ -28,6 +28,7 @@ import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ListPreference
 import project.pipepipe.app.ui.component.SwitchPreference
 import project.pipepipe.app.ui.component.ClickablePreference
+import project.pipepipe.app.ui.component.CategoryPreference
 import project.pipepipe.app.helper.ColorHelper
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.SharedContext
@@ -63,6 +64,11 @@ fun AppearanceSettingsScreen(
         mutableStateOf(settingsManager.getBoolean("pure_black_key", false))
     }
 
+    // State for Grid Layout
+    val gridLayoutEnabledState = remember {
+        mutableStateOf(settingsManager.getBoolean("grid_layout_enabled_key", false))
+    }
+
     // State for theme color
     val themeColorState = remember {
         mutableStateOf(settingsManager.getString("theme_color_key", PRESET_COLORS[0]))
@@ -89,10 +95,24 @@ fun AppearanceSettingsScreen(
     val pureBlackTitle = stringResource(MR.strings.settings_appearance_pure_black_title)
     val pureBlackSummary = stringResource(MR.strings.settings_appearance_pure_black_summary)
 
+    val gridLayoutTitle = stringResource(MR.strings.settings_appearance_grid_layout_title)
+    val gridLayoutSummary = stringResource(MR.strings.settings_appearance_grid_layout_summary)
+
+    val gridColumnsTitle = stringResource(MR.strings.settings_appearance_grid_columns_title)
+    val gridColumnsSummary = stringResource(MR.strings.settings_appearance_grid_columns_summary)
+
     val customizeTabsTitle = stringResource(MR.strings.customize_tabs)
     val customizeTabsSummary = stringResource(MR.strings.customize_tabs_summary)
 
+    val themeCategory = stringResource(MR.strings.theme)
+    val gridCategory = stringResource(MR.strings.grid)
+    val tabCategory = stringResource(MR.strings.tab)
+
     val preferenceItems = listOf(
+        PreferenceItem.CategoryPref(
+            key = "theme_category",
+            title = themeCategory
+        ),
         PreferenceItem.ListPref(
             key = "theme_mode_key",
             title = themeModeTitle,
@@ -119,18 +139,46 @@ fun AppearanceSettingsScreen(
                 pureBlackEnabledState.value = it
             }
         ),
+        PreferenceItem.CategoryPref(
+            key = "tab_category",
+            title = tabCategory
+        ),
         PreferenceItem.ClickablePref(
             title = customizeTabsTitle,
             summary = customizeTabsSummary,
             onClick = {
                 navController.navigate(Screen.TabCustomization.route)
             }
-        )
+        ),
+        PreferenceItem.CategoryPref(
+            key = "grid_category",
+            title = gridCategory
+        ),
+        PreferenceItem.SwitchPref(
+            key = "grid_layout_enabled_key",
+            title = gridLayoutTitle,
+            summary = gridLayoutSummary,
+            defaultValue = false,
+            onValueChange = {
+                gridLayoutEnabledState.value = it
+            }
+        ),
+        PreferenceItem.ListPref(
+            key = "grid_columns_key",
+            title = gridColumnsTitle,
+            summary = gridColumnsSummary,
+            entries = listOf("1", "2", "3", "4", "5", "6", "7", "8"),
+            entryValues = listOf("1", "2", "3", "4", "5", "6", "7", "8"),
+            defaultValue = "4",
+            enabled = gridLayoutEnabledState.value
+        ),
+
     )
 
     val switchStateMap: Map<String, MutableState<Boolean>> = mapOf(
         "material_you_enabled_key" to materialYouEnabledState,
-        "pure_black_key" to pureBlackEnabledState
+        "pure_black_key" to pureBlackEnabledState,
+        "grid_layout_enabled_key" to gridLayoutEnabledState
     )
 
     Column {
@@ -148,7 +196,17 @@ fun AppearanceSettingsScreen(
                 key = PreferenceItem::key
             ) { item ->
                 when (item) {
-                    is PreferenceItem.ListPref -> ListPreference(item = item)
+                    is PreferenceItem.CategoryPref -> CategoryPreference(item = item)
+                    is PreferenceItem.ListPref -> {
+                        // For grid columns, key on the enabled state so it re-renders when grid layout is toggled
+                        if (item.key == "grid_columns_key") {
+                            key("${item.key}_${gridLayoutEnabledState.value}") {
+                                ListPreference(item = item)
+                            }
+                        } else {
+                            ListPreference(item = item)
+                        }
+                    }
                     is PreferenceItem.SwitchPref -> {
                         val state = switchStateMap[item.key]
                         if (state != null) {
@@ -158,23 +216,23 @@ fun AppearanceSettingsScreen(
                         } else {
                             SwitchPreference(item = item)
                         }
+
+                        // Add color palette after pure_black_key (last item in theme category)
+                        if (item.key == "pure_black_key") {
+                            InlineColorPalette(
+                                title = themeColorTitle,
+                                currentColor = themeColorState.value,
+                                enabled = !materialYouEnabledState.value,
+                                onColorSelected = { color ->
+                                    themeColorState.value = color
+                                    settingsManager.putString("theme_color_key", color)
+                                }
+                            )
+                        }
                     }
                     is PreferenceItem.ClickablePref -> ClickablePreference(item = item)
                     else -> Unit
                 }
-            }
-
-            // Inline color palette
-            item {
-                InlineColorPalette(
-                    title = themeColorTitle,
-                    currentColor = themeColorState.value,
-                    enabled = !materialYouEnabledState.value,
-                    onColorSelected = { color ->
-                        themeColorState.value = color
-                        settingsManager.putString("theme_color_key", color)
-                    }
-                )
             }
         }
     }

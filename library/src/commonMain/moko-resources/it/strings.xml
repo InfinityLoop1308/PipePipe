@@ -407,4 +407,11 @@
 <string name="newpipe_backup_warning_title">Backup di NewPipe rilevato</string>
 <string name="newpipe_backup_warning_message">Stai importando un backup di NewPipe. Si prega di notare che i backup di NewPipe e PipePipe non sono completamente compatibili.</string>
 <string name="hint_continue">Continua</string>
+<string name="settings_appearance_grid_layout_summary">Visualizza gli elementi della playlist in un layout a griglia</string>
+<string name="settings_appearance_grid_layout_title">Layout a griglia per le playlist</string>
+<string name="theme">Tema</string>
+<string name="settings_appearance_grid_columns_summary">Numero di colonne nel layout a griglia</string>
+<string name="tab">Scheda</string>
+<string name="settings_appearance_grid_columns_title">Colonne della griglia</string>
+<string name="grid">Griglia</string>
 </resources>

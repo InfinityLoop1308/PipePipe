@@ -407,4 +407,11 @@
 <string name="newpipe_backup_warning_title">NewPipe-Sicherung erkannt</string>
 <string name="newpipe_backup_warning_message">Sie importieren eine NewPipe-Sicherung. Bitte beachten Sie, dass NewPipe- und PipePipe-Sicherungen nicht vollständig kompatibel sind.</string>
 <string name="hint_continue">Weiter</string>
+<string name="settings_appearance_grid_layout_summary">Playlist-Elemente in einem Rasterlayout anzeigen</string>
+<string name="settings_appearance_grid_layout_title">Rasterlayout für Playlists</string>
+<string name="theme">Thema</string>
+<string name="settings_appearance_grid_columns_summary">Anzahl der Spalten im Rasterlayout</string>
+<string name="tab">Registerkarte</string>
+<string name="settings_appearance_grid_columns_title">Rasterspalten</string>
+<string name="grid">Raster</string>
 </resources>
