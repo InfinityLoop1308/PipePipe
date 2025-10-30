@@ -105,7 +105,7 @@ fun PlaylistDetailScreen(
 
     val shouldShowMoreMenuButton = !((uiState.playlistType == PlaylistType.FEED
             && url.substringAfterLast("/").substringBefore("?").toLongOrNull() == -1L)
-            || uiState.playlistType == PlaylistType.HISTORY)
+            || uiState.playlistType in listOf(PlaylistType.HISTORY, PlaylistType.TRENDING))
 
     LaunchedEffect(url) {
         viewModel.loadPlaylist(url, serviceId)
@@ -316,7 +316,7 @@ fun PlaylistDetailScreen(
                                 onSortModeChange = { viewModel.updateSortMode(it) }
                             )
                         }
-                        if (!isSearchActive && uiState.playlistType != PlaylistType.REMOTE) {
+                        if (!isSearchActive && uiState.playlistType !in listOf(PlaylistType.REMOTE, PlaylistType.TRENDING)) {
                             IconButton(
                                 onClick = {
                                     isSearchActive = true

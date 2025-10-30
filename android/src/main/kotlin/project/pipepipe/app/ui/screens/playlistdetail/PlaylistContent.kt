@@ -181,7 +181,7 @@ fun PlaylistContent(
                                         }
                                     }
                                 } else null,
-                                onDelete = if(uiState.playlistType != PlaylistType.REMOTE) {
+                                onDelete = if(uiState.playlistType !in listOf(PlaylistType.REMOTE, PlaylistType.TRENDING)) {
                                     {
                                         scope.launch {
                                             viewModel.removeItem(streamItem)
@@ -296,7 +296,7 @@ fun PlaylistContent(
                                         }
                                     }
                                 } else null,
-                                onDelete = if(uiState.playlistType != PlaylistType.REMOTE) {
+                                onDelete = if(uiState.playlistType !in listOf(PlaylistType.REMOTE, PlaylistType.TRENDING)) {
                                     {
                                         scope.launch {
                                             viewModel.removeItem(streamItem)
