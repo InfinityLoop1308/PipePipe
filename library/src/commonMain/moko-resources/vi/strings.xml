@@ -440,4 +440,5 @@
 <string name="playback_skip_silence_summary">Tự động bỏ qua các phần im lặng trong khi phát lại</string>
 <string name="playback_skip_silence_title">Bỏ qua im lặng</string>
 <string name="playback_error">Lỗi phát lại</string>
+<string name="no_comments_yet">Chưa có bình luận nào</string>
 </resources>

@@ -371,6 +371,7 @@
 <string name="comment_creator_heart">创作者爱心</string>
 <string name="comment_replies">%d 条回复</string>
 <string name="comment_view_pictures">查看图片 (%d)</string>
+<string name="no_comments_yet">暂无评论</string>
 <string name="trending">热门</string>
 <string name="recommended_lives">推荐直播</string>
 <string name="show_details">显示视频详情</string>

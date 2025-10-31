@@ -35,6 +35,8 @@ import project.pipepipe.shared.infoitem.CommentInfo
 import project.pipepipe.app.ui.item.CommentItem
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.SharedContext
+import dev.icerock.moko.resources.compose.stringResource
+import project.pipepipe.app.MR
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -83,6 +85,22 @@ fun CommentList(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator()
+                    }
+                }
+            } else if (comments.isEmpty()) {
+                // Show empty state when there are no comments and not loading
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(MR.strings.no_comments_yet),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             } else {
