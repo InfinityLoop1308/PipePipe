@@ -559,7 +559,7 @@ class PlaybackService : MediaLibraryService() {
                         errorCode = "PLAY_000"
                     )
                 }
-                ToastManager.show("Playback error")
+                ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))
 
                 // Remove failed item and try to play next
                 val currentIndex = player.currentMediaItemIndex

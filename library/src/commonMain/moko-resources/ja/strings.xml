@@ -439,4 +439,5 @@
 <string name="player_subtitle_auto_generated">自動生成</string>
 <string name="playback_skip_silence_summary">再生中に無音部分を自動的にスキップする</string>
 <string name="playback_skip_silence_title">無音をスキップ</string>
+<string name="playback_error">再生エラー</string>
 </resources>

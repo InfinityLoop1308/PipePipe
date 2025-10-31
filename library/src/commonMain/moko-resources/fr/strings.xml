@@ -439,4 +439,5 @@
 <string name="player_subtitle_auto_generated">généré automatiquement</string>
 <string name="playback_skip_silence_summary">Ignorer automatiquement les parties silencieuses pendant la lecture</string>
 <string name="playback_skip_silence_title">Ignorer les silences</string>
+<string name="playback_error">Erreur de lecture</string>
 </resources>

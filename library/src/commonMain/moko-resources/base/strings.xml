@@ -448,5 +448,5 @@
 <string name="saved">Saved</string>
 <string name="playback_skip_silence_title">Skip silence</string>
 <string name="playback_skip_silence_summary">Automatically skip silent parts during playback</string>
-
+<string name="playback_error">Playback error</string>
 </resources>

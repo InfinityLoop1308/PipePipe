@@ -439,4 +439,5 @@
 <string name="player_subtitle_auto_generated">automatisch generiert</string>
 <string name="playback_skip_silence_summary">Stille Passagen während der Wiedergabe automatisch überspringen</string>
 <string name="playback_skip_silence_title">Stille überspringen</string>
+<string name="playback_error">Wiedergabefehler</string>
 </resources>

@@ -439,4 +439,5 @@
 <string name="player_subtitle_auto_generated">tự động tạo</string>
 <string name="playback_skip_silence_summary">Tự động bỏ qua các phần im lặng trong khi phát lại</string>
 <string name="playback_skip_silence_title">Bỏ qua im lặng</string>
+<string name="playback_error">Lỗi phát lại</string>
 </resources>

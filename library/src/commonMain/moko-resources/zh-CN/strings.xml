@@ -439,4 +439,5 @@
 <string name="saved">已保存</string>
 <string name="playback_skip_silence_summary">在播放期间自动跳过静音部分</string>
 <string name="playback_skip_silence_title">跳过静音</string>
+<string name="playback_error">播放错误</string>
 </resources>

@@ -439,4 +439,5 @@
 <string name="player_subtitle_auto_generated">自動生成</string>
 <string name="playback_skip_silence_summary">播放時自動跳過靜音部分</string>
 <string name="playback_skip_silence_title">跳過靜音</string>
+<string name="playback_error">播放錯誤</string>
 </resources>
