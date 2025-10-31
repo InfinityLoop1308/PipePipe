@@ -461,10 +461,13 @@ fun VideoPlayer(
         val languages = mutableSetOf<Pair<String, Boolean>>()
         currentTracks.groups.filter { it.type == C.TRACK_TYPE_AUDIO }.forEach { audioGroup ->
             audioGroup?.forEachIndexed { index, format ->
-                val languageName = format.language ?: audioLanguageDefault
-                languages.add(Pair(languageName, languageName.contains("Original")))
+                val rawLanguage = format.language ?: audioLanguageDefault
+                // Extract pure language code by removing everything after "."
+                val languageCode = rawLanguage.substringBefore(".")
+                val isOriginal = rawLanguage.contains("Original")
+                languages.add(Pair(languageCode, isOriginal))
                 if (audioGroup.isTrackSelected(index)) {
-                    currentLanguage = languageName
+                    currentLanguage = languageCode
                 }
             }
         }

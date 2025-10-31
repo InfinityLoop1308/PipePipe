@@ -725,23 +725,38 @@ private fun MoreMenu(
             expanded = showAudioLanguageMenu,
             onDismissRequest = { onAudioLanguageMenuChange(false) }
         ) {
+            val originText = stringResource(MR.strings.sort_origin)
             availableLanguages.forEach { language ->
+                // Get localized language name using Locale
+                val languageCode = language.first
+                val locale = java.util.Locale.forLanguageTag(languageCode)
+                val localizedName = locale.getDisplayLanguage(java.util.Locale.getDefault())
+                val displayText = if (localizedName.isNotBlank()) {
+                    if (language.second) {
+                        "$localizedName ($originText)"
+                    } else {
+                        localizedName
+                    }
+                } else {
+                    if (language.second) {
+                        "$languageCode ($originText)"
+                    } else {
+                        languageCode
+                    }
+                }
+
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = language.first + if (language.second) " (${
-                                stringResource(
-                                    MR.strings.sort_origin
-                                )
-                            })" else "",
-                            color = if (currentLanguage == language.first)
+                            text = displayText,
+                            color = if (currentLanguage == languageCode)
                                 MaterialTheme.colorScheme.primary
                             else
                                 MaterialTheme.colorScheme.onSurface
                         )
                     },
                     onClick = {
-                        onAudioLanguageSelected(language.first)
+                        onAudioLanguageSelected(languageCode)
                         onAudioLanguageMenuChange(false)
                     }
                 )
