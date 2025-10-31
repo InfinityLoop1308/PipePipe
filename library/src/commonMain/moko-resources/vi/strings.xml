@@ -437,4 +437,6 @@
 <string name="about_donate_description">Cảm ơn bạn đã sử dụng PipePipe! Nếu bạn thấy ứng dụng hữu ích, vui lòng cân nhắc trở thành người ủng hộ trên Ko-Fi. Sự ủng hộ của bạn rất quan trọng đối với tôi và giúp tôi bổ sung thêm nhiều tính năng mới thú vị. Mọi đóng góp đều có giá trị! 😇</string>
 <string name="saved">Đã lưu</string>
 <string name="player_subtitle_auto_generated">tự động tạo</string>
+<string name="playback_skip_silence_summary">Tự động bỏ qua các phần im lặng trong khi phát lại</string>
+<string name="playback_skip_silence_title">Bỏ qua im lặng</string>
 </resources>

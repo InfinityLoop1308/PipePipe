@@ -15,6 +15,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.*
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.russhwolf.settings.SettingsListener
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.*
 import project.pipepipe.app.MR
@@ -53,6 +54,9 @@ class PlaybackService : MediaLibraryService() {
     private val skippedSegments = mutableMapOf<String, MutableSet<String>>()
     private var sponsorBlockCheckJob: Job? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    // Skip silence setting listener
+    private var skipSilenceListener: SettingsListener? = null
 
     private enum class PlaybackButtonState(
         val repeatMode: Int,
@@ -175,6 +179,7 @@ class PlaybackService : MediaLibraryService() {
                 setHandleAudioBecomingNoisy(true)
                 repeatMode = Player.REPEAT_MODE_OFF
                 shuffleModeEnabled = false
+                skipSilenceEnabled = SharedContext.settingsManager.getBoolean("playback_skip_silence_key", false)
                 addListener(createPlayerListener())
             }
 
@@ -288,6 +293,16 @@ class PlaybackService : MediaLibraryService() {
                 applyPlaybackMode(mode)
             }
         }
+
+        // Monitor skip silence setting changes
+        skipSilenceListener = SharedContext.settingsManager.addBooleanListener(
+            "playback_skip_silence_key",
+            false
+        ) { enabled ->
+            (player as? ForwardingPlayer)?.let { forwardingPlayer ->
+                (forwardingPlayer.wrappedPlayer as? ExoPlayer)?.skipSilenceEnabled = enabled
+            }
+        }
     }
 
     private fun getRepeatModeDisplayName(): String {
@@ -319,6 +334,10 @@ class PlaybackService : MediaLibraryService() {
         serviceScope.cancel()
         sponsorBlockCache.clear()
         skippedSegments.clear()
+
+        // Clean up skip silence listener
+        skipSilenceListener?.deactivate()
+        skipSilenceListener = null
 
         super.onDestroy()
         session?.release()

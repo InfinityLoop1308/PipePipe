@@ -176,6 +176,12 @@ fun PlayerSettingScreen(
             enabled = musicModeEnabled,
             defaultValue = false
         ),
+        PreferenceItem.SwitchPref(
+            key = "playback_skip_silence_key",
+            title = stringResource(MR.strings.playback_skip_silence_title),
+            summary = stringResource(MR.strings.playback_skip_silence_summary),
+            defaultValue = false
+        ),
     )
 
     Column {

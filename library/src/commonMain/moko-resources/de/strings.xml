@@ -437,4 +437,6 @@
 <string name="about_donate_description">Vielen Dank, dass du PipePipe nutzt! Wenn du es nützlich findest, erwäge bitte, ein Unterstützer auf Ko-Fi zu werden. Deine Unterstützung ist mir wichtig und hilft mir, weitere spannende neue Funktionen hinzuzufügen. Jeder Beitrag zählt! 😇</string>
 <string name="saved">Gespeichert</string>
 <string name="player_subtitle_auto_generated">automatisch generiert</string>
+<string name="playback_skip_silence_summary">Stille Passagen während der Wiedergabe automatisch überspringen</string>
+<string name="playback_skip_silence_title">Stille überspringen</string>
 </resources>

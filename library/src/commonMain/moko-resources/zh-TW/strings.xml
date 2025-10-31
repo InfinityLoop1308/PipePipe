@@ -437,4 +437,6 @@
 <string name="about_donate_description">感謝您使用 PipePipe！如果您覺得它很有用，請考慮在 Ko-Fi 上成為支持者。您的支持對我來說很重要，並幫助我添加更多令人興奮的新功能。每一點都彌足珍貴！😇</string>
 <string name="saved">已儲存</string>
 <string name="player_subtitle_auto_generated">自動生成</string>
+<string name="playback_skip_silence_summary">播放時自動跳過靜音部分</string>
+<string name="playback_skip_silence_title">跳過靜音</string>
 </resources>
