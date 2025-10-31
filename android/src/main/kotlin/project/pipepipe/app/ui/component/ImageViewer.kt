@@ -1,5 +1,10 @@
 package project.pipepipe.app.ui.component
 
+import android.app.DownloadManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.os.Environment
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,23 +15,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
+import androidx.core.net.toUri
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.desc.desc
 import project.pipepipe.app.MR
-//import project.pipepipe.app.util.external_communication.ShareUtils
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ToastManager
 
 @Composable
 fun ImageViewer() {
@@ -37,13 +42,12 @@ fun ImageViewer() {
             SharedContext.hideImageViewer()
         }
 
-        Dialog(
-            onDismissRequest = { SharedContext.hideImageViewer() },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false,
-                decorFitsSystemWindows = false
-            )
-        ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .systemBarsPadding()
+        )  {
             ImageViewerContent(
                 urls = imageViewerState.urls.map { it.replace("http://", "https://") },
                 initialPage = imageViewerState.initialPage
@@ -57,6 +61,7 @@ private fun ImageViewerContent(
     urls: List<String>,
     initialPage: Int
 ) {
+    val context = LocalContext.current
     val pagerState = rememberPagerState(
         initialPage = initialPage.coerceIn(0, urls.size - 1),
         pageCount = { urls.size }
@@ -80,7 +85,6 @@ private fun ImageViewerContent(
             )
         }
 
-        // Top Controls - 只保留关闭按钮
         androidx.compose.animation.AnimatedVisibility(
             visible = controlsVisible,
             modifier = Modifier.align(Alignment.TopEnd)
@@ -129,7 +133,11 @@ private fun ImageViewerContent(
 
                     // Share Button
                     IconButton(onClick = {
-//                    ShareUtils.shareText(context, currentUrl, currentUrl)
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, currentUrl)
+                        }
+                        context.startActivity(Intent.createChooser(intent, MR.strings.share.desc().toString(context)))
                     }) {
                         Icon(
                             imageVector = Icons.Default.Share,
@@ -137,27 +145,25 @@ private fun ImageViewerContent(
                             tint = Color.White
                         )
                     }
-
-                    // Open in Browser Button
-                    IconButton(onClick = {
-//                    ShareUtils.openUrlInBrowser(context, currentUrl)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.OpenInBrowser,
-                            contentDescription = stringResource(MR.strings.open_in_browser),
-                            tint = Color.White
-                        )
-                    }
-
-                    // Download Button
-                    IconButton(onClick = {
-                        // TODO: Implement download functionality
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Download,
-                            contentDescription = stringResource(MR.strings.download),
-                            tint = Color.White
-                        )
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        IconButton(onClick = {
+                            val request = DownloadManager.Request(currentUrl.toUri()).apply {
+                                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                setDestinationInExternalPublicDir(
+                                    Environment.DIRECTORY_PICTURES,
+                                    "PipePipe/${System.currentTimeMillis()}.jpg"
+                                )
+                            }
+                            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                            downloadManager.enqueue(request)
+                            ToastManager.show(MR.strings.saved.desc().toString(context))
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = stringResource(MR.strings.download),
+                                tint = Color.White
+                            )
+                        }
                     }
                 }
             }
@@ -239,7 +245,6 @@ private fun ZoomableImage(
                     Button(onClick = {
                         isLoading = true
                         isError = false
-                        // 触发重新加载
                     }) {
                         Text(stringResource(MR.strings.retry))
                     }

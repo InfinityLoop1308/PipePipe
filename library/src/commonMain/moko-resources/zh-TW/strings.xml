@@ -435,4 +435,5 @@
 <string name="about_app_version">版本 %s</string>
 <string name="about_become_supporter">成為支持者</string>
 <string name="about_donate_description">感謝您使用 PipePipe！如果您覺得它很有用，請考慮在 Ko-Fi 上成為支持者。您的支持對我來說很重要，並幫助我添加更多令人興奮的新功能。每一點都彌足珍貴！😇</string>
+<string name="saved">已儲存</string>
 </resources>
