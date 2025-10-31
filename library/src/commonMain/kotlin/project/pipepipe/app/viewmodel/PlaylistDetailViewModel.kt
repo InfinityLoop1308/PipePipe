@@ -21,7 +21,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
     suspend fun loadPlaylist(url: String, serviceId: String? = null) {
         setState {
             it.copy(
-                common = it.common.copy(isLoading = true)
+                common = it.common.copy(isLoading = true, error = null)
             )
         }
         val sortMode = runCatching{ PlaylistSortMode.valueOf(SharedContext.settingsManager.getString("playlist_sort_mode_key")) }
@@ -156,7 +156,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         val nextUrl = uiState.value.list.nextPageUrl ?: return
         setState {
             it.copy(
-                common = it.common.copy(isLoading = true)
+                common = it.common.copy(isLoading = true, error = null)
             )
         }
         val result = withContext(Dispatchers.IO) {

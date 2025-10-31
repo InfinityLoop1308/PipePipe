@@ -184,7 +184,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
     suspend fun search(url: String, serviceId: String) {
         setState {
             it.copy(
-                common = it.common.copy(isLoading = true),
+                common = it.common.copy(isLoading = true, error = null),
                 list = ListUiState()
             )
         }
@@ -238,7 +238,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
         val nextUrl = uiState.value.list.nextPageUrl ?: return
         setState {
             it.copy(
-                common = it.common.copy(isLoading = true)
+                common = it.common.copy(isLoading = true, error = null)
             )
         }
         val result = withContext(Dispatchers.IO) {
