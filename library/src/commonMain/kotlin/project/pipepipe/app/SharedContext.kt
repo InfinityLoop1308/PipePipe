@@ -34,6 +34,8 @@ object SharedContext {
 //    Safe in single-activity architecture where Activity lifecycle matches application lifecycle
     lateinit var navController: NavHostController
 
+    var playingVideoUrlBeforeMinimizing: String? = null
+
     private val _playbackMode = MutableStateFlow(PlaybackMode.AUDIO_ONLY)
     val playbackMode: StateFlow<PlaybackMode> = _playbackMode.asStateFlow()
 

@@ -87,6 +87,11 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     val scope = rememberCoroutineScope()
 
     val showAsBottomTask = {
+        if (SharedContext.playbackMode.value == PlaybackMode.VIDEO_AUDIO
+            && mediaController?.isPlaying == true
+            && mediaController?.currentMediaItem?.mediaId == streamInfo?.url) {
+            SharedContext.playingVideoUrlBeforeMinimizing = streamInfo?.url
+        }
         SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
         if (mediaController?.mediaItemCount == 0 && streamInfo != null) {
             mediaController?.setMediaItem(
@@ -137,20 +142,15 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     // Auto-play logic based on settings and network state
     var hasAutoPlayed by remember { mutableStateOf(false) }
 
-    LaunchedEffect(streamInfo, mediaController) {
-        if (streamInfo != null && mediaController != null && !hasAutoPlayed &&
+    LaunchedEffect(streamInfo, mediaController, uiState.pageState) {
+        if (streamInfo != null && mediaController != null &&
             uiState.pageState == VideoDetailPageState.DETAIL_PAGE
         ) {
-            val autoplaySetting = SharedContext.settingsManager.getString("autoplay_key", "autoplay_never_key")
-
-            val shouldAutoPlay = when (autoplaySetting) {
-                "autoplay_always_key" -> true
-                "autoplay_wifi_key" -> NetworkStateHelper.isWifiConnected()
-                "autoplay_never_key" -> false
-                else -> NetworkStateHelper.isWifiConnected() // default to WiFi only
-            }
-
-            if (shouldAutoPlay) {
+            // Check if this video was playing before minimizing
+            val wasPlayingBeforeMinimizing = SharedContext.playingVideoUrlBeforeMinimizing == streamInfo.url
+            SharedContext.playingVideoUrlBeforeMinimizing = null // Clear the flag
+            if (wasPlayingBeforeMinimizing) {
+                // Resume video playback
                 mediaController?.let { controller ->
                     controller.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
                     if (controller.currentMediaItem?.mediaId != streamInfo.url) {
@@ -159,7 +159,28 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                         controller.play()
                     }
                 }
-                hasAutoPlayed = true
+            } else if(!hasAutoPlayed) {
+                // Original autoplay logic
+                val autoplaySetting = SharedContext.settingsManager.getString("autoplay_key", "autoplay_never_key")
+
+                val shouldAutoPlay = when (autoplaySetting) {
+                    "autoplay_always_key" -> true
+                    "autoplay_wifi_key" -> NetworkStateHelper.isWifiConnected()
+                    "autoplay_never_key" -> false
+                    else -> NetworkStateHelper.isWifiConnected() // default to WiFi only
+                }
+
+                if (shouldAutoPlay) {
+                    mediaController?.let { controller ->
+                        controller.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
+                        if (controller.currentMediaItem?.mediaId != streamInfo.url) {
+                            controller.playFromStreamInfo(streamInfo)
+                        } else if (!controller.isPlaying) {
+                            controller.play()
+                        }
+                    }
+                    hasAutoPlayed = true
+                }
             }
         }
     }
@@ -462,8 +483,8 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                     onDragEnd = {
                                                         // If dragged down more than threshold, minimize to bottom player
                                                         if (totalDragDistance > 100.dp.toPx()) {
-                                                            showAsBottomTask()
                                                             scope.launch {
+                                                                showAsBottomTask()
                                                                 viewModel.setPageState(VideoDetailPageState.BOTTOM_PLAYER)
                                                             }
                                                         }
