@@ -58,7 +58,9 @@ fun DescriptionSection(
                         onClick = {
                             SharedContext.showImageViewer(listOf(thumbnailUrl), 0)
                         },
-                        modifier = Modifier.scale(0.8f).offset(y = (-1).dp)
+                        modifier = Modifier
+                            .scale(0.8f)
+                            .offset(y = (-1).dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Image,
@@ -102,25 +104,27 @@ fun DescriptionSection(
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
                         tags.forEach { tag ->
-                            ElevatedSuggestionChip(
-                                onClick = {
-                                    // Minimize to bottom player
-                                    viewModel.showAsBottomPlayer()
+                            if (tag.isNotEmpty()) {
+                                ElevatedSuggestionChip(
+                                    onClick = {
+                                        // Minimize to bottom player
+                                        viewModel.showAsBottomPlayer()
 
-                                    // Navigate to search screen with tag as query
-                                    navController.navigate(Screen.Search.createRoute(tag, streamInfo.serviceId))
-                                },
-                                label = {
-                                    Text(
-                                        text = tag,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontWeight = FontWeight.SemiBold
+                                        // Navigate to search screen with tag as query
+                                        navController.navigate(Screen.Search.createRoute(tag, streamInfo.serviceId))
+                                    },
+                                    label = {
+                                        Text(
+                                            text = tag,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    },
+                                    colors = SuggestionChipDefaults.elevatedSuggestionChipColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                                     )
-                                },
-                                colors = SuggestionChipDefaults.elevatedSuggestionChipColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                                 )
-                            )
+                            }
                         }
                     }
                 }
