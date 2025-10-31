@@ -24,6 +24,7 @@ import project.pipepipe.database.Subscriptions
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.shared.infoitem.ChannelInfo
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 import project.pipepipe.app.R as AppR
@@ -94,7 +95,7 @@ class StreamsNotificationWorker(
                                 streams = actualNewStreams
                             )
                         }
-
+                        DatabaseOperations.insertOrUpdateSubscription(result.info!! as ChannelInfo, true)
                         // Update the feed
                         DatabaseOperations.updateSubscriptionFeed(
                             subscription.url!!,

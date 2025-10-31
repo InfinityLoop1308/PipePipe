@@ -25,6 +25,7 @@ import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.shared.infoitem.ChannelInfo
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
 import project.pipepipe.app.R as AppR
@@ -115,6 +116,8 @@ class FeedWorker(
                                 subscription.service_id
                             )
                         }
+
+                        DatabaseOperations.insertOrUpdateSubscription(result.info!! as ChannelInfo, true)
 
                         if (result.pagedData != null) {
                             DatabaseOperations.updateSubscriptionFeed(
