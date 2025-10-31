@@ -38,6 +38,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.PlaybackMode
@@ -193,7 +194,10 @@ fun PlaylistDetailScreen(
             controller.prepare()
             controller.play()
             if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
-                SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+                GlobalScope.launch {
+                    delay(500)
+                    SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+                }
             }
         }
     }
