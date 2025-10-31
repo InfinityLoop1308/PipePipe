@@ -139,8 +139,9 @@ class StreamsNotificationWorker(
                     .build()
 
                 val result = imageLoader.execute(request)
-                (result.image?.asDrawable(applicationContext.resources) as? BitmapDrawable)?.bitmap
+                (result.image!!.asDrawable(applicationContext.resources) as BitmapDrawable).bitmap
             } catch (e: Exception) {
+                e.printStackTrace()
                 null
             }
         }
