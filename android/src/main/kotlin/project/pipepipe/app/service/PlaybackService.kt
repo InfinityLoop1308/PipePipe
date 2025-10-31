@@ -554,28 +554,36 @@ class PlaybackService : MediaLibraryService() {
                     player.play()
                     return
                 }
+
+                // Extract failed mediaId from error message
+                val failedMediaId = error.cause?.message?.substringAfter("Failed to prepare media: ")
+                    ?: error.message?.substringAfter("Failed to prepare media: ")
+
                 MainScope().launch {
                     DatabaseOperations.insertErrorLog(
                         stacktrace = error.stackTraceToString(),
-                        request = player.currentMediaItem?.mediaId,
+                        request = failedMediaId ?: player.currentMediaItem?.mediaId,
                         task = "PLAY_STREAM",
                         errorCode = "PLAY_000"
                     )
                 }
                 ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))
 
-                // Remove failed item and try to play next
-                val currentIndex = player.currentMediaItemIndex
-                val hasNext = player.hasNextMediaItem()
-
-                if (currentIndex >= 0 && currentIndex < player.mediaItemCount) {
-                    player.removeMediaItem(currentIndex)
-
-                    if (hasNext && player.mediaItemCount > 0) {
-                        // If there was a next item, it's now at the current index
-                        player.prepare()
-                        player.play()
+                // Find and remove the failed item by mediaId
+                if (failedMediaId != null) {
+                    for (i in 0 until player.mediaItemCount) {
+                        if (player.getMediaItemAt(i).mediaId == failedMediaId) {
+                            player.removeMediaItem(i)
+                            break
+                        }
                     }
+                }
+                // If no mediaId found, don't remove anything to avoid removing wrong item
+
+                // Continue playback if there are items left
+                if (player.mediaItemCount > 0) {
+                    player.prepare()
+                    player.play()
                 }
             }
         }

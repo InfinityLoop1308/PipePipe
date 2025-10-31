@@ -227,7 +227,8 @@ class LazyUrlMediaSource(
                 }
             } catch (e: Exception) { // can be cancelled if service get destroyed
                 e.printStackTrace()
-                prepareError = e
+                // Wrap with IOException to include mediaId, which ExoPlayer can handle
+                prepareError = java.io.IOException("Failed to prepare media: ${mediaItem.mediaId}", e)
             }
         }
     }
