@@ -36,6 +36,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,6 +48,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -120,6 +126,25 @@ private fun SubscriptionsContent(
     onCreateFeedGroup: (String, Int) -> Unit
 ) {
     var showCreateFeedGroupDialog by rememberSaveable { mutableStateOf(false) }
+    var isSearchActive by rememberSaveable { mutableStateOf(false) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+
+    val filteredSubscriptions = remember(subscriptions, searchQuery) {
+        if (searchQuery.isBlank()) {
+            subscriptions
+        } else {
+            subscriptions.filter { subscription ->
+                subscription.name?.contains(searchQuery, ignoreCase = true) == true
+            }
+        }
+    }
+
+    LaunchedEffect(isSearchActive) {
+        if (isSearchActive) {
+            focusRequester.requestFocus()
+        }
+    }
 
     if (showCreateFeedGroupDialog) {
         CreateFeedGroupDialog(
@@ -178,10 +203,22 @@ private fun SubscriptionsContent(
             )
         }
 
-        item { SubscriptionsHeader(onSearchClick = onSearchClick) }
+        item {
+            SubscriptionsHeader(
+                isSearchActive = isSearchActive,
+                searchQuery = searchQuery,
+                focusRequester = focusRequester,
+                onSearchClick = { isSearchActive = true },
+                onSearchQueryChange = { searchQuery = it },
+                onClearSearch = {
+                    searchQuery = ""
+                    isSearchActive = false
+                }
+            )
+        }
 
         when {
-            isLoading && subscriptions.isEmpty() -> {
+            isLoading && filteredSubscriptions.isEmpty() -> {
                 item {
                     Box(
                         modifier = Modifier
@@ -194,7 +231,7 @@ private fun SubscriptionsContent(
                 }
             }
 
-            subscriptions.isEmpty() -> {
+            filteredSubscriptions.isEmpty() -> {
                 item {
                     Box(
                         modifier = Modifier
@@ -212,7 +249,7 @@ private fun SubscriptionsContent(
             }
 
             else -> {
-                items(subscriptions, key = { it.uid }) { subscription ->
+                items(filteredSubscriptions, key = { it.uid }) { subscription ->
                     SubscriptionRow(
                         subscription = subscription,
                         onClick = { onSubscriptionClick(subscription) }
@@ -315,7 +352,12 @@ private fun ChannelGroupCard(
 
 @Composable
 private fun SubscriptionsHeader(
-    onSearchClick: () -> Unit
+    isSearchActive: Boolean,
+    searchQuery: String,
+    focusRequester: FocusRequester,
+    onSearchClick: () -> Unit,
+    onSearchQueryChange: (String) -> Unit,
+    onClearSearch: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -323,17 +365,54 @@ private fun SubscriptionsHeader(
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = stringResource(MR.strings.tab_subscriptions),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(onClick = onSearchClick) {
-            Icon(
-                imageVector = Icons.Outlined.Search,
-                contentDescription = stringResource(MR.strings.search_subscriptions)
+        if (isSearchActive) {
+            androidx.compose.material3.TextField(
+                value = searchQuery,
+                onValueChange = onSearchQueryChange,
+                placeholder = {
+                    Text(
+                        text = stringResource(MR.strings.search_subscriptions),
+                        style = TextStyle(
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
+                        ),
+                        fontSize = 14.sp
+                    )
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .focusRequester(focusRequester),
+                singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent
+                ),
+                textStyle = TextStyle(fontSize = 14.sp),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { /* Search is live */ })
             )
+            IconButton(onClick = onClearSearch) {
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = stringResource(MR.strings.clear)
+                )
+            }
+        } else {
+            Text(
+                text = stringResource(MR.strings.tab_subscriptions),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = onSearchClick) {
+                Icon(
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = stringResource(MR.strings.search_subscriptions)
+                )
+            }
         }
     }
 }
