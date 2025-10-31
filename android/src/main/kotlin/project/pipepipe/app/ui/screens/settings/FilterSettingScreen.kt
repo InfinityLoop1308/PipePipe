@@ -95,7 +95,7 @@ fun FilterSettingScreen(
     val filterTypesTitle = stringResource(MR.strings.filter_field_summary)
     val filterTypeEntries = listOf(
         stringResource(MR.strings.search_result),
-        stringResource(MR.strings.recommended_videos),
+        stringResource(MR.strings.trending),
         stringResource(MR.strings.related_items_tab_description),
         stringResource(MR.strings.channel_videos)
     )
