@@ -143,8 +143,9 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     var hasAutoPlayed by remember { mutableStateOf(false) }
 
     LaunchedEffect(streamInfo, mediaController, uiState.pageState) {
-        if (streamInfo != null && mediaController != null &&
-            uiState.pageState == VideoDetailPageState.DETAIL_PAGE
+        if (streamInfo != null && mediaController != null
+            && uiState.pageState == VideoDetailPageState.DETAIL_PAGE
+            && !uiState.common.isLoading
         ) {
             // Check if this video was playing before minimizing
             val wasPlayingBeforeMinimizing = SharedContext.playingVideoUrlBeforeMinimizing == streamInfo.url
