@@ -21,6 +21,7 @@ import androidx.media3.exoplayer.upstream.Allocator
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
 import androidx.media3.extractor.metadata.icy.IcyHeaders
 import kotlinx.coroutines.*
+import java.io.IOException
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.StreamType
@@ -162,6 +163,7 @@ class LazyUrlMediaSource(
     private val eventListeners = mutableMapOf<MediaSourceEventListener, Handler>()
     private var mediaSourceCaller: MediaSource.MediaSourceCaller? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private var prepareError: Exception? = null
 
     override fun addEventListener(
         handler: Handler,
@@ -225,11 +227,13 @@ class LazyUrlMediaSource(
                 }
             } catch (e: Exception) { // can be cancelled if service get destroyed
                 e.printStackTrace()
+                prepareError = e
             }
         }
     }
 
     override fun maybeThrowSourceInfoRefreshError() {
+        prepareError?.let { throw it }
         actualMediaSource?.maybeThrowSourceInfoRefreshError()
     }
 
@@ -241,7 +245,7 @@ class LazyUrlMediaSource(
         startPositionUs: Long
     ): MediaPeriod {
         return actualMediaSource?.createPeriod(id, allocator, startPositionUs)
-            ?: throw IllegalStateException("Media source not prepared")
+            ?: throw IOException("Media source not prepared")
     }
 
     override fun releasePeriod(mediaPeriod: MediaPeriod) {

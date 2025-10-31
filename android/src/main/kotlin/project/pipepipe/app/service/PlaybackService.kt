@@ -560,6 +560,20 @@ class PlaybackService : MediaLibraryService() {
                     )
                 }
                 ToastManager.show("Playback error")
+
+                // Remove failed item and try to play next
+                val currentIndex = player.currentMediaItemIndex
+                val hasNext = player.hasNextMediaItem()
+
+                if (currentIndex >= 0 && currentIndex < player.mediaItemCount) {
+                    player.removeMediaItem(currentIndex)
+
+                    if (hasNext && player.mediaItemCount > 0) {
+                        // If there was a next item, it's now at the current index
+                        player.prepare()
+                        player.play()
+                    }
+                }
             }
         }
     }
