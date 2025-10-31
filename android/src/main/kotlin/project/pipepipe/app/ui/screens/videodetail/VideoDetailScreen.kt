@@ -394,47 +394,9 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     }
                 }
             }
-            AnimatedContent(
+            Crossfade(
                 targetState = uiState.pageState,
-                transitionSpec = {
-                    when {
-                        targetState == VideoDetailPageState.DETAIL_PAGE &&
-                        initialState == VideoDetailPageState.BOTTOM_PLAYER -> {
-                            slideInVertically(
-                                initialOffsetY = { it },
-                                animationSpec = tween(durationMillis = 250)
-                            ) + fadeIn(
-                                animationSpec = tween(durationMillis = 250)
-                            ) togetherWith slideOutVertically(
-                                targetOffsetY = { -it },
-                                animationSpec = tween(durationMillis = 250)
-                            ) + fadeOut(
-                                animationSpec = tween(durationMillis = 250)
-                            )
-                        }
-                        targetState == VideoDetailPageState.BOTTOM_PLAYER &&
-                        initialState == VideoDetailPageState.DETAIL_PAGE -> {
-                            slideInVertically(
-                                initialOffsetY = { -it },
-                                animationSpec = tween(durationMillis = 250)
-                            ) + fadeIn(
-                                animationSpec = tween(durationMillis = 250)
-                            ) togetherWith slideOutVertically(
-                                targetOffsetY = { it },
-                                animationSpec = tween(durationMillis = 250)
-                            ) + fadeOut(
-                                animationSpec = tween(durationMillis = 250)
-                            )
-                        }
-                        else -> {
-                            fadeIn(
-                                animationSpec = tween(durationMillis = 250)
-                            ) togetherWith fadeOut(
-                                animationSpec = tween(durationMillis = 250)
-                            )
-                        }
-                    } using SizeTransform(clip = false)
-                },
+                animationSpec = tween(durationMillis = 300),
                 label = "pageStateTransition"
             ) { pageState ->
                 Box(
