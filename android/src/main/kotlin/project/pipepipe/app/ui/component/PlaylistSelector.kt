@@ -182,6 +182,7 @@ fun PlaylistSelectorPopup(
             onConfirm = { playlistName ->
                 GlobalScope.launch  {
                     createNewPlaylistAndAddStreams(playlistName, streams)
+                    ToastManager.show(addedText)
                 }
                 showNewPlaylistDialog = false
                 onPlaylistSelected()

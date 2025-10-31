@@ -94,7 +94,9 @@ object DatabaseOperations {
                 streamCount = streamCount.toLong(),
                 isPinned = playlist.is_pinned != 0L,
                 uid = playlist.uid,
-                shouldUseSecondaryColor = streams.contains(streamInfo)
+                shouldUseSecondaryColor = streams.any{
+                    it.url == streamInfo?.url
+                }
             )
         }
     }
