@@ -40,13 +40,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
@@ -56,7 +54,6 @@ import coil3.compose.AsyncImage
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import project.pipepipe.app.MR
@@ -100,6 +97,10 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 
     var showPlaylistPopup by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
+
+    LaunchedEffect(streamInfo?.url) {
+        listState.scrollToItem(0)
+    }
 
     val nestedScrollConnection1 = remember {
         object : NestedScrollConnection {
@@ -552,6 +553,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                     selected = pagerState.currentPage == index,
                                                     onClick = {
                                                         scope.launch {
+                                                            listState.scrollToItem(0)
                                                             pagerState.animateScrollToPage(index)
                                                         }
                                                     },
