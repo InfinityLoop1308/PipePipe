@@ -108,7 +108,9 @@ fun PlaylistDetailScreen(
             || uiState.playlistType in listOf(PlaylistType.HISTORY, PlaylistType.TRENDING))
 
     LaunchedEffect(url) {
-        viewModel.loadPlaylist(url, serviceId)
+        if (uiState.playlistInfo?.url != url) {
+            viewModel.loadPlaylist(url, serviceId)
+        }
     }
 
     LaunchedEffect(listState, uiState.displayItems.size) {

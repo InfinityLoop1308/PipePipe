@@ -92,13 +92,15 @@ fun ChannelScreen(
     val tabLoadRequests = remember(channelUrl) { mutableStateMapOf<ChannelTabType, Boolean>()}
 
     LaunchedEffect(channelUrl) {
-        tabLoadRequests.clear()
-        viewModel.loadChannelMainTab(channelUrl, serviceId)
-        viewModel.checkSubscriptionStatus(channelUrl)
+        if (uiState.channelInfo?.url != channelUrl) {
+            tabLoadRequests.clear()
+            viewModel.loadChannelMainTab(channelUrl, serviceId)
+            viewModel.checkSubscriptionStatus(channelUrl)
 
-        // Load notification mode
-        val subscription = DatabaseOperations.getSubscriptionByUrl(channelUrl)
-        notificationMode = subscription?.notification_mode ?: 1L
+            // Load notification mode
+            val subscription = DatabaseOperations.getSubscriptionByUrl(channelUrl)
+            notificationMode = subscription?.notification_mode ?: 1L
+        }
     }
 
     LaunchedEffect(tabTypes, pagerState, deferredTabLoaders) {
