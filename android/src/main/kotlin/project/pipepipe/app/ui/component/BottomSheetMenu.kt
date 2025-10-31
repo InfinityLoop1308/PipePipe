@@ -245,7 +245,6 @@ private fun StreamInfoMenuItems(
         })
         if (showProvideDetailButton) {
             add(Triple(Icons.Default.Info, stringResource(MR.strings.show_details)) {
-                SharedContext.toggleShowPlayQueueVisibility()
                 SharedContext.sharedVideoDetailViewModel.loadVideoDetails(streamInfo.url, streamInfo.serviceId)
                 onDismiss()
             })
