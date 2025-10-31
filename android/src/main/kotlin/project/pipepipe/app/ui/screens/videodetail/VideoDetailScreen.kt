@@ -8,9 +8,12 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -33,15 +36,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.MediaItem
@@ -54,6 +56,7 @@ import coil3.compose.AsyncImage
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import project.pipepipe.app.MR
@@ -80,7 +83,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     val streamInfo = uiState.currentStreamInfo
     val context = LocalContext.current
     val activity = context as? Activity
-    val density = LocalDensity.current
     val configuration = LocalConfiguration.current
 
     var mediaController by remember { mutableStateOf<MediaController?>(null) }
@@ -92,19 +94,12 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         if (mediaController?.mediaItemCount == 0 && streamInfo != null) {
             mediaController?.setMediaItem(
                 streamInfo.toMediaItem(),
-                runBlocking{ DatabaseOperations.getStreamProgress(streamInfo.url) } ?:0)
+                runBlocking { DatabaseOperations.getStreamProgress(streamInfo.url) } ?: 0)
         }
     }
 
     var showPlaylistPopup by remember { mutableStateOf(false) }
-
-    val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
-    val bottomSheetContentHeight = 64.dp
-    val bottomSheetContentHeightPx = with(density) { bottomSheetContentHeight.toPx() }
-    val navBarHeightPx = WindowInsets.navigationBars.getBottom(density)
     val listState = rememberLazyListState()
-
-    val colorScheme = MaterialTheme.colorScheme
 
     val nestedScrollConnection1 = remember {
         object : NestedScrollConnection {
@@ -114,7 +109,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     scope.launch {
                         listState.scrollBy(consumed)
                     }
-                    return Offset(0f, if(consumed > 0)available.y else 0f)
+                    return Offset(0f, if (consumed > 0) available.y else 0f)
                 } else {
                     return Offset.Zero
                 }
@@ -122,35 +117,12 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         }
     }
 
-    val draggableState = remember(uiState.pageState) {
-        AnchoredDraggableState(
-            initialValue = uiState.pageState,
-            anchors = DraggableAnchors {
-                VideoDetailPageState.DETAIL_PAGE at 0f
-                VideoDetailPageState.BOTTOM_PLAYER at screenHeight - bottomSheetContentHeightPx - navBarHeightPx
-            }
-        )
-    }
+    // Track drag distance for swipe-down gesture
+    var totalDragDistance by remember { mutableFloatStateOf(0f) }
 
-    var layoutHeightPx by remember { mutableFloatStateOf(0f) }
-    LaunchedEffect(layoutHeightPx, draggableState) {
-        if (layoutHeightPx > 0f) {
-            val newAnchors = DraggableAnchors {
-                VideoDetailPageState.DETAIL_PAGE at 0f
-                VideoDetailPageState.BOTTOM_PLAYER at layoutHeightPx - navBarHeightPx - bottomSheetContentHeightPx
-            }
-            draggableState.updateAnchors(newAnchors)
-        }
-    }
-
-    LaunchedEffect(draggableState.currentValue) {
-        if (draggableState.currentValue != uiState.pageState &&
-            uiState.pageState != VideoDetailPageState.FULLSCREEN_PLAYER) {
-            viewModel.setPageState(draggableState.currentValue)
-            if (draggableState.currentValue == VideoDetailPageState.BOTTOM_PLAYER) {
-                showAsBottomTask()
-            }
-        }
+    // Reset drag distance when state changes
+    LaunchedEffect(uiState.pageState) {
+        totalDragDistance = 0f
     }
     LaunchedEffect(Unit) {
         val sessionToken = SessionToken(context, ComponentName(context, PlaybackService::class.java))
@@ -166,7 +138,8 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 
     LaunchedEffect(streamInfo, mediaController) {
         if (streamInfo != null && mediaController != null && !hasAutoPlayed &&
-            uiState.pageState == VideoDetailPageState.DETAIL_PAGE) {
+            uiState.pageState == VideoDetailPageState.DETAIL_PAGE
+        ) {
             val autoplaySetting = SharedContext.settingsManager.getString("autoplay_key", "autoplay_never_key")
 
             val shouldAutoPlay = when (autoplaySetting) {
@@ -240,7 +213,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
                     if (isAutoRotateDisabled && act.resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
-                        act.requestedOrientation = if(streamInfo.isPortrait) {
+                        act.requestedOrientation = if (streamInfo.isPortrait) {
                             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                         } else {
                             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
@@ -348,28 +321,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                 }
             }
         )
-//        TabConfig(
-//            title = "Description",
-//            isAvailable = false,
-//            content = {
-//                Text(
-//                    "Video Description Area\n(To be implemented)",
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
-//            }
-//        ),
-//        TabConfig(
-//            title = "More",
-//            isAvailable = false,
-//            content = {
-//                Text(
-//                    "More Info Area\n(To be implemented)",
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
-//            }
-//        )
     )
 
     val availableTabs = allTabs.filter { it.isAvailable }
@@ -392,9 +343,18 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     danmakuPool = uiState.currentDanmaku,
                     gestureSettings = PlayerGestureSettings(
                         swipeSeekEnabled = false,
-                        volumeGestureEnabled = SharedContext.settingsManager.getBoolean("volume_gesture_control_key", true),
-                        brightnessGestureEnabled = SharedContext.settingsManager.getBoolean("brightness_gesture_control_key", true),
-                        fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean("fullscreen_gesture_control_key", true)
+                        volumeGestureEnabled = SharedContext.settingsManager.getBoolean(
+                            "volume_gesture_control_key",
+                            true
+                        ),
+                        brightnessGestureEnabled = SharedContext.settingsManager.getBoolean(
+                            "brightness_gesture_control_key",
+                            true
+                        ),
+                        fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean(
+                            "fullscreen_gesture_control_key",
+                            true
+                        )
                     ),
                     danmakuEnabled = uiState.danmakuEnabled,
                     onToggleDanmaku = { viewModel.toggleDanmaku() },
@@ -402,6 +362,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                 )
             }
         }
+
         VideoDetailPageState.BOTTOM_PLAYER, VideoDetailPageState.DETAIL_PAGE -> {
             if (uiState.pageState == VideoDetailPageState.DETAIL_PAGE) {
                 BackHandler {
@@ -411,18 +372,54 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     }
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onSizeChanged { size ->
-                        layoutHeightPx = size.height.toFloat()
-                    }
-            ) {
+            AnimatedContent(
+                targetState = uiState.pageState,
+                transitionSpec = {
+                    when {
+                        targetState == VideoDetailPageState.DETAIL_PAGE &&
+                        initialState == VideoDetailPageState.BOTTOM_PLAYER -> {
+                            slideInVertically(
+                                initialOffsetY = { it },
+                                animationSpec = tween(durationMillis = 250)
+                            ) + fadeIn(
+                                animationSpec = tween(durationMillis = 250)
+                            ) togetherWith slideOutVertically(
+                                targetOffsetY = { -it },
+                                animationSpec = tween(durationMillis = 250)
+                            ) + fadeOut(
+                                animationSpec = tween(durationMillis = 250)
+                            )
+                        }
+                        targetState == VideoDetailPageState.BOTTOM_PLAYER &&
+                        initialState == VideoDetailPageState.DETAIL_PAGE -> {
+                            slideInVertically(
+                                initialOffsetY = { -it },
+                                animationSpec = tween(durationMillis = 250)
+                            ) + fadeIn(
+                                animationSpec = tween(durationMillis = 250)
+                            ) togetherWith slideOutVertically(
+                                targetOffsetY = { it },
+                                animationSpec = tween(durationMillis = 250)
+                            ) + fadeOut(
+                                animationSpec = tween(durationMillis = 250)
+                            )
+                        }
+                        else -> {
+                            fadeIn(
+                                animationSpec = tween(durationMillis = 250)
+                            ) togetherWith fadeOut(
+                                animationSpec = tween(durationMillis = 250)
+                            )
+                        }
+                    } using SizeTransform(clip = false)
+                },
+                label = "pageStateTransition"
+            ) { pageState ->
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    when (draggableState.currentValue) {
+                    when (pageState) {
                         VideoDetailPageState.DETAIL_PAGE -> {
                             Column(
                                 modifier = modifier
@@ -436,8 +433,12 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                         error = uiState.common.error!!,
                                         onRetry = {
                                             scope.launch {
-                                                val errorRow = DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
-                                                viewModel.loadVideoDetails(errorRow!!.request!!, serviceId = errorRow.service_id)
+                                                val errorRow =
+                                                    DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
+                                                viewModel.loadVideoDetails(
+                                                    errorRow!!.request!!,
+                                                    serviceId = errorRow.service_id
+                                                )
                                             }
                                         },
                                         modifier = Modifier.fillMaxSize()
@@ -455,15 +456,29 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                     Box(
                                         modifier = Modifier
                                             .aspectRatio(16f / 9f)
-                                            .anchoredDraggable(
-                                                state = draggableState,
-                                                orientation = Orientation.Vertical,
-                                            )
-                                            .then(
-                                                if (draggableState.currentValue == VideoDetailPageState.BOTTOM_PLAYER) {
-                                                    Modifier.zIndex(1f)
-                                                } else Modifier
-                                            )
+                                            .pointerInput(Unit) {
+                                                detectVerticalDragGestures(
+                                                    onDragEnd = {
+                                                        // If dragged down more than threshold, minimize to bottom player
+                                                        if (totalDragDistance > 100.dp.toPx()) {
+                                                            showAsBottomTask()
+                                                            scope.launch {
+                                                                viewModel.setPageState(VideoDetailPageState.BOTTOM_PLAYER)
+                                                            }
+                                                        }
+                                                        totalDragDistance = 0f
+                                                    },
+                                                    onDragCancel = {
+                                                        totalDragDistance = 0f
+                                                    }
+                                                ) { change, dragAmount ->
+                                                    // Only track downward drags
+                                                    if (dragAmount > 0) {
+                                                        change.consume()
+                                                        totalDragDistance += dragAmount
+                                                    }
+                                                }
+                                            }
                                     ) {
                                         VideoPlayer(
                                             mediaController = mediaController!!,
@@ -490,7 +505,12 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                         state = listState
                                     ) {
                                         item { VideoTitleSection(name = streamInfo.name) }
-                                        item { VideoDetailSection(streamInfo = streamInfo, navController = navController) }
+                                        item {
+                                            VideoDetailSection(
+                                                streamInfo = streamInfo,
+                                                navController = navController
+                                            )
+                                        }
                                         item {
                                             ActionButtons(
                                                 onPlayAudioClick = {
@@ -549,16 +569,19 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                 }
                             }
                         }
+
                         VideoDetailPageState.BOTTOM_PLAYER -> {
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
-                                    .navigationBarsPadding()) {
+                                    .navigationBarsPadding()
+                            ) {
                                 BottomSheetContent(
                                     mediaController = mediaController
                                 )
                             }
                         }
+
                         else -> {
                         }
                     }
@@ -584,37 +607,28 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 private fun BottomSheetContent(
     mediaController: MediaController?
 ) {
-    var isPlaying by remember { mutableStateOf(false) }
-    var currentMediaItem by remember { mutableStateOf<MediaItem?>(null) }
+    var isPlaying by remember { mutableStateOf(mediaController?.isPlaying?:false) }
+    var currentMediaItem by remember { mutableStateOf(mediaController?.currentMediaItem) }
 
     DisposableEffect(mediaController) {
         val listener = object : Player.Listener {
             override fun onEvents(player: Player, events: Player.Events) {
-                // 检查播放状态变化
                 if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
                     isPlaying = player.isPlaying
                 }
 
-                // 检查媒体项变化
                 if (events.contains(Player.EVENT_TIMELINE_CHANGED) ||
-                    events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)) {
+                    events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)
+                ) {
                     currentMediaItem = player.currentMediaItem
                 }
             }
         }
-
-        mediaController?.let { controller ->
-            controller.addListener(listener)
-            // 初始化当前状态
-            isPlaying = controller.isPlaying
-            currentMediaItem = controller.currentMediaItem
-        }
-
+        mediaController?.addListener(listener)
         onDispose {
             mediaController?.removeListener(listener)
         }
     }
-
     if (currentMediaItem == null) {
         SharedContext.sharedVideoDetailViewModel.hide()
         return
