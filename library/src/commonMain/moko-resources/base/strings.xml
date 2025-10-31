@@ -103,6 +103,7 @@
 <string name="player_skipped_category">Skipped %s</string>
 <string name="player_audio_language_default">Default</string>
 <string name="player_subtitle_language_unknown">Unknown</string>
+<string name="player_subtitle_auto_generated">auto-generated</string>
 <string name="player_play_video">Play video</string>
 <string name="sponsor_block_manual_skip_button">Skip</string>
 <string name="player_skip_segment">Skip segment</string>

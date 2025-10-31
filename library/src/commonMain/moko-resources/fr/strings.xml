@@ -436,4 +436,5 @@
 <string name="about_become_supporter">Devenir un soutien</string>
 <string name="about_donate_description">Merci d\'utiliser PipePipe ! Si vous le trouvez utile, veuillez envisager de devenir un soutien sur Ko-Fi. Votre soutien est important pour moi et m\'aide à ajouter de nouvelles fonctionnalités passionnantes. Chaque contribution compte ! 😇</string>
 <string name="saved">Enregistré</string>
+<string name="player_subtitle_auto_generated">généré automatiquement</string>
 </resources>

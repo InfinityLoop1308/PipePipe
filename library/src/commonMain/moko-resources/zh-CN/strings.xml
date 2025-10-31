@@ -176,6 +176,7 @@
 <string name="search_type">搜索类型</string>
 <string name="sleep_timer_hours_unit">小时</string>
 <string name="player_subtitle_language_unknown">未知</string>
+<string name="player_subtitle_auto_generated">自动生成</string>
 <string name="player_enable_danmaku">启用弹幕</string>
 <string name="view_details">查看详情</string>
 <string name="dashboard">仪表盘</string>
