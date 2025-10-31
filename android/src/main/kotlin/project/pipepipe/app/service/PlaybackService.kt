@@ -496,8 +496,11 @@ class PlaybackService : MediaLibraryService() {
 
                 if (SponsorBlockHelper.isNotificationsEnabled()) {
                     MainScope().launch {
-                        ToastManager.show(MR.strings.player_skipped_category.desc()
-                            .toString(this@PlaybackService).format(segment.category.name))
+                        val categoryName = project.pipepipe.app.ui.component.player.SponsorBlockUtils.getCategoryName(segment.category, this@PlaybackService)
+                        val message = MR.strings.player_skipped_category.desc()
+                            .toString(this@PlaybackService)
+                            .format(categoryName)
+                        ToastManager.show(message)
                     }
                 }
             }

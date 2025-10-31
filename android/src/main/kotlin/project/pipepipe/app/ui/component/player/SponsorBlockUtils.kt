@@ -1,8 +1,10 @@
 package project.pipepipe.app.ui.component.player
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.desc.desc
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
@@ -72,5 +74,26 @@ object SponsorBlockUtils {
             SponsorBlockCategory.FILLER -> stringResource(MR.strings.sponsor_block_category_filler)
             SponsorBlockCategory.PENDING -> stringResource(MR.strings.missions_header_pending)
         }
+    }
+
+    /**
+     * Get the localized name for a specific SponsorBlock category (non-Composable version)
+     * @param category The SponsorBlock category
+     * @param context The Android context
+     * @return The localized category name
+     */
+    fun getCategoryName(category: SponsorBlockCategory, context: Context): String {
+        return when (category) {
+            SponsorBlockCategory.SPONSOR -> MR.strings.sponsor_block_category_sponsor
+            SponsorBlockCategory.INTRO -> MR.strings.sponsor_block_category_intro
+            SponsorBlockCategory.OUTRO -> MR.strings.sponsor_block_category_outro
+            SponsorBlockCategory.INTERACTION -> MR.strings.sponsor_block_category_interaction
+            SponsorBlockCategory.HIGHLIGHT -> MR.strings.sponsor_block_category_highlight
+            SponsorBlockCategory.SELF_PROMO -> MR.strings.sponsor_block_category_self_promo
+            SponsorBlockCategory.NON_MUSIC -> MR.strings.sponsor_block_category_non_music
+            SponsorBlockCategory.PREVIEW -> MR.strings.sponsor_block_category_preview
+            SponsorBlockCategory.FILLER -> MR.strings.sponsor_block_category_filler
+            SponsorBlockCategory.PENDING -> MR.strings.missions_header_pending
+        }.desc().toString(context)
     }
 }
