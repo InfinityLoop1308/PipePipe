@@ -281,6 +281,13 @@ class PlaybackService : MediaLibraryService() {
             .build()
 
         applyPlaybackMode(playbackMode.value)
+
+        // Monitor playbackMode changes
+        serviceScope.launch {
+            playbackMode.collect { mode ->
+                applyPlaybackMode(mode)
+            }
+        }
     }
 
     private fun getRepeatModeDisplayName(): String {
@@ -329,7 +336,7 @@ class PlaybackService : MediaLibraryService() {
                 val mode = runCatching { PlaybackMode.valueOf(modeName ?: "") }.getOrNull()
                 if (mode != null) {
                     SharedContext.updatePlaybackMode(mode)
-                    applyPlaybackMode(mode)
+                    // applyPlaybackMode will be called automatically by the Flow collector
                     SessionResult(SessionResult.RESULT_SUCCESS)
                 } else {
                     SessionResult(SessionError.ERROR_BAD_VALUE)
@@ -564,7 +571,6 @@ fun MediaController.playFromStreamInfo(streamInfo: StreamInfo) {
             } else {
                 setMediaItem(mediaItem)
             }
-
         }
         prepare()
         play()

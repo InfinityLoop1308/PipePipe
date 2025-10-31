@@ -724,13 +724,15 @@ fun VideoPlayer(
                     }
 
             ) {
-                VideoSurface(
-                    modifier = Modifier.fillMaxSize(),
-                    mediaController = mediaController,
-                    danmakuPool = danmakuPool,
-                    danmakuState = danmakuState,
-                    danmakuEnabled = danmakuEnabled
-                )
+                key(audioMode) {
+                    VideoSurface(
+                        modifier = Modifier.fillMaxSize(),
+                        mediaController = mediaController,
+                        danmakuPool = danmakuPool,
+                        danmakuState = danmakuState,
+                        danmakuEnabled = danmakuEnabled
+                    )
+                }
                 if (!isInPipMode) {
                     // Create player control state
                     val playerControlState = PlayerControlState(
