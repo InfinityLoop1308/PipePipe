@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var mediaController: MediaController? = null
     lateinit var navController: NavHostController
+    private var wasInPipMode = false
 
     @androidx.annotation.OptIn(UnstableApi::class)
     @OptIn(ExperimentalMaterial3Api::class)
@@ -272,8 +273,22 @@ class MainActivity : ComponentActivity() {
         newConfig: Configuration
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-        if (!isInPictureInPictureMode) {
+        if (isInPictureInPictureMode) {
+            wasInPipMode = true
+        } else if (wasInPipMode) {
+            // User returned to app by clicking fullscreen button
             handleExitPip()
+            wasInPipMode = false
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // If in PiP mode and Activity is stopping, user closed the PiP window
+        if (wasInPipMode && isInPictureInPictureMode) {
+            mediaController?.pause()
+            handleExitPip()
+            wasInPipMode = false
         }
     }
 
