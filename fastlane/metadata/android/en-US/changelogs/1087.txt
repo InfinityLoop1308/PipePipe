@@ -1,0 +1,9 @@
+### Bug Fixes
+
+- Update checker incorrectly fetches test versions of 5.0.0
+- Failed to load trending sometimes (YouTube)
+- Failed to parse videos under certain scenarios (YouTube)
+
+### Behavior
+
+- Temporarily disable YouTube accounts and log users out since video extraction for logged-in accounts is broken now
