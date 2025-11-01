@@ -235,7 +235,12 @@ class LazyUrlMediaSource(
 
     override fun maybeThrowSourceInfoRefreshError() {
         prepareError?.let { throw it }
-        actualMediaSource?.maybeThrowSourceInfoRefreshError()
+        // Only delegate to actual media source if it's been initialized
+        // If it's still null, the prepare job is still running and there's no error yet
+        val source = actualMediaSource
+        if (source != null) {
+            source.maybeThrowSourceInfoRefreshError()
+        }
     }
 
     override fun getMediaItem(): MediaItem = mediaItem
@@ -251,7 +256,8 @@ class LazyUrlMediaSource(
 
     override fun releasePeriod(mediaPeriod: MediaPeriod) {
         actualMediaSource?.releasePeriod(mediaPeriod)
-        coroutineScope.cancel()
+        // Note: Don't cancel coroutineScope here - it should only be cancelled in releaseSource
+        // because releasePeriod might be called multiple times
     }
 
     override fun releaseSource(caller: MediaSource.MediaSourceCaller) {
@@ -260,6 +266,7 @@ class LazyUrlMediaSource(
         actualMediaSource = null
         mediaSourceCaller = null
         eventListeners.clear()
+        coroutineScope.cancel()
     }
 
     override fun enable(caller: MediaSource.MediaSourceCaller) {

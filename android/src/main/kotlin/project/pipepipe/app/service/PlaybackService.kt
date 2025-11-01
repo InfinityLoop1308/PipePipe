@@ -506,6 +506,27 @@ class PlaybackService : MediaLibraryService() {
             }
         }
     }
+
+    private fun extractMediaIdFromError(error: PlaybackException): String? {
+        val prefix = "Failed to prepare media: "
+
+        // Check cause message first
+        error.cause?.message?.let { msg ->
+            if (msg.contains(prefix)) {
+                return msg.substringAfter(prefix)
+            }
+        }
+
+        // Check error message
+        error.message?.let { msg ->
+            if (msg.contains(prefix)) {
+                return msg.substringAfter(prefix)
+            }
+        }
+
+        // Return null if prefix not found - don't return the whole error message
+        return null
+    }
     private fun createPlayerListener(): Player.Listener {
         return object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -556,8 +577,8 @@ class PlaybackService : MediaLibraryService() {
                 }
 
                 // Extract failed mediaId from error message
-                val failedMediaId = error.cause?.message?.substringAfter("Failed to prepare media: ")
-                    ?: error.message?.substringAfter("Failed to prepare media: ")
+                // Use helper function to properly parse the mediaId
+                val failedMediaId = extractMediaIdFromError(error)
 
                 MainScope().launch {
                     DatabaseOperations.insertErrorLog(
@@ -569,16 +590,22 @@ class PlaybackService : MediaLibraryService() {
                 }
                 ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))
 
-                // Find and remove the failed item by mediaId
-                if (failedMediaId != null) {
-                    for (i in 0 until player.mediaItemCount) {
-                        if (player.getMediaItemAt(i).mediaId == failedMediaId) {
-                            player.removeMediaItem(i)
-                            break
-                        }
+                // Find and remove the failed item
+                // If we found a specific failed mediaId, remove that item
+                // Otherwise, remove the current item to prevent infinite retry loop
+                val itemToRemove = if (failedMediaId != null) {
+                    // Try to find the specific failed item by mediaId
+                    (0 until player.mediaItemCount).firstOrNull { i ->
+                        player.getMediaItemAt(i).mediaId == failedMediaId
                     }
+                } else {
+                    // Couldn't extract mediaId from error, remove current item as fallback
+                    player.currentMediaItemIndex.takeIf { it != C.INDEX_UNSET }
                 }
-                // If no mediaId found, don't remove anything to avoid removing wrong item
+
+                itemToRemove?.let { index ->
+                    player.removeMediaItem(index)
+                }
 
                 // Continue playback if there are items left
                 if (player.mediaItemCount > 0) {
