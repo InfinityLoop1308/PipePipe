@@ -14,8 +14,8 @@ android {
         applicationId = "project.pipepipe.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2000
-        versionName = "5.0.0-beta1"
+        versionCode = 2001
+        versionName = "5.0.0-beta2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
