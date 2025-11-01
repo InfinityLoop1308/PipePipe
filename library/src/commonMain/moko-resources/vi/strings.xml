@@ -441,4 +441,17 @@
 <string name="playback_skip_silence_title">Bỏ qua im lặng</string>
 <string name="playback_error">Lỗi phát lại</string>
 <string name="no_comments_yet">Chưa có bình luận nào</string>
+<string name="error_handling_dialog_message">Để giữ trải nghiệm xem của bạn mượt mà và không bị gián đoạn, chúng tôi đã thiết kế lại cách xử lý lỗi.\n\nLỗi hiện được tự động ghi lại và lưu trữ cục bộ. Bạn có thể xem và báo cáo chúng bất cứ lúc nào trong Cài đặt &gt; Nhật ký.</string>
+<string name="error_handling_dialog_button">Đã hiểu</string>
+<string name="first_run_dialog_title">Bật kiểm tra cập nhật?</string>
+<string name="data_migration_dialog_message">PipePipe 5 sử dụng tên gói mới để tránh xung đột với các phiên bản cũ hơn. Điều này có nghĩa là:\n• Phiên bản 5 cài đặt dưới dạng một ứng dụng riêng biệt\n• Cài đặt hiện có của bạn vẫn không thay đổi\n\nCách di chuyển dữ liệu của bạn:\n1. Mở ứng dụng PipePipe cũ của bạn (ví dụ: phiên bản 4.7.3)\n2. Xuất bản sao lưu trong Cài đặt\n3. Mở PipePipe 5 mới\n4. Nhập bản sao lưu trong Cài đặt\n\nLưu ý dành cho người thử nghiệm beta: Nếu bạn đã sử dụng 5.0.0-beta1, vui lòng xuất và nhập lại dữ liệu của bạn để áp dụng các thay đổi mới nhất.</string>
+<string name="welcome_dialog_title">Một PipePipe Hoàn Toàn Mới!</string>
+<string name="first_run_dialog_enable">Bật</string>
+<string name="first_run_dialog_message">Luôn cập nhật các tính năng mới nhất và sửa lỗi bằng cách bật kiểm tra cập nhật tự động.</string>
+<string name="error_handling_dialog_title">Xử lý lỗi được cải thiện</string>
+<string name="data_migration_dialog_button">Đã hiểu</string>
+<string name="welcome_dialog_message">Chào mừng bạn đến với PipePipe 5 Beta! Chúng tôi rất vui mừng khi bạn là một trong những người đầu tiên dùng thử.\n\nChúng tôi đã xây dựng lại ứng dụng từ đầu để nhanh hơn, mượt mà hơn và trực quan hơn.\n\nĐây là phiên bản đầu tiên, vì vậy mọi thứ có thể chưa hoàn hảo. Đó là lúc bạn tham gia! Hãy giúp chúng tôi cải thiện PipePipe bằng cách chia sẻ phản hồi của bạn.</string>
+<string name="data_migration_dialog_title">Di chuyển dữ liệu</string>
+<string name="first_run_dialog_no_thanks">Không, cảm ơn</string>
+<string name="welcome_dialog_button">Khám phá ứng dụng</string>
 </resources>

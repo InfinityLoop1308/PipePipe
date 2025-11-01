@@ -15,7 +15,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
@@ -31,10 +35,15 @@ import project.pipepipe.app.global.PipHelper
 import project.pipepipe.app.helper.ExternalUrlPatternHelper
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.service.PlaybackService
+import project.pipepipe.app.service.UpdateCheckWorker
 import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.ui.component.BottomSheetMenu
+import project.pipepipe.app.ui.component.DataMigrationDialog
+import project.pipepipe.app.ui.component.ErrorHandlingDialog
+import project.pipepipe.app.ui.component.FirstRunDialog
 import project.pipepipe.app.ui.component.ImageViewer
 import project.pipepipe.app.ui.component.Toast
+import project.pipepipe.app.ui.component.WelcomeDialog
 import project.pipepipe.app.ui.navigation.NavGraph
 import project.pipepipe.app.ui.screens.PlayQueueScreen
 import project.pipepipe.app.ui.screens.Screen
@@ -74,6 +83,24 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             SharedContext.navController = navController
             val toastMessage by ToastManager.message.collectAsState()
+
+            // Dialog state management
+            // TODO: Update welcome dialog text after the official release
+            var showWelcomeDialog by remember { mutableStateOf(false) }
+            var showDataMigrationDialog by remember { mutableStateOf(false) }
+            var showErrorHandlingDialog by remember { mutableStateOf(false) }
+            var showFirstRunDialog by remember { mutableStateOf(false) }
+
+            // Check if this is the first run and show dialogs in sequence
+            // Dialog order: Welcome -> Data Migration -> Error Handling -> Update Checker
+            LaunchedEffect(Unit) {
+                val isFirstRun = SharedContext.settingsManager.getBoolean("is_first_run", true)
+                if (isFirstRun) {
+                    // Show welcome dialog first
+                    showWelcomeDialog = true
+                }
+            }
+
             PipePipeTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -131,6 +158,56 @@ class MainActivity : ComponentActivity() {
                         }
                         toastMessage?.let { message ->
                             Toast(message = message)
+                        }
+
+                        // Welcome dialog - shown first on first run
+                        if (showWelcomeDialog) {
+                            WelcomeDialog(
+                                onDismiss = {
+                                    showWelcomeDialog = false
+                                    // After welcome dialog, show data migration dialog
+                                    showDataMigrationDialog = true
+                                }
+                            )
+                        }
+
+                        // Data migration dialog - shown after welcome dialog
+                        if (showDataMigrationDialog) {
+                            DataMigrationDialog(
+                                onDismiss = {
+                                    showDataMigrationDialog = false
+                                    // After data migration dialog, show error handling dialog
+                                    showErrorHandlingDialog = true
+                                }
+                            )
+                        }
+
+                        // Error handling dialog - shown after data migration dialog
+                        if (showErrorHandlingDialog) {
+                            ErrorHandlingDialog(
+                                onDismiss = {
+                                    showErrorHandlingDialog = false
+                                    // After error handling dialog, show update checker dialog
+                                    showFirstRunDialog = true
+                                }
+                            )
+                        }
+
+                        // Update checker dialog - shown after error handling dialog
+                        if (showFirstRunDialog) {
+                            FirstRunDialog(
+                                onDismiss = {
+                                    showFirstRunDialog = false
+                                    SharedContext.settingsManager.putBoolean("is_first_run", false)
+                                },
+                                onEnableUpdateChecker = {
+                                    SharedContext.settingsManager.putBoolean(UpdateCheckWorker.UPDATE_ENABLED_KEY, true)
+                                    ToastManager.show(MR.strings.update_checking.desc().toString(context = this@MainActivity))
+                                    UpdateCheckWorker.enqueueUpdateCheck(this@MainActivity, isManual = true)
+                                    showFirstRunDialog = false
+                                    SharedContext.settingsManager.putBoolean("is_first_run", false)
+                                }
+                            )
                         }
                     }
                 }
@@ -336,4 +413,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-

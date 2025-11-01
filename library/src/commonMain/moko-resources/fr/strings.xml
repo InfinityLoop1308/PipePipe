@@ -441,4 +441,17 @@
 <string name="playback_skip_silence_title">Ignorer les silences</string>
 <string name="playback_error">Erreur de lecture</string>
 <string name="no_comments_yet">Aucun commentaire pour l\'instant</string>
+<string name="error_handling_dialog_message">Pour que votre expérience de visionnage reste fluide et sans interruption, nous avons repensé la gestion des erreurs.\n\nLes erreurs sont désormais automatiquement capturées et stockées localement. Vous pouvez les consulter et les signaler à tout moment dans Paramètres &gt; Journal.</string>
+<string name="error_handling_dialog_button">Compris</string>
+<string name="first_run_dialog_title">Activer le vérificateur de mises à jour ?</string>
+<string name="data_migration_dialog_message">PipePipe 5 utilise un nouveau nom de paquet pour éviter les conflits avec les versions antérieures. Cela signifie :\n• La version 5 s\'installe comme une application distincte\n• Votre installation existante reste inchangée\n\nComment migrer vos données :\n1. Ouvrez votre ancienne application PipePipe (par exemple, version 4.7.3)\n2. Exportez une sauvegarde dans les Paramètres\n3. Ouvrez le nouveau PipePipe 5\n4. Importez la sauvegarde dans les Paramètres\n\nNote pour les testeurs bêta : Si vous utilisez déjà la version 5.0.0-beta1, veuillez exporter et importer vos données à nouveau pour appliquer les dernières modifications.</string>
+<string name="welcome_dialog_title">Un tout nouveau PipePipe !</string>
+<string name="first_run_dialog_enable">Activer</string>
+<string name="first_run_dialog_message">Restez à jour avec les dernières fonctionnalités et corrections de bugs en activant les vérifications automatiques des mises à jour.</string>
+<string name="error_handling_dialog_title">Gestion des erreurs améliorée</string>
+<string name="data_migration_dialog_button">Compris</string>
+<string name="welcome_dialog_message">Bienvenue dans la version bêta de PipePipe 5 ! Nous sommes ravis que vous soyez parmi les premiers à l\'essayer.\n\nNous avons entièrement reconstruit l\'application pour la rendre plus rapide, plus fluide et plus intuitive.\n\nCeci est une version préliminaire, donc les choses ne sont peut-être pas encore parfaites. C\'est là que vous intervenez ! Aidez-nous à améliorer PipePipe en partageant vos commentaires.</string>
+<string name="data_migration_dialog_title">Migration des données</string>
+<string name="first_run_dialog_no_thanks">Non, merci</string>
+<string name="welcome_dialog_button">Explorer l\'application</string>
 </resources>

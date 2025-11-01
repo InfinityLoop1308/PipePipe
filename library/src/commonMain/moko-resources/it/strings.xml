@@ -441,4 +441,17 @@
 <string name="playback_skip_silence_title">Salta il silenzio</string>
 <string name="playback_error">Errore di riproduzione</string>
 <string name="no_comments_yet">Nessun commento ancora</string>
+<string name="error_handling_dialog_message">Per mantenere la tua esperienza di visione fluida e senza interruzioni, abbiamo riprogettato la gestione degli errori.\n\nGli errori vengono ora acquisiti automaticamente e archiviati localmente. Puoi visualizzarli e segnalarli in qualsiasi momento in Impostazioni &gt; Registro.</string>
+<string name="error_handling_dialog_button">Capito</string>
+<string name="first_run_dialog_title">Abilitare il controllo aggiornamenti?</string>
+<string name="data_migration_dialog_message">PipePipe 5 utilizza un nuovo nome di pacchetto per evitare conflitti con le versioni precedenti. Ciò significa:\n• La versione 5 si installa come app separata\n• La tua installazione esistente rimane invariata\n\nCome migrare i tuoi dati:\n1. Apri la tua vecchia app PipePipe (es. versione 4.7.3)\n2. Esporta un backup in Impostazioni\n3. Apri il nuovo PipePipe 5\n4. Importa il backup in Impostazioni\n\nNota per i beta tester: Se stai già utilizzando la versione 5.0.0-beta1, esporta e importa nuovamente i tuoi dati per applicare le ultime modifiche.</string>
+<string name="welcome_dialog_title">Un PipePipe Completamente Nuovo!</string>
+<string name="first_run_dialog_enable">Abilita</string>
+<string name="first_run_dialog_message">Rimani aggiornato con le ultime funzionalità e correzioni di bug abilitando i controlli automatici degli aggiornamenti.</string>
+<string name="error_handling_dialog_title">Gestione degli Errori Migliorata</string>
+<string name="data_migration_dialog_button">Capito</string>
+<string name="welcome_dialog_message">Benvenuto nella Beta di PipePipe 5! Siamo entusiasti che tu sia tra i primi a provarla.\n\nAbbiamo ricostruito l\'app da zero per renderla più veloce, fluida e intuitiva.\n\nQuesta è una versione preliminare, quindi le cose potrebbero non essere ancora perfette. È qui che entri in gioco tu! Aiutaci a migliorare PipePipe condividendo il tuo feedback.</string>
+<string name="data_migration_dialog_title">Migrazione Dati</string>
+<string name="first_run_dialog_no_thanks">No, grazie</string>
+<string name="welcome_dialog_button">Esplora l\'App</string>
 </resources>

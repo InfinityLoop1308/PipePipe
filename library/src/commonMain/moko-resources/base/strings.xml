@@ -450,4 +450,18 @@
 <string name="playback_skip_silence_title">Skip silence</string>
 <string name="playback_skip_silence_summary">Automatically skip silent parts during playback</string>
 <string name="playback_error">Playback error</string>
+<string name="first_run_dialog_title">Enable update checker?</string>
+<string name="first_run_dialog_message">Stay up to date with the latest features and bug fixes by enabling automatic update checks.</string>
+<string name="first_run_dialog_enable">Enable</string>
+<string name="first_run_dialog_no_thanks">No, thanks</string>
+<!-- TODO: Update these strings after the official release -->
+<string name="welcome_dialog_title">A Whole New PipePipe!</string>
+<string name="welcome_dialog_message">Welcome to the PipePipe 5 Beta! We\'re thrilled for you to be among the first to try it.\n\nWe\'ve rebuilt the app from the ground up to be faster, smoother, and more intuitive.\n\nThis is an early version, so things might not be perfect yet. That\'s where you come in! Help us improve PipePipe by sharing your feedback.</string>
+<string name="welcome_dialog_button">Explore the App</string>
+<string name="data_migration_dialog_title">Data Migration</string>
+<string name="data_migration_dialog_message">PipePipe 5 uses a new package name to avoid conflicts with older versions. This means:\n• Version 5 installs as a separate app\n• Your existing installation remains unchanged\n\nHow to migrate your data:\n1. Open your old PipePipe app (e.g., version 4.7.3)\n2. Export a backup in Settings\n3. Open the new PipePipe 5\n4. Import the backup in Settings\n\nNote for beta testers: If you\'re already using 5.0.0-beta1, please export and import your data again to apply the latest changes.</string>
+<string name="data_migration_dialog_button">Got it</string>
+<string name="error_handling_dialog_title">Improved Error Handling</string>
+<string name="error_handling_dialog_message">To keep your viewing experience smooth and interruption-free, we\'ve redesigned how errors are handled.\n\nErrors are now automatically captured and stored locally. You can view and report them anytime in Settings > Log.</string>
+<string name="error_handling_dialog_button">Got It</string>
 </resources>
