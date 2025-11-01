@@ -41,6 +41,10 @@ fun SpeedPitchDialog(
     var tempPitch by remember { mutableFloatStateOf(currentPitch) }
     var stepSize by remember { mutableFloatStateOf(0.25f) }
 
+    // Save initial values for cancel restoration
+    val initialSpeed = remember { currentSpeed }
+    val initialPitch = remember { currentPitch }
+
     // Helper functions for non-linear slider mapping
     // Maps speed (0.1-10) to slider position (0-1) with 1x at center
     fun speedToSlider(speed: Float): Float {
@@ -93,7 +97,10 @@ fun SpeedPitchDialog(
                     ) {
                         // Minus button
                         OutlinedButton(
-                            onClick = { tempSpeed = (tempSpeed - stepSize).coerceIn(0.1f, 10f) },
+                            onClick = {
+                                tempSpeed = (tempSpeed - stepSize).coerceIn(0.1f, 10f)
+                                onApply(tempSpeed, tempPitch)
+                            },
                             contentPadding = PaddingValues(vertical = 4.dp),
                             modifier = Modifier.height(32.dp)
                         ) {
@@ -102,14 +109,20 @@ fun SpeedPitchDialog(
 
                         Slider(
                             value = speedToSlider(tempSpeed),
-                            onValueChange = { tempSpeed = sliderToSpeed(it) },
+                            onValueChange = {
+                                tempSpeed = sliderToSpeed(it)
+                                onApply(tempSpeed, tempPitch)
+                            },
                             valueRange = 0f..1f,
                             modifier = Modifier.weight(1f)
                         )
 
                         // Plus button
                         OutlinedButton(
-                            onClick = { tempSpeed = (tempSpeed + stepSize).coerceIn(0.1f, 10f) },
+                            onClick = {
+                                tempSpeed = (tempSpeed + stepSize).coerceIn(0.1f, 10f)
+                                onApply(tempSpeed, tempPitch)
+                            },
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                             modifier = Modifier.height(32.dp)
                         ) {
@@ -135,7 +148,10 @@ fun SpeedPitchDialog(
                     ) {
                         // Minus button
                         OutlinedButton(
-                            onClick = { tempPitch = (tempPitch - stepSize).coerceIn(0.1f, 10f) },
+                            onClick = {
+                                tempPitch = (tempPitch - stepSize).coerceIn(0.1f, 10f)
+                                onApply(tempSpeed, tempPitch)
+                            },
                             contentPadding = PaddingValues(vertical = 4.dp),
                             modifier = Modifier.height(32.dp)
                         ) {
@@ -144,14 +160,20 @@ fun SpeedPitchDialog(
 
                         Slider(
                             value = speedToSlider(tempPitch),
-                            onValueChange = { tempPitch = sliderToSpeed(it) },
+                            onValueChange = {
+                                tempPitch = sliderToSpeed(it)
+                                onApply(tempSpeed, tempPitch)
+                            },
                             valueRange = 0f..1f,
                             modifier = Modifier.weight(1f)
                         )
 
                         // Plus button
                         OutlinedButton(
-                            onClick = { tempPitch = (tempPitch + stepSize).coerceIn(0.1f, 10f) },
+                            onClick = {
+                                tempPitch = (tempPitch + stepSize).coerceIn(0.1f, 10f)
+                                onApply(tempSpeed, tempPitch)
+                            },
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                             modifier = Modifier.height(32.dp)
                         ) {
@@ -199,6 +221,7 @@ fun SpeedPitchDialog(
                         onClick = {
                             tempSpeed = 1.0f
                             tempPitch = 1.0f
+                            onApply(tempSpeed, tempPitch)
                         }
                     ) {
                         Text(stringResource(MR.strings.playback_reset), fontSize = 14.sp)
@@ -206,7 +229,12 @@ fun SpeedPitchDialog(
 
                     // Cancel and OK buttons on the right
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        TextButton(onClick = onDismiss) {
+                        TextButton(
+                            onClick = {
+                                onApply(initialSpeed, initialPitch)
+                                onDismiss()
+                            }
+                        ) {
                             Text(stringResource(MR.strings.cancel), fontSize = 14.sp)
                         }
 
