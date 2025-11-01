@@ -454,4 +454,8 @@
 <string name="data_migration_dialog_title">Migración de Datos</string>
 <string name="first_run_dialog_no_thanks">No, gracias</string>
 <string name="welcome_dialog_button">Explorar la Aplicación</string>
+<string name="empty_channel_playlists">No hay listas de reproducción</string>
+<string name="empty_channel_albums">No hay álbumes</string>
+<string name="empty_channel_videos">No hay videos</string>
+<string name="empty_channel_lives">No hay transmisiones en vivo</string>
 </resources>

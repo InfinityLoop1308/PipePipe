@@ -454,4 +454,8 @@
 <string name="data_migration_dialog_title">データ移行</string>
 <string name="first_run_dialog_no_thanks">いいえ、結構です</string>
 <string name="welcome_dialog_button">アプリを探索</string>
+<string name="empty_channel_playlists">再生リストがありません</string>
+<string name="empty_channel_albums">アルバムがありません</string>
+<string name="empty_channel_videos">動画がありません</string>
+<string name="empty_channel_lives">ライブ配信がありません</string>
 </resources>

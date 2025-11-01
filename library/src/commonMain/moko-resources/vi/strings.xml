@@ -454,4 +454,8 @@
 <string name="data_migration_dialog_title">Di chuyển dữ liệu</string>
 <string name="first_run_dialog_no_thanks">Không, cảm ơn</string>
 <string name="welcome_dialog_button">Khám phá ứng dụng</string>
+<string name="empty_channel_playlists">Không có danh sách phát nào</string>
+<string name="empty_channel_albums">Không có album nào</string>
+<string name="empty_channel_videos">Không có video nào</string>
+<string name="empty_channel_lives">Không có buổi phát trực tiếp nào</string>
 </resources>

@@ -454,4 +454,8 @@
 <string name="data_migration_dialog_title">資料遷移</string>
 <string name="first_run_dialog_no_thanks">不用了，謝謝</string>
 <string name="welcome_dialog_button">探索應用程式</string>
+<string name="empty_channel_playlists">沒有播放清單</string>
+<string name="empty_channel_albums">沒有專輯</string>
+<string name="empty_channel_videos">沒有影片</string>
+<string name="empty_channel_lives">沒有直播</string>
 </resources>

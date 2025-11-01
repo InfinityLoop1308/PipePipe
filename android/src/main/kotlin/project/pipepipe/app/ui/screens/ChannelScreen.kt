@@ -256,7 +256,8 @@ fun ChannelScreen(
                                 item.url,
                                 item.serviceId
                             )
-                        }
+                        },
+                        emptyMessage = stringResource(MR.strings.empty_channel_lives)
                     )
 
                     ChannelTabType.VIDEOS -> TabContent(
@@ -271,7 +272,8 @@ fun ChannelScreen(
                                 item.url,
                                 item.serviceId
                             )
-                        }
+                        },
+                        emptyMessage = stringResource(MR.strings.empty_channel_videos)
                     )
 
                     ChannelTabType.PLAYLISTS -> TabContent(
@@ -284,7 +286,8 @@ fun ChannelScreen(
                         onItemClick = { item -> navController.navigate(
                             "playlist?url=" + URLEncoder.encode(item.url, "UTF-8")
                                     + if(item.serviceId != null) "&serviceId=${item.serviceId}" else ""
-                        )}
+                        )},
+                        emptyMessage = stringResource(MR.strings.empty_channel_playlists)
                     )
 
                     ChannelTabType.ALBUMS -> TabContent(
@@ -297,7 +300,8 @@ fun ChannelScreen(
                         onItemClick = { item -> navController.navigate(
                             "playlist?url=" + URLEncoder.encode(item.url, "UTF-8")
                                     + if(item.serviceId != null) "&serviceId=${item.serviceId}" else ""
-                        )}
+                        )},
+                        emptyMessage = stringResource(MR.strings.empty_channel_albums)
                     )
 
                     else -> {
@@ -448,7 +452,8 @@ private fun <T: Info> TabContent(
     hasMore: Boolean,
     onLoadMore: () -> Unit,
     getUrl: (T) -> String,
-    onItemClick: (T) -> Unit
+    onItemClick: (T) -> Unit,
+    emptyMessage: String? = null
 ) {
     val uniqueItems = remember(items) { items.distinctBy { getUrl(it) } }
     val loadMoreInvoker = rememberUpdatedState(onLoadMore)
@@ -477,6 +482,19 @@ private fun <T: Info> TabContent(
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
+        }
+    } else if (!isLoading && uniqueItems.isEmpty() && emptyMessage != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = emptyMessage,
+                style = MaterialTheme.typography.bodyLarge,
+                color = supportingTextColor()
+            )
         }
     } else {
         LazyColumn(
