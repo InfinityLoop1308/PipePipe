@@ -51,7 +51,7 @@ body:
       label: Frequency
       description: How often does this bug occur?
       options:
-        - ===== Please select a version =====
+        - ===== Please select a value =====
         - Always (100% of the time)
         - Often (80-90% of the time)
         - Sometimes (40-60% of the time)
