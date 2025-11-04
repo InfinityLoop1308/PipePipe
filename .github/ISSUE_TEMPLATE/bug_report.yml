@@ -30,6 +30,7 @@ body:
       label: Version
       description: Which version does this issue target?
       options:
+        - ===== Please select a version =====
         - "5.0 (beta)"
         - "4.7"
     validations:
@@ -50,6 +51,7 @@ body:
       label: Frequency
       description: How often does this bug occur?
       options:
+        - ===== Please select a version =====
         - Always (100% of the time)
         - Often (80-90% of the time)
         - Sometimes (40-60% of the time)
