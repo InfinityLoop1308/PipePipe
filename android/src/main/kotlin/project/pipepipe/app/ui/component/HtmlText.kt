@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnit.Companion
+import androidx.compose.ui.unit.isSpecified
 import project.pipepipe.app.helper.getHtmlHelper
 
 /**
@@ -130,7 +131,10 @@ private fun spannedToAnnotatedString(
                     addStyle(SpanStyle(color = Color(span.foregroundColor)), start, end)
                 }
                 is RelativeSizeSpan -> {
-                    addStyle(SpanStyle(fontSize = textStyle.fontSize * span.sizeChange), start, end)
+                    // Only apply relative size if base fontSize is specified
+                    if (textStyle.fontSize.isSpecified) {
+                        addStyle(SpanStyle(fontSize = textStyle.fontSize * span.sizeChange), start, end)
+                    }
                 }
                 is URLSpan -> {
                     addStyle(
