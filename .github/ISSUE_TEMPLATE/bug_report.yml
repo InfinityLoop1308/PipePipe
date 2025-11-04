@@ -24,6 +24,17 @@ body:
         - label: I have attached the error report in the issue
           required: false
 
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: Which version does this issue target?
+      options:
+        - "5.0 (beta)"
+        - "4.7"
+    validations:
+      required: true
+
   - type: textarea
     id: bug-description
     attributes:

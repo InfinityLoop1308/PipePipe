@@ -15,6 +15,8 @@ body:
       label: Checklist
       description: Please confirm the following before submitting your feature request
       options:
+        - label: I have tested the latest 5.0 beta version, and it doesn't have this feature.
+          required: true
         - label: I have searched for existing issues (open and closed) and confirmed this feature hasn't been requested before
           required: true
         - label: I believe this feature request will benefit more than 10% of users, not just myself
