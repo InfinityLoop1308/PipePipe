@@ -61,6 +61,7 @@
                 <data android:scheme="http" />
                 <data android:host="nicovideo.jp" />
                 <data android:host="www.nicovideo.jp" />
+                <data android:host="sp.nicovideo.jp" />
                 <data android:host="nico.ms" />
                 <data android:host="ch.nicovideo.jp" />
             </intent-filter>
