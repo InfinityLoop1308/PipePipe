@@ -5,6 +5,8 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,6 +27,7 @@ import androidx.compose.material.icons.filled.NorthWest
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import project.pipepipe.app.uistate.SearchSuggestion
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -78,7 +81,7 @@ import project.pipepipe.shared.infoitem.serviceId
 private const val SELECTED_SERVICE_KEY = "selected_service"
 private const val SUPPORTED_SERVICES_KEY = "supported_services"
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreen(
     navController: NavController,
@@ -86,6 +89,7 @@ fun SearchScreen(
     initialServiceId: String? = null
 ) {
     var showFilterDialog by remember { mutableStateOf(false) }
+    var suggestionToDelete by remember { mutableStateOf<SearchSuggestion?>(null) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val viewModel: SearchViewModel = viewModel()
@@ -330,10 +334,17 @@ fun SearchScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(40.dp)
-                                .clickable {
-                                    viewModel.updateSearchQuery(suggestion.text)
-                                    performSearch(suggestion.text)
-                                }
+                                .combinedClickable(
+                                    onClick = {
+                                        viewModel.updateSearchQuery(suggestion.text)
+                                        performSearch(suggestion.text)
+                                    },
+                                    onLongClick = {
+                                        if (suggestion.isLocal) {
+                                            suggestionToDelete = suggestion
+                                        }
+                                    }
+                                )
                                 .padding(horizontal = 16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -398,6 +409,27 @@ fun SearchScreen(
                 showFilterDialog = false
             },
             onDismiss = { showFilterDialog = false }
+        )
+    }
+
+    if (suggestionToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { suggestionToDelete = null },
+            title = { Text(stringResource(MR.strings.delete_search_history)) },
+            text = { Text(stringResource(MR.strings.delete_search_history_message, suggestionToDelete!!.text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.removeSuggestion(suggestionToDelete!!.text)
+                    suggestionToDelete = null
+                }) {
+                    Text(stringResource(MR.strings.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { suggestionToDelete = null }) {
+                    Text(stringResource(MR.strings.cancel))
+                }
+            }
         )
     }
 }

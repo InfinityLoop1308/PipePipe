@@ -470,4 +470,6 @@
 <string name="error_handling_dialog_title">Improved Error Handling</string>
 <string name="error_handling_dialog_message">To keep your viewing experience smooth and interruption-free, we\'ve redesigned how errors are handled.\n\nErrors are now automatically captured and stored locally. You can view and report them anytime in Settings > Log.</string>
 <string name="error_handling_dialog_button">Got It</string>
+    <string name="delete_search_history">Delete search history</string>
+    <string name="delete_search_history_message">Are you sure you want to delete this search history: %s?</string>
 </resources>

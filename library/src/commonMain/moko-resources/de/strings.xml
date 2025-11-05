@@ -458,4 +458,8 @@
 <string name="empty_channel_albums">Keine Alben</string>
 <string name="empty_channel_videos">Keine Videos</string>
 <string name="empty_channel_lives">Keine Livestreams</string>
+<string name="delete_search_history">Suchverlauf löschen</string>
+<string name="delete_search_history_message">Möchten Sie diesen Suchverlauf wirklich löschen: %s?</string>
+<string name="settings_appearance_dynamic_color_for_search_summary">Verwenden Sie die Dienst-Designfarbe für die Suchleiste. Nützlich, wenn Sie häufig zwischen Diensten wechseln</string>
+<string name="settings_appearance_dynamic_color_for_search_title">Dynamische Farbe für die Suche</string>
 </resources>

@@ -1,6 +1,7 @@
 package project.pipepipe.app.viewmodel
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
@@ -25,6 +26,13 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
     fun updateSearchQuery(query: String) {
         setState {
             it.copy(searchQuery = query)
+        }
+    }
+
+    suspend fun removeSuggestion(text: String) {
+        DatabaseOperations.deleteSearchHistoryByText(text)
+        setState {
+            it.copy(searchSuggestionList = it.searchSuggestionList.filterNot { suggestion ->  suggestion.isLocal && suggestion.text == text })
         }
     }
 

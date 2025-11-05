@@ -458,4 +458,8 @@
 <string name="empty_channel_albums">Không có album nào</string>
 <string name="empty_channel_videos">Không có video nào</string>
 <string name="empty_channel_lives">Không có buổi phát trực tiếp nào</string>
+<string name="delete_search_history">Xóa lịch sử tìm kiếm</string>
+<string name="delete_search_history_message">Bạn có chắc chắn muốn xóa lịch sử tìm kiếm này: %s?</string>
+<string name="settings_appearance_dynamic_color_for_search_summary">Sử dụng màu chủ đề của dịch vụ cho thanh tìm kiếm. Hữu ích nếu thường xuyên chuyển đổi giữa các dịch vụ</string>
+<string name="settings_appearance_dynamic_color_for_search_title">Màu động cho tìm kiếm</string>
 </resources>

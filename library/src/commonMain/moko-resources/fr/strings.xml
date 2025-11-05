@@ -458,4 +458,8 @@
 <string name="empty_channel_albums">Aucun album</string>
 <string name="empty_channel_videos">Aucune vidéo</string>
 <string name="empty_channel_lives">Aucun direct</string>
+<string name="delete_search_history">Supprimer l\'historique de recherche</string>
+<string name="delete_search_history_message">Êtes-vous sûr de vouloir supprimer cet historique de recherche : %s ?</string>
+<string name="settings_appearance_dynamic_color_for_search_summary">Utiliser la couleur du thème du service pour la barre de recherche. Utile si vous changez fréquemment de service</string>
+<string name="settings_appearance_dynamic_color_for_search_title">Couleur dynamique pour la recherche</string>
 </resources>

@@ -458,4 +458,8 @@
 <string name="empty_channel_albums">沒有專輯</string>
 <string name="empty_channel_videos">沒有影片</string>
 <string name="empty_channel_lives">沒有直播</string>
+<string name="delete_search_history">刪除搜尋紀錄</string>
+<string name="delete_search_history_message">您確定要刪除此搜尋紀錄：%s 嗎？</string>
+<string name="settings_appearance_dynamic_color_for_search_summary">搜尋列使用服務主題顏色。如果經常在不同服務之間切換，這會很有用</string>
+<string name="settings_appearance_dynamic_color_for_search_title">搜尋的動態顏色</string>
 </resources>

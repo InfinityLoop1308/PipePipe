@@ -332,8 +332,8 @@ object DatabaseOperations {
         database.appDatabaseQueries.selectSearchHistoryBySearchPattern(searchPattern).executeAsList()
     }
 
-    suspend fun deleteSearchHistory(id: Long) = withContext(Dispatchers.IO) {
-        database.appDatabaseQueries.deleteSearchHistory(id)
+    suspend fun deleteSearchHistoryByText(search: String) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.deleteSearchHistoryByText(search)
     }
 
     // Updated: Now updates the stream directly instead of inserting into a separate table

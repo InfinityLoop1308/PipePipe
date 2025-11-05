@@ -458,4 +458,8 @@
 <string name="empty_channel_albums">没有专辑</string>
 <string name="empty_channel_videos">没有视频</string>
 <string name="empty_channel_lives">没有直播</string>
+<string name="delete_search_history">删除搜索历史</string>
+<string name="delete_search_history_message">确定删除此条搜索历史：%s？</string>
+<string name="settings_appearance_dynamic_color_for_search_title">搜索的动态颜色</string>
+<string name="settings_appearance_dynamic_color_for_search_summary">搜索栏使用服务主题颜色。如果频繁切换服务，此功能很有用</string>
 </resources>

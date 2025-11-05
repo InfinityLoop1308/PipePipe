@@ -458,4 +458,8 @@
 <string name="empty_channel_albums">Nessun album</string>
 <string name="empty_channel_videos">Nessun video</string>
 <string name="empty_channel_lives">Nessuna trasmissione in diretta</string>
+<string name="delete_search_history">Elimina cronologia ricerche</string>
+<string name="delete_search_history_message">Sei sicuro di voler eliminare questa cronologia di ricerca: %s?</string>
+<string name="settings_appearance_dynamic_color_for_search_summary">Usa il colore del tema del servizio per la barra di ricerca. Utile se si cambia frequentemente tra i servizi</string>
+<string name="settings_appearance_dynamic_color_for_search_title">Colore dinamico per la ricerca</string>
 </resources>

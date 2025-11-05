@@ -335,6 +335,9 @@ LIMIT 5;
 deleteSearchHistory:
 DELETE FROM search_history WHERE id = ?;
 
+deleteSearchHistoryByText:
+DELETE FROM search_history WHERE search = ?;
+
 updateSearchHistoryDate:
 UPDATE search_history
 SET creation_date = ?
