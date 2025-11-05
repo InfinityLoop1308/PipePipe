@@ -35,19 +35,22 @@ jobs:
         run: |
           if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
 
-      - name: Prepare Gradle Wrapper if missing
-        run: |
-          if [ ! -f ./gradlew ]; then
-            echo "Gradle wrapper missing at repo root, generating wrapper via client module..."
-            ./PipePipeClient/gradlew -p PipePipeClient wrapper || true
-          fi
-
-      - name: Build release APKs
+      - name: Clean
         run: |
           if [ -f ./gradlew ]; then
-            ./gradlew assembleRelease --no-daemon
+            ./gradlew clean --no-daemon --stacktrace --info || true
           else
-            ./PipePipeClient/gradlew -p PipePipeClient assembleRelease --no-daemon
+            ./PipePipeClient/gradlew -p PipePipeClient clean --no-daemon --stacktrace --info || true
+          fi
+
+      - name: Build release APKs (with KAPT tweaks)
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=1g"
+        run: |
+          if [ -f ./gradlew ]; then
+            ./gradlew assembleRelease --no-daemon --stacktrace --info -Pkapt.use.worker.api=false
+          else
+            ./PipePipeClient/gradlew -p PipePipeClient assembleRelease --no-daemon --stacktrace --info -Pkapt.use.worker.api=false
           fi
 
       - name: Upload APK artifacts
