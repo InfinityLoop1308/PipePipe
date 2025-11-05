@@ -36,6 +36,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                 it.copy(searchSuggestionList = localHistory.map { SearchSuggestion(it.search, true) })
             }
         } else {
+            if (query.startsWith("http://") || query.startsWith("https://")) return
             val service = uiState.value.selectedService!!
             val localHistory = DatabaseOperations.getSearchHistoryByPattern(query)
             var remoteSuggestionsReponse = service.suggestionPayload!!.let {
@@ -54,21 +55,31 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                     }
                 }
             }
-            if (remoteSuggestionsReponse != null && service.suggestionJsonBetween != null) {
-                remoteSuggestionsReponse = remoteSuggestionsReponse
-                    .substringBeforeLast(service.suggestionJsonBetween!!.second)
-                    .substringAfter(service.suggestionJsonBetween!!.first)
-            }
-            val remoteSuggestionsResult: List<String>? = remoteSuggestionsReponse?.let { SharedContext.objectMapper.readTree(it)}
-                ?.requireArray(service.suggestionStringPath!!.first)
-                ?.map { it.requireString(service.suggestionStringPath!!.second) }
+            try {
+                if (remoteSuggestionsReponse != null && service.suggestionJsonBetween != null) {
+                    remoteSuggestionsReponse = remoteSuggestionsReponse
+                        .substringBeforeLast(service.suggestionJsonBetween!!.second)
+                        .substringAfter(service.suggestionJsonBetween!!.first)
+                }
+                val remoteSuggestionsResult: List<String>? = remoteSuggestionsReponse?.let { SharedContext.objectMapper.readTree(it)}
+                    ?.requireArray(service.suggestionStringPath!!.first)
+                    ?.map { it.requireString(service.suggestionStringPath!!.second) }
 
-            val allSuggestions = localHistory.map { SearchSuggestion(it.search, true) }.toMutableList()
-            remoteSuggestionsResult?.let {
-                allSuggestions += remoteSuggestionsResult.map { SearchSuggestion(it, false) }
-            }
-            setState {
-                it.copy(searchSuggestionList = allSuggestions)
+                val allSuggestions = localHistory.map { SearchSuggestion(it.search, true) }.toMutableList()
+                remoteSuggestionsResult?.let {
+                    allSuggestions += remoteSuggestionsResult.map { SearchSuggestion(it, false) }
+                }
+                setState {
+                    it.copy(searchSuggestionList = allSuggestions)
+                }
+            } catch (e: Exception) {
+                DatabaseOperations.insertErrorLog(
+                    e.stackTraceToString(),
+                    task = "GET_SUGGESTION",
+                    errorCode = "IGN_001",
+                    request = service.suggestionPayload!!.url + query,
+                    serviceId = service.serviceId
+                )
             }
         }
     }
