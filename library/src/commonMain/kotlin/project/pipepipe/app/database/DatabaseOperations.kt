@@ -565,6 +565,7 @@ object DatabaseOperations {
         request: String? = null,
         serviceId: String? = null,
     ): Long = withContext(Dispatchers.IO) {
+        println(stacktrace)
         database.appDatabaseQueries.insertErrorLog(
             Clock.System.now().toEpochMilliseconds(),
             stacktrace,
