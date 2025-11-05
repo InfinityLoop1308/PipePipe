@@ -286,6 +286,8 @@
 <string name="settings_appearance_material_you_disabled_summary">Requires Android 12 or later</string>
 <string name="settings_appearance_pure_black_title">Pure black dark mode</string>
 <string name="settings_appearance_pure_black_summary">Use pure black background in dark mode</string>
+<string name="settings_appearance_dynamic_color_for_search_title">Dynamic color for search</string>
+<string name="settings_appearance_dynamic_color_for_search_summary">Use service theme color for search bar. Useful if frequently switching between services</string>
 <string name="settings_appearance_grid_layout_title">Grid layout for playlists</string>
 <string name="settings_appearance_grid_layout_summary">Display playlist items in a grid layout</string>
 <string name="settings_appearance_grid_columns_title">Grid columns</string>

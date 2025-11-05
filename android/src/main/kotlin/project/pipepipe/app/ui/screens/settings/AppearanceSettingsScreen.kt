@@ -69,6 +69,11 @@ fun AppearanceSettingsScreen(
         mutableStateOf(settingsManager.getBoolean("grid_layout_enabled_key", false))
     }
 
+    // State for dynamic color for search
+    val dynamicColorForSearchEnabledState = remember {
+        mutableStateOf(settingsManager.getBoolean("dynamic_color_for_search_enabled_key", false))
+    }
+
     // State for theme color
     val themeColorState = remember {
         mutableStateOf(settingsManager.getString("theme_color_key", PRESET_COLORS[0]))
@@ -104,9 +109,13 @@ fun AppearanceSettingsScreen(
     val customizeTabsTitle = stringResource(MR.strings.customize_tabs)
     val customizeTabsSummary = stringResource(MR.strings.customize_tabs_summary)
 
+    val dynamicColorForSearchTitle = stringResource(MR.strings.settings_appearance_dynamic_color_for_search_title)
+    val dynamicColorForSearchSummary = stringResource(MR.strings.settings_appearance_dynamic_color_for_search_summary)
+
     val themeCategory = stringResource(MR.strings.theme)
     val gridCategory = stringResource(MR.strings.grid)
     val tabCategory = stringResource(MR.strings.tab)
+    val searchCategory = stringResource(MR.strings.search)
 
     val preferenceItems = listOf(
         PreferenceItem.CategoryPref(
@@ -137,6 +146,19 @@ fun AppearanceSettingsScreen(
             defaultValue = false,
             onValueChange = {
                 pureBlackEnabledState.value = it
+            }
+        ),
+        PreferenceItem.CategoryPref(
+            key = "search_category",
+            title = searchCategory
+        ),
+        PreferenceItem.SwitchPref(
+            key = "dynamic_color_for_search_enabled_key",
+            title = dynamicColorForSearchTitle,
+            summary = dynamicColorForSearchSummary,
+            defaultValue = false,
+            onValueChange = {
+                dynamicColorForSearchEnabledState.value = it
             }
         ),
         PreferenceItem.CategoryPref(
@@ -178,7 +200,8 @@ fun AppearanceSettingsScreen(
     val switchStateMap: Map<String, MutableState<Boolean>> = mapOf(
         "material_you_enabled_key" to materialYouEnabledState,
         "pure_black_key" to pureBlackEnabledState,
-        "grid_layout_enabled_key" to gridLayoutEnabledState
+        "grid_layout_enabled_key" to gridLayoutEnabledState,
+        "dynamic_color_for_search_enabled_key" to dynamicColorForSearchEnabledState
     )
 
     Column {

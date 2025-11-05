@@ -66,6 +66,8 @@ import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.helper.ColorHelper
+import project.pipepipe.app.ui.theme.customTopBarColor
+import project.pipepipe.app.ui.theme.onCustomTopBarColor
 import project.pipepipe.app.ui.viewmodel.SearchViewModel
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.shared.infoitem.PlaylistInfo
@@ -178,9 +180,10 @@ fun SearchScreen(
                 }
             }
     }
+    val isDynamicColorForSearchEnabled = SharedContext.settingsManager.getBoolean("dynamic_color_for_search_enabled_key", false)
+    val themeSearchBarColor = if (isDynamicColorForSearchEnabled)ColorHelper.parseHexColor(uiState.selectedService?.themeColor) else customTopBarColor()
+    val onThemeSearchBarColor = if (isDynamicColorForSearchEnabled)ColorHelper.getContrastingColor(themeSearchBarColor) else onCustomTopBarColor()
 
-    val themeSearchBarColor = ColorHelper.parseHexColor(uiState.selectedService?.themeColor)
-    val onThemeSearchBarColor = ColorHelper.getContrastingColor(themeSearchBarColor)
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
