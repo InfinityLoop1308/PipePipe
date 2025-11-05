@@ -165,9 +165,7 @@ fun supportingTextColor(): Color {
 
 @Composable
 fun customTopBarColor(): Color {
-    return if (currentPureBlackEnabled && isDarkTheme) {
-        Color.Black
-    } else if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
+    return if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
         MaterialTheme.colorScheme.surface
     } else {
         if (isDarkTheme) {
