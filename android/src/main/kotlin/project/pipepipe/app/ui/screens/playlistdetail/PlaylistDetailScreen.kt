@@ -78,6 +78,7 @@ fun PlaylistDetailScreen(
     val focusRequester = remember { FocusRequester() }
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showClearHistoryDialog by remember { mutableStateOf(false) }
 
     val titleTextRaw =
         if (url.getType() == "trending") StringResourceHelper.getTranslatedTrendingName(getQueryValue(url, "name")!!)
@@ -106,7 +107,7 @@ fun PlaylistDetailScreen(
 
     val shouldShowMoreMenuButton = !((uiState.playlistType == PlaylistType.FEED
             && url.substringAfterLast("/").substringBefore("?").toLongOrNull() == -1L)
-            || uiState.playlistType in listOf(PlaylistType.HISTORY, PlaylistType.TRENDING))
+            || uiState.playlistType == PlaylistType.TRENDING)
 
     LaunchedEffect(url) {
         if (uiState.playlistInfo?.url != url) {
@@ -233,6 +234,13 @@ fun PlaylistDetailScreen(
         )
     }
 
+    if (showClearHistoryDialog) {
+        ClearHistoryDialog(
+            onDismiss = { showClearHistoryDialog = false },
+            onConfirmClear = { viewModel.clearHistory() }
+        )
+    }
+
     if (isSearchActive) {
         BackHandler {
             focusManager.clearFocus()
@@ -344,6 +352,7 @@ fun PlaylistDetailScreen(
                                 onRenameClick = { showRenameDialog = true },
                                 onDeleteClick = { showDeleteDialog = true },
                                 onReloadPlaylist = { viewModel.loadPlaylist(url, serviceId) },
+                                onClearHistoryClick = { showClearHistoryDialog = true },
                                 scope = scope
                             )
                         }

@@ -76,4 +76,11 @@ class PlaylistDetailViewModel : ViewModel() {
             sharedViewModel.updateFeedLastUpdated(feedId)
         }
     }
+
+    fun clearHistory() {
+        viewModelScope.launch {
+            DatabaseOperations.clearAllStreamHistory()
+            sharedViewModel.loadPlaylist(uiState.value.playlistInfo?.url ?: "", uiState.value.playlistInfo?.serviceId)
+        }
+    }
 }

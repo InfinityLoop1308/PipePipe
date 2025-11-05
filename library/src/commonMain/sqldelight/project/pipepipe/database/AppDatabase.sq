@@ -218,8 +218,15 @@ ORDER BY last_access_date DESC;
 deleteStreamHistory:
 UPDATE streams
 SET last_access_date = NULL,
-    repeat_count = 0
+    repeat_count = 0,
+    progress_time = 0
 WHERE url = ?;
+
+clearAllStreamHistory:
+UPDATE streams
+SET last_access_date = NULL,
+    repeat_count = 0,
+    progress_time = 0;
 
 -- Stream state queries (now integrated into streams)
 updateStreamProgress:

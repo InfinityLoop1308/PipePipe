@@ -462,4 +462,6 @@
 <string name="delete_search_history_message">Êtes-vous sûr de vouloir supprimer cet historique de recherche : %s ?</string>
 <string name="settings_appearance_dynamic_color_for_search_summary">Utiliser la couleur du thème du service pour la barre de recherche. Utile si vous changez fréquemment de service</string>
 <string name="settings_appearance_dynamic_color_for_search_title">Couleur dynamique pour la recherche</string>
+<string name="clear_history_message">Êtes-vous sûr de vouloir effacer tout l\'historique de visionnage ? Cette action ne peut pas être annulée.</string>
+<string name="clear_history_desc">Effacer l\'historique de visionnage</string>
 </resources>

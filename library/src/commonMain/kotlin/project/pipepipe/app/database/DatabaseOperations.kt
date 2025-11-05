@@ -345,6 +345,10 @@ object DatabaseOperations {
         database.appDatabaseQueries.deleteStreamHistory(url)
     }
 
+    suspend fun clearAllStreamHistory() = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.clearAllStreamHistory()
+    }
+
     suspend fun updateStreamProgress(url: String, progressTime: Long) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.updateStreamProgress(progressTime, url)
     }

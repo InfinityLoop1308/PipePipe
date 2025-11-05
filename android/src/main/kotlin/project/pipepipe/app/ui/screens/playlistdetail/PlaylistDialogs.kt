@@ -116,3 +116,37 @@ fun DeletePlaylistDialog(
         }
     )
 }
+
+@Composable
+fun ClearHistoryDialog(
+    onDismiss: () -> Unit,
+    onConfirmClear: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(MR.strings.clear_history_desc.desc().toString(context = context)) },
+        text = {
+            Text(MR.strings.clear_history_message.desc().toString(context = context))
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmClear()
+                    onDismiss()
+                },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text(MR.strings.clear.desc().toString(context = context))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(MR.strings.cancel.desc().toString(context = context))
+            }
+        }
+    )
+}

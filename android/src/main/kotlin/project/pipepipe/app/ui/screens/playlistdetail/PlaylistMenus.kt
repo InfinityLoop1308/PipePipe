@@ -69,6 +69,7 @@ fun PlaylistMoreMenu(
     onRenameClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onReloadPlaylist: () -> Unit,
+    onClearHistoryClick: (() -> Unit)? = null,
     scope: CoroutineScope
 ) {
     val context = LocalContext.current
@@ -237,7 +238,22 @@ fun PlaylistMoreMenu(
                 }
 
                 else -> {
-                    // No menu items for HISTORY and TRENDING types
+                    when (playlistType) {
+                        PlaylistType.HISTORY -> {
+                            DropdownMenuItem(
+                                text = { Text(MR.strings.clear_history_desc.desc().toString(context = context)) },
+                                onClick = {
+                                    showMoreMenu = false
+                                    onClearHistoryClick?.invoke()
+                                },
+                                leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
+                            )
+                        }
+
+                        else -> {
+                            // No menu items for TRENDING types
+                        }
+                    }
                 }
             }
         }

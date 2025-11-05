@@ -462,4 +462,6 @@
 <string name="delete_search_history_message">この検索履歴を削除してもよろしいですか: %s?</string>
 <string name="settings_appearance_dynamic_color_for_search_summary">検索バーにサービステーマカラーを使用します。サービスを頻繁に切り替える場合に便利です</string>
 <string name="settings_appearance_dynamic_color_for_search_title">検索の動的カラー</string>
+<string name="clear_history_message">すべての視聴履歴を消去してもよろしいですか？この操作は元に戻せません。</string>
+<string name="clear_history_desc">視聴履歴を消去</string>
 </resources>

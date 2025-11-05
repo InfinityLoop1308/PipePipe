@@ -462,4 +462,6 @@
 <string name="delete_search_history_message">Möchten Sie diesen Suchverlauf wirklich löschen: %s?</string>
 <string name="settings_appearance_dynamic_color_for_search_summary">Verwenden Sie die Dienst-Designfarbe für die Suchleiste. Nützlich, wenn Sie häufig zwischen Diensten wechseln</string>
 <string name="settings_appearance_dynamic_color_for_search_title">Dynamische Farbe für die Suche</string>
+<string name="clear_history_message">Möchten Sie wirklich den gesamten Wiedergabeverlauf löschen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+<string name="clear_history_desc">Wiedergabeverlauf löschen</string>
 </resources>

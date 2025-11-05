@@ -472,4 +472,6 @@
 <string name="error_handling_dialog_button">Got It</string>
     <string name="delete_search_history">Delete search history</string>
     <string name="delete_search_history_message">Are you sure you want to delete this search history: %s?</string>
+    <string name="clear_history_desc">Clear Watch History</string>
+    <string name="clear_history_message">Are you sure you want to clear all watch history? This action cannot be undone.</string>
 </resources>

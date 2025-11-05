@@ -462,4 +462,6 @@
 <string name="delete_search_history_message">Sei sicuro di voler eliminare questa cronologia di ricerca: %s?</string>
 <string name="settings_appearance_dynamic_color_for_search_summary">Usa il colore del tema del servizio per la barra di ricerca. Utile se si cambia frequentemente tra i servizi</string>
 <string name="settings_appearance_dynamic_color_for_search_title">Colore dinamico per la ricerca</string>
+<string name="clear_history_message">Sei sicuro di voler cancellare tutta la cronologia delle visualizzazioni? Questa azione non può essere annullata.</string>
+<string name="clear_history_desc">Cancella cronologia visualizzazioni</string>
 </resources>
