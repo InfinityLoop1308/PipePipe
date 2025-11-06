@@ -45,12 +45,19 @@ jobs:
 
       - name: Build release APKs (with KAPT tweaks)
         env:
+          JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=1g"
         run: |
           if [ -f ./gradlew ]; then
-            ./gradlew assembleRelease --no-daemon --stacktrace --info -Pkapt.use.worker.api=false
+            ./gradlew assembleRelease --no-daemon --stacktrace --info \
+              -Pkapt.use.worker.api=false \
+              -Dorg.gradle.unsafe.configuration-cache=false \
+              -Dkotlin.compiler.execution.strategy=in-process
           else
-            ./PipePipeClient/gradlew -p PipePipeClient assembleRelease --no-daemon --stacktrace --info -Pkapt.use.worker.api=false
+            ./PipePipeClient/gradlew -p PipePipeClient assembleRelease --no-daemon --stacktrace --info \
+              -Pkapt.use.worker.api=false \
+              -Dorg.gradle.unsafe.configuration-cache=false \
+              -Dkotlin.compiler.execution.strategy=in-process
           fi
 
       - name: Upload APK artifacts
