@@ -1,0 +1,79 @@
+name: Build 4.7.4 APKs (Dev-like)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+      JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
+      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xms512m -Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+    steps:
+      - name: Checkout (full, with submodules)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Install Android SDK components (match 4.7.x)
+        uses: android-actions/setup-android@v3
+      
+      - name: Accept Android licenses and install platforms
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "platforms;android-32" "platforms;android-31"
+
+      - name: Prime Gradle wrapper (client module fallback)
+        run: |
+          if [ ! -f ./gradlew ] && [ -f ./PipePipeClient/gradlew ]; then
+            chmod +x ./PipePipeClient/gradlew
+          fi
+          if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
+
+      - name: Show tool versions
+        run: |
+          java -version
+          javac -version
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          sdkmanager --list | head -n 40 || true
+
+      - name: Clean
+        run: |
+          if [ -f ./gradlew ]; then
+            ./gradlew clean --no-daemon --stacktrace --info || true
+          else
+            ./PipePipeClient/gradlew -p PipePipeClient clean --no-daemon --stacktrace --info || true
+          fi
+
+      - name: Build release APKs (dev-like flags)
+        run: |
+          if [ -f ./gradlew ]; then
+            ./gradlew assembleRelease --no-daemon --stacktrace --info \
+              -Dorg.gradle.unsafe.configuration-cache=false \
+              -Pkapt.incremental.apt=false \
+              -Pkapt.use.worker.api=false \
+              -Dkotlin.compiler.execution.strategy=in-process
+          else
+            ./PipePipeClient/gradlew -p PipePipeClient assembleRelease --no-daemon --stacktrace --info \
+              -Dorg.gradle.unsafe.configuration-cache=false \
+              -Pkapt.incremental.apt=false \
+              -Pkapt.use.worker.api=false \
+              -Dkotlin.compiler.execution.strategy=in-process
+          fi
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipepipe-4.7.4-apks
+          path: |
+            **/*.apk
+            **/build/outputs/apk/**/*.apk
