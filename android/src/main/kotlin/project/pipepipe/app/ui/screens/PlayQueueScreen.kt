@@ -54,6 +54,8 @@ import androidx.navigation.compose.rememberNavController
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.StreamInfoWithCallback
 import androidx.media3.common.PlaybackParameters
+import project.pipepipe.app.service.SleepTimerService
+import project.pipepipe.app.ui.component.player.SleepTimerDialog
 import project.pipepipe.app.ui.theme.onCustomTopBarColor
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -62,6 +64,8 @@ fun PlayQueueScreen() {
 	val context = LocalContext.current
 	var _mediaController by remember { mutableStateOf<MediaController?>(null) }
 	var controllerFuture by remember { mutableStateOf<ListenableFuture<MediaController>?>(null) }
+    var showMoreMenu by remember { mutableStateOf(false) }
+    var showSleepTimerDialog by remember { mutableStateOf(false) }
 
 	LaunchedEffect(Unit) {
 		val sessionToken = SessionToken(context, ComponentName(context, PlaybackService::class.java))
@@ -189,7 +193,8 @@ fun PlayQueueScreen() {
                     )
                 }
                 TextButton(
-                    onClick = { showSpeedPitchDialog = true }
+                    onClick = { showSpeedPitchDialog = true },
+                    modifier = Modifier.width(44.dp)
                 ) {
                     Text(
                         text = if (currentSpeed == 1f) "1x" else String.format("%.1fx", currentSpeed),
@@ -197,7 +202,42 @@ fun PlayQueueScreen() {
                         color = onCustomTopBarColor()
                     )
                 }
+                Box {
+                    IconButton(onClick = { showMoreMenu = true }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(MR.strings.playlist_action_more),
+                            tint = onCustomTopBarColor()
+                        )
+                    }
 
+                    DropdownMenu(
+                        expanded = showMoreMenu,
+                        onDismissRequest = { showMoreMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            modifier = Modifier.height(44.dp),
+                            text = {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Timer,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Text(stringResource(MR.strings.player_sleep_timer))
+                                }
+                            },
+                            onClick = {
+                                showMoreMenu = false
+                                showSleepTimerDialog = true
+                            }
+                        )
+                    }
+                }
             }
         )
 
@@ -319,6 +359,14 @@ fun PlayQueueScreen() {
 				}
 			)
 		}
+        if (showSleepTimerDialog) {
+            SleepTimerDialog(
+                onDismiss = { showSleepTimerDialog = false },
+                onConfirm = { minutes ->
+                    SleepTimerService.startTimer(context, minutes)
+                }
+            )
+        }
 	}
 }
 
