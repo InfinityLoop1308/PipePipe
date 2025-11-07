@@ -419,6 +419,10 @@ class PlaybackService : MediaLibraryService() {
             .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, disableVideo)
             .build()
         player.trackSelectionParameters = params
+        if (!disableVideo && player.currentMediaItem != null && player.isPlaying) {
+            player.setMediaItem(player.currentMediaItem!!, player.currentPosition)
+            player.prepare()
+        }
     }
 
     private fun buildSessionActivity(): PendingIntent {

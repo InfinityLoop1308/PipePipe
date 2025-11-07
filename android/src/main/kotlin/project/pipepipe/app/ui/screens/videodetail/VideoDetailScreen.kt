@@ -152,12 +152,11 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             SharedContext.playingVideoUrlBeforeMinimizing = null // Clear the flag
             if (wasPlayingBeforeMinimizing) {
                 // Resume video playback
+                kotlinx.coroutines.delay(200)
                 mediaController?.let { controller ->
                     controller.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
-                    if (controller.currentMediaItem?.mediaId != streamInfo.url) {
+                    if (controller.currentMediaItem?.mediaId == streamInfo.url && controller.isPlaying) {
                         controller.playFromStreamInfo(streamInfo)
-                    } else if (!controller.isPlaying) {
-                        controller.play()
                     }
                 }
             } else if(!hasAutoPlayed) {
