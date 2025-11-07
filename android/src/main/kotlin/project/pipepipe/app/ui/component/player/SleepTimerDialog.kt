@@ -1,21 +1,18 @@
 package project.pipepipe.app.ui.component.player
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import dev.darkokoa.datetimewheelpicker.WheelTimePicker
-import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.datetime.LocalTime
 import project.pipepipe.app.MR
 
 @Composable
@@ -24,16 +21,10 @@ fun SleepTimerDialog(
     onConfirm: (minutes: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val quickOptions = remember { listOf(15, 30, 45, 60, 90) }
+    val quickOptions = remember { listOf(10, 15, 30, 45, 60, 90) }
 
-    var wheelRebuildKey by remember { mutableIntStateOf(0) }
-
-    var selectedTime by remember {
-        mutableStateOf(LocalTime(hour = 0, minute = quickOptions.first()))
-    }
-    var selectedQuickOption by remember {
-        mutableStateOf<Int?>(quickOptions.first())
-    }
+    var minutesText by remember { mutableStateOf("15") }
+    var selectedQuickOption by remember { mutableStateOf<Int?>(15) }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -59,51 +50,29 @@ fun SleepTimerDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Row(
+                OutlinedTextField(
+                    value = minutesText,
+                    onValueChange = { newValue ->
+                        if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                            minutesText = newValue
+                            val minutes = newValue.toIntOrNull()
+                            selectedQuickOption = if (minutes in quickOptions) minutes else null
+                        }
+                    },
+                    label = { Text(stringResource(MR.strings.sleep_timer_minutes_unit)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
                     modifier = Modifier
+                        .fillMaxWidth()
                         .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(48.dp)
-                ) {
-                    Text(
-                        text = stringResource(MR.strings.sleep_timer_hours_unit),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = stringResource(MR.strings.sleep_timer_minutes_unit),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                )
 
-                key(wheelRebuildKey) {
-                    WheelTimePicker(
-                        startTime = selectedTime,
-                        size = DpSize(200.dp, 150.dp),
-                        rowCount = 5,
-                        textStyle = MaterialTheme.typography.titleMedium,
-                        textColor = MaterialTheme.colorScheme.onSurface,
-                        selectorProperties = WheelPickerDefaults.selectorProperties(
-                            enabled = true,
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            border = null
-                        ),
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) { snappedTime ->
-                        selectedTime = snappedTime
-                        val totalMinutes = snappedTime.hour * 60 + snappedTime.minute
-                        selectedQuickOption = quickOptions.firstOrNull { it == totalMinutes }
-                    }
-                }
-
-
-                LazyRow(
+                FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(quickOptions) { minutes ->
+                    quickOptions.forEach { minutes ->
                         val label = stringResource(
                             MR.strings.sleep_timer_quick_option_minutes,
                             minutes
@@ -112,11 +81,7 @@ fun SleepTimerDialog(
                             selected = selectedQuickOption == minutes,
                             onClick = {
                                 selectedQuickOption = minutes
-                                selectedTime = LocalTime(
-                                    hour = minutes / 60,
-                                    minute = minutes % 60
-                                )
-                                wheelRebuildKey++
+                                minutesText = minutes.toString()
                             },
                             label = { Text(label) },
                             shape = RoundedCornerShape(24.dp),
@@ -128,7 +93,6 @@ fun SleepTimerDialog(
                     }
                 }
 
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
@@ -139,7 +103,7 @@ fun SleepTimerDialog(
 
                     TextButton(
                         onClick = {
-                            val totalMinutes = selectedTime.hour * 60 + selectedTime.minute
+                            val totalMinutes = minutesText.toIntOrNull()?.coerceAtLeast(1) ?: 15
                             onConfirm(totalMinutes)
                             onDismiss()
                         }
