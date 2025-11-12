@@ -1,0 +1,11 @@
+### New Features
+
+- Re-support YouTube login
+
+### Bug Fixes
+
+- Failed to parse comment replies sometimes (YouTube)
+
+### Behavior
+
+- Replace the default YouTube trending page to "Recommended Lives" as YouTube removed the trending page
