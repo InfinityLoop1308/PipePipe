@@ -12,5 +12,5 @@ else
 fi
 git add .
 git commit -a
-git push
+git push origin HEAD
 git push git@codeberg.org:NullPointerException/PipePipe.git
