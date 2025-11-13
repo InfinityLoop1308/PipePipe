@@ -5,6 +5,7 @@ import java.net.URLEncoder
 sealed class Screen(val route: String) {
     object Main : Screen("main")
     object Dashboard : Screen("dashboard")
+    object Subscription: Screen("subscription")
     object BookmarkedPlaylist : Screen("bookmarked_playlist")
     object PlaylistDetail : Screen("playlist?url={url}&serviceId={serviceId}") {
         fun createRoute(url: String, serviceId: String? = null): String {

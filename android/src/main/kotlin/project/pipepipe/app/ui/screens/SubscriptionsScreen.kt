@@ -74,10 +74,14 @@ import project.pipepipe.app.ui.viewmodel.SubscriptionsViewModel
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.helper.MainScreenTabHelper
 import project.pipepipe.app.helper.MainScreenTabHelper.categoryIconFor
+import project.pipepipe.app.ui.component.CustomTopBar
 import java.net.URLEncoder
 
 @Composable
-fun SubscriptionsScreen(navController: NavController) {
+fun SubscriptionsScreen(
+    navController: NavController,
+    useAsTab: Boolean = false
+) {
     val viewModel: SubscriptionsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -92,27 +96,35 @@ fun SubscriptionsScreen(navController: NavController) {
             viewModel.init()
     }
 
-    SubscriptionsContent(
-        isLoading = uiState.common.isLoading,
-        channelGroups = uiState.feedGroups,
-        subscriptions = uiState.subscriptions,
-        onChannelGroupClick = { feedGroupId, name ->
-            val route = Screen.Feed.createRoute(
-                id = feedGroupId ?: -1,
-                name = name
+    Column {
+        if (!useAsTab) {
+            CustomTopBar(
+                defaultTitleText = stringResource(MR.strings.tab_subscriptions)
             )
-            navController.navigate(route)
-        },
-        onSearchClick = { },
-        onSubscriptionClick = { subscription ->
-            val url = subscription.url ?: return@SubscriptionsContent
-            val encodedUrl = URLEncoder.encode(url, "UTF-8")
-            navController.navigate("channel?url=$encodedUrl&serviceId=${subscription.service_id}")
-        },
-        onCreateFeedGroup = { name, iconId ->
-            viewModel.createFeedGroup(name, iconId)
         }
-    )
+
+        SubscriptionsContent(
+            isLoading = uiState.common.isLoading,
+            channelGroups = uiState.feedGroups,
+            subscriptions = uiState.subscriptions,
+            onChannelGroupClick = { feedGroupId, name ->
+                val route = Screen.Feed.createRoute(
+                    id = feedGroupId ?: -1,
+                    name = name
+                )
+                navController.navigate(route)
+            },
+            onSearchClick = { },
+            onSubscriptionClick = { subscription ->
+                val url = subscription.url ?: return@SubscriptionsContent
+                val encodedUrl = URLEncoder.encode(url, "UTF-8")
+                navController.navigate("channel?url=$encodedUrl&serviceId=${subscription.service_id}")
+            },
+            onCreateFeedGroup = { name, iconId ->
+                viewModel.createFeedGroup(name, iconId)
+            }
+        )
+    }
 }
 
 @Composable

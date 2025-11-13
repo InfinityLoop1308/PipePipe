@@ -9,10 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
+import project.pipepipe.app.ui.screens.BookmarkedPlaylistScreen
 import project.pipepipe.app.ui.screens.ChannelScreen
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.ui.screens.SearchScreen
 import project.pipepipe.app.ui.screens.SettingsScreen
+import project.pipepipe.app.ui.screens.SubscriptionsScreen
 import project.pipepipe.app.ui.screens.TabNavigationScreen
 import project.pipepipe.app.ui.screens.playlistdetail.PlaylistDetailScreen
 import project.pipepipe.app.ui.screens.settings.AboutScreen
@@ -45,6 +47,12 @@ fun NavGraph(
     ) {
         composable(Screen.Main.route) {
             TabNavigationScreen(navController = navController)
+        }
+        composable (Screen.Subscription.route) {
+            SubscriptionsScreen(navController)
+        }
+        composable (Screen.BookmarkedPlaylist.route) {
+            BookmarkedPlaylistScreen(navController)
         }
         composable(Screen.History.route) {
             PlaylistDetailScreen(

@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
+import androidx.core.view.GravityCompat
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +20,7 @@ import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import project.pipepipe.app.LocalDrawerLayout
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.MainScreenTabConfig
@@ -32,6 +35,7 @@ import project.pipepipe.app.ui.theme.onCustomTopBarColor
 @Composable
 fun TabNavigationScreen(navController: NavController) {
     val settingsManager = SharedContext.settingsManager
+    val drawerLayout = LocalDrawerLayout.current
 
     // Load saved tabs or use defaults
     val tabConfigs by remember {
@@ -75,12 +79,12 @@ fun TabNavigationScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
-                onClick = { navController.navigate(Screen.Settings.route) },
+                onClick = { drawerLayout?.openDrawer(GravityCompat.START) },
                 modifier = Modifier.padding(start = 4.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = stringResource(MR.strings.settings),
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Menu",
                     tint = onCustomTopBarColor()
                 )
             }
@@ -139,8 +143,8 @@ fun TabNavigationScreen(navController: NavController) {
             val baseRoute = route.substringBefore('?')
             when {
                 route == "dashboard" -> DashboardScreen(navController = navController)
-                route == "subscriptions" -> SubscriptionsScreen(navController = navController)
-                route == "bookmarked_playlists" -> BookmarkedPlaylistScreen(navController = navController)
+                route == "subscriptions" -> SubscriptionsScreen(navController = navController, useAsTab = true)
+                route == "bookmarked_playlists" -> BookmarkedPlaylistScreen(navController = navController, useAsTab = true)
                 route == "blank" -> BlankPageScreen()
                 route == "history" -> PlaylistDetailScreen(
                     url = "local://history",

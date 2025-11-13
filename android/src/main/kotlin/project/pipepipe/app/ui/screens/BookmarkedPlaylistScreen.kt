@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.item.DisplayType
 import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.viewmodel.BookmarkedPlaylistViewModel
@@ -31,7 +32,10 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.net.URLEncoder
 
 @Composable
-fun BookmarkedPlaylistScreen(navController: NavController) {
+fun BookmarkedPlaylistScreen(
+    navController: NavController,
+    useAsTab: Boolean = false
+) {
     val viewModel: BookmarkedPlaylistViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
@@ -53,13 +57,19 @@ fun BookmarkedPlaylistScreen(navController: NavController) {
         viewModel.loadPlaylists()
     }
 
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (!useAsTab) {
+            CustomTopBar(
+                defaultTitleText = stringResource(MR.strings.tab_bookmarks)
+            )
+        }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp)
-    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp)
+        ) {
         when {
             uiState.playlists.isEmpty() -> {
                 Box(
@@ -110,6 +120,7 @@ fun BookmarkedPlaylistScreen(navController: NavController) {
                     }
                 }
             }
+        }
         }
     }
 }
