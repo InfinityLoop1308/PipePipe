@@ -79,7 +79,7 @@ object DatabaseOperations {
                 isPaid = row.is_paid != 0L,
                 isShort = row.is_short != 0L
             )
-        }
+        }.distinctBy { it.url }
     }
 
     suspend fun getAllLocalPlaylists(streamInfo: StreamInfo?): List<PlaylistInfo> = withContext(Dispatchers.IO) {
