@@ -322,45 +322,57 @@ fun SearchScreen(
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
-                    items(uiState.searchSuggestionList) { suggestion ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(40.dp)
-                                .clickable {
-                                    viewModel.updateSearchQuery(suggestion.text)
-                                    performSearch(suggestion.text)
-                                }
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                if (suggestion.isLocal)Icons.Default.History else Icons.Default.Search,
-                                contentDescription = if (suggestion.isLocal) stringResource(MR.strings.title_activity_history) else stringResource(MR.strings.search),
-                                modifier = Modifier.size(22.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                    itemsIndexed(
+                        items = uiState.searchSuggestionList,
+                        key = { i, suggestion -> suggestion.text + i }
+                    ) { _, suggestion ->
+                        val dismissState = rememberSwipeToDismissBoxState()
 
-                            Text(
-                                text = suggestion.text,
+                        SwipeToDismissBox(
+                            state = dismissState,
+                            backgroundContent = {},
+                            onDismiss = { viewModel.removeLocalSuggestion(suggestion.text) },
+                            gesturesEnabled = suggestion.isLocal
+                        ) {
+                            Row(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 16.dp),
-                                fontSize = 13.5.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                            Icon(
-                                Icons.Default.NorthWest,
-                                contentDescription = stringResource(MR.strings.fill_search),
-                                modifier = Modifier
-                                    .size(21.dp)
+                                    .fillMaxWidth()
+                                    .height(40.dp)
                                     .clickable {
                                         viewModel.updateSearchQuery(suggestion.text)
-                                        focusRequester.requestFocus()
-                                    },
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                                        performSearch(suggestion.text)
+                                    }
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    if (suggestion.isLocal) Icons.Default.History else Icons.Default.Search,
+                                    contentDescription = if (suggestion.isLocal) stringResource(MR.strings.title_activity_history) else stringResource(MR.strings.search),
+                                    modifier = Modifier.size(22.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                Text(
+                                    text = suggestion.text,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 16.dp),
+                                    fontSize = 13.5.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                Icon(
+                                    Icons.Default.NorthWest,
+                                    contentDescription = stringResource(MR.strings.fill_search),
+                                    modifier = Modifier
+                                        .size(21.dp)
+                                        .clickable {
+                                            viewModel.updateSearchQuery(suggestion.text)
+                                            focusRequester.requestFocus()
+                                        },
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }

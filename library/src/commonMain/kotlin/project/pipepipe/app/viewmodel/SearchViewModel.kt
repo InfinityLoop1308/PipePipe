@@ -73,6 +73,21 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
         }
     }
 
+    suspend fun removeLocalSuggestion(suggestionText: String) {
+        DatabaseOperations.getSearchHistory()
+            .find { it.search == suggestionText }?.let { removedSuggestion ->
+            val result = DatabaseOperations.deleteSearchHistory(removedSuggestion.id)
+
+            if (result.value == 1L) {
+                setState {
+                    it.copy(
+                        searchSuggestionList = it.searchSuggestionList.filterNot { suggestion -> suggestion.text == suggestionText }
+                    )
+                }
+            }
+        }
+    }
+
     fun updateSelectedService(service: SupportedServiceInfo) {
         if (service == uiState.value) {
             return

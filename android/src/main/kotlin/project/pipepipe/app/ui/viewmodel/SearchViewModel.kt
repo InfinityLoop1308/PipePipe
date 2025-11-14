@@ -42,6 +42,12 @@ class SearchViewModel : ViewModel() {
         }
     }
 
+    fun removeLocalSuggestion(suggestionText: String) {
+        viewModelScope.launch {
+            sharedViewModel.removeLocalSuggestion(suggestionText)
+        }
+    }
+
     fun updateSelectedService(service: SupportedServiceInfo) {
         sharedViewModel.updateSelectedService(service)
     }
