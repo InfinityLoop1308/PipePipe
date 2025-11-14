@@ -403,7 +403,7 @@
 <string name="select_tab_type">Seleziona tipo di scheda</string>
 <string name="blank_page">Pagina vuota</string>
 <string name="select_item">Seleziona elemento</string>
-<string name="cannot_remove_tab">Questa scheda è sempre disponibile.</string>
+<string name="cannot_remove_tab">Impossibile rimuovere l\'ultima scheda.</string>
 <string name="newpipe_backup_warning_title">Backup di NewPipe rilevato</string>
 <string name="newpipe_backup_warning_message">Stai importando un backup di NewPipe. Si prega di notare che i backup di NewPipe e PipePipe non sono completamente compatibili.</string>
 <string name="hint_continue">Continua</string>

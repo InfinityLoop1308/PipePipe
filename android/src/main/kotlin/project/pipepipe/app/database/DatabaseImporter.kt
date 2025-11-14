@@ -17,8 +17,7 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.SettingsManager
-import project.pipepipe.app.helper.MainScreenTabConfig
-import project.pipepipe.app.helper.MainScreenTabConfigDefaults
+import project.pipepipe.app.helper.MainScreenTabDefaults
 import project.pipepipe.app.serialize.SavedTabsPayload
 import project.pipepipe.app.serialize.SavedTabPayload
 import project.pipepipe.app.PipePipeApplication
@@ -317,7 +316,7 @@ class DatabaseImporter(
         val payload = savedTabsJsonParser.decodeFromString<SavedTabsPayload>(rawJson)
 
         val routes = mutableSetOf<String>()
-        val newTabs = mutableListOf<MainScreenTabConfig>()
+        val newTabs = mutableListOf<String>()
 
         // Convert each old tab to new route format
         payload.tabs.forEach { tab ->
@@ -325,47 +324,25 @@ class DatabaseImporter(
             // Skip duplicates and null routes
             if (route != null && !routes.contains(route)) {
                 routes.add(route)
-                val isDefault = route in listOf(
-                    MainScreenTabConfigDefaults.DASHBOARD_ROUTE,
-                    MainScreenTabConfigDefaults.SUBSCRIPTIONS_ROUTE,
-                    MainScreenTabConfigDefaults.BOOKMARKED_PLAYLISTS_ROUTE
-                )
-                newTabs.add(MainScreenTabConfig(route, isDefault))
-            }
-        }
-
-        // Ensure all default tabs are present
-        val defaultRoutes = listOf(
-            MainScreenTabConfigDefaults.DASHBOARD_ROUTE,
-            MainScreenTabConfigDefaults.SUBSCRIPTIONS_ROUTE,
-            MainScreenTabConfigDefaults.BOOKMARKED_PLAYLISTS_ROUTE
-        )
-
-        defaultRoutes.forEach { defaultRoute ->
-            if (!routes.contains(defaultRoute)) {
-                newTabs.add(MainScreenTabConfig(defaultRoute, isDefault = true))
-                routes.add(defaultRoute)
+                newTabs.add(route)
             }
         }
 
         // Save to settings
-        val jsonString = tabConfigJsonParser.encodeToString(
-            kotlinx.serialization.builtins.ListSerializer(MainScreenTabConfig.serializer()),
-            newTabs
-        )
+        val jsonString = Json.encodeToString(newTabs)
         settingsManager.putString(CUSTOM_TABS_CONFIG_KEY, jsonString)
     }
 
     private suspend fun convertTabToRoute(tab: SavedTabPayload): String? {
         return when (tab.tabId) {
             0 -> "blank"
-            1 -> MainScreenTabConfigDefaults.SUBSCRIPTIONS_ROUTE
+            1 -> MainScreenTabDefaults.SUBSCRIPTIONS_ROUTE
             2 -> "feed/-1"
-            3 -> MainScreenTabConfigDefaults.BOOKMARKED_PLAYLISTS_ROUTE
+            3 -> MainScreenTabDefaults.BOOKMARKED_PLAYLISTS_ROUTE
             4 -> "history"
             5 -> null // Skip KIOSK tabs
             6 -> convertChannelTab(tab)
-            7 -> MainScreenTabConfigDefaults.DASHBOARD_ROUTE
+            7 -> MainScreenTabDefaults.DASHBOARD_ROUTE
             8 -> convertPlaylistTab(tab)
             9 -> convertChannelGroupTab(tab)
             else -> null

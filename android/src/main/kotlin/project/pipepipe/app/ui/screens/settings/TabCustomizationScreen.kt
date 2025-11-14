@@ -23,8 +23,7 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.global.StringResourceHelper
-import project.pipepipe.app.helper.MainScreenTabConfig
-import project.pipepipe.app.helper.MainScreenTabConfigDefaults
+import project.pipepipe.app.helper.MainScreenTabDefaults
 import project.pipepipe.app.helper.MainScreenTabHelper
 import project.pipepipe.app.helper.MainScreenTabHelper.categoryIconFor
 import project.pipepipe.app.helper.ToastManager
@@ -49,26 +48,25 @@ fun TabCustomizationScreen(
     val settingsManager = SharedContext.settingsManager
     val selectItemText = stringResource(MR.strings.select_item)
     val alreadyExistsText = stringResource(MR.strings.tab_already_exists)
+    val cannotRemoveTabText = stringResource(MR.strings.cannot_remove_tab)
 
     var tabs by remember {
         mutableStateOf(
             try {
                 val jsonString = settingsManager.getString("custom_tabs_config_key")
                 if (jsonString.isNotEmpty()) {
-                    Json.decodeFromString<List<MainScreenTabConfig>>(jsonString)
+                    Json.decodeFromString<List<String>>(jsonString)
                 } else {
-                    MainScreenTabConfigDefaults.getDefaultTabs()
+                    MainScreenTabDefaults.getDefaultTabs()
                 }
             } catch (e: Exception) {
-                MainScreenTabConfigDefaults.getDefaultTabs()
+                MainScreenTabDefaults.getDefaultTabs()
             }
         )
     }
 
     // Only need one state
     var showDialog by remember { mutableStateOf<TabType?>(null) }
-
-    val cannotRemoveHint = stringResource(MR.strings.cannot_remove_tab)
 
     val listState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
@@ -94,25 +92,25 @@ fun TabCustomizationScreen(
         ) {
             itemsIndexed(
                 items = tabs,
-                key = { _, tab -> tab.route }
-            ) { index, tab ->
+                key = { _, route -> route }
+            ) { index, route ->
                 ReorderableItem(
                     reorderableLazyListState,
-                    key = tab.route
+                    key = route
                 ) { isDragging ->
                     val interactionSource = remember { MutableInteractionSource() }
-                    val dismissState = remember(tab.route) {
+                    val dismissState = remember(route) {
                         SwipeToDismissBoxState(
                             initialValue = SwipeToDismissBoxValue.Settled,
                             density = androidx.compose.ui.unit.Density(1f),
                             confirmValueChange = { _ ->
-                                if (!tab.isDefault) {
-                                    tabs = tabs.toMutableList().apply { removeAll { it.route == tab.route } }
+                                if (tabs.size <= 1) {
+                                    ToastManager.show(cannotRemoveTabText)
+                                    false
+                                } else {
+                                    tabs = tabs.toMutableList().apply { removeAll { it == route } }
                                     saveTabs(tabs, settingsManager)
                                     true
-                                } else {
-                                    ToastManager.show(cannotRemoveHint)
-                                    false
                                 }
                             },
                             positionalThreshold = { it * 0.5f }
@@ -141,7 +139,7 @@ fun TabCustomizationScreen(
                         enableDismissFromEndToStart = true
                     ) {
                         TabItemRow(
-                            tab = tab,
+                            route = route,
                             isDragging = isDragging,
                             dragHandleModifier = Modifier.draggableHandle(
                                 onDragStarted = {},
@@ -298,7 +296,7 @@ fun TabCustomizationScreen(
 
 @Composable
 private fun TabItemRow(
-    tab: MainScreenTabConfig,
+    route: String,
     isDragging: Boolean,
     dragHandleModifier: Modifier
 ) {
@@ -315,13 +313,13 @@ private fun TabItemRow(
         ListItem(
             headlineContent = {
                 Text(
-                    text = MainScreenTabHelper.getTabDisplayName(tab.route),
+                    text = MainScreenTabHelper.getTabDisplayName(route),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             },
             leadingContent = {
                 Icon(
-                    imageVector = MainScreenTabHelper.getTabIcon(tab.route),
+                    imageVector = MainScreenTabHelper.getTabIcon(route),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
@@ -418,23 +416,23 @@ private fun TabTypeOption(
 
 private fun addTab(
     route: String,
-    tabs: List<MainScreenTabConfig>,
+    tabs: List<String>,
     manager: project.pipepipe.app.helper.SettingsManager,
-    updateTabs: (List<MainScreenTabConfig>) -> Unit,
+    updateTabs: (List<String>) -> Unit,
     alreadyExistsText: String
 ) {
     // Check if route already exists
-    if (tabs.any { it.route == route }) {
+    if (tabs.contains(route)) {
         ToastManager.show(alreadyExistsText)
         return
     }
 
-    val newTabs = tabs + MainScreenTabConfig(route, false)
+    val newTabs = tabs + route
     saveTabs(newTabs, manager)
     updateTabs(newTabs)
 }
 
-private fun saveTabs(tabs: List<MainScreenTabConfig>, settingsManager: project.pipepipe.app.helper.SettingsManager) {
+private fun saveTabs(tabs: List<String>, settingsManager: project.pipepipe.app.helper.SettingsManager) {
     val jsonString = Json.encodeToString(tabs)
     settingsManager.putString("custom_tabs_config_key", jsonString)
 }

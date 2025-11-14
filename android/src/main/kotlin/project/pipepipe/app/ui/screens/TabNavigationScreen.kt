@@ -23,8 +23,7 @@ import kotlinx.serialization.json.Json
 import project.pipepipe.app.LocalDrawerLayout
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
-import project.pipepipe.app.helper.MainScreenTabConfig
-import project.pipepipe.app.helper.MainScreenTabConfigDefaults
+import project.pipepipe.app.helper.MainScreenTabDefaults
 import project.pipepipe.app.helper.MainScreenTabHelper
 import project.pipepipe.app.ui.screens.playlistdetail.PlaylistDetailScreen
 import project.pipepipe.app.ui.theme.customTopBarColor
@@ -43,12 +42,12 @@ fun TabNavigationScreen(navController: NavController) {
             try {
                 val jsonString = settingsManager.getString("custom_tabs_config_key")
                 if (jsonString.isNotEmpty()) {
-                    Json.decodeFromString<List<MainScreenTabConfig>>(jsonString)
+                    Json.decodeFromString<List<String>>(jsonString)
                 } else {
-                    MainScreenTabConfigDefaults.getDefaultTabs()
+                    MainScreenTabDefaults.getDefaultTabs()
                 }
             } catch (e: Exception) {
-                MainScreenTabConfigDefaults.getDefaultTabs()
+                MainScreenTabDefaults.getDefaultTabs()
             }
         )
     }
@@ -93,7 +92,7 @@ fun TabNavigationScreen(navController: NavController) {
             if (tabConfigs.isNotEmpty()) {
                 val safeIndex = pagerState.currentPage.coerceIn(0, tabConfigs.size - 1)
                 Text(
-                    text = MainScreenTabHelper.getTabDisplayName(tabConfigs[safeIndex].route),
+                    text = MainScreenTabHelper.getTabDisplayName(tabConfigs[safeIndex]),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                     color = onCustomTopBarColor()
@@ -114,7 +113,7 @@ fun TabNavigationScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             containerColor = customTopBarColor()
         ) {
-            tabConfigs.forEachIndexed { index, tabConfig ->
+            tabConfigs.forEachIndexed { index, route ->
                 Tab(
                     selected = pagerState.currentPage == index,
                     onClick = {
@@ -124,8 +123,8 @@ fun TabNavigationScreen(navController: NavController) {
                     },
                     icon = {
                         Icon(
-                            imageVector = MainScreenTabHelper.getTabIcon(tabConfig.route),
-                            contentDescription = MainScreenTabHelper.getTabDisplayName(tabConfig.route),
+                            imageVector = MainScreenTabHelper.getTabIcon(route),
+                            contentDescription = MainScreenTabHelper.getTabDisplayName(route),
                             modifier = Modifier.size(22.dp),
                             tint = onCustomTopBarColor()
                         )
@@ -139,7 +138,7 @@ fun TabNavigationScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             beyondViewportPageCount = 0
         ) { page ->
-            val route = tabConfigs[page].route
+            val route = tabConfigs[page]
             val baseRoute = route.substringBefore('?')
             when {
                 route == "dashboard" -> DashboardScreen(navController = navController)

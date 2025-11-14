@@ -401,7 +401,7 @@
 <string name="select_tab_type">Seleccionar tipo de pestaña</string>
 <string name="blank_page">Página en blanco</string>
 <string name="select_item">Seleccionar elemento</string>
-<string name="cannot_remove_tab">Esta pestaña siempre está disponible.</string>
+<string name="cannot_remove_tab">No se puede eliminar la última pestaña.</string>
 <string name="description_tab">Descripción</string>
 <string name="published_on">Publicado el</string>
 <string name="newpipe_backup_warning_title">Copia de seguridad de NewPipe detectada</string>

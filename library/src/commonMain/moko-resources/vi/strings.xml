@@ -401,7 +401,7 @@
 <string name="select_tab_type">Chọn loại tab</string>
 <string name="blank_page">Trang trống</string>
 <string name="select_item">Chọn mục</string>
-<string name="cannot_remove_tab">Tab này luôn có sẵn.</string>
+<string name="cannot_remove_tab">Không thể xóa tab cuối cùng.</string>
 <string name="description_tab">Mô tả</string>
 <string name="published_on">Được xuất bản vào</string>
 <string name="newpipe_backup_warning_title">Đã phát hiện bản sao lưu NewPipe</string>

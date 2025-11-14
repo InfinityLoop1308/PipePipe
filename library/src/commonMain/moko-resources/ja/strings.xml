@@ -401,7 +401,7 @@
 <string name="select_tab_type">タブの種類を選択</string>
 <string name="blank_page">空白のページ</string>
 <string name="select_item">項目を選択</string>
-<string name="cannot_remove_tab">このタブは常に利用可能です。</string>
+<string name="cannot_remove_tab">最後のタブを削除できません。</string>
 <string name="description_tab">説明</string>
 <string name="published_on">公開日</string>
 <string name="newpipe_backup_warning_title">NewPipeのバックアップを検出しました</string>

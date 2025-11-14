@@ -416,7 +416,7 @@
 <string name="duplicate_in_playlist">Grayed-out playlists already contain this video.</string>
 <string name="url_not_recognized_title">Unrecognized URL</string>
 <string name="url_not_recognized_message">Unable to recognize the following link:\n%s</string>
-<string name="cannot_remove_tab">This tab is always available.</string>
+<string name="cannot_remove_tab">Cannot remove the last tab.</string>
 <string name="tab_already_exists">This tab already exists.</string>
 <string name="all_feed_title">What\'s New</string>
 <string name="blank_page_hint">Tap the magnifying glass to get started.</string>

@@ -399,7 +399,7 @@
 <string name="blank_page">Leere Seite</string>
 <string name="select_item">Element auswählen</string>
 <string name="published_on">Veröffentlicht am</string>
-<string name="cannot_remove_tab">Dieser Tab ist immer verfügbar.</string>
+<string name="cannot_remove_tab">Der letzte Tab kann nicht entfernt werden.</string>
 <string name="tab_already_exists">Dieser Tab existiert bereits.</string>
 <string name="description_tab">Beschreibung</string>
 <string name="blank_page_hint">Tippen Sie auf die Lupe, um zu beginnen.</string>

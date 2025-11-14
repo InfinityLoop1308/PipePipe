@@ -399,7 +399,7 @@
 <string name="blank_page">Page blanche</string>
 <string name="select_item">Sélectionner un élément</string>
 <string name="published_on">Publié le</string>
-<string name="cannot_remove_tab">Cet onglet est toujours disponible.</string>
+<string name="cannot_remove_tab">Impossible de supprimer le dernier onglet.</string>
 <string name="tab_already_exists">Cet onglet existe déjà.</string>
 <string name="description_tab">Description</string>
 <string name="blank_page_hint">Appuyez sur la loupe pour commencer.</string>
