@@ -20,6 +20,10 @@ import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import project.pipepipe.app.LocalDrawerLayout
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
@@ -41,10 +45,27 @@ fun TabNavigationScreen(navController: NavController) {
         mutableStateOf(
             try {
                 val jsonString = settingsManager.getString("custom_tabs_config_key")
-                if (jsonString.isNotEmpty()) {
-                    Json.decodeFromString<List<String>>(jsonString)
-                } else {
+                if (jsonString.isEmpty()) {
                     MainScreenTabDefaults.getDefaultTabs()
+                } else {
+                    // Try new format first
+                    try {
+                        Json.decodeFromString<List<String>>(jsonString)
+                    } catch (e: Exception) {
+                        // Try old format (List<{route: String, isDefault: Boolean}>)
+                        // TODO: remove this fallback once goto stable. Also TabCustomizationScreen.kt
+                        val jsonElement = Json.parseToJsonElement(jsonString)
+                        if (jsonElement is JsonArray && jsonElement.firstOrNull() is JsonObject) {
+                            val convertedTabs = jsonElement.mapNotNull { element ->
+                                (element as? JsonObject)?.get("route")?.jsonPrimitive?.content
+                            }
+                            // Save as new format
+                            settingsManager.putString("custom_tabs_config_key", Json.encodeToString(convertedTabs))
+                            convertedTabs
+                        } else {
+                            throw e // Neither format worked, fall through to default
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 MainScreenTabDefaults.getDefaultTabs()
