@@ -132,8 +132,19 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             playlistInfo
         }
 
-        val items = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
             .distinctBy { it.url }
+
+        // Apply filters only for trending
+        val items = if (isTrending) {
+            val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.RECOMMENDATIONS
+            )
+            filteredItems
+        } else {
+            rawItems
+        }
 
         setState {
             it.copy(
@@ -185,16 +196,28 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             val newItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
             val combinedList = (it.list.itemList + newItems)
                 .distinctBy { item -> item.url }
+
+            // Apply filters only for trending
+            val finalList = if (it.playlistType == PlaylistType.TRENDING) {
+                val (filteredList, _) = FilterHelper.filterStreamInfoList(
+                    combinedList,
+                    FilterHelper.FilterScope.RECOMMENDATIONS
+                )
+                filteredList
+            } else {
+                combinedList
+            }
+
             it.copy(
                 common = it.common.copy(
                     isLoading = false,
                     error = null
                 ),
                 list = it.list.copy(
-                    itemList = combinedList,
+                    itemList = finalList,
                     nextPageUrl = result.pagedData?.nextPageUrl
                 ),
-                displayItems = combinedList
+                displayItems = finalList
             )
         }
 
