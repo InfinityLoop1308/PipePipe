@@ -160,3 +160,28 @@ fun readScreenBrightness(activity: Activity): Float {
     }.getOrDefault(128)
     return (system / 255f).coerceIn(0f, 1f)
 }
+
+/**
+ * Save screen brightness to preferences with timestamp.
+ * The saved brightness will expire after 4 hours.
+ */
+fun saveScreenBrightness(brightness: Float) {
+    project.pipepipe.app.SharedContext.settingsManager.putFloat("screen_brightness", brightness)
+    project.pipepipe.app.SharedContext.settingsManager.putLong("screen_brightness_timestamp", System.currentTimeMillis())
+}
+
+/**
+ * Get saved screen brightness from preferences.
+ * Returns -1 if no saved brightness or if it has expired (after 4 hours).
+ */
+fun getSavedScreenBrightness(): Float {
+    val timestamp = project.pipepipe.app.SharedContext.settingsManager.getLong("screen_brightness_timestamp", 0)
+
+    // Check if saved brightness has expired (4 hours)
+    val fourHoursInMillis = 4 * 60 * 60 * 1000L
+    if (System.currentTimeMillis() - timestamp > fourHoursInMillis) {
+        return -1f
+    }
+
+    return project.pipepipe.app.SharedContext.settingsManager.getFloat("screen_brightness", -1f)
+}

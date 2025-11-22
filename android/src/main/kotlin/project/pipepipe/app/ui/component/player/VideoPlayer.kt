@@ -325,6 +325,8 @@ fun VideoPlayer(
             val lp = window.attributes
             lp.screenBrightness = newProgress
             window.attributes = lp
+            // Save brightness to preferences
+            saveScreenBrightness(newProgress)
         }
     }
 
@@ -578,6 +580,13 @@ fun VideoPlayer(
             mediaController.removeListener(listener)
             unskipButtonJob?.cancel()
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            // Restore system brightness when player is disposed
+            activity?.window?.let { window ->
+                val lp = window.attributes
+                lp.screenBrightness = -1f  // -1 means use system default brightness
+                window.attributes = lp
+            }
         }
     }
 
@@ -617,6 +626,25 @@ fun VideoPlayer(
                             WindowInsetsCompat.Type.navigationBars()
                 )
             }
+        }
+    }
+
+    // Manage brightness based on fullscreen mode
+    LaunchedEffect(isFullscreenMode, gestureSettings.brightnessGestureEnabled) {
+        activity?.window?.let { window ->
+            val lp = window.attributes
+            if (isFullscreenMode && gestureSettings.brightnessGestureEnabled) {
+                // Entering fullscreen: restore saved brightness if available
+                val savedBrightness = getSavedScreenBrightness()
+                if (savedBrightness >= 0f) {
+                    lp.screenBrightness = savedBrightness
+                    brightnessOverlayProgress = savedBrightness
+                }
+            } else {
+                // Exiting fullscreen or gesture disabled: restore system brightness
+                lp.screenBrightness = -1f
+            }
+            window.attributes = lp
         }
     }
 
