@@ -123,6 +123,68 @@ fun ListPreference(
 }
 
 @Composable
+fun IntListPreference(
+    item: PreferenceItem.IntListPref,
+    modifier: Modifier = Modifier
+) {
+    var selectedValue by remember {
+        mutableStateOf(SharedContext.settingsManager.getInt(item.key, item.defaultValue))
+    }
+    var showDialog by remember { mutableStateOf(false) }
+
+    val selectedEntry = remember(selectedValue) {
+        val index = item.entryValues.indexOf(selectedValue)
+        if (index >= 0 && index < item.entries.size) item.entries[index] else ""
+    }
+
+    PreferenceTemplate(
+        title = item.title,
+        summary = item.summary ?: selectedEntry,
+        icon = item.icon,
+        enabled = item.enabled,
+        modifier = modifier,
+        onClick = { if (item.enabled) showDialog = true }
+    )
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(item.title) },
+            text = {
+                Column {
+                    item.entries.forEachIndexed { index, entry ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    selectedValue = item.entryValues[index]
+                                    SharedContext.settingsManager.putInt(item.key, selectedValue)
+                                    item.onValueChange?.invoke(selectedValue)
+                                    showDialog = false
+                                }
+                                .padding(vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selectedValue == item.entryValues[index],
+                                onClick = null
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(entry)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(MR.strings.cancel))
+                }
+            }
+        )
+    }
+}
+
+@Composable
 fun EditTextPreference(
     item: PreferenceItem.EditTextPref,
     modifier: Modifier = Modifier

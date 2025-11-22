@@ -464,4 +464,9 @@
 <string name="settings_appearance_dynamic_color_for_search_title">検索の動的カラー</string>
 <string name="clear_history_message">すべての視聴履歴を消去してもよろしいですか？この操作は元に戻せません。</string>
 <string name="clear_history_desc">視聴履歴を消去</string>
+<string name="video_zoom_mode_title">ビデオズームモード</string>
+<string name="zoom_fill">フィル</string>
+<string name="zoom_zoom">ズーム</string>
+<string name="video_zoom_mode_summary">ビデオのスケーリングモード — %s</string>
+<string name="zoom_fit">フィット</string>
 </resources>

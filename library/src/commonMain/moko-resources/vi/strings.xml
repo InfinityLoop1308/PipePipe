@@ -464,4 +464,9 @@
 <string name="settings_appearance_dynamic_color_for_search_title">Màu động cho tìm kiếm</string>
 <string name="clear_history_message">Bạn có chắc chắn muốn xóa toàn bộ lịch sử xem không? Hành động này không thể hoàn tác.</string>
 <string name="clear_history_desc">Xóa lịch sử xem</string>
+<string name="video_zoom_mode_title">Chế độ thu phóng video</string>
+<string name="zoom_fill">Điền</string>
+<string name="zoom_zoom">Thu phóng</string>
+<string name="video_zoom_mode_summary">Chế độ chia tỷ lệ video — %s</string>
+<string name="zoom_fit">Vừa màn hình</string>
 </resources>

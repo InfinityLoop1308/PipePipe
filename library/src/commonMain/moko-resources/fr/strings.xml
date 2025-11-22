@@ -464,4 +464,9 @@
 <string name="settings_appearance_dynamic_color_for_search_title">Couleur dynamique pour la recherche</string>
 <string name="clear_history_message">Êtes-vous sûr de vouloir effacer tout l\'historique de visionnage ? Cette action ne peut pas être annulée.</string>
 <string name="clear_history_desc">Effacer l\'historique de visionnage</string>
+<string name="video_zoom_mode_title">Mode de zoom vidéo</string>
+<string name="zoom_fill">Remplir</string>
+<string name="zoom_zoom">Zoom</string>
+<string name="video_zoom_mode_summary">Mode de mise à l\'échelle vidéo — %s</string>
+<string name="zoom_fit">Ajuster</string>
 </resources>

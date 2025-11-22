@@ -464,4 +464,9 @@
 <string name="settings_appearance_dynamic_color_for_search_title">Dynamische Farbe für die Suche</string>
 <string name="clear_history_message">Möchten Sie wirklich den gesamten Wiedergabeverlauf löschen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
 <string name="clear_history_desc">Wiedergabeverlauf löschen</string>
+<string name="video_zoom_mode_title">Video-Zoom-Modus</string>
+<string name="zoom_fill">Füllen</string>
+<string name="zoom_zoom">Zoom</string>
+<string name="video_zoom_mode_summary">Video-Skalierungsmodus — %s</string>
+<string name="zoom_fit">Anpassen</string>
 </resources>

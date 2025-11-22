@@ -340,6 +340,11 @@
 <string name="fill_search">Fill search</string>
 <string name="autoplay_title">Autoplay</string>
 <string name="autoplay_summary">Start playback automatically — %s</string>
+<string name="video_zoom_mode_title">Video zoom mode</string>
+<string name="video_zoom_mode_summary">Video scaling mode — %s</string>
+<string name="zoom_fit">Fit</string>
+<string name="zoom_fill">Fill</string>
+<string name="zoom_zoom">Zoom</string>
 <string name="wifi_only">Only on Wi-Fi</string>
 <string name="never">Never</string>
 <string name="always">Always</string>

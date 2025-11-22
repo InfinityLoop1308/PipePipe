@@ -464,4 +464,9 @@
 <string name="settings_appearance_dynamic_color_for_search_title">Color dinámico para la búsqueda</string>
 <string name="clear_history_message">¿Estás seguro de que quieres borrar todo el historial de reproducciones? Esta acción no se puede deshacer.</string>
 <string name="clear_history_desc">Borrar historial de reproducciones</string>
+<string name="video_zoom_mode_title">Modo de zoom de video</string>
+<string name="zoom_fill">Rellenar</string>
+<string name="zoom_zoom">Zoom</string>
+<string name="video_zoom_mode_summary">Modo de escalado de video — %s</string>
+<string name="zoom_fit">Ajustar</string>
 </resources>

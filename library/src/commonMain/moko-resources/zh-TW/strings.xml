@@ -464,4 +464,9 @@
 <string name="settings_appearance_dynamic_color_for_search_title">搜尋的動態顏色</string>
 <string name="clear_history_message">您確定要清除所有觀看記錄嗎？此操作無法復原。</string>
 <string name="clear_history_desc">清除觀看記錄</string>
+<string name="video_zoom_mode_title">視訊縮放模式</string>
+<string name="zoom_fill">填滿</string>
+<string name="zoom_zoom">縮放</string>
+<string name="video_zoom_mode_summary">視訊縮放模式 — %s</string>
+<string name="zoom_fit">適應</string>
 </resources>

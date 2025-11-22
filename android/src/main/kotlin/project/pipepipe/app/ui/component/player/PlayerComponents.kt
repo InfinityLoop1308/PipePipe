@@ -36,6 +36,7 @@ import androidx.media3.common.text.Cue
 import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.SubtitleView
 import coil3.ImageLoader
@@ -45,6 +46,7 @@ import coil3.request.ImageRequest
 import coil3.request.maxBitmapSize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.getFrameBoundsAt
 import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.shared.infoitem.DanmakuInfo
@@ -120,15 +122,19 @@ fun VideoSurface(
     Box(modifier = modifier) {
         AndroidView(
             factory = { context ->
+                val resizeMode = SharedContext.settingsManager.getInt("last_resize_mode", AspectRatioFrameLayout.RESIZE_MODE_FIT)
                 PlayerView(context).apply {
                     useController = false
                     setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
                     player = mediaController
                     subtitleView?.visibility = GONE
+                    this.resizeMode = resizeMode
                 }
             },
             update = { playerView ->
                 playerView.player = mediaController
+                val resizeMode = SharedContext.settingsManager.getInt("last_resize_mode", AspectRatioFrameLayout.RESIZE_MODE_FIT)
+                playerView.resizeMode = resizeMode
             },
             modifier = Modifier.fillMaxSize()
         )

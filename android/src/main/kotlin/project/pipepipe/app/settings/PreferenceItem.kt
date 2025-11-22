@@ -95,4 +95,16 @@ sealed class PreferenceItem {
         val defaultColor: String = "#FFFFFF",
         val onColorChange: ((String) -> Unit)? = null
     ) : PreferenceItem()
+
+    data class IntListPref(
+        override val key: String,
+        override val title: String,
+        override val summary: String? = null,
+        override val icon: (@Composable () -> Unit)? = null,
+        override val enabled: Boolean = true,
+        val entries: List<String>,
+        val entryValues: List<Int>,
+        val defaultValue: Int = 0,
+        val onValueChange: ((Int) -> Unit)? = null
+    ) : PreferenceItem()
 }

@@ -464,4 +464,9 @@
 <string name="settings_appearance_dynamic_color_for_search_title">Colore dinamico per la ricerca</string>
 <string name="clear_history_message">Sei sicuro di voler cancellare tutta la cronologia delle visualizzazioni? Questa azione non può essere annullata.</string>
 <string name="clear_history_desc">Cancella cronologia visualizzazioni</string>
+<string name="video_zoom_mode_title">Modalità zoom video</string>
+<string name="zoom_fill">Riempi</string>
+<string name="zoom_zoom">Zoom</string>
+<string name="video_zoom_mode_summary">Modalità di ridimensionamento video — %s</string>
+<string name="zoom_fit">Adatta</string>
 </resources>

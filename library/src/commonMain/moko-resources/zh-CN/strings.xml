@@ -464,4 +464,9 @@
 <string name="settings_appearance_dynamic_color_for_search_summary">搜索栏使用服务主题颜色。如果频繁切换服务，此功能很有用</string>
 <string name="clear_history_message">您确定要清除所有观看历史记录吗？此操作无法撤消。</string>
 <string name="clear_history_desc">清除观看历史记录</string>
+<string name="video_zoom_mode_title">视频缩放模式</string>
+<string name="zoom_fill">填充</string>
+<string name="zoom_zoom">缩放</string>
+<string name="video_zoom_mode_summary">视频缩放模式 — %s</string>
+<string name="zoom_fit">适应</string>
 </resources>

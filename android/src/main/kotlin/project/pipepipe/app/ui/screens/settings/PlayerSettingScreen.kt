@@ -19,6 +19,7 @@ import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.CustomTopBar
+import project.pipepipe.app.ui.component.IntListPreference
 import project.pipepipe.app.ui.component.ListPreference
 import project.pipepipe.app.ui.component.SwitchPreference
 
@@ -129,6 +130,38 @@ fun PlayerSettingScreen(
         }
     }
 
+    val zoomFit = stringResource(MR.strings.zoom_fit)
+    val zoomFill = stringResource(MR.strings.zoom_fill)
+    val zoomZoom = stringResource(MR.strings.zoom_zoom)
+
+    val zoomEntries = remember(zoomFit, zoomFill, zoomZoom) {
+        listOf(
+            zoomFit,
+            zoomFill,
+            zoomZoom
+        )
+    }
+    val zoomValues = remember {
+        listOf(
+            0,
+            3,
+            4
+        )
+    }
+
+    var zoomValue by remember {
+        mutableStateOf(SharedContext.settingsManager.getInt("last_resize_mode", 0))
+    }
+
+    val zoomSummary = remember(zoomValue, zoomFit, zoomFill, zoomZoom) {
+        when (zoomValue) {
+            0 -> zoomFit
+            3 -> zoomFill
+            4 -> zoomZoom
+            else -> zoomFit
+        }
+    }
+
     val preferenceItems = listOf<PreferenceItem>(
         PreferenceItem.ListPref(
             key = "default_resolution",
@@ -137,6 +170,17 @@ fun PlayerSettingScreen(
             entries = resolutionEntries,
             entryValues = resolutionValues,
             defaultValue = "auto"
+        ),
+        PreferenceItem.IntListPref(
+            key = "last_resize_mode",
+            title = stringResource(MR.strings.video_zoom_mode_title),
+            summary = stringResource(MR.strings.video_zoom_mode_summary).replace("%s", zoomSummary),
+            entries = zoomEntries,
+            entryValues = zoomValues,
+            defaultValue = 0,
+            onValueChange = { value ->
+                zoomValue = value
+            }
         ),
         PreferenceItem.ListPref(
             key = "autoplay_key",
@@ -200,6 +244,7 @@ fun PlayerSettingScreen(
                 when (item) {
                     is PreferenceItem.SwitchPref -> SwitchPreference(item = item)
                     is PreferenceItem.ListPref -> ListPreference(item = item)
+                    is PreferenceItem.IntListPref -> IntListPreference(item = item)
                     else -> Unit
                 }
             }

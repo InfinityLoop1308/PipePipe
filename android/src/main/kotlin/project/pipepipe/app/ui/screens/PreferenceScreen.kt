@@ -24,6 +24,7 @@ fun PreferenceScreen(
             when (item) {
                 is PreferenceItem.SwitchPref -> SwitchPreference(item)
                 is PreferenceItem.ListPref -> ListPreference(item)
+                is PreferenceItem.IntListPref -> IntListPreference(item)
                 is PreferenceItem.EditTextPref -> EditTextPreference(item)
                 is PreferenceItem.SliderPref -> SliderPreference(item)
                 is PreferenceItem.ClickablePref -> ClickablePreference(item)
