@@ -273,6 +273,23 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         val content: @Composable () -> Unit
     )
 
+    // Monitor SponsorBlock enabled state
+    var isSponsorBlockEnabled by remember {
+        mutableStateOf(SharedContext.settingsManager.getBoolean("sponsor_block_enable_key", true))
+    }
+
+    DisposableEffect(Unit) {
+        val listener = SharedContext.settingsManager.addBooleanListener(
+            "sponsor_block_enable_key",
+            true
+        ) { newValue ->
+            isSponsorBlockEnabled = newValue
+        }
+        onDispose {
+            listener?.deactivate()
+        }
+    }
+
     val allTabs = listOf(
         TabConfig(
             title = stringResource(MR.strings.comments_tab_description),
@@ -300,8 +317,8 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         ),
         TabConfig(
             title = stringResource(MR.strings.sponsor_block),
-            icon = Icons.Default.Shield, // 或使用其他合适的图标
-            isAvailable = streamInfo?.sponsorblockUrl != null,
+            icon = Icons.Default.Shield,
+            isAvailable = streamInfo?.sponsorblockUrl != null && isSponsorBlockEnabled,
             content = {
                 val sponsorBlockState = uiState.currentSponsorBlock
                 if (sponsorBlockState.common.isLoading) {
@@ -380,7 +397,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     ),
                     danmakuEnabled = uiState.danmakuEnabled,
                     onToggleDanmaku = { viewModel.toggleDanmaku() },
-                    sponsorBlockSegments = uiState.currentSponsorBlock.segments
+                    sponsorBlockSegments = if (isSponsorBlockEnabled) uiState.currentSponsorBlock.segments else emptyList()
                 )
             }
         }
@@ -478,7 +495,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                             ),
                                             danmakuEnabled = uiState.danmakuEnabled,
                                             onToggleDanmaku = { viewModel.toggleDanmaku() },
-                                            sponsorBlockSegments = uiState.currentSponsorBlock.segments
+                                            sponsorBlockSegments = if (isSponsorBlockEnabled) uiState.currentSponsorBlock.segments else emptyList()
                                         )
                                     }
 
