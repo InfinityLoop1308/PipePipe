@@ -70,6 +70,20 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                     FilterHelper.FilterScope.CHANNELS
                 )
 
+                // Mark new items if this is a refresh
+                val previousUrls = uiState.value.previousItemUrls
+                val itemsWithNewFlag = if (previousUrls.isNotEmpty()) {
+                    filteredItems.map { item ->
+                        if (item.url !in previousUrls) {
+                            item.copy(isNew = true)
+                        } else {
+                            item
+                        }
+                    }
+                } else {
+                    filteredItems
+                }
+
                 val isPinned = DatabaseOperations.getPinnedFeedGroups().any { it.uid == feedId }
                 setState { state ->
                     state.copy(
@@ -80,8 +94,9 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                             name = name,
                             isPinned = isPinned
                         ),
-                        list = state.list.copy(itemList = filteredItems),
-                        displayItems = filteredItems
+                        list = state.list.copy(itemList = itemsWithNewFlag),
+                        displayItems = itemsWithNewFlag,
+                        previousItemUrls = itemsWithNewFlag.map { it.url }.toSet()
                     )
                 }
                 updateFeedLastUpdated(feedId)

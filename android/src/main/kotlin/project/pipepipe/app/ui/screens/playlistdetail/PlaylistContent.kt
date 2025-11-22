@@ -153,6 +153,7 @@ fun PlaylistContent(
                                 isGridLayout = true,
                                 isDragging = isDragging,
                                 showDragHandle = uiState.playlistType == PlaylistType.LOCAL && !isSearchActive,
+                                showNewItemBorder = uiState.playlistType == PlaylistType.FEED && streamItem.isNew,
                                 onClick = {
                                     focusManager.clearFocus()
                                     if (uiState.playlistType in listOf(PlaylistType.LOCAL, PlaylistType.FEED)
@@ -268,6 +269,7 @@ fun PlaylistContent(
                                 item = streamItem,
                                 isDragging = isDragging,
                                 showDragHandle = uiState.playlistType == PlaylistType.LOCAL && !isSearchActive,
+                                showNewItemBorder = uiState.playlistType == PlaylistType.FEED && streamItem.isNew,
                                 onClick = {
                                     focusManager.clearFocus()
                                     if (uiState.playlistType in listOf(PlaylistType.LOCAL, PlaylistType.FEED)

@@ -141,7 +141,8 @@ data class PlaylistUiState(
     val displayItems: List<StreamInfo> = emptyList(),
     val playlistType: PlaylistType = PlaylistType.LOCAL,
     val feedLastUpdated: Long? = null,
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
+    val previousItemUrls: Set<String> = emptySet()
 ) : BaseUiState
 
 data class DashboardUiState(

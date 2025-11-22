@@ -67,6 +67,7 @@ fun CommonItem(
     displayType: DisplayType = DisplayType.ORIGIN,
     shouldUseSecondaryColor: Boolean = false,
     isGridLayout: Boolean = false,
+    showNewItemBorder: Boolean = false,
 ) {
     when (item) {
         is ChannelInfo -> {
@@ -90,7 +91,8 @@ fun CommonItem(
                     showProvideDetailButton = showProvideDetailButton,
                     showDragHandle = showDragHandle,
                     dragHandleModifier = dragHandleModifier,
-                    displayType = displayType
+                    displayType = displayType,
+                    showNewItemBorder = showNewItemBorder
                 )
             } else {
                 StreamOrPlaylistListItem(
@@ -105,7 +107,8 @@ fun CommonItem(
                     showDragHandle = showDragHandle,
                     dragHandleModifier = dragHandleModifier,
                     showProvideDetailButton = showProvideDetailButton,
-                    displayType = displayType
+                    displayType = displayType,
+                    showNewItemBorder = showNewItemBorder
                 )
             }
         }
@@ -202,6 +205,7 @@ private fun StreamOrPlaylistListItem(
     showDragHandle: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
     displayType: DisplayType = DisplayType.ORIGIN,
+    showNewItemBorder: Boolean = false,
 ) {
     var thumbnailUrl: String? = null
     var title: String
@@ -351,6 +355,22 @@ private fun StreamOrPlaylistListItem(
                         .padding(horizontal = 4.dp, vertical = 0.dp)
                 )
             }
+
+            // NEW badge for new items (List mode)
+            if (showNewItemBorder && item is StreamInfo) {
+                Text(
+                    text = "NEW",
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 18.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .background(Color.Red.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 6.dp, vertical = 1.dp)
+                )
+            }
+
             if (progress != null && duration != null) {
                 LinearProgressIndicator(
                     progress = { progress / duration / 1000f },
@@ -456,6 +476,7 @@ private fun StreamOrPlaylistGridItem(
     showDragHandle: Boolean = false,
     dragHandleModifier: Modifier = Modifier,
     displayType: DisplayType = DisplayType.ORIGIN,
+    showNewItemBorder: Boolean = false,
 ) {
     var thumbnailUrl: String? = null
     var title: String
@@ -583,6 +604,21 @@ private fun StreamOrPlaylistGridItem(
                         .align(Alignment.TopEnd)
                         .background(ColorHelper.parseHexColor("#FFD700"), RoundedCornerShape(4.dp))
                         .padding(horizontal = 4.dp, vertical = 0.dp)
+                )
+            }
+
+            // NEW badge for new items (Grid mode)
+            if (showNewItemBorder && item is StreamInfo) {
+                Text(
+                    text = "NEW",
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 18.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .background(Color.Red.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 6.dp, vertical = 1.dp)
                 )
             }
 
