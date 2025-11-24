@@ -8,6 +8,12 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
+    <!-- Download permissions -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
     <queries>
         <package android:name="com.junkfood.seal" />
     </queries>
@@ -104,6 +110,10 @@
             android:exported="false"
             android:foregroundServiceType="dataSync"
             tools:node="merge" />
+        <service
+            android:name="project.pipepipe.app.service.DownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <receiver
             android:name="project.pipepipe.app.service.FeedFailureReceiver"
             android:exported="false">
@@ -119,6 +129,15 @@
                 <action android:name="project.pipepipe.app.OPEN_CHANNEL" />
             </intent-filter>
         </receiver>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
 </manifest>

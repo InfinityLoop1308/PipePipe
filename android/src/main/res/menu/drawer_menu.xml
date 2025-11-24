@@ -19,6 +19,10 @@
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_history"
             android:title="@string/title_activity_history" />
+        <item
+            android:id="@+id/nav_download"
+            android:icon="@drawable/ic_download"
+            android:title="@string/downloads" />
     </group>
 
     <group android:id="@+id/settings_group">

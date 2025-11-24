@@ -163,3 +163,53 @@ data class BookmarkedPlaylistUiState(
     val common: CommonUiState = CommonUiState(),
     val playlists: List<PlaylistInfo> = emptyList()
 ) : BaseUiState
+
+// Download state enums
+enum class DownloadStatus {
+    QUEUED,
+    FETCHING_INFO,
+    PREPROCESSING,
+    DOWNLOADING,
+    POSTPROCESSING,
+    PAUSED,
+    COMPLETED,
+    FAILED,
+    CANCELED;
+
+    fun isTerminal() = this in listOf(COMPLETED, FAILED, CANCELED)
+    fun isActive() = this in listOf(QUEUED, FETCHING_INFO, PREPROCESSING, DOWNLOADING, POSTPROCESSING)
+}
+
+enum class DownloadType {
+    VIDEO,
+    AUDIO
+}
+
+// Download item state for UI
+data class DownloadItemState(
+    val id: Long,
+    val url: String,
+    val title: String,
+    val imageUrl: String?,
+    val duration: Int,
+    val downloadType: DownloadType,
+    val quality: String,
+    val codec: String,
+    val status: DownloadStatus,
+    val progress: Float = 0f,
+    val downloadedBytes: Long? = null,
+    val totalBytes: Long? = null,
+    val downloadSpeed: String? = null,
+    val filePath: String? = null,
+    val createdAt: Long,
+    val finishedTimestamp: Long? = null,
+    val errorMessage: String? = null,
+    val errorLogId: Long? = null
+)
+
+// Download UI state
+data class DownloadUiState(
+    val common: CommonUiState = CommonUiState(),
+    val downloads: List<DownloadItemState> = emptyList(),
+    val activeDownloadCount: Int = 0
+) : BaseUiState

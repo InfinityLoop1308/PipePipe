@@ -1,15 +1,20 @@
 package project.pipepipe.app
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.Rational
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.filled.*
@@ -173,6 +178,15 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             }
+                            // Download format dialog
+                            val downloadDialogState by SharedContext.downloadFormatDialogState.collectAsState()
+                            if (downloadDialogState.isVisible && downloadDialogState.streamInfo != null) {
+                                DownloadFormatDialog(
+                                    streamInfo = downloadDialogState.streamInfo!!,
+                                    onDismiss = { SharedContext.hideDownloadFormatDialog() }
+                                )
+                            }
+
                             toastMessage?.let { message ->
                                 Toast(message = message)
                             }
@@ -252,6 +266,9 @@ class MainActivity : ComponentActivity() {
                 }
                 R.id.nav_history -> {
                     navController.navigate(Screen.History.route)
+                }
+                R.id.nav_download -> {
+                    navController.navigate(Screen.Download.route)
                 }
 
                 R.id.nav_settings -> {
@@ -495,4 +512,5 @@ class MainActivity : ComponentActivity() {
         navigationView.itemIconTintList = iconTint
         navigationView.itemTextColor = textColor
     }
+
 }

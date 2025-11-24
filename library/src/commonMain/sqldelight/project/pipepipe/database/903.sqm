@@ -1,0 +1,37 @@
+-- Migration 903: Add downloads table
+-- Adds the downloads table for managing download tasks
+
+-- ============================================================
+-- Part 1: Create downloads table
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS downloads (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    image_url TEXT,
+    duration INTEGER NOT NULL DEFAULT 0,
+    download_type TEXT NOT NULL,
+    quality TEXT NOT NULL,
+    codec TEXT NOT NULL,
+    format_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    progress REAL NOT NULL DEFAULT 0.0,
+    downloaded_bytes INTEGER,
+    total_bytes INTEGER,
+    download_speed TEXT,
+    file_path TEXT,
+    created_at INTEGER NOT NULL,
+    finished_at INTEGER,
+    error_message TEXT,
+    error_log_id INTEGER,
+    UNIQUE(url, quality, download_type),
+    FOREIGN KEY(error_log_id) REFERENCES error_log(id) ON DELETE SET NULL
+);
+
+-- ============================================================
+-- Part 2: Create indexes for downloads table
+-- ============================================================
+
+CREATE INDEX IF NOT EXISTS index_downloads_status ON downloads (status);
+CREATE INDEX IF NOT EXISTS index_downloads_created_at ON downloads (created_at DESC);

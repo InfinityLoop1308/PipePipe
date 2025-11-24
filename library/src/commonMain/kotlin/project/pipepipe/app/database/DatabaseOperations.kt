@@ -651,4 +651,100 @@ object DatabaseOperations {
             }
         }
     }
+
+    // =================================================================
+    // Download Operations
+    // =================================================================
+
+    @OptIn(ExperimentalTime::class)
+    suspend fun insertDownload(
+        url: String,
+        title: String,
+        imageUrl: String?,
+        duration: Int,
+        downloadType: String,
+        quality: String,
+        codec: String,
+        formatId: String
+    ): Long = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.insertDownload(
+            url = url,
+            title = title,
+            image_url = imageUrl,
+            duration = duration.toLong(),
+            download_type = downloadType,
+            quality = quality,
+            codec = codec,
+            format_id = formatId,
+            created_at = Clock.System.now().toEpochMilliseconds()
+        )
+        return@withContext database.appDatabaseQueries.lastInsertRowId().executeAsOne()
+    }
+
+    suspend fun getDownloadById(id: Long) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.selectDownloadById(id).executeAsOneOrNull()
+    }
+
+    suspend fun getAllDownloads() = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.selectAllDownloads().executeAsList()
+    }
+
+    suspend fun getActiveDownloads() = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.selectActiveDownloads().executeAsList()
+    }
+
+    suspend fun updateDownloadStatus(id: Long, status: String, errorMessage: String?, errorLogId: Long? = null) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.updateDownloadStatus(status, errorMessage, errorLogId, id)
+    }
+
+    suspend fun updateDownloadProgress(
+        id: Long,
+        progress: Float,
+        downloadedBytes: Long?,
+        totalBytes: Long?,
+        speed: String?
+    ) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.updateDownloadProgress(
+            progress = progress.toDouble(),
+            downloaded_bytes = downloadedBytes,
+            total_bytes = totalBytes,
+            download_speed = speed,
+            id = id
+        )
+    }
+
+    @OptIn(ExperimentalTime::class)
+    suspend fun updateDownloadCompleted(id: Long, filePath: String, fileSize: Long? = null) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.updateDownloadCompleted(
+            file_path = filePath,
+            finished_at = Clock.System.now().toEpochMilliseconds(),
+            id = id
+        )
+        // Update total_bytes if file size is provided
+        if (fileSize != null) {
+            database.appDatabaseQueries.updateDownloadProgress(
+                progress = 1.0,
+                downloaded_bytes = fileSize,
+                total_bytes = fileSize,
+                download_speed = null,
+                id = id
+            )
+        }
+    }
+
+    suspend fun markDownloadStarted(id: Long) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.markDownloadStarted(id)
+    }
+
+    suspend fun deleteDownload(id: Long) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.deleteDownload(id)
+    }
+
+    suspend fun findDownloadByUrlAndQuality(url: String, quality: String, downloadType: String) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.findDownloadByUrlAndQuality(url, quality, downloadType).executeAsOneOrNull()
+    }
+
+    suspend fun findDownloadByUrlAndType(url: String, downloadType: String) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.findDownloadByUrlAndType(url, downloadType).executeAsOneOrNull()
+    }
 }

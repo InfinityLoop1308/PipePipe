@@ -11,6 +11,7 @@ import project.pipepipe.shared.downloader.Downloader
 import project.pipepipe.app.viewmodel.BottomSheetMenuViewModel
 import project.pipepipe.app.viewmodel.VideoDetailViewModel
 import project.pipepipe.shared.infoitem.Info
+import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.JobRequest
 import project.pipepipe.shared.job.JobResponse
 import project.pipepipe.app.helper.SettingsManager
@@ -78,5 +79,25 @@ object SharedContext {
 
     fun hideImageViewer() {
         _imageViewerState.value = ImageViewerState()
+    }
+
+    // Download Format Dialog State
+    data class DownloadFormatDialogState(
+        val isVisible: Boolean = false,
+        val streamInfo: StreamInfo? = null
+    )
+
+    private val _downloadFormatDialogState = MutableStateFlow(DownloadFormatDialogState())
+    val downloadFormatDialogState: StateFlow<DownloadFormatDialogState> = _downloadFormatDialogState.asStateFlow()
+
+    fun showDownloadFormatDialog(streamInfo: StreamInfo) {
+        _downloadFormatDialogState.value = DownloadFormatDialogState(
+            isVisible = true,
+            streamInfo = streamInfo
+        )
+    }
+
+    fun hideDownloadFormatDialog() {
+        _downloadFormatDialogState.value = DownloadFormatDialogState()
     }
 }

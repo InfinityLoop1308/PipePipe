@@ -48,6 +48,8 @@ android {
         }
     }
 
+    packagingOptions { jniLibs { useLegacyPackaging = true } }
+
     applicationVariants.all {
         outputs.all {
             (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
@@ -101,4 +103,14 @@ dependencies {
     implementation("sh.calvin.reorderable:reorderable:3.0.0")
     implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3:1.4.0")
     implementation("org.ocpsoft.prettytime:prettytime:5.0.7.Final")
+
+    // youtubedl-android for download functionality
+    implementation("io.github.junkfood02.youtubedl-android:library:0.18.1")
+    implementation("io.github.junkfood02.youtubedl-android:ffmpeg:0.18.1")
+
+    // Jackson for JSON parsing (required by SharedContext)
+    implementation("com.fasterxml.jackson.core:jackson-core:2.20.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.0")
+
 }

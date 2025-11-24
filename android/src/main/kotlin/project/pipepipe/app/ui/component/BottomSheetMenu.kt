@@ -183,7 +183,6 @@ private fun StreamInfoMenuItems(
     doneText: String
 ) {
     var showPlaylistPopup by remember { mutableStateOf(false) }
-    var showDownloadDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val activity = context.findActivity() as MainActivity
     var isSubscribed by remember { mutableStateOf(false) }
@@ -228,9 +227,8 @@ private fun StreamInfoMenuItems(
             showPlaylistPopup = true
         })
         add(Triple(Icons.Default.Download, stringResource(MR.strings.download)) {
-            handleDownload(context, streamInfo.url) { showDialog ->
-                showDownloadDialog = showDialog
-            }
+            SharedContext.showDownloadFormatDialog(streamInfo)
+            onDismiss()
         })
         add(Triple(Icons.Default.Share, stringResource(MR.strings.share)) {
             val sendIntent = Intent().apply {
@@ -336,15 +334,6 @@ private fun StreamInfoMenuItems(
             onPlaylistSelected = {
                 showPlaylistPopup = false
                 onDismiss()
-            }
-        )
-    }
-
-    if (showDownloadDialog) {
-        DownloadInfoDialog(
-            url = streamInfo.url,
-            onDismiss = {
-                showDownloadDialog = false
             }
         )
     }

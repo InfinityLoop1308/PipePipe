@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.shared.infoitem.StreamInfo
 
 
@@ -27,7 +28,6 @@ fun ActionButtons(
     streamInfo: StreamInfo,
 ) {
     val context = LocalContext.current
-    var showDownloadDialog by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -66,22 +66,9 @@ fun ActionButtons(
             icon = Icons.Default.Download,
             text = stringResource(MR.strings.download),
             onClick = {
-                handleDownload(
-                    context = context,
-                    url = streamInfo.url,
-                    onShowDialog = { show ->
-                        showDownloadDialog = show
-                    }
-                )
+                SharedContext.showDownloadFormatDialog(streamInfo)
             },
             modifier = Modifier.weight(1f)
-        )
-    }
-
-    if (showDownloadDialog) {
-        DownloadInfoDialog(
-            url = streamInfo.url,
-            onDismiss = { showDownloadDialog = false }
         )
     }
 }

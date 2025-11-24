@@ -11,6 +11,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import project.pipepipe.app.ui.screens.BookmarkedPlaylistScreen
 import project.pipepipe.app.ui.screens.ChannelScreen
+import project.pipepipe.app.ui.screens.DownloadScreen
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.ui.screens.SearchScreen
 import project.pipepipe.app.ui.screens.SettingsScreen
@@ -114,6 +115,9 @@ fun NavGraph(
         }
         composable(Screen.AboutSettings.route) {
             AboutScreen(navController = navController)
+        }
+        composable(Screen.Download.route) {
+            DownloadScreen(navController = navController)
         }
         composable(Screen.Search.route) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")

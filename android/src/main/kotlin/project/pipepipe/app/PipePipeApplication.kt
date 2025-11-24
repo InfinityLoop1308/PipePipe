@@ -19,6 +19,11 @@ import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.helper.SettingsManager
 import project.pipepipe.shared.state.Cache4kSessionManager
 import project.pipepipe.app.viewmodel.VideoDetailViewModel
+import project.pipepipe.app.download.DownloadManager
+import project.pipepipe.app.download.DownloadManagerHolder
+import com.yausername.youtubedl_android.YoutubeDL
+import com.yausername.ffmpeg.FFmpeg
+import android.util.Log
 
 class PipePipeApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -69,6 +74,23 @@ class PipePipeApplication : Application() {
 
         // Initialize Database
         DataBaseDriverManager.initialize(this)
+
+        // Initialize youtubedl-android and FFmpeg
+        try {
+            YoutubeDL.getInstance().init(this)
+            FFmpeg.getInstance().init(this)
+            Log.d("PipePipeApp", "YoutubeDL and FFmpeg initialized successfully")
+            GlobalScope.launch {
+                YoutubeDL.updateYoutubeDL(this@PipePipeApplication)
+            }
+        } catch (e: Exception) {
+            Log.e("PipePipeApp", "Failed to initialize YoutubeDL/FFmpeg", e)
+        }
+
+        // Initialize DownloadManager
+        val downloadManager = DownloadManager(this)
+        DownloadManagerHolder.initialize(downloadManager)
+        Log.d("PipePipeApp", "DownloadManager initialized")
 
         // Schedule streams notification periodic work
         StreamsNotificationManager.schedulePeriodicWork(this)

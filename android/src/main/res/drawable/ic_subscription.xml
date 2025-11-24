@@ -1,4 +1,4 @@
-<!-- drawable/youtube_subscription.xml -->
+<!-- drawable/subscription.xml -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="24dp" android:width="24dp"
         android:viewportWidth="24" android:viewportHeight="24">
     <path android:fillColor="#000000"
