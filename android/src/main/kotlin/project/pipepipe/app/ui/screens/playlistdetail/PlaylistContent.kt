@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
@@ -174,10 +175,11 @@ fun PlaylistContent(
                                         scope.launch {
                                             onClearSearchFocus()
                                             val displayIndex = viewModel.uiState.value.displayItems.indexOfFirst { it.joinId == streamItem.joinId }
+                                            delay(100)
                                             if (uiState.list.itemList.size <= 100) {
-                                                gridState.animateScrollToItem(index = displayIndex)
+                                                gridState.animateScrollToItem(index = displayIndex + 2)
                                             } else {
-                                                gridState.scrollToItem(index = displayIndex)
+                                                gridState.scrollToItem(index = displayIndex + 2)
                                             }
                                         }
                                     }
@@ -290,10 +292,11 @@ fun PlaylistContent(
                                         scope.launch {
                                             onClearSearchFocus()
                                             val displayIndex = viewModel.uiState.value.displayItems.indexOfFirst { it.joinId == streamItem.joinId }
+                                            delay(100)
                                             if (uiState.list.itemList.size <= 100) {
-                                                listState.animateScrollToItem(index = displayIndex)
+                                                listState.animateScrollToItem(index = displayIndex + 2)
                                             } else {
-                                                listState.scrollToItem(index = displayIndex)
+                                                listState.scrollToItem(index = displayIndex + 2)
                                             }
                                         }
                                     }
