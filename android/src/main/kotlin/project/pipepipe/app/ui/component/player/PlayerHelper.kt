@@ -6,6 +6,7 @@ import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
+import project.pipepipe.app.helper.FormatHelper
 import kotlin.math.min
 
 object PlayerHelper {
@@ -21,34 +22,10 @@ object PlayerHelper {
         val resolutionPixel: String get() = "${min(height, width)}p"
         val displayLabel: String
             get() {
-                val codecName = when {
-                    codecs == null -> ""
-                    codecs.contains("av01", ignoreCase = true) -> "AV1"
-                    codecs.contains("vp9", ignoreCase = true) -> "VP9"
-                    codecs.contains("avc", ignoreCase = true) || codecs.contains("h264", ignoreCase = true) -> "H264"
-                    codecs.contains("hevc", ignoreCase = true)
-                            || codecs.contains("h265", ignoreCase = true)
-                            || codecs.contains("hev1", ignoreCase = true)
-                            || codecs.contains("hvc1", ignoreCase = true) -> "HEVC"
-
-                    else -> codecs.uppercase()
-                }
-
-                return if (frameRate > 30f) {
-                    "$codecName ${resolutionPixel}${frameRate.toInt()}"
-                } else {
-                    "$codecName $resolutionPixel"
-                }
+                val codecName = FormatHelper.parseCodecName(codecs)
+                return FormatHelper.formatVideoLabel(codecName, resolutionPixel, frameRate)
             }
-        val codecPriority: Int
-            get() = when {
-                codecs == null -> 0
-                codecs.contains("av01", ignoreCase = true) -> 4
-                codecs.contains("hevc", ignoreCase = true) || codecs.contains("h265", ignoreCase = true) -> 3
-                codecs.contains("vp9", ignoreCase = true) -> 2
-                codecs.contains("avc", ignoreCase = true) || codecs.contains("h264", ignoreCase = true) -> 1
-                else -> 0
-            }
+        val codecPriority: Int get() = FormatHelper.getCodecPriority(codecs)
     }
 
     data class SubtitleInfo(
