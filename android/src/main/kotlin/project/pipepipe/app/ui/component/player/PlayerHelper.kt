@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.component.player
 
+import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.TrackGroup
 import androidx.media3.common.TrackSelectionOverride
@@ -10,6 +11,17 @@ import project.pipepipe.app.helper.FormatHelper
 import kotlin.math.min
 
 object PlayerHelper {
+    /**
+     * Detect if a format is HDR based on codec string
+     */
+    fun Format.isHDR(): Boolean {
+        // vp9.2 = VP9 Profile 2 (10-bit HDR)
+        // av01.0.0XM where X >= 9 = AV1 Main 10 Profile (HDR capable)
+        val codecString = codecs ?: return false
+        return codecString.contains("vp9.2", ignoreCase = true) ||
+            Regex("av01\\.0\\.(09|1[0-3])M", RegexOption.IGNORE_CASE).containsMatchIn(codecString)
+    }
+
     data class ResolutionInfo(
         val height: Int,
         val width: Int,
@@ -17,13 +29,15 @@ object PlayerHelper {
         val frameRate: Float,
         val trackGroup: TrackGroup,
         val trackIndex: Int,
-        val isSelected: Boolean
+        val isSelected: Boolean,
+        val isHDR: Boolean = false
     ) {
         val resolutionPixel: String get() = "${min(height, width)}p"
         val displayLabel: String
             get() {
                 val codecName = FormatHelper.parseCodecName(codecs)
-                return FormatHelper.formatVideoLabel(codecName, resolutionPixel, frameRate)
+                val baseLabel = FormatHelper.formatVideoLabel(codecName, resolutionPixel, frameRate)
+                return if (isHDR) "$baseLabel HDR" else baseLabel
             }
         val codecPriority: Int get() = FormatHelper.getCodecPriority(codecs)
     }

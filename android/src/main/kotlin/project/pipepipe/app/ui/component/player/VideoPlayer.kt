@@ -50,6 +50,7 @@ import project.pipepipe.app.ui.component.player.PlayerHelper.ResolutionInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.SubtitleInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.applyDefaultResolution
 import project.pipepipe.app.ui.component.player.PlayerHelper.forEachIndexed
+import project.pipepipe.app.ui.component.player.PlayerHelper.isHDR
 import project.pipepipe.app.ui.theme.applySystemBarColors
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -431,6 +432,8 @@ fun VideoPlayer(
         currentTracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }.forEach { videoGroup ->
             videoGroup?.forEachIndexed { index, format ->
                 if (videoGroup.isTrackSupported(index)) {
+                    // Detect HDR using helper function
+                    val isHDR = format.isHDR()
                     resolutions.add(
                         ResolutionInfo(
                             height = format.height,
@@ -439,7 +442,8 @@ fun VideoPlayer(
                             frameRate = format.frameRate,
                             trackGroup = videoGroup.mediaTrackGroup,
                             trackIndex = index,
-                            isSelected = videoGroup.isTrackSelected(index)
+                            isSelected = videoGroup.isTrackSelected(index),
+                            isHDR = isHDR
                         )
                     )
                 }
@@ -448,10 +452,11 @@ fun VideoPlayer(
 
 
         availableResolutions = resolutions
-            .distinctBy { "${it.codecs}_${it.height}_${it.frameRate}" }
+            .distinctBy { "${it.codecs}_${it.height}_${it.frameRate}_${it.isHDR}" }
             .sortedWith(
                 compareByDescending<ResolutionInfo> { it.height }
                     .thenByDescending { it.frameRate }
+                    .thenByDescending { it.isHDR }
                     .thenByDescending { it.codecPriority }
             )
 
