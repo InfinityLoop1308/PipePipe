@@ -275,6 +275,10 @@ class MainActivity : ComponentActivity() {
                     navController.navigate(Screen.Settings.route)
                 }
 
+                R.id.nav_log -> {
+                    navController.navigate(Screen.LogSettings.route)
+                }
+
                 R.id.nav_about -> {
                     navController.navigate(Screen.AboutSettings.route)
                 }

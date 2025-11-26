@@ -237,7 +237,7 @@
 <string name="group_name">Nombre del grupo</string>
 <string name="refresh_feed">Actualizar feed</string>
 <string name="duration">Duración</string>
-<string name="log">Registro</string>
+<string name="log">Registros</string>
 <string name="settings_gesture_fullscreen_summary">Alternar gestos de control de pantalla completa</string>
 <string name="settings_appearance_theme_mode_dark">Oscuro</string>
 <string name="player_unskipped">No saltado</string>

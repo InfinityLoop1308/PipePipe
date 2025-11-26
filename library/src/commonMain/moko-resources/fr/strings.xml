@@ -237,7 +237,7 @@
 <string name="group_name">Nom du groupe</string>
 <string name="refresh_feed">Actualiser le flux</string>
 <string name="duration">Durée</string>
-<string name="log">Journal</string>
+<string name="log">Journaux</string>
 <string name="settings_gesture_fullscreen_summary">Activer/désactiver les gestes de contrôle en plein écran</string>
 <string name="settings_appearance_theme_mode_dark">Sombre</string>
 <string name="player_unskipped">Non ignoré</string>

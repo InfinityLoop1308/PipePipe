@@ -32,6 +32,11 @@
             android:title="@string/settings" />
 
         <item
+            android:id="@+id/nav_log"
+            android:icon="@drawable/ic_bug"
+            android:title="@string/log" />
+
+        <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_info_outline"
             android:title="@string/settings_section_about" />

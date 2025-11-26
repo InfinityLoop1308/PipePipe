@@ -237,7 +237,7 @@
 <string name="group_name">Gruppenname</string>
 <string name="refresh_feed">Feed aktualisieren</string>
 <string name="duration">Dauer</string>
-<string name="log">Protokoll</string>
+<string name="log">Protokolle</string>
 <string name="settings_gesture_fullscreen_summary">Vollbild-Steuergesten umschalten</string>
 <string name="settings_appearance_theme_mode_dark">Dunkel</string>
 <string name="player_unskipped">Nicht übersprungen</string>
