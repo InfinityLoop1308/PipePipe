@@ -1,36 +1,51 @@
 package project.pipepipe.app.ui.screens
 
 // PreferenceScreen.kt
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import project.pipepipe.app.settings.PreferenceItem
-import project.pipepipe.app.helper.SettingsManager
 import project.pipepipe.app.ui.component.*
 
 @Composable
 fun PreferenceScreen(
+    title: String,
     items: List<PreferenceItem>,
-    settingsManager: SettingsManager = remember { SettingsManager() },
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    verticalSpacing: Int = 4,
+    contentPadding: PaddingValues = PaddingValues(bottom = 16.dp)
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize()
-    ) {
-        items(items) { item ->
-            when (item) {
-                is PreferenceItem.SwitchPref -> SwitchPreference(item)
-                is PreferenceItem.ListPref -> ListPreference(item)
-                is PreferenceItem.IntListPref -> IntListPreference(item)
-                is PreferenceItem.EditTextPref -> EditTextPreference(item)
-                is PreferenceItem.SliderPref -> SliderPreference(item)
-                is PreferenceItem.ClickablePref -> ClickablePreference(item)
-                is PreferenceItem.CategoryPref -> CategoryPreference(item)
-                is PreferenceItem.MultiSelectPref -> MultiSelectPreference(item)
-                is PreferenceItem.ColorPref -> ColorPreference(item)
+    Column {
+        CustomTopBar(
+            defaultTitleText = title
+        )
+
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(verticalSpacing.dp),
+            contentPadding = contentPadding
+        ) {
+            items(
+                items = items,
+                key = { item -> item.key.ifEmpty { item.title } }
+            ) { item ->
+                when (item) {
+                    is PreferenceItem.SwitchPref -> SwitchPreference(item)
+                    is PreferenceItem.ListPref -> ListPreference(item)
+                    is PreferenceItem.IntListPref -> IntListPreference(item)
+                    is PreferenceItem.EditTextPref -> EditTextPreference(item)
+                    is PreferenceItem.SliderPref -> SliderPreference(item)
+                    is PreferenceItem.ClickablePref -> ClickablePreference(item)
+                    is PreferenceItem.CategoryPref -> CategoryPreference(item)
+                    is PreferenceItem.MultiSelectPref -> MultiSelectPreference(item)
+                    is PreferenceItem.ColorPref -> ColorPreference(item)
+                }
             }
         }
     }

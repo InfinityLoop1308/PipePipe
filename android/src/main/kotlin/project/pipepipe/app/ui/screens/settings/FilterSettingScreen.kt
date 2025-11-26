@@ -61,11 +61,9 @@ import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
-import project.pipepipe.app.ui.component.ClickablePreference
 import project.pipepipe.app.ui.component.CustomTopBar
-import project.pipepipe.app.ui.component.MultiSelectPreference
-import project.pipepipe.app.ui.component.SwitchPreference
 import project.pipepipe.app.ui.screens.Screen
+import project.pipepipe.app.ui.screens.PreferenceScreen
 
 @Composable
 fun FilterSettingScreen(
@@ -163,28 +161,11 @@ fun FilterSettingScreen(
         )
     }
 
-    Column {
-        CustomTopBar(
-            defaultTitleText = filterTitle
-        )
-
-        LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            items(
-                items = preferenceItems,
-                key = { item -> item.key.ifEmpty { item.title } }
-            ) { item ->
-                when (item) {
-                    is PreferenceItem.ClickablePref -> ClickablePreference(item = item)
-                    is PreferenceItem.SwitchPref -> SwitchPreference(item = item)
-                    is PreferenceItem.MultiSelectPref -> MultiSelectPreference(item = item)
-                    else -> Unit
-                }
-            }
-        }
-    }
+    PreferenceScreen(
+        title = filterTitle,
+        items = preferenceItems,
+        modifier = modifier
+    )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

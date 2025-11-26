@@ -8,11 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -39,9 +36,7 @@ import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.ui.component.CategoryPreference
-import project.pipepipe.app.ui.component.ClickablePreference
-import project.pipepipe.app.ui.component.CustomTopBar
+import project.pipepipe.app.ui.screens.PreferenceScreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -189,28 +184,12 @@ fun ImportExportSettingScreen(
         )
     }
 
-    Column {
-        CustomTopBar(
-            defaultTitleText = MR.strings.settings_section_import_export.desc().toString(context)
-        )
-
-        LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding = PaddingValues(bottom = 24.dp)
-        ) {
-            items(
-                items = preferenceItems,
-                key = { item -> item.key.ifEmpty { item.title } }
-            ) { item ->
-                when (item) {
-                    is PreferenceItem.CategoryPref -> CategoryPreference(item)
-                    is PreferenceItem.ClickablePref -> ClickablePreference(item)
-                    else -> Unit
-                }
-            }
-        }
-    }
+    PreferenceScreen(
+        title = MR.strings.settings_section_import_export.desc().toString(context),
+        items = preferenceItems,
+        modifier = modifier,
+        contentPadding = PaddingValues(bottom = 24.dp)
+    )
 
     if (showNewPipeWarningDialog && pendingImportUri != null) {
         AlertDialog(
