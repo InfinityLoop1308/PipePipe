@@ -3,6 +3,7 @@ package project.pipepipe.app.database
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import project.pipepipe.database.Search_history
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.SharedContext.database
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.shared.infoitem.PlaylistInfo
@@ -343,10 +344,12 @@ object DatabaseOperations {
 
     suspend fun deleteStreamHistory(url: String) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.deleteStreamHistory(url)
+        SharedContext.notifyHistoryChanged()
     }
 
     suspend fun clearAllStreamHistory() = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.clearAllStreamHistory()
+        SharedContext.notifyHistoryChanged()
     }
 
     suspend fun updateStreamProgress(url: String, progressTime: Long) = withContext(Dispatchers.IO) {
@@ -502,6 +505,7 @@ object DatabaseOperations {
         insertOrUpdateStream(streamInfo)
         val streamRow = getStreamByUrl(streamInfo.url)
         updateStreamHistory(streamRow!!.url, currentTime)
+        SharedContext.notifyHistoryChanged()
     }
 
     suspend fun isSubscribed(url: String): Boolean = withContext(Dispatchers.IO) {

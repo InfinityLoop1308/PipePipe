@@ -1,6 +1,11 @@
 package project.pipepipe.app.viewmodel
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.FilterHelper
@@ -17,6 +22,42 @@ import project.pipepipe.app.helper.executeJobFlow
 import kotlin.collections.plus
 
 class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()) {
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    init {
+        // Listen for playlist changes
+        SharedContext.playlistChanged
+            .onEach { changedPlaylistId ->
+                val currentPlaylistId = uiState.value.playlistInfo?.uid
+                val currentUrl = uiState.value.playlistInfo?.url
+
+                // Reload if this is a local playlist and it matches the changed playlist
+                if (currentPlaylistId == changedPlaylistId &&
+                    currentUrl != null &&
+                    uiState.value.playlistType == PlaylistType.LOCAL) {
+                    loadPlaylist(currentUrl, uiState.value.playlistInfo?.serviceId)
+                }
+            }
+            .launchIn(scope)
+
+        // Listen for history changes
+        SharedContext.historyChanged
+            .onEach {
+                val currentUrl = uiState.value.playlistInfo?.url
+
+                // Reload if this is the history playlist
+                if (currentUrl == "local://history" &&
+                    uiState.value.playlistType == PlaylistType.HISTORY) {
+                    loadPlaylist(currentUrl, uiState.value.playlistInfo?.serviceId)
+                }
+            }
+            .launchIn(scope)
+    }
+
+    fun onCleared() {
+        scope.cancel()
+    }
 
     suspend fun loadPlaylist(url: String, serviceId: String? = null) {
         setState {
@@ -268,6 +309,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
     }
 
     suspend fun removeItem(streamInfo: StreamInfo) {
+        val playlistId = uiState.value.playlistInfo?.uid
         setState { state ->
             val playlistItems = uiState.value.list.itemList.toMutableList().filter {
                 when (uiState.value.playlistType) {
@@ -285,6 +327,11 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             )
         }
         updateDisplayItems()
+
+        // Notify playlist changed for local playlists
+        if (uiState.value.playlistType == PlaylistType.LOCAL && playlistId != null) {
+            SharedContext.notifyPlaylistChanged(playlistId)
+        }
     }
 
     fun calculateDisplayIndex(originalIndex: Int): Int {

@@ -83,4 +83,9 @@ class PlaylistDetailViewModel : ViewModel() {
             sharedViewModel.loadPlaylist(uiState.value.playlistInfo?.url ?: "", uiState.value.playlistInfo?.serviceId)
         }
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        sharedViewModel.onCleared()
+    }
 }

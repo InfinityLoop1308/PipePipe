@@ -2,8 +2,11 @@ package project.pipepipe.app
 
 import androidx.navigation.NavHostController
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import project.pipepipe.database.AppDatabase
 import project.pipepipe.shared.downloader.CookieManager
@@ -99,5 +102,21 @@ object SharedContext {
 
     fun hideDownloadFormatDialog() {
         _downloadFormatDialogState.value = DownloadFormatDialogState()
+    }
+
+    // Playlist Change Notification
+    private val _playlistChanged = MutableSharedFlow<Long>()
+    val playlistChanged: SharedFlow<Long> = _playlistChanged.asSharedFlow()
+
+    suspend fun notifyPlaylistChanged(playlistId: Long) {
+        _playlistChanged.emit(playlistId)
+    }
+
+    // History Change Notification
+    private val _historyChanged = MutableSharedFlow<Unit>()
+    val historyChanged: SharedFlow<Unit> = _historyChanged.asSharedFlow()
+
+    suspend fun notifyHistoryChanged() {
+        _historyChanged.emit(Unit)
     }
 }

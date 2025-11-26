@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.GlobalScope
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.PlaylistInfo
@@ -235,6 +236,7 @@ private suspend fun addStreamsToPlaylist(
     playlist: PlaylistInfo
 ) {
     DatabaseOperations.addStreamsToPlaylist(playlist.uid!!, streams)
+    SharedContext.notifyPlaylistChanged(playlist.uid!!)
 }
 
 private suspend fun createNewPlaylistAndAddStreams(
@@ -247,4 +249,5 @@ private suspend fun createNewPlaylistAndAddStreams(
     )
 
     DatabaseOperations.addStreamsToPlaylist(playlistId, streams)
+    SharedContext.notifyPlaylistChanged(playlistId)
 }
