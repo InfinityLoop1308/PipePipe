@@ -203,6 +203,57 @@ class PlaybackService : MediaLibraryService() {
                     else -> super.isCommandAvailable(command)
                 }
             }
+
+            override fun seekToNext() {
+                val nextIndex = nextMediaItemIndex
+                if (nextIndex != C.INDEX_UNSET) {
+                    seekToIndexWithRestoredProgress(nextIndex)
+                } else {
+                    super.seekToNext()
+                }
+            }
+
+            override fun seekToPrevious() {
+                val maxSeekBackTime = maxSeekToPreviousPosition
+                if (currentPosition > maxSeekBackTime || previousMediaItemIndex == C.INDEX_UNSET) {
+                    super.seekToPrevious()
+                } else {
+                    seekToIndexWithRestoredProgress(previousMediaItemIndex)
+                }
+            }
+
+            override fun seekToNextMediaItem() {
+                val nextIndex = nextMediaItemIndex
+                if (nextIndex != C.INDEX_UNSET) {
+                    seekToIndexWithRestoredProgress(nextIndex)
+                } else {
+                    super.seekToNextMediaItem()
+                }
+            }
+
+            override fun seekToPreviousMediaItem() {
+                 val prevIndex = previousMediaItemIndex
+                if (prevIndex != C.INDEX_UNSET) {
+                    seekToIndexWithRestoredProgress(prevIndex)
+                } else {
+                    super.seekToPreviousMediaItem()
+                }
+            }
+
+            private fun seekToIndexWithRestoredProgress(targetIndex: Int) {
+                val targetItem = getMediaItemAt(targetIndex)
+                val mediaId = targetItem.mediaId
+
+                serviceScope.launch {
+                    val savedPosition = DatabaseOperations.getStreamProgress(mediaId)
+
+                    if (savedPosition != null && savedPosition > 0) {
+                        seekTo(targetIndex, savedPosition)
+                    } else {
+                        seekTo(targetIndex, 0L)
+                    }
+                }
+            }
         }
 
         playbackButtonState = PlaybackButtonState.fromPlayer(player.repeatMode, player.shuffleModeEnabled)

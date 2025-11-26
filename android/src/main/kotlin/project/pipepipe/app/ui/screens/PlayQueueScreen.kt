@@ -304,8 +304,8 @@ fun PlayQueueScreen() {
 			onSeek = { position ->
 				mediaController.seekTo(position)
 			},
-			onPrevious = { mediaController.seekToPreviousMediaItem() },
-			onNext = { mediaController.seekToNextMediaItem() },
+			onPrevious = { mediaController.seekToPrevious() },
+			onNext = { mediaController.seekToNext() },
 			onRewind = { mediaController.seekTo(maxOf(0, currentPosition - 10000)) },
 			onFastForward = { mediaController.seekTo(minOf(duration, currentPosition + 10000)) },
 			onRepeatMode = {
