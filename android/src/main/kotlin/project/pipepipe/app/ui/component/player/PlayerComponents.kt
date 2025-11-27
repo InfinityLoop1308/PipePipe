@@ -228,7 +228,7 @@ fun VideoProgressBar(
 
     BoxWithConstraints(
         modifier = modifier
-            .height(24.dp)
+            .height(40.dp)
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
                     val newPosition = (offset.x / size.width * duration).toLong()
@@ -247,6 +247,7 @@ fun VideoProgressBar(
                         isDragging = false
                     }
                 ) { change, dragAmount ->
+                    change.consume()  // Consume the event to prevent parent gesture detection
                     val newPosition = dragPosition + (dragAmount.x / size.width * duration).toLong()
                     dragPosition = newPosition.coerceIn(0L, duration)
                     dragOffsetX = change.position.x
@@ -316,17 +317,17 @@ fun VideoProgressBar(
                         .background(Color.White, RoundedCornerShape(2.dp))
                 )
             }
+        }
 
-            // Thumb (only when dragging)
-            if (isDragging && progress > 0f) {
-                Box(
-                    modifier = Modifier
-                        .size(12.dp)
-                        .offset(x = progress * (boxWidth - 12.dp))
-                        .background(Color.White, CircleShape)
-                        .align(Alignment.CenterStart)
-                )
-            }
+        if (progress > 0f || isDragging) {
+            val thumbSize = if (isDragging) 16.dp else 12.dp
+            Box(
+                modifier = Modifier
+                    .size(thumbSize)
+                    .offset(x = progress * boxWidth - thumbSize / 2)
+                    .background(Color.White, CircleShape)
+                    .align(Alignment.CenterStart)
+            )
         }
 
         // Preview card when dragging - always show timestamp
