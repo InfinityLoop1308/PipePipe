@@ -33,6 +33,8 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PictureInPicture
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Queue
+import androidx.compose.material.icons.filled.QueueMusic
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.SpatialAudioOff
@@ -60,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import androidx.media3.session.MediaController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.player.PlayerHelper.ResolutionInfo
 import project.pipepipe.app.ui.component.player.PlayerHelper.SubtitleInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
@@ -610,6 +613,29 @@ private fun MoreMenu(
                 },
                 onClick = {
                     onPipClick()
+                    onMenuChange(false)
+                }
+            )
+
+            // Play Queue
+            DropdownMenuItem(
+                modifier = Modifier.height(44.dp),
+                text = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.QueueMusic,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(stringResource(MR.strings.play_queue))
+                    }
+                },
+                onClick = {
+                    SharedContext.toggleShowPlayQueueVisibility()
                     onMenuChange(false)
                 }
             )
