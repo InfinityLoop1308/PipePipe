@@ -165,6 +165,10 @@ class PlaybackService : MediaLibraryService() {
 
         val mediaSourceFactory = CustomMediaSourceFactory()
 
+        // Retrieve saved playback parameters
+        val savedSpeed = SharedContext.settingsManager.getFloat("playback_speed_key", 1.0f)
+        val savedPitch = SharedContext.settingsManager.getFloat("playback_pitch_key", 1.0f)
+
         val actualPlayer = ExoPlayer.Builder(this)
             .setMediaSourceFactory(mediaSourceFactory)
             .build()
@@ -180,6 +184,8 @@ class PlaybackService : MediaLibraryService() {
                 repeatMode = Player.REPEAT_MODE_OFF
                 shuffleModeEnabled = false
                 skipSilenceEnabled = SharedContext.settingsManager.getBoolean("playback_skip_silence_key", false)
+                // Restore saved playback speed and pitch
+                playbackParameters = PlaybackParameters(savedSpeed, savedPitch)
                 addListener(createPlayerListener())
             }
 

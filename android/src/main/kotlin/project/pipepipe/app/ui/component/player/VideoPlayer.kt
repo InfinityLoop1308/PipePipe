@@ -927,6 +927,10 @@ fun VideoPlayer(
                     // Apply speed and pitch to the media controller
                     val params = PlaybackParameters(speed, pitch)
                     mediaController.playbackParameters = params
+
+                    // Save to preferences for persistence across app restarts
+                    SharedContext.settingsManager.putFloat("playback_speed_key", speed)
+                    SharedContext.settingsManager.putFloat("playback_pitch_key", pitch)
                 }
             )
         }
