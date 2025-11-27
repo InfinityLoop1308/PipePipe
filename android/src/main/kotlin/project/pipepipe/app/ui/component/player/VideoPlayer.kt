@@ -471,8 +471,9 @@ fun VideoPlayer(
                 val rawLanguage = format.language ?: audioLanguageDefault
                 // Extract pure language code by removing everything after "."
                 val languageCode = rawLanguage.substringBefore(".")
-                val isOriginal = rawLanguage.contains("Original")
-                languages.add(Pair(languageCode, isOriginal))
+                val hasMainRole = (format.roleFlags and C.ROLE_FLAG_MAIN) != 0
+                val isDefaultSelection = (format.selectionFlags and C.SELECTION_FLAG_DEFAULT) != 0
+                languages.add(Pair(languageCode, hasMainRole || isDefaultSelection))
                 if (audioGroup.isTrackSelected(index)) {
                     currentLanguage = languageCode
                 }

@@ -101,6 +101,7 @@ object PlayerHelper {
                         resolution.trackIndex
                     )
                 )
+                .setPreferredAudioRoleFlags(C.ROLE_FLAG_MAIN)
                 .build()
             mediaController.trackSelectionParameters = params
         }
