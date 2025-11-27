@@ -467,17 +467,17 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                                 viewModel.setPageState(VideoDetailPageState.BOTTOM_PLAYER)
                                                             }
                                                         }
+                                                        else if (totalDragDistance < -50.dp.toPx()) {
+                                                            viewModel.toggleFullscreenPlayer()
+                                                        }
                                                         totalDragDistance = 0f
                                                     },
                                                     onDragCancel = {
                                                         totalDragDistance = 0f
                                                     }
                                                 ) { change, dragAmount ->
-                                                    // Only track downward drags
-                                                    if (dragAmount > 0) {
-                                                        change.consume()
-                                                        totalDragDistance += dragAmount
-                                                    }
+                                                    change.consume()
+                                                    totalDragDistance += dragAmount
                                                 }
                                             }
                                     ) {
