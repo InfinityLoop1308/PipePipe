@@ -67,6 +67,7 @@ private const val SEEK_SWIPE_FACTOR = 100f
 private const val SEEK_SWIPE_FAST_MULTIPLIER = 10f
 private const val SEEK_SWIPE_FAST_THRESHOLD_MS = 60_000L
 private const val VERTICAL_SWIPE_NORMALIZER = 600f
+private const val DEFAULT_CONTROLS_HIDE_TIME = 2000L // 2 seconds
 
 @OptIn(ExperimentalLayoutApi::class)
 @UnstableApi
@@ -653,6 +654,13 @@ fun VideoPlayer(
         }
     }
 
+    // Auto-hide controls after timeout when playing
+    LaunchedEffect(isControlsVisible, isPlaying) {
+        if (isControlsVisible && isPlaying) {
+            delay(DEFAULT_CONTROLS_HIDE_TIME)
+            isControlsVisible = false
+        }
+    }
 
     Box(
         modifier = modifier
