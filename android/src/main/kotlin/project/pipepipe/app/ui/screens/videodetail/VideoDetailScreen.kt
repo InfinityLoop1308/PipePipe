@@ -142,7 +142,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     // Auto-play logic based on settings and network state
     var hasAutoPlayed by remember { mutableStateOf(false) }
 
-    LaunchedEffect(streamInfo, mediaController, uiState.pageState) {
+    LaunchedEffect(streamInfo, mediaController) {
         if (streamInfo != null && mediaController != null
             && uiState.pageState == VideoDetailPageState.DETAIL_PAGE
             && !uiState.common.isLoading
