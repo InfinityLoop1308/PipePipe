@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -897,7 +896,6 @@ fun VideoPlayer(
                     // Use PlayerControl component
                     PlayerControl(
                         streamInfo = streamInfo,
-                        mediaController = mediaController,
                         state = playerControlState,
                         callbacks = playerControlCallbacks,
                         isFullscreenMode = isFullscreenMode,
@@ -906,15 +904,12 @@ fun VideoPlayer(
                         controlsTransition = controlsTransition,
                         showResolutionMenu = showResolutionMenu,
                         onResolutionMenuChange = { showResolutionMenu = it },
-                        showSpeedPitchDialog = showSpeedPitchDialog,
-                        onSpeedPitchDialogChange = { showSpeedPitchDialog = it },
                         showMoreMenu = showMoreMenu,
                         onMoreMenuChange = { showMoreMenu = it },
                         showAudioLanguageMenu = showAudioLanguageMenu,
                         onAudioLanguageMenuChange = { showAudioLanguageMenu = it },
                         showSubtitleMenu = showSubtitleMenu,
                         onSubtitleMenuChange = { showSubtitleMenu = it },
-                        showSleepTimerDialog = showSleepTimerDialog,
                         onSleepTimerDialogChange = { showSleepTimerDialog = it },
                         onPipClick = {
                             PipHelper.enterPipMode(mediaController, streamInfo, context)

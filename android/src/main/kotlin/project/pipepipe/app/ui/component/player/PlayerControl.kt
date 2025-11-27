@@ -33,7 +33,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PictureInPicture
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Queue
 import androidx.compose.material.icons.filled.QueueMusic
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
@@ -59,7 +58,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.media3.session.MediaController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
@@ -127,7 +125,6 @@ data class PlayerControlCallbacks(
 @Composable
 fun PlayerControl(
     streamInfo: StreamInfo,
-    mediaController: MediaController,
     state: PlayerControlState,
     callbacks: PlayerControlCallbacks,
     isFullscreenMode: Boolean,
@@ -136,15 +133,12 @@ fun PlayerControl(
     controlsTransition: MutableTransitionState<Boolean>,
     showResolutionMenu: Boolean,
     onResolutionMenuChange: (Boolean) -> Unit,
-    showSpeedPitchDialog: Boolean,
-    onSpeedPitchDialogChange: (Boolean) -> Unit,
     showMoreMenu: Boolean,
     onMoreMenuChange: (Boolean) -> Unit,
     showAudioLanguageMenu: Boolean,
     onAudioLanguageMenuChange: (Boolean) -> Unit,
     showSubtitleMenu: Boolean,
     onSubtitleMenuChange: (Boolean) -> Unit,
-    showSleepTimerDialog: Boolean,
     onSleepTimerDialogChange: (Boolean) -> Unit,
     onPipClick: () -> Unit,
     modifier: Modifier = Modifier
