@@ -7,28 +7,27 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.core.view.GravityCompat
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import project.pipepipe.app.LocalDrawerLayout
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.MainScreenTabDefaults
 import project.pipepipe.app.helper.MainScreenTabHelper
+import project.pipepipe.app.ui.component.ResponsiveTabs
 import project.pipepipe.app.ui.screens.playlistdetail.PlaylistDetailScreen
 import project.pipepipe.app.ui.theme.customTopBarColor
 import project.pipepipe.app.ui.theme.onCustomTopBarColor
@@ -129,28 +128,15 @@ fun TabNavigationScreen(navController: NavController) {
             }
         }
 
-        TabRow(
-            selectedTabIndex = pagerState.currentPage,
+        ResponsiveTabs(
+            titles = List(tabConfigs.size) { "" },
+            selectedIndex = pagerState.currentPage,
             modifier = Modifier.fillMaxWidth(),
+            icons = tabConfigs.map { MainScreenTabHelper.getTabIcon(it) },
             containerColor = customTopBarColor()
-        ) {
-            tabConfigs.forEachIndexed { index, route ->
-                Tab(
-                    selected = pagerState.currentPage == index,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = MainScreenTabHelper.getTabIcon(route),
-                            contentDescription = MainScreenTabHelper.getTabDisplayName(route),
-                            modifier = Modifier.size(22.dp),
-                            tint = onCustomTopBarColor()
-                        )
-                    }
-                )
+        ) { index ->
+            scope.launch {
+                pagerState.animateScrollToPage(index)
             }
         }
 
