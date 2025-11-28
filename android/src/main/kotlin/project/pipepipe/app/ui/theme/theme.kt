@@ -177,9 +177,10 @@ fun customTopBarColor(): Color {
 }
 
 @Composable
-fun onCustomTopBarColor(): Color {
+fun onCustomTopBarColor(useInDrawer: Boolean = false): Color {
     return if (currentMaterialYouEnabled || currentCustomPrimaryColor == Color.White) {
-        LocalContentColor.current
+        // LocalContentColor.current is black on drawer when dark and white for unknown reason
+        if (useInDrawer && isDarkTheme) MaterialTheme.colorScheme.onSurface else LocalContentColor.current
     } else {
         ColorHelper.getContrastingColor(currentCustomPrimaryColor)
     }

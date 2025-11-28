@@ -126,7 +126,7 @@ class MainActivity : ComponentActivity() {
                     val surfaceColor = MaterialTheme.colorScheme.surface
                     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
                     val topBarColor = customTopBarColor()
-                    val onTopBarColor = onCustomTopBarColor()
+                    val onTopBarColor = onCustomTopBarColor(true)
 
                     LaunchedEffect(surfaceColor, onSurfaceColor, topBarColor, onTopBarColor) {
                         updateDrawerColorsFromCompose(navigationView, surfaceColor, onSurfaceColor, topBarColor, onTopBarColor)
