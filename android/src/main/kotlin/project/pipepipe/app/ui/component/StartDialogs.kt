@@ -9,30 +9,6 @@ import project.pipepipe.app.MR
 
 
 /**
- * Welcome dialog shown on first app launch to introduce PipePipe 5 Beta.
- * TODO: Update dialog text after the official release.
- */
-@Composable
-fun WelcomeDialog(
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = stringResource(MR.strings.welcome_dialog_title))
-        },
-        text = {
-            Text(text = stringResource(MR.strings.welcome_dialog_message))
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(MR.strings.welcome_dialog_button))
-            }
-        }
-    )
-}
-
-/**
  * Data migration dialog shown after welcome dialog to explain package name change
  * and guide users through the migration process.
  */
@@ -81,12 +57,12 @@ fun ErrorHandlingDialog(
 }
 
 /**
- * First run dialog shown after error handling dialog to prompt user to enable update checker.
+ * First run dialog shown after error handling dialog to prompt user to enable notifications.
  */
 @Composable
 fun FirstRunDialog(
     onDismiss: () -> Unit,
-    onEnableUpdateChecker: () -> Unit
+    onEnableNotifications: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -97,7 +73,7 @@ fun FirstRunDialog(
             Text(text = stringResource(MR.strings.first_run_dialog_message))
         },
         confirmButton = {
-            TextButton(onClick = onEnableUpdateChecker) {
+            TextButton(onClick = onEnableNotifications) {
                 Text(text = stringResource(MR.strings.first_run_dialog_enable))
             }
         },

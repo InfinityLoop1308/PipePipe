@@ -61,6 +61,10 @@ class MainActivity : ComponentActivity() {
     private var wasInPipMode = false
     private lateinit var drawerLayout: DrawerLayout
 
+    companion object {
+        private const val REQUEST_NOTIFICATION_PERMISSION = 1001
+    }
+
     @androidx.annotation.OptIn(UnstableApi::class)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,8 +98,6 @@ class MainActivity : ComponentActivity() {
             val toastMessage by ToastManager.message.collectAsState()
 
             // Dialog state management
-            // TODO: Update welcome dialog text after the official release
-            var showWelcomeDialog by remember { mutableStateOf(false) }
             var showDataMigrationDialog by remember { mutableStateOf(false) }
             var showErrorHandlingDialog by remember { mutableStateOf(false) }
             var showFirstRunDialog by remember { mutableStateOf(false) }
@@ -103,10 +105,10 @@ class MainActivity : ComponentActivity() {
             // Check if this is the first run and show dialogs in sequence
             // Dialog order: Welcome -> Data Migration -> Error Handling -> Update Checker
             LaunchedEffect(Unit) {
-                val isFirstRun = SharedContext.settingsManager.getBoolean("is_first_run", true)
+                val isFirstRun = SharedContext.settingsManager.getBoolean("is_first_run_new", true)
                 if (isFirstRun) {
                     // Show welcome dialog first
-                    showWelcomeDialog = true
+                    showDataMigrationDialog = true
                 }
             }
 
@@ -191,16 +193,6 @@ class MainActivity : ComponentActivity() {
                                 Toast(message = message)
                             }
 
-                            // Welcome dialog - shown first on first run
-                            if (showWelcomeDialog) {
-                                WelcomeDialog(
-                                    onDismiss = {
-                                        showWelcomeDialog = false
-                                        // After welcome dialog, show data migration dialog
-                                        showDataMigrationDialog = true
-                                    }
-                                )
-                            }
 
                             // Data migration dialog - shown after welcome dialog
                             if (showDataMigrationDialog) {
@@ -218,30 +210,32 @@ class MainActivity : ComponentActivity() {
                                 ErrorHandlingDialog(
                                     onDismiss = {
                                         showErrorHandlingDialog = false
-                                        // After error handling dialog, show update checker dialog
-                                        showFirstRunDialog = true
+                                        // After error handling dialog, show notification dialog only on Android 13+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            showFirstRunDialog = true
+                                        } else {
+                                            // On Android 12 and below, notifications don't require runtime permission
+                                            SharedContext.settingsManager.putBoolean("is_first_run_new", false)
+                                        }
                                     }
                                 )
                             }
 
-                            // Update checker dialog - shown after error handling dialog
+                            // Notification permission dialog - shown after error handling dialog (Android 13+ only)
                             if (showFirstRunDialog) {
                                 FirstRunDialog(
                                     onDismiss = {
                                         showFirstRunDialog = false
-                                        SharedContext.settingsManager.putBoolean("is_first_run", false)
+                                        SharedContext.settingsManager.putBoolean("is_first_run_new", false)
                                     },
-                                    onEnableUpdateChecker = {
-                                        SharedContext.settingsManager.putBoolean(
-                                            UpdateCheckWorker.UPDATE_ENABLED_KEY,
-                                            true
+                                    onEnableNotifications = {
+                                        ActivityCompat.requestPermissions(
+                                            this@MainActivity,
+                                            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                                            REQUEST_NOTIFICATION_PERMISSION
                                         )
-                                        ToastManager.show(
-                                            MR.strings.update_checking.desc().toString(context = this@MainActivity)
-                                        )
-                                        UpdateCheckWorker.enqueueUpdateCheck(this@MainActivity, isManual = true)
                                         showFirstRunDialog = false
-                                        SharedContext.settingsManager.putBoolean("is_first_run", false)
+                                        SharedContext.settingsManager.putBoolean("is_first_run_new", false)
                                     }
                                 )
                             }

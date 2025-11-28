@@ -25,7 +25,7 @@ fun UpdateSettingsScreen(
     val context = LocalContext.current
 
     var updateEnabled by remember {
-        mutableStateOf(SharedContext.settingsManager.getBoolean(UpdateCheckWorker.UPDATE_ENABLED_KEY, false))
+        mutableStateOf(SharedContext.settingsManager.getBoolean(UpdateCheckWorker.UPDATE_ENABLED_KEY, true))
     }
 
     var showPreRelease by remember {
