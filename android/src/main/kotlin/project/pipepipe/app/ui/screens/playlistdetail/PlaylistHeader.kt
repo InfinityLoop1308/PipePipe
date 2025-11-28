@@ -30,10 +30,7 @@ fun PlaylistHeaderSection(
     thumbnailUrl: String?,
     streamCount: Long?,
     totalDuration: Long,
-    feedLastUpdated: Long?,
-    isRefreshing: Boolean,
     hasItems: Boolean,
-    onRefreshClick: () -> Unit,
     onPlayAllClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -80,33 +77,6 @@ fun PlaylistHeaderSection(
                     )
                 }
             }
-        } else {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(MR.strings.feed_oldest_subscription_update).format(
-                        feedLastUpdated?.let { formatRelativeTime(it) } ?: stringResource(MR.strings.never)
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                IconButton(
-                    onClick = onRefreshClick,
-                    enabled = !isRefreshing
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(MR.strings.refresh_feed)
-                    )
-                }
-            }
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
         }
 
         if (hasItems) {
@@ -129,5 +99,45 @@ fun PlaylistHeaderSection(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun FeedRefreshHeader(
+    feedLastUpdated: Long?,
+    isRefreshing: Boolean,
+    onRefreshClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(MR.strings.feed_oldest_subscription_update).format(
+                    feedLastUpdated?.let { formatRelativeTime(it) } ?: stringResource(MR.strings.never)
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            IconButton(
+                onClick = onRefreshClick,
+                enabled = !isRefreshing
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = stringResource(MR.strings.refresh_feed)
+                )
+            }
+        }
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
     }
 }

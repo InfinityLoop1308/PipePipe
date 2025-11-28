@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Surface
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -115,6 +116,27 @@ fun PlaylistContent(
                 ) {
                     // Header section spanning full width
                     if (uiState.playlistType != PlaylistType.HISTORY && uiState.playlistType != PlaylistType.TRENDING) {
+                        // For FEED type, add refresh header as sticky
+                        if (uiState.playlistType == PlaylistType.FEED) {
+                            stickyHeader {
+                                Surface(
+                                    color = MaterialTheme.colorScheme.background
+                                ) {
+                                    FeedRefreshHeader(
+                                        feedLastUpdated = uiState.feedLastUpdated,
+                                        isRefreshing = uiState.isRefreshing,
+                                        onRefreshClick = {
+                                            if (!uiState.isRefreshing) {
+                                                val feedId = url.substringAfterLast("/")
+                                                    .substringBefore("?").toLong()
+                                                FeedUpdateManager.startFeedUpdate(context, feedId)
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+
                         item(span = { GridItemSpan(gridColumns) }) {
                             PlaylistHeaderSection(
                                 playlistType = uiState.playlistType,
@@ -122,16 +144,7 @@ fun PlaylistContent(
                                 thumbnailUrl = uiState.playlistInfo?.thumbnailUrl,
                                 streamCount = uiState.playlistInfo?.streamCount,
                                 totalDuration = uiState.list.itemList.sumOf { it.duration ?: 0L },
-                                feedLastUpdated = uiState.feedLastUpdated,
-                                isRefreshing = uiState.isRefreshing,
                                 hasItems = uiState.list.itemList.isNotEmpty(),
-                                onRefreshClick = {
-                                    if (!uiState.isRefreshing) {
-                                        val feedId = url.substringAfterLast("/")
-                                            .substringBefore("?").toLong()
-                                        FeedUpdateManager.startFeedUpdate(context, feedId)
-                                    }
-                                },
                                 onPlayAllClick = { onStartPlayAll(0, false) }
                             )
                         }
@@ -235,6 +248,27 @@ fun PlaylistContent(
                         .clipToBounds()
                 ) {
                     if (uiState.playlistType != PlaylistType.HISTORY && uiState.playlistType != PlaylistType.TRENDING){
+                        // For FEED type, add refresh header as sticky
+                        if (uiState.playlistType == PlaylistType.FEED) {
+                            stickyHeader {
+                                Surface(
+                                    color = MaterialTheme.colorScheme.background
+                                ) {
+                                    FeedRefreshHeader(
+                                        feedLastUpdated = uiState.feedLastUpdated,
+                                        isRefreshing = uiState.isRefreshing,
+                                        onRefreshClick = {
+                                            if (!uiState.isRefreshing) {
+                                                val feedId = url.substringAfterLast("/")
+                                                    .substringBefore("?").toLong()
+                                                FeedUpdateManager.startFeedUpdate(context, feedId)
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+
                         item {
                             PlaylistHeaderSection(
                                 playlistType = uiState.playlistType,
@@ -242,16 +276,7 @@ fun PlaylistContent(
                                 thumbnailUrl = uiState.playlistInfo?.thumbnailUrl,
                                 streamCount = uiState.playlistInfo?.streamCount,
                                 totalDuration = uiState.list.itemList.sumOf { it.duration ?: 0L },
-                                feedLastUpdated = uiState.feedLastUpdated,
-                                isRefreshing = uiState.isRefreshing,
                                 hasItems = uiState.list.itemList.isNotEmpty(),
-                                onRefreshClick = {
-                                    if (!uiState.isRefreshing) {
-                                        val feedId = url.substringAfterLast("/")
-                                            .substringBefore("?").toLong()
-                                        FeedUpdateManager.startFeedUpdate(context, feedId)
-                                    }
-                                },
                                 onPlayAllClick = { onStartPlayAll(0, false) }
                             )
                         }
