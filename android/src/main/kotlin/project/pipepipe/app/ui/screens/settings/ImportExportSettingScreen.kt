@@ -37,6 +37,7 @@ import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.ui.screens.PreferenceScreen
+import project.pipepipe.app.ui.screens.Screen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -254,7 +255,18 @@ fun ImportExportSettingScreen(
                             databaseImporter.importBackup(
                                 targetUri,
                                 importDatabase = importDatabaseSelected,
-                                importSettings = importSettingsSelected
+                                importSettings = importSettingsSelected,
+                                onSuccess = {
+                                    // Navigate to Main screen and trigger dialog checks
+                                    navController.navigate(Screen.Main.route) {
+                                        popUpTo(Screen.Main.route) { inclusive = true }
+                                    }
+                                    // Trigger dialog check after a short delay to ensure navigation completes
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        kotlinx.coroutines.delay(300)
+                                        project.pipepipe.app.SharedContext.triggerDialogCheck()
+                                    }
+                                }
                             )
                         }
                         showImportDialog = false

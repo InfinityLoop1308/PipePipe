@@ -155,7 +155,8 @@ class DatabaseImporter(
     fun importBackup(
         uri: Uri,
         importDatabase: Boolean,
-        importSettings: Boolean
+        importSettings: Boolean,
+        onSuccess: (() -> Unit)? = null
     ) {
         if (!importDatabase && !importSettings) {
             ToastManager.show(MR.strings.backup_nothing_selected_import.desc().toString(context = context))
@@ -260,6 +261,7 @@ class DatabaseImporter(
                         else -> MR.strings.backup_import_completed.desc().toString(context = context)
                     }
                     ToastManager.show(message)
+                    onSuccess?.invoke()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

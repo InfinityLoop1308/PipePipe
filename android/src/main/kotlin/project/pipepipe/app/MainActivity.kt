@@ -102,13 +102,22 @@ class MainActivity : ComponentActivity() {
             var showErrorHandlingDialog by remember { mutableStateOf(false) }
             var showFirstRunDialog by remember { mutableStateOf(false) }
 
-            // Check if this is the first run and show dialogs in sequence
-            // Dialog order: Welcome -> Data Migration -> Error Handling -> Update Checker
-            LaunchedEffect(Unit) {
-                val isFirstRun = SharedContext.settingsManager.getBoolean("is_first_run_new", true)
+            // Function to check and trigger dialogs based on settings
+            val checkAndTriggerDialogs = {
+                val isFirstRun = SharedContext.settingsManager.getBoolean("is_first_run", true)
                 if (isFirstRun) {
-                    // Show welcome dialog first
                     showDataMigrationDialog = true
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                checkAndTriggerDialogs()
+            }
+
+            // Listen for dialog check trigger (e.g., after backup import)
+            LaunchedEffect(Unit) {
+                SharedContext.checkAndShowDialogs.collect {
+                    checkAndTriggerDialogs()
                 }
             }
 
@@ -215,7 +224,7 @@ class MainActivity : ComponentActivity() {
                                             showFirstRunDialog = true
                                         } else {
                                             // On Android 12 and below, notifications don't require runtime permission
-                                            SharedContext.settingsManager.putBoolean("is_first_run_new", false)
+                                            SharedContext.settingsManager.putBoolean("is_first_run", false)
                                         }
                                     }
                                 )
@@ -226,7 +235,7 @@ class MainActivity : ComponentActivity() {
                                 FirstRunDialog(
                                     onDismiss = {
                                         showFirstRunDialog = false
-                                        SharedContext.settingsManager.putBoolean("is_first_run_new", false)
+                                        SharedContext.settingsManager.putBoolean("is_first_run", false)
                                     },
                                     onEnableNotifications = {
                                         ActivityCompat.requestPermissions(
@@ -235,7 +244,7 @@ class MainActivity : ComponentActivity() {
                                             REQUEST_NOTIFICATION_PERMISSION
                                         )
                                         showFirstRunDialog = false
-                                        SharedContext.settingsManager.putBoolean("is_first_run_new", false)
+                                        SharedContext.settingsManager.putBoolean("is_first_run", false)
                                     }
                                 )
                             }

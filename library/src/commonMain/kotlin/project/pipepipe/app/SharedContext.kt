@@ -119,4 +119,12 @@ object SharedContext {
     suspend fun notifyHistoryChanged() {
         _historyChanged.emit(Unit)
     }
+
+    // Check and show dialogs (e.g., after backup import)
+    private val _checkAndShowDialogs = MutableSharedFlow<Unit>()
+    val checkAndShowDialogs: SharedFlow<Unit> = _checkAndShowDialogs.asSharedFlow()
+
+    suspend fun triggerDialogCheck() {
+        _checkAndShowDialogs.emit(Unit)
+    }
 }
