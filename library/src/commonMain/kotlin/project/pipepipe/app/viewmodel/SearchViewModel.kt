@@ -282,11 +282,13 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
         }
 
         // Apply filters
+        val shouldFilter = result.pagedData?.itemList?.getOrNull(0) is StreamInfo
+
         val rawItems = (result.pagedData?.itemList as? List<StreamInfo>) ?: emptyList()
-        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+        val (filteredItems, _) = if (shouldFilter) FilterHelper.filterStreamInfoList(
             rawItems,
             FilterHelper.FilterScope.SEARCH_RESULT
-        )
+        ) else Pair(emptyList(), 0)
 
         setState {
             it.copy(
@@ -295,7 +297,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                     error = null
                 ),
                 list = it.list.copy(
-                    itemList = it.list.itemList + filteredItems,
+                    itemList = it.list.itemList + (if (shouldFilter) filteredItems else result.pagedData?.itemList ?: emptyList()),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )
