@@ -23,8 +23,12 @@
 <string name="clear">清除</string>
 <string name="sort">排序</string>
 <string name="play_all">播放全部</string>
-<string name="sort_origin">原始</string>
-<string name="sort_origin_reverse">原始（逆向）</string>
+<string name="sort_origin">添加时间（升序）</string>
+<string name="sort_origin_reverse">添加时间（降序）</string>
+<string name="sort_upload_time_ascending">上传时间（正序）</string>
+<string name="sort_upload_time_descending">上传时间（逆序）</string>
+<string name="sort_duration_ascending">时长（正序）</string>
+<string name="sort_duration_descending">时长（逆序）</string>
 <string name="delete">删除</string>
 <string name="error_snackbar_message">抱歉，出了一些问题。</string>
 <string name="error_snackbar_action">报告</string>

@@ -23,8 +23,8 @@
 <string name="clear">Effacer</string>
 <string name="sort">Trier</string>
 <string name="play_all">Tout lire</string>
-<string name="sort_origin">Original</string>
-<string name="sort_origin_reverse">Original (inversé)</string>
+<string name="sort_origin">Heure d\'ajout (Croissant)</string>
+<string name="sort_origin_reverse">Heure d\'ajout (Décroissant)</string>
 <string name="delete">Supprimer</string>
 <string name="error_snackbar_message">Désolé, quelque chose a mal tourné.</string>
 <string name="error_snackbar_action">Signaler</string>
@@ -494,4 +494,8 @@
 <string name="download_paused_status">En pause</string>
 <string name="no_downloads">Aucun téléchargement</string>
 <string name="download_select_audio_format">Sélectionner le format audio</string>
+<string name="sort_duration_ascending">Durée (Croissant)</string>
+<string name="sort_upload_time_ascending">Heure de téléchargement (Croissant)</string>
+<string name="sort_upload_time_descending">Heure de téléchargement (Décroissant)</string>
+<string name="sort_duration_descending">Durée (Décroissant)</string>
 </resources>

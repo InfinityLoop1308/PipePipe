@@ -202,6 +202,8 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             rawItems
         }
 
+        val sortMode = runCatching{ PlaylistSortMode.valueOf(SharedContext.settingsManager.getString("playlist_sort_mode_key")) }
+            .getOrDefault(PlaylistSortMode.ORIGIN)
         setState {
             it.copy(
                 common = it.common.copy(
@@ -214,8 +216,11 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                     itemList = items,
                     nextPageUrl = result.pagedData?.nextPageUrl
                 ),
-                displayItems = items
+                sortMode = sortMode
             )
+        }
+        setState {
+            it.copy(displayItems = sortedItems)
         }
     }
 
@@ -272,10 +277,10 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                 list = it.list.copy(
                     itemList = finalList,
                     nextPageUrl = result.pagedData?.nextPageUrl
-                ),
-                displayItems = finalList
+                )
             )
         }
+        updateDisplayItems()
 
     }
 
@@ -340,7 +345,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         val totalItems = state.list.itemList.size
         return when (state.sortMode) {
             PlaylistSortMode.ORIGIN_REVERSE -> totalItems - 1 - actualIndex
-            PlaylistSortMode.ORIGIN -> actualIndex
+            else -> actualIndex
         }
     }
     fun StreamInfo.matchFilter(query: String): Boolean {
@@ -354,6 +359,10 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         return when (uiState.value.sortMode) {
             PlaylistSortMode.ORIGIN -> uiState.value.list.itemList
             PlaylistSortMode.ORIGIN_REVERSE -> uiState.value.list.itemList.reversed()
+            PlaylistSortMode.UPLOAD_TIME_ASCENDING -> uiState.value.list.itemList.sortedBy { it.uploadDate ?: Long.MAX_VALUE }
+            PlaylistSortMode.UPLOAD_TIME_DESCENDING -> uiState.value.list.itemList.sortedByDescending { it.uploadDate ?: Long.MIN_VALUE }
+            PlaylistSortMode.DURATION_ASCENDING -> uiState.value.list.itemList.sortedBy { it.duration ?: Long.MAX_VALUE }
+            PlaylistSortMode.DURATION_DESCENDING -> uiState.value.list.itemList.sortedByDescending { it.duration ?: Long.MIN_VALUE }
         }
     }
 

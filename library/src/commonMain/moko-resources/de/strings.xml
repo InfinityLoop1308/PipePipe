@@ -23,8 +23,8 @@
 <string name="clear">Löschen</string>
 <string name="sort">Sortieren</string>
 <string name="play_all">Alle abspielen</string>
-<string name="sort_origin">Original</string>
-<string name="sort_origin_reverse">Original (umgekehrt)</string>
+<string name="sort_origin">Hinzufügezeit (Aufsteigend)</string>
+<string name="sort_origin_reverse">Hinzufügezeit (Absteigend)</string>
 <string name="delete">Löschen</string>
 <string name="error_snackbar_message">Entschuldigung, etwas ist schiefgelaufen.</string>
 <string name="error_snackbar_action">Melden</string>
@@ -494,4 +494,8 @@
 <string name="download_paused_status">Pausiert</string>
 <string name="no_downloads">Keine Downloads</string>
 <string name="download_select_audio_format">Audioformat auswählen</string>
+<string name="sort_duration_ascending">Dauer (Aufsteigend)</string>
+<string name="sort_upload_time_ascending">Upload-Zeit (Aufsteigend)</string>
+<string name="sort_upload_time_descending">Upload-Zeit (Absteigend)</string>
+<string name="sort_duration_descending">Dauer (Absteigend)</string>
 </resources>

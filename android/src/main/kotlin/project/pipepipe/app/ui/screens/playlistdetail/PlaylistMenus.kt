@@ -55,6 +55,46 @@ fun SortMenuButton(
                     { Icon(Icons.Default.Check, contentDescription = null) }
                 } else null
             )
+            DropdownMenuItem(
+                text = { Text(MR.strings.sort_upload_time_ascending.desc().toString(context = context)) },
+                onClick = {
+                    onSortModeChange(PlaylistSortMode.UPLOAD_TIME_ASCENDING)
+                    showSortMenu = false
+                },
+                leadingIcon = if (currentSortMode == PlaylistSortMode.UPLOAD_TIME_ASCENDING) {
+                    { Icon(Icons.Default.Check, contentDescription = null) }
+                } else null
+            )
+            DropdownMenuItem(
+                text = { Text(MR.strings.sort_upload_time_descending.desc().toString(context = context)) },
+                onClick = {
+                    onSortModeChange(PlaylistSortMode.UPLOAD_TIME_DESCENDING)
+                    showSortMenu = false
+                },
+                leadingIcon = if (currentSortMode == PlaylistSortMode.UPLOAD_TIME_DESCENDING) {
+                    { Icon(Icons.Default.Check, contentDescription = null) }
+                } else null
+            )
+            DropdownMenuItem(
+                text = { Text(MR.strings.sort_duration_ascending.desc().toString(context = context)) },
+                onClick = {
+                    onSortModeChange(PlaylistSortMode.DURATION_ASCENDING)
+                    showSortMenu = false
+                },
+                leadingIcon = if (currentSortMode == PlaylistSortMode.DURATION_ASCENDING) {
+                    { Icon(Icons.Default.Check, contentDescription = null) }
+                } else null
+            )
+            DropdownMenuItem(
+                text = { Text(MR.strings.sort_duration_descending.desc().toString(context = context)) },
+                onClick = {
+                    onSortModeChange(PlaylistSortMode.DURATION_DESCENDING)
+                    showSortMenu = false
+                },
+                leadingIcon = if (currentSortMode == PlaylistSortMode.DURATION_DESCENDING) {
+                    { Icon(Icons.Default.Check, contentDescription = null) }
+                } else null
+            )
         }
     }
 }

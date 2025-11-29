@@ -372,7 +372,8 @@ fun PlaylistDetailScreen(
                                 )
                             }
                         }
-                        if (uiState.playlistType == PlaylistType.LOCAL) {
+                        if (uiState.playlistType == PlaylistType.LOCAL ||
+                            (uiState.playlistType == PlaylistType.REMOTE && url.getType() != "trending")) {
                             SortMenuButton(
                                 currentSortMode = uiState.sortMode,
                                 onSortModeChange = { viewModel.updateSortMode(it) }

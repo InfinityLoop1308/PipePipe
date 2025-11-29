@@ -68,8 +68,12 @@
 <string name="sort">Sort</string>
 <string name="playlist_action_more">More</string>
 <string name="play_all">Play All</string>
-<string name="sort_origin">Original</string>
-<string name="sort_origin_reverse">Original (Reverse)</string>
+<string name="sort_origin">Adding time (Ascending)</string>
+<string name="sort_origin_reverse">Adding time (Descending)</string>
+<string name="sort_upload_time_ascending">Upload Time (Ascending)</string>
+<string name="sort_upload_time_descending">Upload Time (Descending)</string>
+<string name="sort_duration_ascending">Duration (Ascending)</string>
+<string name="sort_duration_descending">Duration (Descending)</string>
 <string name="playlist_menu_rename">Rename Playlist</string>
 <string name="playlist_menu_delete">Delete Playlist</string>
 <string name="playlist_menu_pin">Pin to DashBoard</string>

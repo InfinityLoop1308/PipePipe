@@ -34,6 +34,7 @@ import project.pipepipe.app.ui.component.ErrorComponent
 import project.pipepipe.app.ui.item.CommonItem
 import project.pipepipe.app.ui.item.DisplayType
 import project.pipepipe.app.ui.viewmodel.PlaylistDetailViewModel
+import project.pipepipe.app.uistate.PlaylistSortMode
 import project.pipepipe.app.uistate.PlaylistType
 import project.pipepipe.app.uistate.PlaylistUiState
 import sh.calvin.reorderable.ReorderableItem
@@ -166,7 +167,8 @@ fun PlaylistContent(
                                 item = streamItem,
                                 isGridLayout = true,
                                 isDragging = isDragging,
-                                showDragHandle = uiState.playlistType == PlaylistType.LOCAL && !isSearchActive,
+                                showDragHandle = uiState.playlistType == PlaylistType.LOCAL && !isSearchActive
+                                    && uiState.sortMode in listOf(PlaylistSortMode.ORIGIN, PlaylistSortMode.ORIGIN_REVERSE),
                                 showNewItemBorder = uiState.playlistType == PlaylistType.FEED && streamItem.isNew,
                                 onClick = {
                                     focusManager.clearFocus()
@@ -295,7 +297,8 @@ fun PlaylistContent(
                             CommonItem(
                                 item = streamItem,
                                 isDragging = isDragging,
-                                showDragHandle = uiState.playlistType == PlaylistType.LOCAL && !isSearchActive,
+                                showDragHandle = uiState.playlistType == PlaylistType.LOCAL && !isSearchActive
+                                    && uiState.sortMode in listOf(PlaylistSortMode.ORIGIN, PlaylistSortMode.ORIGIN_REVERSE),
                                 showNewItemBorder = uiState.playlistType == PlaylistType.FEED && streamItem.isNew,
                                 onClick = {
                                     focusManager.clearFocus()

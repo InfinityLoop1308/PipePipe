@@ -23,8 +23,8 @@
 <string name="clear">Xóa</string>
 <string name="sort">Sắp xếp</string>
 <string name="play_all">Phát tất cả</string>
-<string name="sort_origin">Nguyên gốc</string>
-<string name="sort_origin_reverse">Nguyên bản (đảo ngược)</string>
+<string name="sort_origin">Thời gian thêm (Tăng dần)</string>
+<string name="sort_origin_reverse">Thời gian thêm (Giảm dần)</string>
 <string name="delete">Xóa</string>
 <string name="error_snackbar_message">Xin lỗi, có gì đó không ổn.</string>
 <string name="error_snackbar_action">Báo cáo</string>
@@ -494,4 +494,8 @@
 <string name="download_paused_status">Đã tạm dừng</string>
 <string name="no_downloads">Không có mục tải xuống nào</string>
 <string name="download_select_audio_format">Chọn định dạng âm thanh</string>
+<string name="sort_duration_ascending">Thời lượng (Tăng dần)</string>
+<string name="sort_upload_time_ascending">Thời gian tải lên (Tăng dần)</string>
+<string name="sort_upload_time_descending">Thời gian tải lên (Giảm dần)</string>
+<string name="sort_duration_descending">Thời lượng (Giảm dần)</string>
 </resources>

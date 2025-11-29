@@ -23,8 +23,8 @@
 <string name="clear">消去</string>
 <string name="sort">並び替え</string>
 <string name="play_all">すべて再生</string>
-<string name="sort_origin">オリジナル</string>
-<string name="sort_origin_reverse">オリジナル（逆）</string>
+<string name="sort_origin">追加時間（昇順）</string>
+<string name="sort_origin_reverse">追加時間（降順）</string>
 <string name="delete">削除</string>
 <string name="error_snackbar_message">申し訳ありません、不具合が発生しました。</string>
 <string name="error_snackbar_action">報告</string>
@@ -494,4 +494,8 @@
 <string name="download_paused_status">一時停止中</string>
 <string name="no_downloads">ダウンロードなし</string>
 <string name="download_select_audio_format">音声形式を選択</string>
+<string name="sort_duration_ascending">期間 (昇順)</string>
+<string name="sort_upload_time_ascending">アップロード時間 (昇順)</string>
+<string name="sort_upload_time_descending">アップロード時間 (降順)</string>
+<string name="sort_duration_descending">期間 (降順)</string>
 </resources>

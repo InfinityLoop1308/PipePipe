@@ -122,7 +122,11 @@ data class ChannelUiState(
 
 enum class PlaylistSortMode{
     ORIGIN,
-    ORIGIN_REVERSE
+    ORIGIN_REVERSE,
+    UPLOAD_TIME_ASCENDING,
+    UPLOAD_TIME_DESCENDING,
+    DURATION_ASCENDING,
+    DURATION_DESCENDING
 }
 enum class PlaylistType {
     LOCAL,
