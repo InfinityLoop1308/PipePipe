@@ -212,6 +212,103 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
+    suspend fun loadChannelShortsTab(url: String, serviceId: String) {
+        setState {
+            it.copy(
+                common = it.common.copy(isLoading = true)
+            )
+        }
+        val result = withContext(Dispatchers.IO) {
+            executeJobFlow(
+                SupportedJobType.FETCH_FIRST_PAGE,
+                url,
+                serviceId
+            )
+        }
+
+        // Check for fatal error first
+        if (result.fatalError != null) {
+            setState {
+                it.copy(
+                    common = it.common.copy(
+                        isLoading = false,
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                    )
+                )
+            }
+            return
+        }
+
+        // Apply filters
+        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+            rawItems,
+            FilterHelper.FilterScope.CHANNELS
+        )
+
+        setState {
+            it.copy(
+                common = it.common.copy(
+                    isLoading = false,
+                    error = null
+                ),
+                shortsTab = ListUiState(
+                    itemList = filteredItems,
+                    nextPageUrl = result.pagedData?.nextPageUrl
+                )
+            )
+        }
+    }
+
+    suspend fun loadShortsTabMoreItems(serviceId: String) {
+        val nextUrl = uiState.value.shortsTab.nextPageUrl ?: return
+        setState {
+            it.copy(
+                common = it.common.copy(isLoading = true)
+            )
+        }
+        val result = withContext(Dispatchers.IO) {
+            executeJobFlow(
+                SupportedJobType.FETCH_GIVEN_PAGE,
+                nextUrl,
+                serviceId
+            )
+        }
+
+        // Check for fatal error first
+        if (result.fatalError != null) {
+            setState {
+                it.copy(
+                    common = it.common.copy(
+                        isLoading = false,
+                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                    )
+                )
+            }
+            return
+        }
+
+        // Apply filters
+        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+            rawItems,
+            FilterHelper.FilterScope.CHANNELS
+        )
+
+        setState {
+            it.copy(
+                common = it.common.copy(
+                    isLoading = false,
+                    error = null
+                ),
+                shortsTab = it.shortsTab.copy(
+                    itemList = it.shortsTab.itemList + filteredItems,
+                    nextPageUrl = result.pagedData?.nextPageUrl
+                )
+            )
+        }
+    }
+
     suspend fun loadChannelPlaylistTab(url: String, serviceId: String) {
         setState {
             it.copy(

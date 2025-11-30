@@ -36,6 +36,19 @@ class ChannelViewModel : ViewModel() {
         }
     }
 
+    fun loadChannelShortsTab(url: String, serviceId: String) {
+        viewModelScope.launch {
+            sharedViewModel.loadChannelShortsTab(url, serviceId)
+        }
+    }
+
+    fun loadShortsTabMoreItems(serviceId: String) {
+        viewModelScope.launch {
+            sharedViewModel.loadShortsTabMoreItems(serviceId)
+        }
+    }
+
+
     fun loadChannelPlaylistTab(url: String, serviceId: String) {
         viewModelScope.launch {
             sharedViewModel.loadChannelPlaylistTab(url, serviceId)

@@ -63,8 +63,12 @@ fun ChannelScreen(
     val uiState by viewModel.uiState.collectAsState()
     val tabs = uiState.channelInfo?.tabs.orEmpty()
     val hasDescription = !uiState.channelInfo?.description.isNullOrEmpty()
-    val tabTypes = remember(tabs, hasDescription) {
+    val filterShorts = remember { SharedContext.settingsManager.getBoolean("filter_shorts_key", false) }
+    val tabTypes = remember(tabs, hasDescription, filterShorts) {
         val types = tabs.map { it.type }.toMutableList()
+        if (filterShorts) {
+            types.removeAll { it == ChannelTabType.SHORTS }
+        }
         if (hasDescription) {
             types.add(ChannelTabType.INFO)
         }
@@ -77,13 +81,15 @@ fun ChannelScreen(
     val scope = rememberCoroutineScope()
     val videoListState = rememberLazyListState()
     val liveListState = rememberLazyListState()
+    val shortsListState = rememberLazyListState()
     var showGroupDialog by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
     var notificationMode by remember { mutableStateOf(0L) }
 
     val deferredTabLoaders = remember(channelUrl, serviceId, viewModel) {
         mapOf(
-            ChannelTabType.LIVES to { viewModel.loadChannelLiveTab(uiState.channelInfo!!.tabs.first{it.type == ChannelTabType.LIVES}.url, serviceId) },
+            ChannelTabType.LIVE to { viewModel.loadChannelLiveTab(uiState.channelInfo!!.tabs.first{it.type == ChannelTabType.LIVE}.url, serviceId) },
+            ChannelTabType.SHORTS to { viewModel.loadChannelShortsTab(uiState.channelInfo!!.tabs.first{it.type == ChannelTabType.SHORTS}.url, serviceId) },
             ChannelTabType.PLAYLISTS to { viewModel.loadChannelPlaylistTab(uiState.channelInfo!!.tabs.first{it.type == ChannelTabType.PLAYLISTS}.url, serviceId) },
             ChannelTabType.ALBUMS to { viewModel.loadChannelAlbumTab(uiState.channelInfo!!.tabs.first{it.type == ChannelTabType.ALBUMS}.url, serviceId) },
             // 在这里继续为其它 Tab 注册加载逻辑
@@ -244,7 +250,7 @@ fun ChannelScreen(
                         }
                     }
 
-                    ChannelTabType.LIVES -> TabContent(
+                    ChannelTabType.LIVE -> TabContent(
                         listState = liveListState,
                         items = uiState.liveTab.itemList,
                         isLoading = uiState.common.isLoading,
@@ -258,6 +264,22 @@ fun ChannelScreen(
                             )
                         },
                         emptyMessage = stringResource(MR.strings.empty_channel_lives)
+                    )
+
+                    ChannelTabType.SHORTS -> TabContent(
+                        listState = shortsListState,
+                        items = uiState.shortsTab.itemList,
+                        isLoading = uiState.common.isLoading,
+                        hasMore = uiState.shortsTab.nextPageUrl != null,
+                        onLoadMore = { viewModel.loadShortsTabMoreItems(serviceId) },
+                        getUrl = { it.url },
+                        onItemClick = { item ->
+                            SharedContext.sharedVideoDetailViewModel.loadVideoDetails(
+                                item.url,
+                                item.serviceId
+                            )
+                        },
+                        emptyMessage = stringResource(MR.strings.empty_channel_shorts)
                     )
 
                     ChannelTabType.VIDEOS -> TabContent(

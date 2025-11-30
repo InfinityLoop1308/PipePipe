@@ -412,6 +412,7 @@
 <string name="empty_history">No watch history yet</string>
 <string name="empty_channel_videos">No videos</string>
 <string name="empty_channel_lives">No live streams</string>
+<string name="empty_channel_shorts">No shorts</string>
 <string name="empty_channel_playlists">No playlists</string>
 <string name="empty_channel_albums">No albums</string>
 <string name="subscription_export_json_title">Export subscriptions (JSON)</string>
