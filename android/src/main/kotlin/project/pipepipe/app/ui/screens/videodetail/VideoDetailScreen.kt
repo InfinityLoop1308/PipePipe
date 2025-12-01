@@ -93,7 +93,9 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             SharedContext.playingVideoUrlBeforeMinimizing = streamInfo?.url
         }
         SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
-        if (mediaController?.mediaItemCount == 0 && streamInfo != null) {
+        if (streamInfo != null &&
+            (mediaController?.mediaItemCount == 0 ||
+             (mediaController?.mediaItemCount == 1 && mediaController?.playbackState == Player.STATE_IDLE))) {
             mediaController?.setMediaItem(
                 streamInfo.toMediaItem(),
                 runBlocking { DatabaseOperations.getStreamProgress(streamInfo.url) } ?: 0)

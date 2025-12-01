@@ -165,7 +165,7 @@ class VideoDetailViewModel()
     }
 
     fun hide() {
-        setState { it.copy(pageState = VideoDetailPageState.HIDDEN) }
+        setState { it.copy(pageState = VideoDetailPageState.HIDDEN, streamInfoStack = emptyList())}
     }
 
     fun setDanmakuEnabled(enabled: Boolean) {
