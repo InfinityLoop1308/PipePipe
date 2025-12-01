@@ -56,3 +56,7 @@
 # ============ Debugging (Optional) ============
 # -printconfiguration build/outputs/mapping/configuration.txt
 # -printusage build/outputs/mapping/usage.txt
+
+
+-keep class org.apache.commons.compress.** { *; }
+-dontwarn org.apache.commons.compress.**

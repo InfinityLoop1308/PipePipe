@@ -1,3 +1,5 @@
+import com.android.build.api.variant.FilterConfiguration
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,6 +8,16 @@ plugins {
 kotlin {
     jvmToolchain(24)
 }
+
+ext {
+    set("abiCodes", mapOf(
+        "armeabi-v7a" to 1,
+        "x86" to 2,
+        "x86_64" to 3,
+        "arm64-v8a" to 4
+    ))
+}
+
 android {
     namespace = "project.pipepipe.app"
     compileSdk = 36
@@ -14,9 +26,18 @@ android {
         applicationId = "project.pipepipe.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2001
-        versionName = "5.0.0-beta2"
+        versionCode = 2002
+        versionName = "5.0.0-beta3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    splits {
+        abi {
+            reset()
+            isEnable = true
+            isUniversalApk = true // Generate a universal APK in addition to ABI-specific APKs
+            include("armeabi-v7a", "arm64-v8a", "x86_64", "x86")
+        }
     }
 
     buildTypes {
@@ -46,14 +67,26 @@ android {
             excludes += "/META-INF/INDEX.LIST"
             excludes += "/META-INF/io.netty.versions.properties"
         }
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 
-    packagingOptions { jniLibs { useLegacyPackaging = true } }
-
     applicationVariants.all {
+        val abiCodesMap = project.ext.get("abiCodes") as Map<*, *>
+        val baseVersionCode = defaultConfig.versionCode ?: 0
+
         outputs.all {
-            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
-                "PipePipe-${versionName}-${buildType.name}.apk"
+            val outputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val abiFilter = outputImpl.getFilter(com.android.build.OutputFile.ABI)
+            if (abiFilter != null) {
+                outputImpl.outputFileName = "PipePipe-${versionName}-${abiFilter}-${buildType.name}.apk"
+                val abiCode = abiCodesMap[abiFilter] as? Int ?: 0
+                (outputImpl as com.android.build.gradle.api.ApkVariantOutput).versionCodeOverride = 100 * baseVersionCode + abiCode
+            } else {
+                outputImpl.outputFileName = "PipePipe-${versionName}-universal-${buildType.name}.apk"
+                (outputImpl as com.android.build.gradle.api.ApkVariantOutput).versionCodeOverride = 100 * baseVersionCode
+            }
         }
     }
 }
