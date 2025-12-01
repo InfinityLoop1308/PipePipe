@@ -57,17 +57,12 @@ fun PlayerOverlays(
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         if (isLoading) {
-            Box(
+            CircularProgressIndicator(
+                color = Color.White,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    modifier = Modifier.size(48.dp)
-                )
-            }
+                    .size(48.dp)
+                    .align(Alignment.Center)
+            )
         }
 
         AnimatedVisibility(
