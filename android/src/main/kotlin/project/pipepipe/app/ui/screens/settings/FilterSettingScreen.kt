@@ -277,7 +277,7 @@ fun FilterByKeywordsScreen(
                         )
                     } else {
                         Text(
-                            if (isChannelSceen) stringResource(MR.strings.filter_by_channel_title)
+                            if (isChannelScreen) stringResource(MR.strings.filter_by_channel_title)
                                 else stringResource(MR.strings.filter_by_keyword_title),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
