@@ -81,7 +81,7 @@ class PipePipeApplication : Application() {
             FFmpeg.getInstance().init(this)
             Log.d("PipePipeApp", "YoutubeDL and FFmpeg initialized successfully")
             GlobalScope.launch {
-                YoutubeDL.updateYoutubeDL(this@PipePipeApplication)
+                runCatching{ YoutubeDL.updateYoutubeDL(this@PipePipeApplication) }
             }
         } catch (e: Exception) {
             Log.e("PipePipeApp", "Failed to initialize YoutubeDL/FFmpeg", e)
