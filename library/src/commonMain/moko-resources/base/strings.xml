@@ -512,4 +512,16 @@
 <string name="download_duplicate_title">Download Already Exists</string>
 <string name="download_duplicate_message">This video/audio with the same quality has already been downloaded. Do you want to replace it?</string>
 <string name="download_duplicate_replace">Replace</string>
+<!-- Account settings -->
+<string name="settings_section_account">Account</string>
+<string name="account_login">Login</string>
+<string name="account_login_with_webview">Login via WebView to %s</string>
+<string name="account_logout">Logout</string>
+<string name="account_logged_out">Logged out</string>
+<string name="account_close">Close</string>
+<string name="account_try_again">Please try again</string>
+<string name="account_clear_webview_cookies">Clear WebView Cookies</string>
+<string name="account_clear_webview_cookies_summary">Clear all cookies stored in WebView so you can use a new account</string>
+<string name="account_webview_cookies_cleared">WebView cookies have been cleared</string>
+<string name="account_failed_to_clear_webview_cookies">Failed to clear WebView cookies</string>
 </resources>

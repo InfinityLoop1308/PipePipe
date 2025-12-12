@@ -36,11 +36,12 @@ fun SettingsScreen(
             SettingsSection(Icons.Default.PlayCircleFilled, MR.strings.settings_category_player_title.desc().toString(context = context), Screen.PlayerSettings),
             SettingsSection(Icons.Default.TouchApp, MR.strings.settings_section_gesture.desc().toString(context = context), Screen.GestureSettings),
             SettingsSection(Icons.Default.Palette, MR.strings.settings_section_appearance.desc().toString(context = context), Screen.AppearanceSettings),
+            SettingsSection(Icons.Default.AccountCircle, MR.strings.settings_section_account.desc().toString(context = context), Screen.AccountSettings),
             SettingsSection(Icons.Default.Notifications, MR.strings.settings_category_feed_title.desc().toString(context = context), Screen.FeedSettings),
             SettingsSection(Icons.Default.CloudDownload, MR.strings.settings_section_update.desc().toString(context = context), Screen.UpdateSettings),
             SettingsSection(Icons.Default.Save, MR.strings.settings_section_import_export.desc().toString(context = context), Screen.ImportExportSettings),
             SettingsSection(Icons.Default.FilterAlt, MR.strings.settings_section_filter.desc().toString(context = context), Screen.FilterSettings),
-            SettingsSection(Icons.Default.Shield, MR.strings.sponsor_block.desc().toString(context = context), Screen.SponsorBlockSettings)
+            SettingsSection(Icons.Default.Shield, MR.strings.sponsor_block.desc().toString(context = context), Screen.SponsorBlockSettings),
         )
     }
 

@@ -61,4 +61,5 @@ sealed class Screen(val route: String) {
     object UpdateSettings: Screen("update_settings")
     object AboutSettings: Screen("about_settings")
     object Download : Screen("download")
+    object AccountSettings: Screen("account_settings")
 }
