@@ -111,9 +111,6 @@ fun PlayQueueScreen() {
 
     val listState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
-        if (currentMediaItemIndex == from.index) {
-            currentMediaItemIndex = to.index
-        }
         mediaController.moveMediaItem(from.index, to.index)
     }
 
@@ -127,6 +124,9 @@ fun PlayQueueScreen() {
     val listener = object : Player.Listener {
 		override fun onTimelineChanged(newTimeline: androidx.media3.common.Timeline, reason: Int) {
 			timeline = newTimeline
+			// 同步更新 currentMediaItemIndex，因为拖拽重排后 index 可能变化
+			// 但 onMediaItemTransition 不会被触发（播放的还是同一个 media item）
+			currentMediaItemIndex = mediaController.currentMediaItemIndex
 		}
 
 		override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -252,9 +252,9 @@ fun PlayQueueScreen() {
                 items = (0 until timeline.windowCount).map { index ->
                     timeline.getWindow(index, androidx.media3.common.Timeline.Window())
                 },
-                key = {_,item -> item.mediaItem.mediaId }
+                key = { index, item -> "${item.uid}_${item.mediaItem.mediaId}"}
             ) { index, window ->
-                ReorderableItem(reorderableLazyListState, key = window.mediaItem.mediaId) { isDragging ->
+                ReorderableItem(reorderableLazyListState, key = "${window.uid}_${window.mediaItem.mediaId}") { isDragging ->
                     val interactionSource = remember { MutableInteractionSource() }
                     PlayQueueItem(
                         mediaItem = window.mediaItem,
