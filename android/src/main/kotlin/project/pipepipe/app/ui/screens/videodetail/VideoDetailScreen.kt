@@ -70,6 +70,8 @@ import project.pipepipe.app.ui.component.*
 import project.pipepipe.app.ui.component.player.PlayerGestureSettings
 import project.pipepipe.app.ui.component.player.VideoPlayer
 import project.pipepipe.app.uistate.VideoDetailPageState
+import project.pipepipe.shared.infoitem.StreamInfo
+import java.sql.Timestamp
 import kotlin.math.min
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -338,6 +340,13 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                         modifier = Modifier.fillMaxSize(),
                         onStart = { mediaController?.currentPosition },
                         onEnd = { mediaController?.currentPosition },
+                        onTimestampClick = { timestamp ->
+                            mediaController?.let {
+                                if (it.currentMediaItem?.mediaId == streamInfo!!.url) {
+                                    it.seekTo(timestamp * 1000)
+                                }
+                            }
+                        }
                     )
                 }
             }

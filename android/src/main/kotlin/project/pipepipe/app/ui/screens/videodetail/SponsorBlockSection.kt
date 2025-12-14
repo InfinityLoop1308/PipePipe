@@ -1,6 +1,7 @@
 package project.pipepipe.app.ui.screens.videodetail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ToastManager
+import project.pipepipe.app.ui.component.HtmlText
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 import project.pipepipe.app.utils.toDurationString
@@ -34,6 +36,7 @@ fun SponsorBlockSection(
     modifier: Modifier = Modifier,
     onStart: () -> Long?,
     onEnd: () -> Long?,
+    onTimestampClick: (Long) -> Unit = {},
 ) {
     val skipMarked = remember { mutableStateOf(true) }
 //    val whitelistChannel = remember { mutableStateOf(false) }
@@ -146,6 +149,7 @@ fun SponsorBlockSection(
             items(segments) { segment ->
                 SegmentRow(
                     segment = segment,
+                    onTimestampClick = onTimestampClick,
                     onThumbUp = {
                         if (segment.hasVoted) {
                             ToastManager.show(alreadyVotedText)
@@ -282,6 +286,7 @@ private fun ToggleRow(
 @Composable
 private fun SegmentRow(
     segment: SponsorBlockSegmentInfo,
+    onTimestampClick: (Long) -> Unit,
     onThumbUp: () -> Unit,
     onThumbDown: () -> Unit
 ) {
@@ -308,10 +313,13 @@ private fun SegmentRow(
             )
         }
 
-        Text(
+        HtmlText(
             text = formatSegmentRange(segment),
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 12.dp)
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .padding(horizontal = 12.dp),
+            onTimestampClick = onTimestampClick
         )
         Row(modifier = Modifier.width(80.dp)) {
             IconButton(onClick = onThumbUp) {
