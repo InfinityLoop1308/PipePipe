@@ -27,6 +27,7 @@ import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.app.SharedContext
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 
@@ -56,6 +57,7 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
         val hlsUrl = extras.getString("KEY_HLS_URL")
         val headers = extras.getSerializable("KEY_HEADER_MAP") as? MutableMap<String, String> ?: mutableMapOf()
         val sponsorblockUrl = extras.getString("KEY_SPONSORBLOCK_URL")
+        val relatedItemUrl = extras.getString("KEY_RELATED_ITEM_URL")
 
         if (dashManifestString == null && dashUrl == null && hlsUrl == null) {
             return LazyUrlMediaSource(
@@ -63,7 +65,7 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
                 mediaSourceFactory = this,
             )
         }
-        return createActualMediaSource(mediaItem, dashManifestString, dashUrl, hlsUrl, headers, sponsorblockUrl)
+        return createActualMediaSource(mediaItem, dashManifestString, dashUrl, hlsUrl, headers, sponsorblockUrl, relatedItemUrl)
     }
 
 
@@ -73,7 +75,8 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
         dashUrl: String?,
         hlsUrl: String?,
         headers: Map<String, String>,
-        sponsorblockUrl: String?
+        sponsorblockUrl: String?,
+        relatedItemUrl: String?
     ): MediaSource {
 
         val requestHeaders = headers.toMutableMap().apply {
@@ -114,27 +117,28 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
                     Uri.parse("https://example.com/invalid.mpd"),
                     ByteArrayInputStream(dashManifest.toByteArray(StandardCharsets.UTF_8))
                 )
-                val dashMediaItem = mediaItem.copyWithStreamInfo(Uri.EMPTY, MimeTypes.APPLICATION_MPD, sponsorblockUrl)
+                val dashMediaItem = mediaItem.copyWithStreamInfo(Uri.EMPTY, MimeTypes.APPLICATION_MPD, sponsorblockUrl, relatedItemUrl)
                 dashMediaSourceFactory.createMediaSource(manifest, dashMediaItem)
             }
             dashUrl != null -> {
                 val dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
-                val dashMediaItem = mediaItem.copyWithStreamInfo(dashUrl.toUri(), MimeTypes.APPLICATION_MPD, sponsorblockUrl)
+                val dashMediaItem = mediaItem.copyWithStreamInfo(dashUrl.toUri(), MimeTypes.APPLICATION_MPD, sponsorblockUrl, relatedItemUrl)
                 dashMediaSourceFactory.createMediaSource(dashMediaItem)
             }
             hlsUrl != null -> {
                 val hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
-                val hlsMediaItem = mediaItem.copyWithStreamInfo(hlsUrl.toUri(), MimeTypes.APPLICATION_M3U8, sponsorblockUrl)
+                val hlsMediaItem = mediaItem.copyWithStreamInfo(hlsUrl.toUri(), MimeTypes.APPLICATION_M3U8, sponsorblockUrl, relatedItemUrl)
                 hlsMediaSourceFactory.createMediaSource(hlsMediaItem)
             }
             else -> error("Either dashManifest, dashUrl, or hlsUrl must be provided")
         }
     }
 
-    private fun MediaItem.copyWithStreamInfo(uri: Uri, mimeType: String, sponsorblockUrl: String?): MediaItem {
+    private fun MediaItem.copyWithStreamInfo(uri: Uri, mimeType: String, sponsorblockUrl: String?, relatedItemUrl: String?): MediaItem {
         val extras = Bundle().apply {
             putString("KEY_SERVICE_ID", mediaMetadata.extras!!.getString("KEY_SERVICE_ID"))
             putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)
+            putString("KEY_RELATED_ITEM_URL", relatedItemUrl)
         }
         return MediaItem.Builder()
             .setUri(uri)
@@ -211,7 +215,13 @@ class LazyUrlMediaSource(
                     streamInfo.dashUrl,
                     streamInfo.hlsUrl,
                     streamInfo.headers,
-                    streamInfo.sponsorblockUrl
+                    streamInfo.sponsorblockUrl,
+                    streamInfo.relatedItemUrl
+                )
+                SharedContext.notifyStreamInfoLoaded(
+                    mediaItem.mediaId,
+                    streamInfo.sponsorblockUrl,
+                    streamInfo.relatedItemUrl
                 )
                 withContext(Dispatchers.Main) {
                     eventListeners.forEach { (listener, handler) ->
@@ -298,6 +308,7 @@ fun StreamInfo.toMediaItem(): MediaItem {
         putSerializable("KEY_HEADER_MAP", headers)
         putBoolean("KEY_USE_CACHE", streamType != StreamType.LIVE_STREAM)
         putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)
+        putString("KEY_RELATED_ITEM_URL", relatedItemUrl)
     }
     return MediaItem.Builder()
         .setUri("placeholder://stream")

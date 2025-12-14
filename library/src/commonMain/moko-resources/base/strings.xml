@@ -36,6 +36,10 @@
 <string name="settings_player_resolution_datasaver">Data saver (lowest)</string>
 <string name="auto_background_play_title">Music Player Mode</string>
 <string name="auto_background_play_summary">Play in background automatically when clicking an item in a local playlist</string>
+<string name="auto_queue_title">Auto-enqueue next stream</string>
+<string name="auto_queue_summary">Continue ending (non-repeating) playback queue by appending a related stream</string>
+<string name="dont_auto_queue_long_title">Don\'t auto queue long videos</string>
+<string name="dont_auto_queue_long_description">Only auto queue videos shorter than 6 min</string>
 <string name="settings_player_music_random_title">Random playback order</string>
 <string name="settings_player_music_random_summary">Shuffle local playlist playback when Music Player Mode is enabled</string>
 <string name="settings_player_music_random_disabled_summary">Enable Music Player Mode to use random order</string>

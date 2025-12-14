@@ -22,6 +22,10 @@ fun PlayerSettingScreen(
         mutableStateOf(SharedContext.settingsManager.getBoolean("auto_background_play_key", false))
     }
 
+    var autoQueueEnabled by remember {
+        mutableStateOf(SharedContext.settingsManager.getBoolean("auto_queue_key", false))
+    }
+
     val resolutionAuto = stringResource(MR.strings.auto)
     val resolutionBest = stringResource(MR.strings.settings_player_resolution_best)
     val resolutionDataSaver = stringResource(MR.strings.settings_player_resolution_datasaver)
@@ -214,6 +218,22 @@ fun PlayerSettingScreen(
             title = stringResource(MR.strings.playback_skip_silence_title),
             summary = stringResource(MR.strings.playback_skip_silence_summary),
             defaultValue = false
+        ),
+        PreferenceItem.SwitchPref(
+            key = "auto_queue_key",
+            title = stringResource(MR.strings.auto_queue_title),
+            summary = stringResource(MR.strings.auto_queue_summary),
+            defaultValue = false,
+            onValueChange = { enabled ->
+                autoQueueEnabled = enabled
+            }
+        ),
+        PreferenceItem.SwitchPref(
+            key = "dont_auto_queue_long_key",
+            title = stringResource(MR.strings.dont_auto_queue_long_title),
+            summary = stringResource(MR.strings.dont_auto_queue_long_description),
+            enabled = autoQueueEnabled,
+            defaultValue = true
         ),
     )
 

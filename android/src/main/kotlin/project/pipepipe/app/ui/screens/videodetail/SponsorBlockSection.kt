@@ -274,7 +274,7 @@ private fun ToggleRow(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier.scale(0.8f)
+            modifier = Modifier.scale(0.6f)
         )
     }
 }

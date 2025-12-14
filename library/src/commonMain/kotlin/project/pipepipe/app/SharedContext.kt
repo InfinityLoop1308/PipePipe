@@ -127,4 +127,18 @@ object SharedContext {
     suspend fun triggerDialogCheck() {
         _checkAndShowDialogs.emit(Unit)
     }
+
+    // Stream Info Loaded Notification (for SponsorBlock and Autoplay)
+    data class StreamInfoLoadedEvent(
+        val mediaId: String,
+        val sponsorblockUrl: String?,
+        val relatedItemUrl: String?
+    )
+
+    private val _streamInfoLoaded = MutableSharedFlow<StreamInfoLoadedEvent>()
+    val streamInfoLoaded: SharedFlow<StreamInfoLoadedEvent> = _streamInfoLoaded.asSharedFlow()
+
+    suspend fun notifyStreamInfoLoaded(mediaId: String, sponsorblockUrl: String?, relatedItemUrl: String?) {
+        _streamInfoLoaded.emit(StreamInfoLoadedEvent(mediaId, sponsorblockUrl, relatedItemUrl))
+    }
 }

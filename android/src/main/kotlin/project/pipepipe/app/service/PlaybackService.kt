@@ -32,6 +32,7 @@ import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.ui.component.player.SponsorBlockHelper
 import project.pipepipe.app.uistate.VideoDetailPageState
+import project.pipepipe.shared.infoitem.RelatedItemInfo
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.media3.ui.R as Media3UiR
@@ -54,6 +55,7 @@ class PlaybackService : MediaLibraryService() {
     private val skippedSegments = mutableMapOf<String, MutableSet<String>>()
     private var sponsorBlockCheckJob: Job? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
 
     // Skip silence setting listener
     private var skipSilenceListener: SettingsListener? = null
@@ -369,6 +371,18 @@ class PlaybackService : MediaLibraryService() {
                 (forwardingPlayer.wrappedPlayer as? ExoPlayer)?.skipSilenceEnabled = enabled
             }
         }
+
+        // Monitor stream info loaded events for SponsorBlock and Autoplay
+        serviceScope.launch {
+            SharedContext.streamInfoLoaded.collect { event ->
+                // Only process if this is the current media item
+                if (player.currentMediaItem?.mediaId == event.mediaId) {
+                    loadSponsorBlock(event.mediaId, event.sponsorblockUrl)
+                    loadAutoplayNext(event.mediaId, event.relatedItemUrl,
+                        player.currentMediaItem?.mediaMetadata?.extras?.getString("KEY_SERVICE_ID"))
+                }
+            }
+        }
     }
 
     private fun getRepeatModeDisplayName(): String {
@@ -400,6 +414,7 @@ class PlaybackService : MediaLibraryService() {
         serviceScope.cancel()
         sponsorBlockCache.clear()
         skippedSegments.clear()
+
 
         // Clean up skip silence listener
         skipSilenceListener?.deactivate()
@@ -507,7 +522,10 @@ class PlaybackService : MediaLibraryService() {
     private fun loadSponsorBlockForMedia(mediaItem: MediaItem) {
         val mediaId = mediaItem.mediaId
         val sponsorBlockUrl = mediaItem.mediaMetadata.extras?.getString("KEY_SPONSORBLOCK_URL")
+        loadSponsorBlock(mediaId, sponsorBlockUrl)
+    }
 
+    private fun loadSponsorBlock(mediaId: String, sponsorBlockUrl: String?) {
         if (sponsorBlockUrl == null || sponsorBlockCache.containsKey(mediaId)) {
             return
         }
@@ -573,6 +591,81 @@ class PlaybackService : MediaLibraryService() {
                         ToastManager.show(message)
                     }
                 }
+            }
+        }
+    }
+
+    // Autoplay next related methods
+    private fun loadAutoplayNextForMedia(mediaItem: MediaItem) {
+        val mediaId = mediaItem.mediaId
+        val relatedItemUrl = mediaItem.mediaMetadata.extras?.getString("KEY_RELATED_ITEM_URL")
+        val serviceId = mediaItem.mediaMetadata.extras?.getString("KEY_SERVICE_ID")
+        loadAutoplayNext(mediaId, relatedItemUrl, serviceId)
+    }
+
+    private fun loadAutoplayNext(mediaId: String, relatedItemUrl: String?, serviceId: String?) {
+        if (!SharedContext.settingsManager.getBoolean("auto_queue_key", false)) return
+
+        val currentIndex = player.currentMediaItemIndex
+        val isLastItem = currentIndex == player.mediaItemCount - 1
+
+        // Only load for the last item
+        if (!isLastItem) return
+
+        if (relatedItemUrl == null) return
+
+        serviceScope.launch {
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    executeJobFlow(
+                        SupportedJobType.FETCH_INFO,
+                        relatedItemUrl,
+                        serviceId
+                    )
+                }
+                val relatedItemInfo = result.info as? RelatedItemInfo
+                val partitions = relatedItemInfo?.partitions
+
+                // Check if we have partitions and can find next item
+                if (!partitions.isNullOrEmpty()) {
+                    // Find current partition index by mediaId (url)
+                    val currentIndex = partitions.indexOfFirst { it.url == mediaId }
+                    if (currentIndex != -1 && currentIndex < partitions.size - 1) {
+                        // Get next partition item
+                        val nextItem = partitions[currentIndex + 1]
+                        val newMediaItem = nextItem.toMediaItem()
+
+                        withContext(Dispatchers.Main) {
+                            if (player.currentMediaItemIndex == player.mediaItemCount - 1) {
+                                player.addMediaItem(newMediaItem)
+                            }
+                        }
+                        return@launch
+                    }
+                }
+
+                // Fallback to relatedItems logic if no partition match
+                val relatedItems = result.pagedData?.itemList as? List<StreamInfo> ?: return@launch
+                if (relatedItems.isEmpty()) return@launch
+
+                // Pick a random related item
+                val randomItem = relatedItems.filter {
+                    if (SharedContext.settingsManager.getBoolean("dont_auto_queue_long_key", true)) {
+                        runCatching { it.duration!! <= 360 }.getOrDefault(true)
+                    } else true
+                }.random()
+
+                // Create media item and add to queue
+                val newMediaItem = randomItem.toMediaItem()
+
+                withContext(Dispatchers.Main) {
+                    // Check again if still the last item (queue might have changed)
+                    if (player.currentMediaItemIndex == player.mediaItemCount - 1) {
+                        player.addMediaItem(newMediaItem)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -677,6 +770,7 @@ class PlaybackService : MediaLibraryService() {
                 mediaItem?.let {
                     skippedSegments[it.mediaId] = mutableSetOf()
                     loadSponsorBlockForMedia(it)
+                    loadAutoplayNextForMedia(it)
                     // Reset retry state when successfully transitioning to a new item
                     retryStates.remove(it.mediaId)
                 }
