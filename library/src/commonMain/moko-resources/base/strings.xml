@@ -476,7 +476,6 @@
 <string name="first_run_dialog_enable">Enable</string>
 <string name="first_run_dialog_no_thanks">No, thanks</string>
 <!-- TODO: Update these strings after the official release -->
-
 <string name="data_migration_dialog_title">Data Migration</string>
 <string name="data_migration_dialog_message">PipePipe 5 uses a new package name to avoid conflicts with older versions. This means:\n• Version 5 installs as a separate app\n• Your existing installation remains unchanged\n\nHow to migrate your data:\n1. Open your old PipePipe app (e.g., version 4.7.3)\n2. Export a backup in Settings\n3. Open the new PipePipe 5\n4. Import the backup in Settings\n\nNote for beta testers: If you\'re already using 5.0.0-beta1, please export and import your data again to apply the latest changes.</string>
 <string name="data_migration_dialog_button">Got it</string>
@@ -528,4 +527,28 @@
 <string name="account_clear_webview_cookies_summary">Clear all cookies stored in WebView so you can use a new account</string>
 <string name="account_webview_cookies_cleared">WebView cookies have been cleared</string>
 <string name="account_failed_to_clear_webview_cookies">Failed to clear WebView cookies</string>
+<!-- History settings -->
+<string name="settings_category_history_title">History</string>
+<string name="enable_watch_history_title">Watch history</string>
+
+<string name="watch_history_on_play">Record when video starts playing</string>
+<string name="watch_history_on_click">Record when you click a video</string>
+<string name="watch_history_disabled">Don\'t record watch history</string>
+<string name="enable_playback_resume_title">Resume playback</string>
+<string name="enable_playback_resume_summary">Restore last playback position</string>
+<string name="enable_search_history_title">Search history</string>
+<string name="enable_search_history_summary">Store search queries locally</string>
+<string name="settings_category_clear_data_title">Clear data</string>
+<string name="clear_views_history_title">Clear watch history</string>
+<string name="clear_views_history_summary">Deletes the history of played streams and the playback positions</string>
+<string name="delete_view_history_alert">Delete entire watch history?</string>
+<string name="watch_history_deleted">Watch history deleted</string>
+<string name="clear_playback_states_title">Delete playback positions</string>
+<string name="clear_playback_states_summary">Deletes all playback positions</string>
+<string name="delete_playback_states_alert">Delete all playback positions?</string>
+<string name="watch_history_states_deleted">Playback positions deleted</string>
+<string name="clear_search_history_title">Clear search history</string>
+<string name="clear_search_history_summary">Deletes history of search keywords</string>
+<string name="delete_search_history_alert_all">Delete entire search history?</string>
+<string name="search_history_deleted">Search history deleted</string>
 </resources>

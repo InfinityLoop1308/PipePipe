@@ -246,6 +246,13 @@ class DatabaseImporter(
                             convertSavedTabsToNewConfig(savedTabsJson)
                         }
 
+                        // Convert old enable_watch_history (boolean) to new watch_history_mode (string)
+                        val enableWatchHistory = snapshot["enable_watch_history"] as? Boolean
+                        if (enableWatchHistory != null) {
+                            val watchHistoryMode = if (enableWatchHistory) "on_play" else "disabled"
+                            settingsManager.putString("watch_history_mode", watchHistoryMode)
+                        }
+
                         // Re-initialize supported services to prevent being overwritten by old backup
                         PipePipeApplication.initializeSupportedServices()
                     } else {

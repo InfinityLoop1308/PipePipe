@@ -371,7 +371,7 @@ private fun StreamOrPlaylistListItem(
                 )
             }
 
-            if (progress != null && duration != null) {
+            if (progress != null && duration != null && progress > 0) {
                 LinearProgressIndicator(
                     progress = { progress / duration / 1000f },
                     modifier = Modifier

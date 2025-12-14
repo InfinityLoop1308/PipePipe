@@ -237,6 +237,10 @@ WHERE url = ?;
 selectStreamProgress:
 SELECT progress_time FROM streams WHERE url = ?;
 
+clearAllPlaybackStates:
+UPDATE streams
+SET progress_time = 0;
+
 -- Playlist queries
 selectAllPlaylists:
 SELECT * FROM playlists ORDER BY display_index;
@@ -344,6 +348,9 @@ DELETE FROM search_history WHERE id = ?;
 
 deleteSearchHistoryByText:
 DELETE FROM search_history WHERE search = ?;
+
+clearAllSearchHistory:
+DELETE FROM search_history;
 
 updateSearchHistoryDate:
 UPDATE search_history

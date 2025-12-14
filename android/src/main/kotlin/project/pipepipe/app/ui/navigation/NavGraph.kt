@@ -26,6 +26,7 @@ import project.pipepipe.app.ui.screens.settings.FeedSettingsScreen
 import project.pipepipe.app.ui.screens.settings.FilterByKeywordsScreen
 import project.pipepipe.app.ui.screens.settings.FilterSettingScreen
 import project.pipepipe.app.ui.screens.settings.GestureSettingScreen
+import project.pipepipe.app.ui.screens.settings.HistorySettingScreen
 import project.pipepipe.app.ui.screens.settings.ImportExportSettingScreen
 import project.pipepipe.app.ui.screens.settings.LogSettingScreen
 import project.pipepipe.app.ui.screens.settings.PlayerSettingScreen
@@ -116,6 +117,9 @@ fun NavGraph(
         }
         composable(Screen.AccountSettings.route) {
             AccountSettingsScreen(navController = navController)
+        }
+        composable(Screen.HistorySettings.route) {
+            HistorySettingScreen(navController = navController)
         }
         composable(Screen.AboutSettings.route) {
             AboutScreen(navController = navController)

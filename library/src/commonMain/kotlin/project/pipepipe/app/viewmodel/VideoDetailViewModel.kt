@@ -87,7 +87,10 @@ class VideoDetailViewModel()
                         streamInfoStack = it.streamInfoStack + newEntry
                     )
                 }
-                DatabaseOperations.updateOrInsertStreamHistory(newStreamInfo)
+                val watchHistoryMode = SharedContext.settingsManager.getString("watch_history_mode", "on_play")
+                if (watchHistoryMode == "on_click") {
+                    DatabaseOperations.updateOrInsertStreamHistory(newStreamInfo)
+                }
 
                 if (newStreamInfo.commentUrl != null) {
                     loadComments(newStreamInfo)

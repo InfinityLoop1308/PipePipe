@@ -311,6 +311,9 @@ object DatabaseOperations {
     }
 
     suspend fun insertOrUpdateSearchHistory(search: String) = withContext(Dispatchers.IO) {
+        val enableSearchHistory = SharedContext.settingsManager.getBoolean("enable_search_history", true)
+        if (!enableSearchHistory) return@withContext
+
         val now = System.currentTimeMillis()
         database.transaction {
             val existing = database.appDatabaseQueries
@@ -337,6 +340,10 @@ object DatabaseOperations {
         database.appDatabaseQueries.deleteSearchHistoryByText(search)
     }
 
+    suspend fun clearAllSearchHistory() = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.clearAllSearchHistory()
+    }
+
     // Updated: Now updates the stream directly instead of inserting into a separate table
     suspend fun updateStreamHistory(url: String, accessDate: Long) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.updateStreamHistory(accessDate, url)
@@ -353,11 +360,19 @@ object DatabaseOperations {
     }
 
     suspend fun updateStreamProgress(url: String, progressTime: Long) = withContext(Dispatchers.IO) {
+        val watchHistoryMode = SharedContext.settingsManager.getString("watch_history_mode", "on_play")
+        if (watchHistoryMode == "disabled") return@withContext
         database.appDatabaseQueries.updateStreamProgress(progressTime, url)
     }
 
     suspend fun getStreamProgress(url: String) = withContext(Dispatchers.IO) {
+        val enablePlaybackResume = SharedContext.settingsManager.getBoolean("enable_playback_resume", true)
+        if (!enablePlaybackResume) return@withContext null
         database.appDatabaseQueries.selectStreamProgress(url).executeAsOneOrNull()
+    }
+
+    suspend fun clearAllPlaybackStates() = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.clearAllPlaybackStates()
     }
 
     suspend fun getAllFeedGroups() = withContext(Dispatchers.IO) {
@@ -501,6 +516,9 @@ object DatabaseOperations {
 
 
     suspend fun updateOrInsertStreamHistory(streamInfo: StreamInfo) = withContext(Dispatchers.IO) {
+        val watchHistoryMode = SharedContext.settingsManager.getString("watch_history_mode", "on_play")
+        if (watchHistoryMode == "disabled") return@withContext
+
         val currentTime = System.currentTimeMillis()
         insertOrUpdateStream(streamInfo)
         val streamRow = getStreamByUrl(streamInfo.url)
