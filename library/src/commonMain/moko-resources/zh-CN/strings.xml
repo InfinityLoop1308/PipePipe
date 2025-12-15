@@ -536,4 +536,6 @@
 <string name="empty_channel_shorts">没有短视频</string>
 <string name="account_clear_webview_cookies">清除 WebView Cookie</string>
 <string name="account_logout">注销</string>
+<string name="decoder_init_failed_title">解码器初始化失败</string>
+<string name="decoder_init_failed_message">您的设备缺少所需的硬件解码器，因此无法播放此格式。请选择其他格式以继续。</string>
 </resources>

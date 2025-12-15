@@ -536,4 +536,6 @@
 <string name="empty_channel_shorts">Không có video ngắn</string>
 <string name="account_clear_webview_cookies">Xóa Cookie WebView</string>
 <string name="account_logout">Đăng xuất</string>
+<string name="decoder_init_failed_title">Khởi tạo bộ giải mã thất bại</string>
+<string name="decoder_init_failed_message">Thiết bị của bạn thiếu bộ giải mã phần cứng cần thiết, vì vậy bạn không thể phát định dạng này. Vui lòng chọn định dạng khác để tiếp tục.</string>
 </resources>

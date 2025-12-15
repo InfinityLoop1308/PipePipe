@@ -670,60 +670,13 @@ class PlaybackService : MediaLibraryService() {
         }
     }
 
-    private fun extractMediaIdFromError(error: PlaybackException): String? {
-        val prefix = "Failed to prepare media: "
-
-        // Check cause message first
-        error.cause?.message?.let { msg ->
-            if (msg.contains(prefix)) {
-                return msg.substringAfter(prefix)
-            }
-        }
-
-        // Check error message
-        error.message?.let { msg ->
-            if (msg.contains(prefix)) {
-                return msg.substringAfter(prefix)
-            }
-        }
-
-        // Return null if prefix not found - don't return the whole error message
-        return null
-    }
-
-    private fun is403Error(error: PlaybackException): Boolean {
-        var cause: Throwable? = error
-        while (cause != null) {
-            val message = cause.message ?: ""
-            // Check for HTTP 403 in various forms
-            if (message.contains("403") ||
-                message.contains("Forbidden") ||
-                message.contains("responseCode=403")) {
-                return true
-            }
-            // Check if it's an HttpDataSourceException with response code 403
-            if (cause.javaClass.simpleName == "HttpDataSourceException") {
-                try {
-                    val field = cause.javaClass.getDeclaredField("responseCode")
-                    field.isAccessible = true
-                    val responseCode = field.getInt(cause)
-                    if (responseCode == 403) {
-                        return true
-                    }
-                } catch (e: Exception) {
-                    // Ignore reflection errors
-                }
-            }
-            cause = cause.cause
-        }
-        return false
-    }
-
-    private fun refreshStreamAndRetry(mediaId: String, currentIndex: Int) {
+    private fun refreshStreamAndRetry(mediaId: String) {
+        val currentIndex = player.currentMediaItemIndex
+        val savedPosition = player.currentPosition
         serviceScope.launch {
             try {
                 // Get service ID from current media item
-                val currentItem = player.getMediaItemAt(currentIndex)
+                val currentItem = player.currentMediaItem ?: return@launch
                 val serviceId = currentItem.mediaMetadata.extras?.getString("KEY_SERVICE_ID")
 
                 // Fetch fresh stream info
@@ -743,8 +696,8 @@ class PlaybackService : MediaLibraryService() {
                     player.removeMediaItem(currentIndex)
                     player.addMediaItem(currentIndex, newMediaItem)
 
-                    // Seek to the same position and try to play
-                    player.seekTo(currentIndex, player.currentPosition)
+                    // Seek to the saved position and try to play
+                    player.seekTo(currentIndex, savedPosition)
                     player.prepare()
                     player.play()
                 }
@@ -813,9 +766,8 @@ class PlaybackService : MediaLibraryService() {
                     return
                 }
 
-                // Extract failed mediaId from error message
-                val failedMediaId = extractMediaIdFromError(error)
-                val mediaId = failedMediaId ?: player.currentMediaItem?.mediaId
+                val mediaId = player.currentMediaItem?.mediaId ?: return
+                val currentIndex = player.currentMediaItemIndex
 
                 // Log the error
                 MainScope().launch {
@@ -827,30 +779,12 @@ class PlaybackService : MediaLibraryService() {
                     )
                 }
 
-                // Check if this is a 403 error and handle retry logic
-                if (is403Error(error) && mediaId != null) {
+
+                if (error.cause?.message?.contains("403") == true
+                    || error.cause?.message?.contains("maybeThrowPlaylistRefreshError") == true) {
                     val retryState = retryStates.getOrPut(mediaId) { RetryState() }
 
-                    // Find the index of the failed item
-                    val itemIndex = if (failedMediaId != null) {
-                        (0 until player.mediaItemCount).firstOrNull { i ->
-                            player.getMediaItemAt(i).mediaId == failedMediaId
-                        } ?: player.currentMediaItemIndex
-                    } else {
-                        player.currentMediaItemIndex
-                    }
-
-                    if (itemIndex == C.INDEX_UNSET) {
-                        // Can't find item, show error and skip
-                        ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))
-                        if (player.mediaItemCount > 0) {
-                            player.prepare()
-                            player.play()
-                        }
-                        return
-                    }
-
-                    // First phase: retry up to 5 times before refreshing
+                    // First phase: retry up to MAX_RETRIES_BEFORE_REFRESH times before refreshing
                     if (!retryState.hasRefreshedStream && retryState.retryCount < MAX_RETRIES_BEFORE_REFRESH) {
                         retryState.retryCount++
                         ToastManager.show("403 error, retrying (${retryState.retryCount}/$MAX_RETRIES_BEFORE_REFRESH)...")
@@ -867,11 +801,11 @@ class PlaybackService : MediaLibraryService() {
                         retryState.retryCount = 0
                         ToastManager.show("Refreshing stream after $MAX_RETRIES_BEFORE_REFRESH retries...")
 
-                        refreshStreamAndRetry(mediaId, itemIndex)
+                        refreshStreamAndRetry(mediaId)
                         return
                     }
 
-                    // Third phase: retry up to 5 more times after refresh
+                    // Third phase: retry up to MAX_RETRIES_AFTER_REFRESH more times after refresh
                     if (retryState.retryCount < MAX_RETRIES_AFTER_REFRESH) {
                         retryState.retryCount++
                         ToastManager.show("403 error after refresh, retrying (${retryState.retryCount}/$MAX_RETRIES_AFTER_REFRESH)...")
@@ -884,8 +818,8 @@ class PlaybackService : MediaLibraryService() {
 
                     // Final phase: all retries exhausted, give up and skip to next
                     ToastManager.show("Failed after all retries, skipping to next...")
-                    retryStates.remove(mediaId)  // Clean up retry state
-                    player.removeMediaItem(itemIndex)
+                    retryStates.remove(mediaId)
+                    player.removeMediaItem(currentIndex)
 
                     if (player.mediaItemCount > 0) {
                         player.prepare()
@@ -894,23 +828,32 @@ class PlaybackService : MediaLibraryService() {
                     return
                 }
 
-                // For non-403 errors, use the original logic
-                ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))
-
-                val itemToRemove = if (failedMediaId != null) {
-                    (0 until player.mediaItemCount).firstOrNull { i ->
-                        player.getMediaItemAt(i).mediaId == failedMediaId
+                // Handle network-related errors: just pause, don't evict
+                when (error.errorCode) {
+                    PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE,
+                    PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
+                    PlaybackException.ERROR_CODE_TIMEOUT,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
+                    PlaybackException.ERROR_CODE_UNSPECIFIED -> {
+                        player.pause()
+                        return
                     }
-                } else {
-                    player.currentMediaItemIndex.takeIf { it != C.INDEX_UNSET }
+                    PlaybackException.ERROR_CODE_DECODER_INIT_FAILED -> {
+                        // Show decoder error dialog and pause
+                        serviceScope.launch {
+                            SharedContext.notifyDecoderError()
+                        }
+                        player.pause()
+                        return
+                    }
                 }
 
-                itemToRemove?.let { index ->
-                    // Clean up retry state for this item before removing
-                    val itemMediaId = player.getMediaItemAt(index).mediaId
-                    retryStates.remove(itemMediaId)
-                    player.removeMediaItem(index)
-                }
+
+                // For non-403 errors, show error and remove current item
+                ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))
+                retryStates.remove(mediaId)
+                player.removeMediaItem(currentIndex)
 
                 if (player.mediaItemCount > 0) {
                     player.prepare()

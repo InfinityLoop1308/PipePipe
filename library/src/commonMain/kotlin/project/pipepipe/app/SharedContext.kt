@@ -141,4 +141,12 @@ object SharedContext {
     suspend fun notifyStreamInfoLoaded(mediaId: String, sponsorblockUrl: String?, relatedItemUrl: String?) {
         _streamInfoLoaded.emit(StreamInfoLoadedEvent(mediaId, sponsorblockUrl, relatedItemUrl))
     }
+
+    // Decoder Error Event (for showing dialog in VideoDetailScreen)
+    private val _decoderErrorEvent = MutableSharedFlow<Unit>()
+    val decoderErrorEvent: SharedFlow<Unit> = _decoderErrorEvent.asSharedFlow()
+
+    suspend fun notifyDecoderError() {
+        _decoderErrorEvent.emit(Unit)
+    }
 }

@@ -8,6 +8,8 @@ import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.*
 import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.exoplayer.LoadingInfo
+import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.analytics.PlayerId
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.dash.manifest.DashManifestParser
@@ -17,8 +19,12 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaPeriod
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MediaSourceEventListener
+import androidx.media3.exoplayer.source.SampleStream
+import androidx.media3.exoplayer.source.TrackGroupArray
+import androidx.media3.exoplayer.trackselection.ExoTrackSelection
 import androidx.media3.exoplayer.upstream.Allocator
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
+
 import androidx.media3.extractor.metadata.icy.IcyHeaders
 import kotlinx.coroutines.*
 import java.io.IOException
@@ -245,11 +251,13 @@ class LazyUrlMediaSource(
 
     override fun maybeThrowSourceInfoRefreshError() {
         prepareError?.let { throw it }
-        // Only delegate to actual media source if it's been initialized
-        // If it's still null, the prepare job is still running and there's no error yet
-        val source = actualMediaSource
-        if (source != null) {
-            source.maybeThrowSourceInfoRefreshError()
+        try {
+            actualMediaSource?.maybeThrowSourceInfoRefreshError()
+        } catch (e: IOException) {
+            throw e
+        } catch (e: Exception) {
+            // Wrap NPE and other exceptions as IOException so onPlayerError can catch them
+            throw IOException("Failed to prepare media: ${mediaItem.mediaId}", e)
         }
     }
 
@@ -261,7 +269,7 @@ class LazyUrlMediaSource(
         startPositionUs: Long
     ): MediaPeriod {
         return actualMediaSource?.createPeriod(id, allocator, startPositionUs)
-            ?: throw IOException("Media source not prepared")
+            ?: ErrorMediaPeriod(mediaItem.mediaId)
     }
 
     override fun releasePeriod(mediaPeriod: MediaPeriod) {
@@ -296,7 +304,36 @@ class LazyUrlMediaSource(
     }
 }
 
+@UnstableApi
+private class ErrorMediaPeriod(private val mediaId: String) : MediaPeriod {
+    private val error = IOException("Media source not prepared: $mediaId")
 
+    override fun prepare(callback: MediaPeriod.Callback, positionUs: Long) {
+        // Don't call callback.onPrepared(), ExoPlayer will poll maybeThrowPrepareError
+    }
+
+    override fun maybeThrowPrepareError() {
+        throw error
+    }
+
+    override fun getTrackGroups(): TrackGroupArray = TrackGroupArray.EMPTY
+    override fun selectTracks(
+        selections: Array<out ExoTrackSelection?>,
+        mayRetainStreamFlags: BooleanArray,
+        streams: Array<SampleStream?>,
+        streamResetFlags: BooleanArray,
+        positionUs: Long
+    ): Long = 0L
+    override fun discardBuffer(positionUs: Long, toKeyframe: Boolean) {}
+    override fun readDiscontinuity(): Long = C.TIME_UNSET
+    override fun seekToUs(positionUs: Long): Long = positionUs
+    override fun getAdjustedSeekPositionUs(positionUs: Long, seekParameters: SeekParameters): Long = positionUs
+    override fun getBufferedPositionUs(): Long = 0L
+    override fun getNextLoadPositionUs(): Long = C.TIME_END_OF_SOURCE
+    override fun continueLoading(loadingInfo: LoadingInfo): Boolean = false
+    override fun isLoading(): Boolean = false
+    override fun reevaluateBuffer(positionUs: Long) {}
+}
 
 fun StreamInfo.toMediaItem(): MediaItem {
     val duration = (this.duration?:0) * 1000

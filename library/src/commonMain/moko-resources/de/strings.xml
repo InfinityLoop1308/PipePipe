@@ -536,4 +536,6 @@
 <string name="empty_channel_shorts">Keine Shorts</string>
 <string name="account_clear_webview_cookies">WebView-Cookies löschen</string>
 <string name="account_logout">Abmelden</string>
+<string name="decoder_init_failed_title">Decoder-Initialisierung fehlgeschlagen</string>
+<string name="decoder_init_failed_message">Ihrem Gerät fehlen die erforderlichen Hardware-Decoder, daher können Sie dieses Format nicht abspielen. Wählen Sie ein anderes Format, um fortzufahren.</string>
 </resources>

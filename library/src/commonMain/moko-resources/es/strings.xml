@@ -536,4 +536,6 @@
 <string name="empty_channel_shorts">No hay cortos</string>
 <string name="account_clear_webview_cookies">Borrar cookies de WebView</string>
 <string name="account_logout">Cerrar sesión</string>
+<string name="decoder_init_failed_title">Fallo en la inicialización del decodificador</string>
+<string name="decoder_init_failed_message">Su dispositivo carece de los decodificadores de hardware necesarios, por lo que no puede reproducir este formato. Seleccione otro formato para continuar.</string>
 </resources>

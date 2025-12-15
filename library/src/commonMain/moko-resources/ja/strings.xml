@@ -536,4 +536,6 @@
 <string name="empty_channel_shorts">ショートはありません</string>
 <string name="account_clear_webview_cookies">WebViewのCookieをクリア</string>
 <string name="account_logout">ログアウト</string>
+<string name="decoder_init_failed_title">デコーダーの初期化に失敗しました</string>
+<string name="decoder_init_failed_message">お使いのデバイスには必要なハードウェアデコーダーがないため、この形式を再生できません。続行するには別の形式を選択してください。</string>
 </resources>

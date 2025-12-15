@@ -536,4 +536,6 @@
 <string name="empty_channel_shorts">Pas de courts métrages</string>
 <string name="account_clear_webview_cookies">Effacer les cookies WebView</string>
 <string name="account_logout">Déconnexion</string>
+<string name="decoder_init_failed_title">L\'initialisation du décodeur a échoué</string>
+<string name="decoder_init_failed_message">Votre appareil ne dispose pas des décodeurs matériels requis, vous ne pouvez donc pas lire ce format. Sélectionnez un autre format pour continuer.</string>
 </resources>

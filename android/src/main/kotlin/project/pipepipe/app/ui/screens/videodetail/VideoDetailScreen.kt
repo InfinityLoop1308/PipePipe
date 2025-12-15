@@ -105,10 +105,23 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     }
 
     var showPlaylistPopup by remember { mutableStateOf(false) }
+    var showDecoderErrorDialog by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
     LaunchedEffect(streamInfo?.url) {
         listState.scrollToItem(0)
+    }
+
+    // Listen for decoder error events
+    val playbackMode by SharedContext.playbackMode.collectAsState()
+    LaunchedEffect(Unit) {
+        SharedContext.decoderErrorEvent.collect {
+            // Only show dialog when in DETAIL_PAGE and VIDEO_AUDIO mode
+            if (uiState.pageState == VideoDetailPageState.DETAIL_PAGE &&
+                playbackMode == PlaybackMode.VIDEO_AUDIO) {
+                showDecoderErrorDialog = true
+            }
+        }
     }
 
     val nestedScrollConnection1 = remember {
@@ -630,6 +643,19 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             },
             onPlaylistSelected = {
                 showPlaylistPopup = false
+            }
+        )
+    }
+
+    if (showDecoderErrorDialog) {
+        AlertDialog(
+            onDismissRequest = { showDecoderErrorDialog = false },
+            title = { Text(stringResource(MR.strings.decoder_init_failed_title)) },
+            text = { Text(stringResource(MR.strings.decoder_init_failed_message)) },
+            confirmButton = {
+                TextButton(onClick = { showDecoderErrorDialog = false }) {
+                    Text(stringResource(MR.strings.ok))
+                }
             }
         )
     }
