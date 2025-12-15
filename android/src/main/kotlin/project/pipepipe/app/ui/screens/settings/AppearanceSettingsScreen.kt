@@ -197,13 +197,6 @@ fun AppearanceSettingsScreen(
 
     )
 
-    val switchStateMap: Map<String, MutableState<Boolean>> = mapOf(
-        "material_you_enabled_key" to materialYouEnabledState,
-        "pure_black_key" to pureBlackEnabledState,
-        "grid_layout_enabled_key" to gridLayoutEnabledState,
-        "dynamic_color_for_search_enabled_key" to dynamicColorForSearchEnabledState
-    )
-
     Column {
         CustomTopBar(
             defaultTitleText = stringResource(MR.strings.settings_section_appearance)
@@ -220,26 +213,9 @@ fun AppearanceSettingsScreen(
             ) { item ->
                 when (item) {
                     is PreferenceItem.CategoryPref -> CategoryPreference(item = item)
-                    is PreferenceItem.ListPref -> {
-                        // For grid columns, key on the enabled state so it re-renders when grid layout is toggled
-                        if (item.key == "grid_columns_key") {
-                            key("${item.key}_${gridLayoutEnabledState.value}") {
-                                ListPreference(item = item)
-                            }
-                        } else {
-                            ListPreference(item = item)
-                        }
-                    }
+                    is PreferenceItem.ListPref -> ListPreference(item = item)
                     is PreferenceItem.SwitchPref -> {
-                        val state = switchStateMap[item.key]
-                        if (state != null) {
-                            key("${item.key}_${state.value}") {
-                                SwitchPreference(item = item)
-                            }
-                        } else {
-                            SwitchPreference(item = item)
-                        }
-
+                        SwitchPreference(item = item)
                         // Add color palette after pure_black_key (last item in theme category)
                         if (item.key == "pure_black_key") {
                             InlineColorPalette(
