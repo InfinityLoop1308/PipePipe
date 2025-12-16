@@ -20,5 +20,7 @@ data class SavedTabPayload(
     @SerialName("icon") val icon: Int? = null,
     @SerialName("channel_url") val channelUrl: String? = null,
     @SerialName("channel_name") val channelName: String? = null,
-    @SerialName("channel_service_id") val channelServiceId: Int? = null
+    @SerialName("channel_service_id") val channelServiceId: Int? = null,
+    @SerialName("service_id") val serviceId: Int? = null,
+    @SerialName("kiosk_id") val kioskId: String? = null
 )

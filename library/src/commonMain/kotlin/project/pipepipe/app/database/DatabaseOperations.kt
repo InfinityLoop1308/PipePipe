@@ -239,45 +239,6 @@ object DatabaseOperations {
         database.appDatabaseQueries.updatePlaylistThumbnail(thumbnailUrl, playlistId)
     }
 
-    suspend fun setPlaylistPinned(playlistId: Long, isPinned: Boolean) = withContext(Dispatchers.IO) {
-        database.appDatabaseQueries.updatePlaylistPinnedState(
-            if (isPinned) 1L else 0L,
-            playlistId
-        )
-    }
-
-
-    suspend fun getPinnedPlaylists(): List<PlaylistInfo> = withContext(Dispatchers.IO) {
-        return@withContext database.appDatabaseQueries.selectPinnedPlaylistsCombined().executeAsList().map { row ->
-            val isLocal = row.playlist_type == "local"
-
-            if (isLocal) {
-                val streamCount = loadPlaylistsItemsFromDatabase(row.uid).size
-                PlaylistInfo(
-                    url = "local://playlist/${row.uid}",
-                    name = row.name ?: "Unnamed Playlist",
-                    thumbnailUrl = row.thumbnail_url,
-                    streamCount = streamCount.toLong(),
-                    isPinned = true,
-                    uid = row.uid,
-                    serviceId = null
-                )
-            } else {
-                PlaylistInfo(
-                    url = row.url ?: "",
-                    name = row.name ?: "Unnamed Playlist",
-                    thumbnailUrl = row.thumbnail_url,
-                    uploaderName = row.uploader,
-                    streamCount = row.stream_count ?: 0L,
-                    isPinned = true,
-                    uid = row.uid,
-                    serviceId = row.service_id
-                )
-            }
-        }
-    }
-
-
     suspend fun removeStreamFromPlaylistByJoinId(joinId: Long) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.deleteStreamFromPlaylistById(joinId)
     }
@@ -382,17 +343,6 @@ object DatabaseOperations {
     suspend fun getFeedGroupById(groupId: Long) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.selectAllFeedGroups().executeAsList()
             .find { it.uid == groupId }
-    }
-
-    suspend fun setFeedGroupPinned(groupId: Long, isPinned: Boolean) = withContext(Dispatchers.IO) {
-        database.appDatabaseQueries.updateFeedGroupPinnedState(
-            if (isPinned) 1L else 0L,
-            groupId
-        )
-    }
-
-    suspend fun getPinnedFeedGroups() = withContext(Dispatchers.IO) {
-        database.appDatabaseQueries.selectPinnedFeedGroups().executeAsList()
     }
 
     suspend fun getEarliestLastUpdatedForAll(): Long? = withContext(Dispatchers.IO) {
@@ -625,8 +575,7 @@ object DatabaseOperations {
         url: String,
         thumbnailUrl: String?,
         uploader: String?,
-        streamCount: Long?,
-        isPinned: Boolean
+        streamCount: Long?
     ) = withContext(Dispatchers.IO) {
         incrementAllPlaylistsDisplayIndexes()
         database.appDatabaseQueries.insertOrReplaceRemotePlaylist(
@@ -637,14 +586,7 @@ object DatabaseOperations {
             uploader,
             0L,
             streamCount,
-            if (isPinned) 1L else 0L
-        )
-    }
-
-    suspend fun setRemotePlaylistPinned(playlistId: Long, isPinned: Boolean) = withContext(Dispatchers.IO) {
-        database.appDatabaseQueries.updateRemotePlaylistPinnedState(
-            if (isPinned) 1L else 0L,
-            playlistId
+            0L
         )
     }
 

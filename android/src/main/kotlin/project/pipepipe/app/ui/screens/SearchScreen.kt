@@ -56,7 +56,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import project.pipepipe.app.MR
-import project.pipepipe.app.global.StringResourceHelper
+import project.pipepipe.app.helper.StringResourceHelper
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.utils.generateQueryUrl
 import project.pipepipe.app.database.DatabaseOperations

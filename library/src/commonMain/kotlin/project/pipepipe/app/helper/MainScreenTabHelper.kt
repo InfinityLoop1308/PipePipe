@@ -7,6 +7,7 @@ import java.net.URLDecoder
 import dev.icerock.moko.resources.compose.stringResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import project.pipepipe.app.helper.StringResourceHelper.getTranslatedTrendingName
 
 object MainScreenTabHelper {
     /**
@@ -17,7 +18,6 @@ object MainScreenTabHelper {
         val baseRoute = route.substringBefore('?')
 
         return when {
-            route == "dashboard" -> stringResource(MR.strings.dashboard)
             route == "subscriptions" -> stringResource(MR.strings.tab_subscriptions)
             route == "bookmarked_playlists" -> stringResource(MR.strings.tab_bookmarks)
             route == "blank" -> "PipePipe"
@@ -25,7 +25,11 @@ object MainScreenTabHelper {
             route.startsWith("feed/-1") -> stringResource(MR.strings.all_feed_title)
             route.contains("name=") -> {
                 val nameParam = route.substringAfter("name=").substringBefore('&')
-                runCatching{ URLDecoder.decode(nameParam, "UTF-8") }.getOrDefault(stringResource(MR.strings.unknown))
+                if (route.contains("url=trending")) {
+                    getTranslatedTrendingName(nameParam)
+                } else {
+                    runCatching{ URLDecoder.decode(nameParam, "UTF-8") }.getOrDefault(stringResource(MR.strings.unknown))
+                }
             }
             else -> route
         }
@@ -37,7 +41,6 @@ object MainScreenTabHelper {
     fun getTabIcon(route: String): ImageVector {
         return when {
             route.contains("url=trending") -> Icons.Default.Whatshot
-            route == "dashboard" -> Icons.Default.SpaceDashboard
             route == "subscriptions" -> Icons.Default.Subscriptions
             route == "bookmarked_playlists" || route.startsWith("playlist") -> Icons.Default.Bookmark
             route == "blank" -> Icons.Default.Tab

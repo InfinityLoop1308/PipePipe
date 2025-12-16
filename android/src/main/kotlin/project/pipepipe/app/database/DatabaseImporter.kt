@@ -9,8 +9,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import project.pipepipe.database.AppDatabase
 import project.pipepipe.app.MR
@@ -21,6 +19,7 @@ import project.pipepipe.app.helper.MainScreenTabDefaults
 import project.pipepipe.app.serialize.SavedTabsPayload
 import project.pipepipe.app.serialize.SavedTabPayload
 import project.pipepipe.app.PipePipeApplication
+import project.pipepipe.shared.infoitem.SupportedServiceInfo
 import java.net.URLEncoder
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
@@ -53,8 +52,6 @@ class DatabaseImporter(
 
         private const val SAVED_TABS_KEY = "saved_tabs_key"
         private const val CUSTOM_TABS_CONFIG_KEY = "custom_tabs_config_key"
-        private const val PINNED_PLAYLIST_TAB_ID = 8
-        private const val PINNED_FEED_GROUP_TAB_ID = 9
 
         private val savedTabsJsonParser = Json {
             ignoreUnknownKeys = true
@@ -219,7 +216,16 @@ class DatabaseImporter(
                 if (importSettings) {
                     if (settingsImported && tempSettingsFile.exists()) {
                         val snapshot = deserializeSettingsSnapshot(tempSettingsFile)
+
+                        // Save current supported_services before restore, as it's needed for tab conversion
+                        val currentSupportedServices = settingsManager.getString("supported_services")
+
                         settingsManager.restoreFrom(snapshot)
+
+                        // Restore supported_services immediately to ensure tab conversion works correctly
+                        if (currentSupportedServices.isNotBlank()) {
+                            settingsManager.putString("supported_services", currentSupportedServices)
+                        }
 
                         // Convert old list_view_mode to new grid layout settings
                         val listViewMode = snapshot["list_view_mode_key"] as? String
@@ -242,7 +248,6 @@ class DatabaseImporter(
                             ?: settingsManager.getString(SAVED_TABS_KEY).takeIf { it.isNotBlank() }
 
                         if (!savedTabsJson.isNullOrBlank()) {
-                            pinItemsFromSavedTabs(savedTabsJson)
                             convertSavedTabsToNewConfig(savedTabsJson)
                         }
 
@@ -288,39 +293,6 @@ class DatabaseImporter(
         return value as? String
     }
 
-    private suspend fun pinItemsFromSavedTabs(rawJson: String) {
-        val payload = savedTabsJsonParser.decodeFromString<SavedTabsPayload>(rawJson)
-
-        // Pin playlists (tab_id = 8)
-        val playlistTabs = payload.tabs.filter { it.tabId == PINNED_PLAYLIST_TAB_ID }
-
-        playlistTabs.forEach { tab ->
-            when {
-                // Local playlist: use playlistId
-                tab.playlistId!! != -1L -> {
-                    DatabaseOperations.setPlaylistPinned(tab.playlistId!!, true)
-                }
-                // Remote playlist: use playlistUrl
-                tab.playlistUrl != null -> {
-                    val remotePlaylist = DatabaseOperations.getRemotePlaylistByUrl(tab.playlistUrl!!)
-                    remotePlaylist?.uid?.let { playlistId ->
-                        DatabaseOperations.setRemotePlaylistPinned(playlistId, true)
-                    }
-                }
-            }
-        }
-
-        // Pin feed groups (tab_id = 9)
-        val feedGroupIdsToPin = payload.tabs
-            .filter { it.tabId == PINNED_FEED_GROUP_TAB_ID }
-            .mapNotNull { it.groupId }
-            .distinct()
-
-        feedGroupIdsToPin.forEach { groupId ->
-            DatabaseOperations.setFeedGroupPinned(groupId, true)
-        }
-    }
-
     private suspend fun convertSavedTabsToNewConfig(rawJson: String) {
         val payload = savedTabsJsonParser.decodeFromString<SavedTabsPayload>(rawJson)
 
@@ -349,13 +321,69 @@ class DatabaseImporter(
             2 -> "feed/-1"
             3 -> MainScreenTabDefaults.BOOKMARKED_PLAYLISTS_ROUTE
             4 -> "history"
-            5 -> null // Skip KIOSK tabs
+            5 -> convertKioskTab(tab)
             6 -> convertChannelTab(tab)
-            7 -> MainScreenTabDefaults.DASHBOARD_ROUTE
+            7 -> convertDefaultKioskTab()
             8 -> convertPlaylistTab(tab)
             9 -> convertChannelGroupTab(tab)
             else -> null
         }
+    }
+
+    private fun getSupportedServices(): List<SupportedServiceInfo> {
+        return try {
+            val jsonString = settingsManager.getString("supported_services")
+            if (jsonString.isNotEmpty()) {
+                Json.decodeFromString<List<SupportedServiceInfo>>(jsonString)
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun convertLegacyServiceId(intServiceId: Int): String? {
+        return when (intServiceId) {
+            0 -> "YOUTUBE"
+            5 -> "BILIBILI"
+            6 -> "NICONICO"
+            else -> null
+        }
+    }
+
+    private fun convertLegacyKioskId(kioskId: String?): String {
+        return when (kioskId) {
+            "Trending" -> "trending"
+            "Recommended Lives" -> "recommended_lives"
+            else -> "trending"
+        }
+    }
+
+    private fun convertDefaultKioskTab(): String? {
+        val services = getSupportedServices()
+        val firstTrending = services.firstOrNull()?.trendingList?.firstOrNull() ?: return null
+
+        val encodedUrl = URLEncoder.encode(firstTrending.url, "UTF-8")
+        val encodedName = URLEncoder.encode(firstTrending.name, "UTF-8")
+        return "playlist?url=$encodedUrl&name=$encodedName&serviceId=${firstTrending.serviceId}"
+    }
+
+    private fun convertKioskTab(tab: SavedTabPayload): String? {
+        val legacyServiceId = tab.serviceId ?: return null
+        val serviceId = convertLegacyServiceId(legacyServiceId) ?: return null
+        val targetKioskName = convertLegacyKioskId(tab.kioskId)
+
+        val services = getSupportedServices()
+        val service = services.find { it.serviceId == serviceId } ?: return null
+
+        val trendingInfo = service.trendingList.find { it.name == targetKioskName }
+            ?: service.trendingList.firstOrNull()
+            ?: return null
+
+        val encodedUrl = URLEncoder.encode(trendingInfo.url, "UTF-8")
+        val encodedName = URLEncoder.encode(trendingInfo.name, "UTF-8")
+        return "playlist?url=$encodedUrl&name=$encodedName&serviceId=${trendingInfo.serviceId}"
     }
 
     private suspend fun convertChannelTab(tab: SavedTabPayload): String? {

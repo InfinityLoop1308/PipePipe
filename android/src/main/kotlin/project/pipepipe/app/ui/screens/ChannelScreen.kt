@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.global.StringResourceHelper
+import project.pipepipe.app.helper.StringResourceHelper
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.FeedGroupSelectionDialog
 import project.pipepipe.app.ui.component.HtmlText

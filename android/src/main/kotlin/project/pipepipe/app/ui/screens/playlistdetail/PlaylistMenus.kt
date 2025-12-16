@@ -104,7 +104,6 @@ fun PlaylistMoreMenu(
     playlistType: PlaylistType,
     playlistUid: Long?,
     playlistName: String,
-    isPinned: Boolean,
     url: String,
     onRenameClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -144,24 +143,6 @@ fun PlaylistMoreMenu(
                         },
                         leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
                     )
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                if (isPinned) {
-                                    MR.strings.playlist_menu_unpin.desc().toString(context = context)
-                                } else {
-                                    MR.strings.playlist_menu_pin.desc().toString(context = context)
-                                }
-                            )
-                        },
-                        onClick = {
-                            showMoreMenu = false
-                            scope.launch {
-                                DatabaseOperations.setPlaylistPinned(playlistUid!!, !isPinned)
-                            }
-                        },
-                        leadingIcon = { Icon(imageVector = Icons.Default.PushPin, contentDescription = null) }
-                    )
                 }
 
                 PlaylistType.FEED -> {
@@ -183,25 +164,6 @@ fun PlaylistMoreMenu(
                                 onDeleteClick()
                             },
                             leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    if (isPinned) {
-                                        MR.strings.playlist_menu_unpin.desc().toString(context = context)
-                                    } else {
-                                        MR.strings.playlist_menu_pin.desc().toString(context = context)
-                                    }
-                                )
-                            },
-                            onClick = {
-                                showMoreMenu = false
-                                scope.launch {
-                                    DatabaseOperations.setFeedGroupPinned(feedId, !isPinned)
-                                    onReloadPlaylist()
-                                }
-                            },
-                            leadingIcon = { Icon(imageVector = Icons.Default.PushPin, contentDescription = null) }
                         )
                     }
                 }
@@ -237,30 +199,6 @@ fun PlaylistMoreMenu(
                                 contentDescription = null
                             )
                         }
-                    )
-
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                if (isPinned) {
-                                    MR.strings.playlist_menu_unpin.desc().toString(context = context)
-                                } else {
-                                    MR.strings.playlist_menu_pin.desc().toString(context = context)
-                                }
-                            )
-                        },
-                        onClick = {
-                            showMoreMenu = false
-                            scope.launch {
-                                if (!isBookmarked) {
-                                    // Auto-bookmark - will need to be handled in main screen
-                                } else {
-                                    DatabaseOperations.setRemotePlaylistPinned(playlistUid!!, !isPinned)
-                                }
-                                onReloadPlaylist()
-                            }
-                        },
-                        leadingIcon = { Icon(imageVector = Icons.Default.PushPin, contentDescription = null) }
                     )
 
                     DropdownMenuItem(

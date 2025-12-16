@@ -125,15 +125,13 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                     filteredItems
                 }
 
-                val isPinned = DatabaseOperations.getPinnedFeedGroups().any { it.uid == feedId }
                 setState { state ->
                     state.copy(
                         common = state.common.copy(isLoading = false),
                         playlistType = PlaylistType.FEED,
                         playlistInfo = PlaylistInfo(
                             url = url,
-                            name = name,
-                            isPinned = isPinned
+                            name = name
                         ),
                         list = state.list.copy(itemList = itemsWithNewFlag),
                         displayItems = itemsWithNewFlag,
@@ -181,8 +179,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
 
         val finalPlaylistInfo = if (bookmarkedPlaylist != null) {
             playlistInfo?.copy(
-                uid = bookmarkedPlaylist.uid,
-                isPinned = bookmarkedPlaylist.is_pinned != 0L
+                uid = bookmarkedPlaylist.uid
             )
         } else {
             playlistInfo

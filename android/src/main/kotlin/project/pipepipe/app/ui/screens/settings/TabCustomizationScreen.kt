@@ -26,7 +26,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.global.StringResourceHelper
+import project.pipepipe.app.helper.StringResourceHelper
 import project.pipepipe.app.helper.MainScreenTabDefaults
 import project.pipepipe.app.helper.MainScreenTabHelper
 import project.pipepipe.app.helper.MainScreenTabHelper.categoryIconFor
@@ -293,8 +293,7 @@ fun TabCustomizationScreen(
                         },
                         modifier = Modifier.clickable {
                             val encodedUrl = java.net.URLEncoder.encode(url, "UTF-8")
-                            val encodedName = java.net.URLEncoder.encode(translatedName, "UTF-8")
-                            val route = "playlist?url=$encodedUrl&name=$encodedName&serviceId=${serviceId}"
+                            val route = "playlist?url=$encodedUrl&name=$name&serviceId=${serviceId}"
                             addTab(route, tabs, settingsManager, { tabs = it }, alreadyExistsText)
                             showDialog = null
                         }

@@ -150,14 +150,6 @@ data class PlaylistUiState(
     val previousItemUrls: Set<String> = emptySet()
 ) : BaseUiState
 
-data class DashboardUiState(
-    val common: CommonUiState = CommonUiState(),
-    val feedGroups: List<Feed_group> = emptyList(),
-    val historyItems: List<StreamInfo> = emptyList(),
-    val playlists: List<PlaylistInfo> = emptyList(),
-    val trendingItems: List<TrendingInfo> = emptyList()
-) : BaseUiState
-
 data class SubscriptionsUiState(
     val common: CommonUiState = CommonUiState(),
     val feedGroups: List<Feed_group> = emptyList(),

@@ -1,4 +1,4 @@
-package project.pipepipe.app.global
+package project.pipepipe.app.helper
 
 import androidx.compose.runtime.Composable
 import dev.icerock.moko.resources.compose.stringResource
@@ -56,7 +56,7 @@ object StringResourceHelper {
             "year" -> stringResource(MR.strings.upload_year)
 
             "sort_descending" -> stringResource(MR.strings.sort_descending)
-            "sort_ascending" ->stringResource(MR.strings.sort_ascending)
+            "sort_ascending" -> stringResource(MR.strings.sort_ascending)
 
             else -> filter
         }

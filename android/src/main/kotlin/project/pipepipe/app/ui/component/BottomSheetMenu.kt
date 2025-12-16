@@ -354,20 +354,6 @@ private fun PlaylistInfoMenuItems(
         Triple(Icons.Default.Edit, MR.strings.playlist_menu_rename.desc().toString(context = context)) {
             showRenameDialog = true
         },
-        Triple(Icons.Default.PushPin,
-            if (playlistInfo.isPinned) {
-                MR.strings.playlist_menu_unpin.desc().toString(context = context)
-            } else {
-                MR.strings.playlist_menu_pin.desc().toString(context = context)
-            }
-        ) {
-            GlobalScope.launch {
-                playlistInfo.uid?.let { uid ->
-                    DatabaseOperations.setPlaylistPinned(uid, !playlistInfo.isPinned)
-                }
-            }
-            onDismiss()
-        },
         Triple(Icons.Default.Delete, MR.strings.playlist_menu_delete.desc().toString(context = context)) {
             showDeleteDialog = true
         }

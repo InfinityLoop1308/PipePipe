@@ -148,7 +148,6 @@ fun TabNavigationScreen(navController: NavController) {
             val route = tabConfigs[page]
             val baseRoute = route.substringBefore('?')
             when {
-                route == "dashboard" -> DashboardScreen(navController = navController)
                 route == "subscriptions" -> SubscriptionsScreen(navController = navController, useAsTab = true)
                 route == "bookmarked_playlists" -> BookmarkedPlaylistScreen(navController = navController, useAsTab = true)
                 route == "blank" -> BlankPageScreen()

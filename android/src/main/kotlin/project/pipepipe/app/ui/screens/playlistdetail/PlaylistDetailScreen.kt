@@ -44,7 +44,7 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.global.StringResourceHelper
+import project.pipepipe.app.helper.StringResourceHelper
 import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.service.FeedUpdateManager
 import project.pipepipe.app.service.FeedWorkState
@@ -396,7 +396,6 @@ fun PlaylistDetailScreen(
                                 playlistType = uiState.playlistType,
                                 playlistUid = uiState.playlistInfo?.uid,
                                 playlistName = uiState.playlistInfo?.name ?: "",
-                                isPinned = uiState.playlistInfo?.isPinned ?: false,
                                 url = url,
                                 onRenameClick = { showRenameDialog = true },
                                 onDeleteClick = { showDeleteDialog = true },
