@@ -127,6 +127,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer-dash:1.8.0")
     implementation("androidx.media3:media3-exoplayer-hls:1.8.0")
     implementation("androidx.concurrent:concurrent-futures:1.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.10.2")
     implementation("androidx.compose.foundation:foundation")
     implementation("io.ktor:ktor-client-okhttp:3.2.3")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")

@@ -32,6 +32,11 @@
             android:shell="true"
             tools:targetApi="29" />
 
+        <!-- Android Auto support -->
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
         <activity
             android:name="project.pipepipe.app.MainActivity"
             android:exported="true"
@@ -98,6 +103,7 @@
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService"/>
+                <action android:name="android.media.browse.MediaBrowserService"/>
             </intent-filter>
         </service>
         <service

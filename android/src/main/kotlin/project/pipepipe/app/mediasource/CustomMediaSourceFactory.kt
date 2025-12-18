@@ -29,6 +29,7 @@ import androidx.media3.extractor.metadata.icy.IcyHeaders
 import kotlinx.coroutines.*
 import java.io.IOException
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.service.MediaBrowserHelper
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.shared.job.SupportedJobType
@@ -56,7 +57,31 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
     }
 
     override fun createMediaSource(mediaItem: MediaItem): MediaSource {
-        val extras = mediaItem.mediaMetadata.extras!!
+        var item = mediaItem
+        var extras = mediaItem.mediaMetadata.extras
+
+        // Handle Android Auto media IDs (auto://{serviceId}/{realUrl}?name=...&artist=...)
+        // Extras and metadata are lost during IPC, so rebuild MediaItem from encoded URL
+        val autoMediaInfo = MediaBrowserHelper.parseAutoMediaId(mediaItem.mediaId)
+        if (autoMediaInfo != null) {
+            val rebuiltExtras = Bundle().apply {
+                putString("KEY_SERVICE_ID", autoMediaInfo.serviceId)
+            }
+            item = mediaItem.buildUpon()
+                .setMediaId(autoMediaInfo.realUrl)
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle(autoMediaInfo.name)
+                        .setArtist(autoMediaInfo.artist)
+                        .setArtworkUri(autoMediaInfo.thumbnailUrl?.let { Uri.parse(it) })
+                        .setDurationMs(autoMediaInfo.durationMs)
+                        .setExtras(rebuiltExtras)
+                        .build()
+                )
+                .build()
+            extras = rebuiltExtras
+        }
+        extras!!
 
         val dashManifestString = extras.getString("KEY_DASH_MANIFEST")
         val dashUrl = extras.getString("KEY_DASH_URL")
@@ -67,11 +92,11 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
 
         if (dashManifestString == null && dashUrl == null && hlsUrl == null) {
             return LazyUrlMediaSource(
-                mediaItem = mediaItem,
+                mediaItem = item,
                 mediaSourceFactory = this,
             )
         }
-        return createActualMediaSource(mediaItem, dashManifestString, dashUrl, hlsUrl, headers, sponsorblockUrl, relatedItemUrl)
+        return createActualMediaSource(item, dashManifestString, dashUrl, hlsUrl, headers, sponsorblockUrl, relatedItemUrl)
     }
 
 

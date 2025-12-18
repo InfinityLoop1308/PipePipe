@@ -13,26 +13,28 @@ import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.*
+import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.russhwolf.settings.SettingsListener
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.*
+import kotlinx.coroutines.guava.future
 import project.pipepipe.app.MR
-import project.pipepipe.app.mediasource.CustomMediaSourceFactory
-import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.SharedContext.playbackMode
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.executeJobFlow
-import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
-import project.pipepipe.shared.job.SupportedJobType
+import project.pipepipe.app.mediasource.CustomMediaSourceFactory
+import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.ui.component.player.SponsorBlockHelper
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.RelatedItemInfo
+import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
+import project.pipepipe.shared.infoitem.StreamInfo
+import project.pipepipe.shared.job.SupportedJobType
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.media3.ui.R as Media3UiR
@@ -55,6 +57,10 @@ class PlaybackService : MediaLibraryService() {
     private val skippedSegments = mutableMapOf<String, MutableSet<String>>()
     private var sponsorBlockCheckJob: Job? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    // Search result cache for Android Auto
+    private var lastSearchQuery: String? = null
+    private var lastSearchResults: List<MediaItem> = emptyList()
 
 
     // Skip silence setting listener
@@ -282,7 +288,8 @@ class PlaybackService : MediaLibraryService() {
                 session: MediaSession,
                 controller: MediaSession.ControllerInfo
             ): MediaSession.ConnectionResult {
-                val availableSessionCommands = MediaSession.ConnectionResult.DEFAULT_SESSION_COMMANDS.buildUpon()
+                // Use DEFAULT_SESSION_AND_LIBRARY_COMMANDS to allow library browsing (Android Auto)
+                val availableSessionCommands = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
                     .add(SessionCommand(CustomCommands.ACTION_SET_PLAYBACK_MODE, Bundle.EMPTY))
                     .add(CustomCommands.STOP_SERVICE_COMMAND)
                     .add(CustomCommands.CHANGE_REPEAT_MODE_COMMAND)
@@ -333,6 +340,111 @@ class PlaybackService : MediaLibraryService() {
                 )
                 return Futures.immediateFuture(result)
             }
+
+            // Android Auto / Media Browser callbacks
+            override fun onGetLibraryRoot(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                params: LibraryParams?
+            ): ListenableFuture<LibraryResult<MediaItem>> {
+                val rootItem = MediaBrowserHelper.createRootMediaItem()
+                return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params))
+            }
+
+            override fun onGetChildren(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                parentId: String,
+                page: Int,
+                pageSize: Int,
+                params: LibraryParams?
+            ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
+                return serviceScope.future {
+                    val children = MediaBrowserHelper.getChildren(parentId, this@PlaybackService)
+                    if (children != null) {
+                        LibraryResult.ofItemList(children, params)
+                    } else {
+                        LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
+                    }
+                }
+            }
+
+            override fun onGetItem(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                mediaId: String
+            ): ListenableFuture<LibraryResult<MediaItem>> {
+                return serviceScope.future {
+                    val item = MediaBrowserHelper.getItem(mediaId)
+                    if (item != null) {
+                        LibraryResult.ofItem(item, null)
+                    } else {
+                        LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
+                    }
+                }
+            }
+
+            override fun onPlaybackResumption(
+                mediaSession: MediaSession,
+                controller: MediaSession.ControllerInfo
+            ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+                // Load history for playback resumption
+                return serviceScope.future {
+                    val historyItems = MediaBrowserHelper.loadHistoryItems()
+                    if (historyItems.isNotEmpty()) {
+                        MediaSession.MediaItemsWithStartPosition(
+                            historyItems,
+                            0,
+                            C.TIME_UNSET
+                        )
+                    } else {
+                        MediaSession.MediaItemsWithStartPosition(
+                            emptyList(),
+                            0,
+                            C.TIME_UNSET
+                        )
+                    }
+                }
+            }
+
+            override fun onSearch(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                query: String,
+                params: LibraryParams?
+            ): ListenableFuture<LibraryResult<Void>> {
+                return serviceScope.future {
+                    val results = MediaBrowserHelper.onSearch(query)
+                    // Cache the results
+                    lastSearchQuery = query
+                    lastSearchResults = results
+                    // Notify client that search results are ready
+                    session.notifySearchResultChanged(browser, query, results.size, params)
+                    LibraryResult.ofVoid(params)
+                }
+            }
+
+            override fun onGetSearchResult(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                query: String,
+                page: Int,
+                pageSize: Int,
+                params: LibraryParams?
+            ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
+                return serviceScope.future {
+                    // Use cached results if query matches, otherwise re-fetch
+                    val results = if (query == lastSearchQuery) {
+                        lastSearchResults
+                    } else {
+                        MediaBrowserHelper.onSearch(query).also {
+                            lastSearchQuery = query
+                            lastSearchResults = it
+                        }
+                    }
+                    LibraryResult.ofItemList(results, params)
+                }
+            }
         }
         val mediaButtonPreferences = listOf(
             CommandButton.Builder()
@@ -380,6 +492,20 @@ class PlaybackService : MediaLibraryService() {
                     loadSponsorBlock(event.mediaId, event.sponsorblockUrl)
                     loadAutoplayNext(event.mediaId, event.relatedItemUrl,
                         player.currentMediaItem?.mediaMetadata?.extras?.getString("KEY_SERVICE_ID"))
+                }
+            }
+        }
+
+        // Monitor history changes for Android Auto
+        serviceScope.launch {
+            SharedContext.historyChanged.collect {
+                session?.connectedControllers?.forEach { controller ->
+                    session?.notifyChildrenChanged(
+                        controller,
+                        MediaBrowserHelper.MEDIA_HISTORY_ID,
+                        Int.MAX_VALUE,
+                        null
+                    )
                 }
             }
         }
