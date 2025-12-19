@@ -143,7 +143,7 @@ fun TabNavigationScreen(navController: NavController) {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
-            beyondViewportPageCount = 0
+            beyondViewportPageCount = 3
         ) { page ->
             val route = tabConfigs[page]
             val baseRoute = route.substringBefore('?')

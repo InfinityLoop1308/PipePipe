@@ -173,13 +173,13 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
 
         // Check if this remote playlist is bookmarked in database
-        val playlistInfo = result.info as? PlaylistInfo
-        val bookmarkedPlaylist = if (playlistInfo?.serviceId != null) {
+        val playlistInfo = (result.info as? PlaylistInfo) ?: PlaylistInfo(url = url, name = "unknown")
+        val bookmarkedPlaylist = if (playlistInfo.serviceId != null) {
             DatabaseOperations.getRemotePlaylistByUrl(playlistInfo.url)
         } else null
 
         val finalPlaylistInfo = if (bookmarkedPlaylist != null) {
-            playlistInfo?.copy(
+            playlistInfo.copy(
                 uid = bookmarkedPlaylist.uid
             )
         } else {
