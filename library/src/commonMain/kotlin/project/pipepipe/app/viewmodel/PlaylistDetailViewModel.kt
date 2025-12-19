@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations.withProgress
 import project.pipepipe.app.helper.FilterHelper
 import project.pipepipe.app.uistate.ErrorInfo
 import project.pipepipe.app.uistate.ListUiState
@@ -210,7 +211,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                 playlistInfo = finalPlaylistInfo,
                 playlistType = if (isTrending) PlaylistType.TRENDING else PlaylistType.REMOTE,
                 list = ListUiState(
-                    itemList = items,
+                    itemList = items.withProgress(),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 ),
                 sortMode = sortMode
@@ -250,29 +251,29 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
 
 
+        val newItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+        val currentItems = uiState.value.list.itemList
+        val combinedList = (currentItems + newItems).distinctBy { it.url }
+
+        // Apply filters only for trending
+        val finalList = if (uiState.value.playlistType == PlaylistType.TRENDING) {
+            val (filteredList, _) = FilterHelper.filterStreamInfoList(
+                combinedList,
+                FilterHelper.FilterScope.RECOMMENDATIONS
+            )
+            filteredList
+        } else {
+            combinedList
+        }
+
         setState {
-            val newItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
-            val combinedList = (it.list.itemList + newItems)
-                .distinctBy { item -> item.url }
-
-            // Apply filters only for trending
-            val finalList = if (it.playlistType == PlaylistType.TRENDING) {
-                val (filteredList, _) = FilterHelper.filterStreamInfoList(
-                    combinedList,
-                    FilterHelper.FilterScope.RECOMMENDATIONS
-                )
-                filteredList
-            } else {
-                combinedList
-            }
-
             it.copy(
                 common = it.common.copy(
                     isLoading = false,
                     error = null
                 ),
                 list = it.list.copy(
-                    itemList = finalList,
+                    itemList = finalList.withProgress(),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )

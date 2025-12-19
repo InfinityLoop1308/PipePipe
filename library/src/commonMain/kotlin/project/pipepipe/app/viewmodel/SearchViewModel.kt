@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations.withProgress
 import project.pipepipe.app.helper.FilterHelper
 import project.pipepipe.app.helper.executeClientTasksConcurrent
 import project.pipepipe.app.helper.executeJobFlow
@@ -246,7 +247,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                     error = null
                 ),
                 list = it.list.copy(
-                    itemList = if(shouldFilter)filteredItems else result.pagedData!!.itemList,
+                    itemList = if(shouldFilter) filteredItems.withProgress() else result.pagedData!!.itemList,
                     nextPageUrl = result.pagedData!!.nextPageUrl
                 ),
             )
@@ -297,7 +298,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                     error = null
                 ),
                 list = it.list.copy(
-                    itemList = it.list.itemList + (if (shouldFilter) filteredItems else result.pagedData?.itemList ?: emptyList()),
+                    itemList = it.list.itemList + (if (shouldFilter) filteredItems.withProgress() else result.pagedData?.itemList ?: emptyList()),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )

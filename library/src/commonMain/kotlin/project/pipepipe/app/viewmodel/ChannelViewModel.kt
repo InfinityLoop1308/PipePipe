@@ -3,6 +3,7 @@ package project.pipepipe.app.viewmodel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.database.DatabaseOperations.withProgress
 import project.pipepipe.app.helper.FilterHelper
 import project.pipepipe.app.uistate.ChannelUiState
 import project.pipepipe.app.uistate.ErrorInfo
@@ -57,7 +58,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                 ),
                 channelInfo = result.info!! as ChannelInfo,
                 videoTab = ListUiState(
-                    itemList = filteredItems,
+                    itemList = filteredItems.withProgress(),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )
@@ -108,7 +109,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                     error = null
                 ),
                 videoTab = it.videoTab.copy(
-                    itemList = it.videoTab.itemList + filteredItems,
+                    itemList = it.videoTab.itemList + filteredItems.withProgress(),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )
@@ -156,7 +157,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                     error = null
                 ),
                 liveTab = ListUiState(
-                    itemList = filteredItems,
+                    itemList = filteredItems.withProgress(),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )
@@ -205,7 +206,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                     error = null
                 ),
                 liveTab = it.liveTab.copy(
-                    itemList = it.liveTab.itemList + filteredItems,
+                    itemList = it.liveTab.itemList + filteredItems.withProgress(),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )
@@ -253,7 +254,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                     error = null
                 ),
                 shortsTab = ListUiState(
-                    itemList = filteredItems,
+                    itemList = filteredItems.withProgress(),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )
@@ -302,7 +303,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
                     error = null
                 ),
                 shortsTab = it.shortsTab.copy(
-                    itemList = it.shortsTab.itemList + filteredItems,
+                    itemList = it.shortsTab.itemList + filteredItems.withProgress(),
                     nextPageUrl = result.pagedData?.nextPageUrl
                 )
             )

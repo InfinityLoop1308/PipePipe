@@ -237,6 +237,9 @@ WHERE url = ?;
 selectStreamProgress:
 SELECT progress_time FROM streams WHERE url = ?;
 
+selectStreamProgressesByUrls:
+SELECT url, progress_time FROM streams WHERE url IN ?;
+
 clearAllPlaybackStates:
 UPDATE streams
 SET progress_time = 0;

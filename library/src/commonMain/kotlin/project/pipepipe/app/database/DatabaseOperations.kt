@@ -1,6 +1,7 @@
 package project.pipepipe.app.database
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import project.pipepipe.database.Search_history
 import project.pipepipe.app.SharedContext
@@ -330,6 +331,24 @@ object DatabaseOperations {
         val enablePlaybackResume = SharedContext.settingsManager.getBoolean("enable_playback_resume", true)
         if (!enablePlaybackResume) return@withContext null
         database.appDatabaseQueries.selectStreamProgress(url).executeAsOneOrNull()
+    }
+
+    suspend fun getStreamProgressesByUrls(urls: List<String>): Map<String, Long> = withContext(Dispatchers.IO) {
+        val enablePlaybackResume = SharedContext.settingsManager.getBoolean("enable_playback_resume", true)
+        if (!enablePlaybackResume || urls.isEmpty()) return@withContext emptyMap()
+        database.appDatabaseQueries.selectStreamProgressesByUrls(urls)
+            .executeAsList()
+            .filter { it.progress_time != null && it.progress_time > 0 }
+            .associate { it.url to it.progress_time!! }
+    }
+
+    fun List<StreamInfo>.withProgress(): List<StreamInfo> {
+        if (isEmpty()) return this
+        val progressMap = runBlocking{ getStreamProgressesByUrls(map { it.url }) }
+        if (progressMap.isEmpty()) return this
+        return map { item ->
+            progressMap[item.url]?.let { progress -> item.copy(progress = progress) } ?: item
+        }
     }
 
     suspend fun clearAllPlaybackStates() = withContext(Dispatchers.IO) {
