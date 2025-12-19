@@ -26,7 +26,7 @@ CREATE TABLE streams (
     service_id TEXT NOT NULL,
     url TEXT NOT NULL,
     title TEXT NOT NULL,
-    stream_type TEXT NOT NULL,
+    is_live INTEGER NOT NULL DEFAULT 0,
     view_count INTEGER,
     duration INTEGER NOT NULL,
     uploader TEXT NOT NULL,
@@ -181,7 +181,7 @@ WHERE psj.playlist_id = ?
 ORDER BY psj.join_index;
 
 insertStream:
-INSERT INTO streams (service_id, url, title, stream_type, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, is_paid, is_short)
+INSERT INTO streams (service_id, url, title, is_live, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, is_paid, is_short)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateStream:
@@ -189,7 +189,7 @@ UPDATE streams
 SET
     service_id = ?,
     title = ?,
-    stream_type = ?,
+    is_live = ?,
     view_count = ?,
     duration = ?,
     uploader = ?,

@@ -1,0 +1,48 @@
+-- Migration 904: Convert stream_type to is_live boolean
+-- Changes stream_type TEXT to is_live INTEGER (boolean)
+-- LIVE_STREAM -> 1 (true), all others -> 0 (false)
+
+-- ============================================================
+-- Part 1: Create new streams table with is_live column
+-- ============================================================
+
+CREATE TABLE streams_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id TEXT NOT NULL,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    is_live INTEGER NOT NULL DEFAULT 0,
+    view_count INTEGER,
+    duration INTEGER NOT NULL,
+    uploader TEXT NOT NULL,
+    uploader_url TEXT,
+    thumbnail_url TEXT,
+    upload_date INTEGER,
+    last_access_date INTEGER,
+    repeat_count INTEGER NOT NULL DEFAULT 0,
+    progress_time INTEGER NOT NULL DEFAULT 0,
+    is_paid INTEGER NOT NULL DEFAULT 0,
+    is_short INTEGER NOT NULL DEFAULT 0
+);
+
+-- ============================================================
+-- Part 2: Migrate data with stream_type conversion
+-- ============================================================
+
+INSERT INTO streams_new (uid, service_id, url, title, is_live, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, last_access_date, repeat_count, progress_time, is_paid, is_short)
+SELECT uid, service_id, url, title, CASE WHEN stream_type = 'LIVE_STREAM' THEN 1 ELSE 0 END, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, last_access_date, repeat_count, progress_time, is_paid, is_short
+FROM streams;
+
+-- ============================================================
+-- Part 3: Drop old table and rename new table
+-- ============================================================
+
+DROP TABLE streams;
+ALTER TABLE streams_new RENAME TO streams;
+
+-- ============================================================
+-- Part 4: Recreate indexes
+-- ============================================================
+
+CREATE UNIQUE INDEX index_streams_service_id_url ON streams (service_id, url);
+CREATE INDEX index_streams_last_access_date ON streams (last_access_date);

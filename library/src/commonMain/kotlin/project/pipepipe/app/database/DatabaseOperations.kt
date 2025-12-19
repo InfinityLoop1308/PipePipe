@@ -9,7 +9,6 @@ import project.pipepipe.app.SharedContext.database
 import project.pipepipe.shared.infoitem.ChannelInfo
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.infoitem.StreamType
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -20,7 +19,7 @@ object DatabaseOperations {
                 StreamInfo(
                     url = row.url,
                     serviceId = row.service_id,
-                    streamType = StreamType.valueOf(row.stream_type),
+                    isLive = row.is_live != 0L,
                     name = row.title,
                     uploaderUrl = row.uploader_url,
                     uploaderName = row.uploader,
@@ -41,7 +40,7 @@ object DatabaseOperations {
             StreamInfo(
                 url = row.url,
                 serviceId = row.service_id,
-                streamType = StreamType.valueOf(row.stream_type),
+                isLive = row.is_live != 0L,
                 name = row.title,
                 uploaderName = row.uploader,
                 uploaderUrl = row.uploader_url,
@@ -69,7 +68,7 @@ object DatabaseOperations {
             StreamInfo(
                 url = row.url,
                 serviceId = row.service_id,
-                streamType = StreamType.valueOf(row.stream_type),
+                isLive = row.is_live != 0L,
                 name = row.title,
                 uploaderName = row.uploader,
                 uploaderUrl = row.uploader_url,
@@ -139,7 +138,7 @@ object DatabaseOperations {
             database.appDatabaseQueries.updateStream(
                 service_id = streamInfo.serviceId,
                 title = streamInfo.name ?: "Unknown",
-                stream_type = streamInfo.streamType.name,
+                is_live = if (streamInfo.isLive) 1L else 0L,
                 view_count = streamInfo.viewCount,
                 duration = streamInfo.duration ?: 0,
                 uploader = streamInfo.uploaderName ?: "Unknown",
@@ -155,7 +154,7 @@ object DatabaseOperations {
                 streamInfo.serviceId,
                 streamInfo.url,
                 streamInfo.name ?: "Unknown",
-                streamInfo.streamType.name,
+                if (streamInfo.isLive) 1L else 0L,
                 streamInfo.viewCount,
                 streamInfo.duration?:0,
                 streamInfo.uploaderName?: "Unknown",

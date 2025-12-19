@@ -31,7 +31,6 @@ import java.io.IOException
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.service.MediaBrowserHelper
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.SharedContext
@@ -368,7 +367,7 @@ fun StreamInfo.toMediaItem(): MediaItem {
         putString("KEY_HLS_URL", hlsUrl)
         putString("KEY_SERVICE_ID", serviceId)
         putSerializable("KEY_HEADER_MAP", headers)
-        putBoolean("KEY_USE_CACHE", streamType != StreamType.LIVE_STREAM)
+        putBoolean("KEY_USE_CACHE", !isLive)
         putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)
         putString("KEY_RELATED_ITEM_URL", relatedItemUrl)
     }

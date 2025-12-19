@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -24,18 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import project.pipepipe.shared.infoitem.StreamInfo
-
-import java.text.NumberFormat
-import java.util.*
-import project.pipepipe.shared.infoitem.StreamType
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import project.pipepipe.app.MR
-import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ToastManager
+import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.utils.formatCount
+import project.pipepipe.shared.infoitem.StreamInfo
+import java.text.NumberFormat
+import java.util.*
 
 @Composable
 fun VideoTitleSection(name: String?) {
@@ -74,7 +71,6 @@ fun VideoTitleSection(name: String?) {
 
 @Composable
 fun VideoDetailSection(streamInfo: StreamInfo, navController: NavController) {
-    val isLive = streamInfo.streamType == StreamType.LIVE_STREAM
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -146,7 +142,7 @@ fun VideoDetailSection(streamInfo: StreamInfo, navController: NavController) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "${NumberFormat.getNumberInstance(Locale.US).format(streamInfo.viewCount ?: 0)} ${if (!isLive) stringResource(MR.strings.video_info_views) else stringResource(MR.strings.video_info_watching)}",
+                text = "${NumberFormat.getNumberInstance(Locale.US).format(streamInfo.viewCount ?: 0)} ${if (!streamInfo.isLive) stringResource(MR.strings.video_info_views) else stringResource(MR.strings.video_info_watching)}",
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center,
                 maxLines = 1,

@@ -3,7 +3,6 @@ package project.pipepipe.app.ui.item
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,10 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,20 +30,14 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
-import project.pipepipe.app.ui.component.player.SponsorBlockUtils
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ColorHelper
-import project.pipepipe.app.utils.formatCount
-import project.pipepipe.shared.infoitem.Info
-import project.pipepipe.shared.infoitem.PlaylistInfo
-import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.infoitem.ChannelInfo
-import project.pipepipe.shared.infoitem.StreamInfoWithCallback
-import project.pipepipe.app.utils.toDurationString
-import project.pipepipe.app.utils.formatRelativeTime
-import project.pipepipe.shared.infoitem.StreamType
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.utils.formatAbsoluteTime
+import project.pipepipe.app.utils.formatCount
+import project.pipepipe.app.utils.formatRelativeTime
+import project.pipepipe.app.utils.toDurationString
+import project.pipepipe.shared.infoitem.*
 
 enum class DisplayType{
     ORIGIN,
@@ -227,7 +219,7 @@ private fun StreamOrPlaylistListItem(
             thumbnailUrl = item.thumbnailUrl
             uploaderName = item.uploaderName
             title = item.name!!
-            isLive = item.streamType == StreamType.LIVE_STREAM
+            isLive = item.isLive
         }
         is PlaylistInfo -> {
             streamCount = item.streamCount
@@ -497,7 +489,7 @@ private fun StreamOrPlaylistGridItem(
             thumbnailUrl = item.thumbnailUrl
             uploaderName = item.uploaderName
             title = item.name!!
-            isLive = item.streamType == StreamType.LIVE_STREAM
+            isLive = item.isLive
         }
         is PlaylistInfo -> {
             streamCount = item.streamCount
