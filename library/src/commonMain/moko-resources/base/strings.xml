@@ -219,6 +219,7 @@
 <string name="settings_category_sponsor_block_category_pending_summary">Represents a new segment ready to be submitted.</string>
 <string name="add_filter">Add Filter</string>
 <string name="add_to_playlist">Add to playlist</string>
+<string name="mark_as_watched">Mark as watched</string>
 <string name="back">Back</string>
 <string name="channel_videos">Channel videos</string>
 <string name="create">Create</string>

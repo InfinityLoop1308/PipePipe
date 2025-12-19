@@ -217,12 +217,22 @@ private fun StreamInfoMenuItems(
                 }
                 onDismiss()
             })
+            add(Triple(Icons.Default.PictureInPicture, stringResource(MR.strings.pip)) {
+                mediaController?.let { PipHelper.enterPipMode(it, streamInfo, activity) }
+                onDismiss()
+            })
         }
 
-        add(Triple(Icons.Default.PictureInPicture, stringResource(MR.strings.pip)) {
-            mediaController?.let { PipHelper.enterPipMode(it, streamInfo, activity) }
-            onDismiss()
-        })
+        if (streamInfo.duration != null && streamInfo.duration!! > 0) {
+            add(Triple(Icons.Default.Visibility, stringResource(MR.strings.mark_as_watched)) {
+                GlobalScope.launch {
+                    DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
+                    DatabaseOperations.updateStreamProgress(streamInfo.url, streamInfo.duration!! * 1000)
+                }
+                ToastManager.show(doneText)
+                onDismiss()
+            })
+        }
         add(Triple(Icons.AutoMirrored.Filled.PlaylistAdd, stringResource(MR.strings.add_to_playlist)) {
             showPlaylistPopup = true
         })
