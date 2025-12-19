@@ -13,18 +13,21 @@ import android.util.Rational
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
@@ -40,7 +43,6 @@ import project.pipepipe.app.global.PipHelper
 import project.pipepipe.app.helper.ExternalUrlPatternHelper
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.service.PlaybackService
-import project.pipepipe.app.service.UpdateCheckWorker
 import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.ui.component.*
 import project.pipepipe.app.ui.navigation.NavGraph
@@ -141,6 +143,9 @@ class MainActivity : ComponentActivity() {
                         val showPlayQueue by SharedContext.playQueueVisibility.collectAsState()
                         val scope = rememberCoroutineScope()
 
+                        val focusRequester = remember { FocusRequester() }
+
+
                         val bottomPlayerExtraHeight = 64.dp
                         val animatedExtraPadding by animateDpAsState(
                             targetValue = when (videoDetailUiState.pageState) {
@@ -156,10 +161,26 @@ class MainActivity : ComponentActivity() {
                                     .fillMaxSize()
                                     .navigationBarsPadding()
                                     .padding(bottom = animatedExtraPadding)
+                                    .then(
+                                        if (SharedContext.isTv && videoDetailUiState.pageState == VideoDetailPageState.DETAIL_PAGE) {
+                                            Modifier.focusProperties { canFocus = false }
+                                        } else {
+                                            Modifier
+                                        }
+                                    )
                             )
+                            var videoDetailScreenModifier = Modifier
+                            .navigationBarsPadding()
+                            .statusBarsPadding()
+
+                            if (SharedContext.isTv && videoDetailUiState.pageState != VideoDetailPageState.HIDDEN) {
+                                videoDetailScreenModifier = videoDetailScreenModifier.fillMaxSize().focusGroup()
+                                    .focusRequester(focusRequester)
+                                runCatching { focusRequester.requestFocus() }.onFailure { it.printStackTrace() }
+                            }
 
                             VideoDetailScreen(
-                                modifier = Modifier.navigationBarsPadding().statusBarsPadding(),
+                                modifier = videoDetailScreenModifier,
                                 navController = navController
                             )
                             if (showPlayQueue) {

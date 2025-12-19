@@ -16,19 +16,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import project.pipepipe.shared.infoitem.CommentInfo
-import project.pipepipe.app.utils.formatRelativeTime
-import project.pipepipe.app.ui.theme.supportingTextColor
-import project.pipepipe.app.SharedContext
-import project.pipepipe.app.ui.component.HtmlText
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.ui.component.HtmlText
+import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.utils.formatCount
+import project.pipepipe.app.utils.formatRelativeTime
+import project.pipepipe.shared.infoitem.CommentInfo
 
 @Composable
 fun CommentItem(
     commentInfo: CommentInfo,
-    onItemClick: () -> Unit = {},
     onReplyButtonClick: () -> Unit = {},
     onChannelAvatarClick: () -> Unit?,
     onTimestampClick: (Long) -> Unit,
@@ -36,8 +35,7 @@ fun CommentItem(
 ) {
     Surface(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable { onItemClick() },
+            .fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface
     ) {
         Row(
@@ -53,7 +51,7 @@ fun CommentItem(
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
-                    .clickable{ onChannelAvatarClick() },
+                    .clickable(onClick = { onChannelAvatarClick() }, enabled = !SharedContext.isTv ),
                 contentScale = ContentScale.Crop,
 //                placeholder = painterResource(R.drawable.buddy),
 //                error = painterResource(R.drawable.buddy)

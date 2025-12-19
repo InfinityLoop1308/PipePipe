@@ -51,6 +51,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -141,7 +143,8 @@ fun PlayerControl(
     onSubtitleMenuChange: (Boolean) -> Unit,
     onSleepTimerDialogChange: (Boolean) -> Unit,
     onPipClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    playPauseFocusRequester: FocusRequester? = null
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         // Semi-transparent background when controls are visible
@@ -377,7 +380,15 @@ fun PlayerControl(
                     }
                     IconButton(
                         onClick = callbacks.onPlayPauseClick,
-                        modifier = Modifier.size(60.dp)
+                        modifier = Modifier
+                            .size(60.dp)
+                            .then(
+                                if (playPauseFocusRequester != null) {
+                                    Modifier.focusRequester(playPauseFocusRequester)
+                                } else {
+                                    Modifier
+                                }
+                            )
                     ) {
                         Icon(
                             if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,

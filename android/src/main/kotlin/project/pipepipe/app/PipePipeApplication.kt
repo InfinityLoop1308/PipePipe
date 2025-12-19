@@ -24,6 +24,7 @@ import project.pipepipe.app.download.DownloadManagerHolder
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.ffmpeg.FFmpeg
 import android.util.Log
+import android.content.pm.PackageManager
 
 class PipePipeApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -61,6 +62,7 @@ class PipePipeApplication : Application() {
         }
 
         // Initialize SharedContext
+        SharedContext.isTv = packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
         SharedContext.downloader = Downloader(HttpClient(OkHttp))
         SharedContext.settingsManager = SettingsManager()
         SharedContext.cookieManager = CookieManager()

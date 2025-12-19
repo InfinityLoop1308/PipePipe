@@ -26,6 +26,7 @@ enum class PlaybackMode {
 }
 
 object SharedContext {
+    var isTv: Boolean = false
     lateinit var downloader: Downloader
     val objectMapper = ObjectMapper()
     lateinit var cookieManager: CookieManager

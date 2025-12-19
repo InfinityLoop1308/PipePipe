@@ -12,9 +12,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import android.content.pm.PackageManager
+import android.view.KeyEvent
+import androidx.compose.foundation.focusable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -145,6 +151,10 @@ fun VideoPlayer(
     val density = LocalDensity.current
     val rotationThresholdPx = remember(density) { with(density) { 40.dp.toPx() } }
     val gestureScope = rememberCoroutineScope()
+
+    // TV support
+    val playerFocusRequester = remember { FocusRequester() }
+    val playPauseFocusRequester = remember { FocusRequester() }
 
     val isFullscreenMode =
         SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.FULLSCREEN_PLAYER
@@ -676,6 +686,12 @@ fun VideoPlayer(
                     .clickable {
                         mediaController.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
                         mediaController.playFromStreamInfo(streamInfo)
+                        if (SharedContext.isTv) {
+                            gestureScope.launch {
+                                delay(100)
+                                runCatching { playerFocusRequester.requestFocus() }
+                            }
+                        }
                     }
             )
             Icon(
@@ -687,11 +703,66 @@ fun VideoPlayer(
                     .size(64.dp)
             )
         } else {
+            val seekMs = remember {
+                SharedContext.settingsManager.getString("seek_duration_key", "15000").toLong()
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black)
                     .onSizeChanged { gestureContainerSize = it }
+                    .then(
+                        if (SharedContext.isTv) {
+                            Modifier
+                                .focusRequester(playerFocusRequester)
+                                .focusable()
+                                .onKeyEvent { keyEvent ->
+                                    if (keyEvent.nativeKeyEvent.action == KeyEvent.ACTION_DOWN) {
+                                        when (keyEvent.nativeKeyEvent.keyCode) {
+                                            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                                                if (!isControlsVisible) {
+                                                    isControlsVisible = true
+                                                    gestureScope.launch {
+                                                        delay(100)
+                                                        runCatching { playPauseFocusRequester.requestFocus() }
+                                                    }
+                                                } else {
+                                                    // Toggle play/pause when controls visible
+                                                    if (isPlaying) mediaController.pause() else mediaController.play()
+                                                }
+                                                true
+                                            }
+                                            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                                                if (!isControlsVisible) {
+                                                    applySeekDelta(-seekMs)
+                                                    true
+                                                } else {
+                                                    false // Let focus move to other controls
+                                                }
+                                            }
+                                            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                                                if (!isControlsVisible) {
+                                                    applySeekDelta(seekMs)
+                                                    true
+                                                } else {
+                                                    false // Let focus move to other controls
+                                                }
+                                            }
+                                            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
+                                                if (isPlaying) mediaController.pause() else mediaController.play()
+                                                true
+                                            }
+                                            // Don't intercept up/down - let focus move to other elements
+                                            else -> false
+                                        }
+                                    } else {
+                                        false
+                                    }
+                                }
+                        } else {
+                            Modifier
+                        }
+                    )
                     .pointerInput(
                         isFullscreenMode,
                         gestureSettings,
@@ -914,7 +985,8 @@ fun VideoPlayer(
                         onSleepTimerDialogChange = { showSleepTimerDialog = it },
                         onPipClick = {
                             PipHelper.enterPipMode(mediaController, streamInfo, context)
-                        }
+                        },
+                        playPauseFocusRequester = if (SharedContext.isTv) playPauseFocusRequester else null
                     )
                 }
             }
