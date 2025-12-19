@@ -10,11 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.uistate.PlaylistSortMode
 import project.pipepipe.app.uistate.PlaylistType
+import project.pipepipe.shared.infoitem.PlaylistInfo
 
 @Composable
 fun SortMenuButton(
@@ -102,14 +104,11 @@ fun SortMenuButton(
 @Composable
 fun PlaylistMoreMenu(
     playlistType: PlaylistType,
-    playlistUid: Long?,
-    playlistName: String,
-    url: String,
+    playlistInfo: PlaylistInfo?,
     onRenameClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onReloadPlaylist: () -> Unit,
     onClearHistoryClick: (() -> Unit)? = null,
-    scope: CoroutineScope
 ) {
     val context = LocalContext.current
     var showMoreMenu by remember { mutableStateOf(false) }
@@ -146,7 +145,7 @@ fun PlaylistMoreMenu(
                 }
 
                 PlaylistType.FEED -> {
-                    val feedId = url.substringAfterLast("/").substringBefore("?").toLongOrNull()
+                    val feedId = playlistInfo?.url?.substringAfterLast("/")?.substringBefore("?")?.toLongOrNull()
 
                     if (feedId != null && feedId != -1L) {
                         DropdownMenuItem(
@@ -169,7 +168,7 @@ fun PlaylistMoreMenu(
                 }
 
                 PlaylistType.REMOTE -> {
-                    val isBookmarked = playlistUid != null
+                    val isBookmarked = playlistInfo?.uid != null
 
                     DropdownMenuItem(
                         text = {
@@ -183,12 +182,19 @@ fun PlaylistMoreMenu(
                         },
                         onClick = {
                             showMoreMenu = false
-                            scope.launch {
+                            GlobalScope.launch {
                                 if (isBookmarked) {
-                                    DatabaseOperations.deleteRemotePlaylist(playlistUid!!)
+                                    DatabaseOperations.deleteRemotePlaylist(playlistInfo!!.uid!!)
                                     onReloadPlaylist()
-                                } else {
-                                    // Will be handled by passing playlistInfo - need to get it from uiState
+                                } else if (playlistInfo != null && playlistInfo.serviceId != null) {
+                                    DatabaseOperations.insertOrReplaceRemotePlaylist(
+                                        serviceId = playlistInfo.serviceId!!,
+                                        name = playlistInfo.name,
+                                        url = playlistInfo.url,
+                                        thumbnailUrl = playlistInfo.thumbnailUrl,
+                                        uploader = playlistInfo.uploaderName,
+                                        streamCount = playlistInfo.streamCount
+                                    )
                                     onReloadPlaylist()
                                 }
                             }
@@ -207,7 +213,7 @@ fun PlaylistMoreMenu(
                             showMoreMenu = false
                             val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                                 type = "text/plain"
-                                putExtra(android.content.Intent.EXTRA_TEXT, url)
+                                putExtra(android.content.Intent.EXTRA_TEXT, playlistInfo?.url ?: "")
                             }
                             context.startActivity(android.content.Intent.createChooser(intent, null))
                         },

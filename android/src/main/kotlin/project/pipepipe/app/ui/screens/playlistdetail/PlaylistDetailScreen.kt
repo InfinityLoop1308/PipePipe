@@ -394,14 +394,11 @@ fun PlaylistDetailScreen(
                         if (shouldShowMoreMenuButton) {
                             PlaylistMoreMenu(
                                 playlistType = uiState.playlistType,
-                                playlistUid = uiState.playlistInfo?.uid,
-                                playlistName = uiState.playlistInfo?.name ?: "",
-                                url = url,
+                                playlistInfo = uiState.playlistInfo,
                                 onRenameClick = { showRenameDialog = true },
                                 onDeleteClick = { showDeleteDialog = true },
                                 onReloadPlaylist = { viewModel.loadPlaylist(url, serviceId) },
                                 onClearHistoryClick = { showClearHistoryDialog = true },
-                                scope = scope
                             )
                         }
                     }
