@@ -72,7 +72,7 @@ private const val SEEK_SWIPE_FACTOR = 100f
 private const val SEEK_SWIPE_FAST_MULTIPLIER = 10f
 private const val SEEK_SWIPE_FAST_THRESHOLD_MS = 60_000L
 private const val VERTICAL_SWIPE_NORMALIZER = 600f
-private const val DEFAULT_CONTROLS_HIDE_TIME = 2000L // 2 seconds
+private const val DEFAULT_CONTROLS_HIDE_TIME = 3000L // 2 seconds
 
 @OptIn(ExperimentalLayoutApi::class)
 @UnstableApi
@@ -96,6 +96,7 @@ fun VideoPlayer(
     var showBrightnessOverlay by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
     var showAudioLanguageMenu by remember { mutableStateOf(false) }
+    var isSeekBarDragging by remember { mutableStateOf(false) }
 
     val isInPipMode by SharedContext.isInPipMode.collectAsState()
 
@@ -664,11 +665,19 @@ fun VideoPlayer(
         }
     }
 
-    // Auto-hide controls after timeout when playing
-    LaunchedEffect(isControlsVisible, isPlaying) {
-        if (isControlsVisible && isPlaying) {
+    // Determine if player is in "busy" state where auto-hide should be paused
+    val isPlayerBusy = showResolutionMenu || showSpeedPitchDialog || showSleepTimerDialog ||
+            showMoreMenu || showAudioLanguageMenu || showSubtitleMenu || isSeekBarDragging
+
+    // Auto-hide controls after timeout when playing and not busy
+    LaunchedEffect(isControlsVisible, isPlaying, isPlayerBusy) {
+        if (isControlsVisible && isPlaying && !isPlayerBusy) {
             delay(DEFAULT_CONTROLS_HIDE_TIME)
-            isControlsVisible = false
+            // Double check we're still not busy before hiding
+            if (!showResolutionMenu && !showSpeedPitchDialog && !showSleepTimerDialog &&
+                !showMoreMenu && !showAudioLanguageMenu && !showSubtitleMenu && !isSeekBarDragging) {
+                isControlsVisible = false
+            }
         }
     }
 
@@ -986,6 +995,7 @@ fun VideoPlayer(
                         onPipClick = {
                             PipHelper.enterPipMode(mediaController, streamInfo, context)
                         },
+                        onSeekBarDraggingChange = { isSeekBarDragging = it },
                         playPauseFocusRequester = if (SharedContext.isTv) playPauseFocusRequester else null
                     )
                 }

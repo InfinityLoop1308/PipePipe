@@ -179,7 +179,8 @@ fun VideoProgressBar(
     onSeek: (Long) -> Unit,
     modifier: Modifier = Modifier,
     sponsorBlockSegments: List<SponsorBlockSegmentInfo> = emptyList(),
-    previewFrames: List<Frameset>? = null
+    previewFrames: List<Frameset>? = null,
+    onDraggingChange: (Boolean) -> Unit = {}
 ) {
     val context = LocalPlatformContext.current
 
@@ -239,12 +240,14 @@ fun VideoProgressBar(
                 detectDragGestures(
                     onDragStart = { offset ->
                         isDragging = true
+                        onDraggingChange(true)
                         dragPosition = (offset.x / size.width * duration).toLong()
                         dragOffsetX = offset.x
                     },
                     onDragEnd = {
                         onSeek(dragPosition.coerceIn(0L, duration))
                         isDragging = false
+                        onDraggingChange(false)
                     }
                 ) { change, dragAmount ->
                     change.consume()  // Consume the event to prevent parent gesture detection

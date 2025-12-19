@@ -143,6 +143,7 @@ fun PlayerControl(
     onSubtitleMenuChange: (Boolean) -> Unit,
     onSleepTimerDialogChange: (Boolean) -> Unit,
     onPipClick: () -> Unit,
+    onSeekBarDraggingChange: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
     playPauseFocusRequester: FocusRequester? = null
 ) {
@@ -434,6 +435,7 @@ fun PlayerControl(
                         onSeek = callbacks.onSeek,
                         sponsorBlockSegments = state.sponsorBlockSegments,
                         previewFrames = streamInfo.previewFrames,
+                        onDraggingChange = onSeekBarDraggingChange,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 8.dp)
