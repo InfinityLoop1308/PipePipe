@@ -1,24 +1,24 @@
 package project.pipepipe.app.ui.component
 
 import android.text.Spanned
+import android.text.style.*
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import android.text.style.*
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnit.Companion
 import androidx.compose.ui.unit.isSpecified
 import project.pipepipe.app.helper.getHtmlHelper
 
@@ -62,23 +62,35 @@ fun HtmlText(
         )
     }
     val uriHandler = LocalUriHandler.current
+    val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
-    // 使用 ClickableText 替代 Text
-    androidx.compose.foundation.text.ClickableText(
+    androidx.compose.foundation.text.BasicText(
         text = annotatedString,
-        modifier = modifier,
-        style = style.merge(TextStyle(color = color, fontSize = fontSize)),
-        onClick = { offset ->
-            // 检查点击位置的所有注解
-            annotatedString.getStringAnnotations(start = offset, end = offset)
-                .firstOrNull()?.let { annotation ->
-                    when (annotation.tag) {
-                        "URL" -> uriHandler.openUri(annotation.item)
-                        "HASHTAG" -> onHashtagClick?.invoke(annotation.item)
-                        "TIMESTAMP" -> onTimestampClick?.invoke(annotation.item.toLong())
+        modifier = modifier.pointerInput(annotatedString) {
+            awaitEachGesture {
+                val down = awaitFirstDown(requireUnconsumed = false)
+                val layout = layoutResult.value ?: return@awaitEachGesture
+                val offset = layout.getOffsetForPosition(down.position)
+                val annotation = annotatedString
+                    .getStringAnnotations(start = offset, end = offset)
+                    .firstOrNull()
+
+                if (annotation != null) {
+                    down.consume()
+                    val up = waitForUpOrCancellation()
+                    if (up != null) {
+                        up.consume()
+                        when (annotation.tag) {
+                            "URL" -> uriHandler.openUri(annotation.item)
+                            "HASHTAG" -> onHashtagClick?.invoke(annotation.item)
+                            "TIMESTAMP" -> onTimestampClick?.invoke(annotation.item.toLong())
+                        }
                     }
                 }
-        }
+            }
+        },
+        style = style.merge(TextStyle(color = color, fontSize = fontSize)),
+        onTextLayout = { layoutResult.value = it }
     )
 }
 

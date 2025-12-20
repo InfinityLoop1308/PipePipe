@@ -1,5 +1,8 @@
 package project.pipepipe.app.ui.item
+
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -13,18 +16,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.ui.component.HtmlText
 import project.pipepipe.app.ui.theme.supportingTextColor
 import project.pipepipe.app.utils.formatCount
 import project.pipepipe.app.utils.formatRelativeTime
 import project.pipepipe.shared.infoitem.CommentInfo
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CommentItem(
     commentInfo: CommentInfo,
@@ -33,9 +42,16 @@ fun CommentItem(
     onTimestampClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val copiedText = stringResource(MR.strings.msg_copied)
+    val clipboardManager = LocalClipboardManager.current
     Surface(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().combinedClickable(
+            onClick = { },
+            onLongClick = {
+                clipboardManager.setText(AnnotatedString(commentInfo.content ?: ""))
+                ToastManager.show(copiedText)
+            }
+        ),
         color = MaterialTheme.colorScheme.surface
     ) {
         Row(
