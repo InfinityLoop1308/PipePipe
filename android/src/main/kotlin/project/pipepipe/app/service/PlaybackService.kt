@@ -1014,6 +1014,9 @@ fun MediaController.playFromStreamInfo(streamInfo: StreamInfo) {
             } else {
                 setMediaItem(mediaItem)
             }
+            if (SharedContext.settingsManager.getString("watch_history_mode", "on_play") == "on_play"){
+                DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
+            }
         }
         prepare()
         play()
