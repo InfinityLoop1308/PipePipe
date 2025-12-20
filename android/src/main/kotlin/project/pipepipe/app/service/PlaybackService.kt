@@ -960,8 +960,7 @@ class PlaybackService : MediaLibraryService() {
                     PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
                     PlaybackException.ERROR_CODE_TIMEOUT,
                     PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
-                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
-                    PlaybackException.ERROR_CODE_UNSPECIFIED -> {
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> {
                         player.pause()
                         return
                     }
