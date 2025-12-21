@@ -907,7 +907,12 @@ fun VideoPlayer(
                         },
                         onSeekToNext = {
                             mediaController.seekToNext()
-                            SharedContext.sharedVideoDetailViewModel.loadVideoDetails(mediaController.currentMediaItem!!.mediaId)
+                            SharedContext.sharedVideoDetailViewModel.loadVideoDetails(
+                                url = mediaController.currentMediaItem!!.mediaId,
+                                serviceId = mediaController.currentMediaItem!!.mediaMetadata.extras!!.getString("KEY_SERVICE_ID"),
+                                shouldDisableLoading = true,
+                                shouldKeepPlaybackMode = true
+                            )
                         },
                         onSeek = { position ->
                             mediaController.seekTo(position)

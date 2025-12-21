@@ -90,7 +90,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 
     val showAsBottomTask = {
         if (SharedContext.playbackMode.value == PlaybackMode.VIDEO_AUDIO
-            && mediaController?.isPlaying == true
             && mediaController?.currentMediaItem?.mediaId == streamInfo?.url) {
             SharedContext.playingVideoUrlBeforeMinimizing = streamInfo?.url
         }
@@ -159,7 +158,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     // Auto-play logic based on settings and network state
     var hasAutoPlayed by remember { mutableStateOf(false) }
 
-    LaunchedEffect(streamInfo, mediaController) {
+    LaunchedEffect(streamInfo, mediaController, uiState.pageState) {
         if (streamInfo != null && mediaController != null
             && uiState.pageState == VideoDetailPageState.DETAIL_PAGE
             && !uiState.common.isLoading
@@ -176,7 +175,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                         controller.playFromStreamInfo(streamInfo)
                     }
                 }
-            } else if(!hasAutoPlayed) {
+            } else if (!hasAutoPlayed) {
                 // Original autoplay logic
                 val autoplaySetting = SharedContext.settingsManager.getString("autoplay_key", "autoplay_never_key")
 

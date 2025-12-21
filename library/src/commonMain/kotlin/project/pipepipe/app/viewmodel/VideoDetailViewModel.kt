@@ -41,14 +41,15 @@ class VideoDetailViewModel()
     }
 
 
-    fun loadVideoDetails(url: String, serviceId: String? = null) {
+    fun loadVideoDetails(url: String, serviceId: String? = null, shouldDisableLoading: Boolean = false, shouldKeepPlaybackMode: Boolean = false) {
         GlobalScope.launch {
             showAsDetailPage()
-            SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
-            setDanmakuEnabled(SharedContext.settingsManager.getBoolean("danmaku_enabled", false))
-
             val currentEntry = uiState.value.currentEntry
             if (url == currentEntry?.streamInfo?.url) return@launch
+            setDanmakuEnabled(SharedContext.settingsManager.getBoolean("danmaku_enabled", false))
+            if (!shouldKeepPlaybackMode) {
+                SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
+            }
 
             val existingIndex = uiState.value.streamInfoStack.indexOfFirst { it.streamInfo.url == url }
             if (existingIndex != -1) {
@@ -67,9 +68,12 @@ class VideoDetailViewModel()
             }
 
             val resolvedServiceId = serviceId ?: DatabaseOperations.getStreamByUrl(url)?.service_id
-            setState {
-                it.copy(common = it.common.copy(isLoading = true, error = null))
+            if (!shouldDisableLoading) {
+                setState {
+                    it.copy(common = it.common.copy(isLoading = true, error = null))
+                }
             }
+
 
             val result = withContext(Dispatchers.IO) {
                 executeJobFlow(SupportedJobType.FETCH_INFO, url, resolvedServiceId)
