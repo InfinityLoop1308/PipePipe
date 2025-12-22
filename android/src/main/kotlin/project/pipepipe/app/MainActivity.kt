@@ -502,7 +502,10 @@ class MainActivity : ComponentActivity() {
                         PipHelper.enterPipMode(mediaController!!, streamInfo, this)
                     }
                 }
-                // "minimize_on_exit_none_key" or default - do nothing
+
+                "minimize_on_exit_none_key" -> {
+                    mediaController?.pause()
+                }
             }
         }
     }
