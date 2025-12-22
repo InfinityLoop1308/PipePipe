@@ -62,6 +62,10 @@ class PlaybackService : MediaLibraryService() {
     private var lastSearchQuery: String? = null
     private var lastSearchResults: List<MediaItem> = emptyList()
 
+    // Autoplay next deduplication
+    private var autoplayNextJob: Job? = null
+    private var autoplayNextMediaId: String? = null
+
 
     // Skip silence setting listener
     private var skipSilenceListener: SettingsListener? = null
@@ -740,7 +744,13 @@ class PlaybackService : MediaLibraryService() {
 
         if (relatedItemUrl == null) return
 
-        serviceScope.launch {
+        // Deduplicate: skip if already loading for the same mediaId
+        if (autoplayNextMediaId == mediaId && autoplayNextJob?.isActive == true) return
+
+        autoplayNextJob?.cancel()
+        autoplayNextMediaId = mediaId
+
+        autoplayNextJob = serviceScope.launch {
             try {
                 val result = withContext(Dispatchers.IO) {
                     executeJobFlow(
