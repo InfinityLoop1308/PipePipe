@@ -458,7 +458,7 @@ fun PlayerControl(
         }
 
         // Long press speed indicator
-        if (state.isLongPressing) {
+        if (state.isLongPressing && state.speedingPlaybackMultiplier != 1f) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
