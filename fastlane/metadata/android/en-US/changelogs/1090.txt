@@ -1,8 +1,7 @@
 ### Bug Fixes
 
-- Video titles sometimes get translated to English (YouTube)
+- Search results have wrong titles and thumbnails sometimes (YouTube)
 
-### Others
+### Behavior
 
-- Improve stability
-
+- Temporarily disable YouTube login since video extraction for logged-in accounts is broken now
