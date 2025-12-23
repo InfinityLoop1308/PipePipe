@@ -8,6 +8,7 @@ import com.yausername.youtubedl_android.YoutubeDLRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.SharedContext
+import kotlin.math.min
 
 /**
  * Helper class to fetch video formats using yt-dlp's --dump-json command
@@ -51,7 +52,7 @@ object YtDlpFormatHelper {
             return when {
                 hasVideo() && hasAudio() -> {
                     // Combined format (video + audio)
-                    val resolution = height?.let { "${it}p" } ?: "Unknown"
+                    val resolution = runCatching{ "${min(height!!, width!!)}p"}.getOrDefault("Unknown")
                     val codec = FormatHelper.parseCodecName(vcodec)
                     val audioCodec = FormatHelper.parseCodecName(acodec)
                     val fpsLabel = fps?.let { if (it > 30) " ${it.toInt()}fps" else "" } ?: ""
@@ -59,7 +60,7 @@ object YtDlpFormatHelper {
                 }
                 isVideoOnly() -> {
                     // Video only
-                    val resolution = height?.let { "${it}p" } ?: "Unknown"
+                    val resolution = runCatching{ "${min(height!!, width!!)}p"}.getOrDefault("Unknown")
                     val codec = FormatHelper.parseCodecName(vcodec)
                     val fpsLabel = fps?.let { if (it > 30) " ${it.toInt()}fps" else "" } ?: ""
                     val baseLabel = FormatHelper.formatVideoLabel(codec, resolution, fps ?: 0f)
