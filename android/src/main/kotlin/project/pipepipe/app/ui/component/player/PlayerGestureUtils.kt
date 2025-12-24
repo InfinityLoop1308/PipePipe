@@ -19,7 +19,7 @@ enum class DisplayPortion { Left, Middle, Right }
 
 @Immutable
 data class PlayerGestureSettings(
-    val swipeSeekEnabled: Boolean = false,
+    val swipeSeekEnabled: Boolean = true,
     val volumeGestureEnabled: Boolean = true,
     val brightnessGestureEnabled: Boolean = true,
     val fullscreenGestureEnabled: Boolean = true

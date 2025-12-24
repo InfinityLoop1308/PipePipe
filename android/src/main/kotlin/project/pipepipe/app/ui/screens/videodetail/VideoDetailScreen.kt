@@ -404,7 +404,10 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     modifier = Modifier.fillMaxSize(),
                     danmakuPool = uiState.currentDanmaku,
                     gestureSettings = PlayerGestureSettings(
-                        swipeSeekEnabled = false,
+                        swipeSeekEnabled = SharedContext.settingsManager.getBoolean(
+                            "swipe_seek_gesture_control_key",
+                            true
+                        ),
                         volumeGestureEnabled = SharedContext.settingsManager.getBoolean(
                             "volume_gesture_control_key",
                             true
@@ -520,7 +523,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                 modifier = Modifier.fillMaxSize(),
                                                 danmakuPool = uiState.currentDanmaku,
                                                 gestureSettings = PlayerGestureSettings(
-                                                    swipeSeekEnabled = false,
+                                                    swipeSeekEnabled = SharedContext.settingsManager.getBoolean("swipe_seek_gesture_control_key"),
                                                     volumeGestureEnabled = SharedContext.settingsManager.getBoolean("volume_gesture_control_key"),
                                                     brightnessGestureEnabled = SharedContext.settingsManager.getBoolean("brightness_gesture_control_key"),
                                                     fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean("fullscreen_gesture_control_key")

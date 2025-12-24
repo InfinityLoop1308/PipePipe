@@ -263,7 +263,7 @@ fun VideoPlayer(
 
     fun updateSeekGesture(deltaPx: Float) {
         if (!isSwipeSeeking) beginSeekGesture()
-        accumulatedSeek -= deltaPx
+        accumulatedSeek += deltaPx
         val thresholdPx = SEEK_SWIPE_FAST_THRESHOLD_MS / SEEK_SWIPE_FACTOR
         val deltaMs = if (abs(accumulatedSeek) <= thresholdPx) {
             (accumulatedSeek * SEEK_SWIPE_FACTOR).toLong()
