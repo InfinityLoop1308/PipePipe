@@ -25,7 +25,7 @@ object PlayerHelper {
     data class ResolutionInfo(
         val height: Int,
         val width: Int,
-        val codecs: String?,
+        val codec: String?,
         val frameRate: Float,
         val trackGroup: TrackGroup,
         val trackIndex: Int,
@@ -35,11 +35,11 @@ object PlayerHelper {
         val resolutionPixel: String get() = "${min(height, width)}p"
         val displayLabel: String
             get() {
-                val codecName = FormatHelper.parseCodecName(codecs)
+                val codecName = FormatHelper.parseCodecName(codec)
                 val baseLabel = FormatHelper.formatVideoLabel(codecName, resolutionPixel, frameRate)
                 return if (isHDR) "$baseLabel HDR" else baseLabel
             }
-        val codecPriority: Int get() = FormatHelper.getCodecPriority(codecs)
+        val codecPriority: Int get() = FormatHelper.getCodecPriority(codec)
     }
 
     data class SubtitleInfo(

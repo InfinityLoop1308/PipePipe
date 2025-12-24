@@ -8,6 +8,7 @@ import com.yausername.youtubedl_android.YoutubeDLRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.ui.component.Format
 import kotlin.math.min
 
 /**
@@ -163,5 +164,92 @@ object YtDlpFormatHelper {
             Log.e(TAG, "Error fetching formats", e)
             Result.failure(e)
         }
+    }
+
+    /**
+     * Parse formats from DASH manifest XML
+     */
+    fun parseFormatsFromDashManifest(dashManifest: String, url: String): Pair<List<Format>, List<Format>> {
+        val videoFormats = mutableListOf<Format>()
+        val audioFormats = mutableListOf<Format>()
+
+        try {
+            val factory = javax.xml.parsers.DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val inputStream = java.io.ByteArrayInputStream(dashManifest.toByteArray(Charsets.UTF_8))
+            val document = builder.parse(inputStream)
+
+            val adaptationSets = document.getElementsByTagName("AdaptationSet")
+            for (i in 0 until adaptationSets.length) {
+                val adaptationSet = adaptationSets.item(i) as org.w3c.dom.Element
+                val contentType = adaptationSet.getAttribute("contentType")
+
+                val representations = adaptationSet.getElementsByTagName("Representation")
+                for (j in 0 until representations.length) {
+                    val rep = representations.item(j) as org.w3c.dom.Element
+                    val repId = rep.getAttribute("id")
+                    val codecs = rep.getAttribute("codecs")
+
+                    when (contentType) {
+                        "video" -> {
+                            val height = rep.getAttribute("height").toIntOrNull() ?: 0
+                            val frameRate = rep.getAttribute("frameRate").toFloatOrNull() ?: 0f
+                            val codecName = FormatHelper.parseCodecName(codecs)
+                            val isHDR = codecs.contains("vp9.2", ignoreCase = true) ||
+                                    Regex("av01\\.0\\.(09|1[0-3])M", RegexOption.IGNORE_CASE).containsMatchIn(codecs)
+                            val displayLabel = FormatHelper.formatVideoLabel(codecName, "${height}p", frameRate) + if (isHDR) " HDR" else ""
+
+                            videoFormats.add(Format(
+                                id = repId,
+                                url = url,
+                                displayLabel = displayLabel,
+                                height = height,
+                                frameRate = frameRate,
+                                codec = codecs,
+                                bitrate = rep.getAttribute("bandwidth").toIntOrNull() ?: 0,
+                                isVideoOnly = true
+                            ))
+                        }
+                        "audio" -> {
+                            val codecName = FormatHelper.parseCodecName(codecs)
+                            val bitrate = rep.getAttribute("bandwidth").toIntOrNull() ?: 0
+                            val bitrateKbps = bitrate / 1000
+                            val displayLabel = "$codecName ${bitrateKbps}kbps"
+
+                            audioFormats.add(Format(
+                                id = repId,
+                                url = url,
+                                displayLabel = displayLabel,
+                                height = 0,
+                                frameRate = 0f,
+                                codec = codecs,
+                                bitrate = bitrate
+                            ))
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parsing DASH manifest", e)
+        }
+
+        // Sort and deduplicate like fetchFormats
+        val sortedVideos = videoFormats
+            .sortedWith(
+                compareByDescending<Format> { it.height }
+                    .thenByDescending { it.frameRate }
+                    .thenByDescending { it.displayLabel.contains("HDR") }
+                    .thenByDescending { FormatHelper.getCodecPriority(it.codec) }
+            )
+            .distinctBy { "${it.height}_${it.frameRate}_${it.displayLabel.contains("HDR")}_${it.codec}" }
+
+        val sortedAudios = audioFormats
+            .sortedWith(
+                compareByDescending<Format> { it.bitrate }
+                    .thenByDescending { FormatHelper.getCodecPriority(it.codec) }
+            )
+            .distinctBy { "${it.codec}_${it.bitrate}" }
+
+        return sortedVideos to sortedAudios
     }
 }

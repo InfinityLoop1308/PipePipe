@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import android.content.pm.PackageManager
 import android.view.KeyEvent
 import androidx.compose.foundation.focusable
 import androidx.compose.ui.Alignment
@@ -449,7 +448,7 @@ fun VideoPlayer(
                         ResolutionInfo(
                             height = format.height,
                             width = format.width,
-                            codecs = format.codecs,
+                            codec = format.codecs,
                             frameRate = format.frameRate,
                             trackGroup = videoGroup.mediaTrackGroup,
                             trackIndex = index,
@@ -463,7 +462,7 @@ fun VideoPlayer(
 
 
         availableResolutions = resolutions
-            .distinctBy { "${it.codecs}_${it.height}_${it.frameRate}_${it.isHDR}" }
+            .distinctBy { "${it.codec}_${it.height}_${it.frameRate}_${it.isHDR}" }
             .sortedWith(
                 compareByDescending<ResolutionInfo> { it.height }
                     .thenByDescending { it.frameRate }

@@ -94,47 +94,56 @@ fun DownloadFormatDialog(
         }
     )
 
-    // Fetch formats using yt-dlp
+    // Fetch formats - from dashManifest if available, otherwise use yt-dlp
     LaunchedEffect(streamInfo.url) {
         isLoadingFormats = true
         loadError = null
 
         try {
-            val result = YtDlpFormatHelper.fetchFormats(streamInfo.url)
+            if (!streamInfo.dashManifest.isNullOrEmpty()) {
+                // Parse from dashManifest
+                val (videos, audios) = YtDlpFormatHelper.parseFormatsFromDashManifest(streamInfo.dashManifest!!, streamInfo.url)
+                videoFormats = videos
+                audioFormats = audios
+                isLoadingFormats = false
+            } else {
+                // Fetch from yt-dlp
+                val result = YtDlpFormatHelper.fetchFormats(streamInfo.url)
 
-            result.onSuccess { formatsResult ->
-                // Convert YtDlpFormat to our Format data class
-                videoFormats = formatsResult.videoFormats.map { ytdlpFormat ->
-                    Format(
-                        id = ytdlpFormat.formatId,
-                        url = ytdlpFormat.url ?: "",
-                        displayLabel = ytdlpFormat.getDisplayLabel(),
-                        height = ytdlpFormat.height ?: 0,
-                        frameRate = ytdlpFormat.fps ?: 0f,
-                        codec = ytdlpFormat.vcodec,
-                        bitrate = 0,
-                        isVideoOnly = true,  // Video-only formats need audio merging
-                        filesize = ytdlpFormat.getFileSize()
-                    )
+                result.onSuccess { formatsResult ->
+                    // Convert YtDlpFormat to our Format data class
+                    videoFormats = formatsResult.videoFormats.map { ytdlpFormat ->
+                        Format(
+                            id = ytdlpFormat.formatId,
+                            url = ytdlpFormat.url ?: "",
+                            displayLabel = ytdlpFormat.getDisplayLabel(),
+                            height = ytdlpFormat.height ?: 0,
+                            frameRate = ytdlpFormat.fps ?: 0f,
+                            codec = ytdlpFormat.vcodec,
+                            bitrate = 0,
+                            isVideoOnly = true,  // Video-only formats need audio merging
+                            filesize = ytdlpFormat.getFileSize()
+                        )
+                    }
+
+                    audioFormats = formatsResult.audioFormats.map { ytdlpFormat ->
+                        Format(
+                            id = ytdlpFormat.formatId,
+                            url = ytdlpFormat.url ?: "",
+                            displayLabel = ytdlpFormat.getDisplayLabel(),
+                            height = 0,
+                            frameRate = 0f,
+                            codec = ytdlpFormat.acodec,
+                            bitrate = (ytdlpFormat.abr ?: ytdlpFormat.tbr ?: 0f).toInt(),
+                            filesize = ytdlpFormat.getFileSize()
+                        )
+                    }.distinctBy { it.displayLabel }
+
+                    isLoadingFormats = false
+                }.onFailure { e ->
+                    loadError = "Failed to load formats: ${e.message}"
+                    isLoadingFormats = false
                 }
-
-                audioFormats = formatsResult.audioFormats.map { ytdlpFormat ->
-                    Format(
-                        id = ytdlpFormat.formatId,
-                        url = ytdlpFormat.url ?: "",
-                        displayLabel = ytdlpFormat.getDisplayLabel(),
-                        height = 0,
-                        frameRate = 0f,
-                        codec = ytdlpFormat.acodec,
-                        bitrate = (ytdlpFormat.abr ?: ytdlpFormat.tbr ?: 0f).toInt(),
-                        filesize = ytdlpFormat.getFileSize()
-                    )
-                }.distinctBy { it.displayLabel }
-
-                isLoadingFormats = false
-            }.onFailure { e ->
-                loadError = "Failed to load formats: ${e.message}"
-                isLoadingFormats = false
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -152,6 +161,19 @@ fun DownloadFormatDialog(
     // Get best audio format for calculating total video download size
     val bestAudioFormat = remember(audioFormats) {
         audioFormats.firstOrNull() // First one is the best quality (already sorted)
+    }
+
+    // Auto-select first format when formats are loaded
+    LaunchedEffect(videoFormats) {
+        if (videoFormats.isNotEmpty() && selectedVideoFormat == null) {
+            selectedVideoFormat = videoFormats.first()
+        }
+    }
+
+    LaunchedEffect(audioFormats) {
+        if (audioFormats.isNotEmpty() && selectedAudioFormat == null) {
+            selectedAudioFormat = audioFormats.first()
+        }
     }
 
     AlertDialog(
@@ -239,7 +261,8 @@ fun DownloadFormatDialog(
                                     onExpandedChange = { videoDropdownExpanded = it }
                                 ) {
                                     OutlinedTextField(
-                                        value = selectedVideoFormat?.displayLabel ?: stringResource(MR.strings.download_select_video_format),
+                                        value = selectedVideoFormat?.displayLabel
+                                            ?: stringResource(MR.strings.download_select_video_format),
                                         onValueChange = {},
                                         readOnly = true,
                                         label = { Text(stringResource(MR.strings.download_video_quality)) },
@@ -254,11 +277,12 @@ fun DownloadFormatDialog(
                                     ) {
                                         videoFormats.forEach { format ->
                                             // Calculate total size (video + best audio)
-                                            val totalSize = if (format.filesize != null && bestAudioFormat?.filesize != null) {
-                                                format.filesize + bestAudioFormat.filesize
-                                            } else {
-                                                format.filesize
-                                            }
+                                            val totalSize =
+                                                if (format.filesize != null && bestAudioFormat?.filesize != null) {
+                                                    format.filesize + bestAudioFormat.filesize
+                                                } else {
+                                                    format.filesize
+                                                }
                                             val sizeLabel = formatFileSize(totalSize)
 
                                             DropdownMenuItem(
@@ -295,7 +319,8 @@ fun DownloadFormatDialog(
                                     onExpandedChange = { audioDropdownExpanded = it }
                                 ) {
                                     OutlinedTextField(
-                                        value = selectedAudioFormat?.displayLabel ?: stringResource(MR.strings.download_select_audio_format),
+                                        value = selectedAudioFormat?.displayLabel
+                                            ?: stringResource(MR.strings.download_select_audio_format),
                                         onValueChange = {},
                                         readOnly = true,
                                         label = { Text(stringResource(MR.strings.download_audio_format)) },
@@ -410,7 +435,11 @@ fun DownloadFormatDialog(
                         // Check if permission is needed (Android 8-9 only)
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                             val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                            if (ContextCompat.checkSelfPermission(
+                                    context,
+                                    permission
+                                ) != PackageManager.PERMISSION_GRANTED
+                            ) {
                                 // Store download action and request permission
                                 pendingDownload = downloadAction
                                 permissionLauncher.launch(permission)

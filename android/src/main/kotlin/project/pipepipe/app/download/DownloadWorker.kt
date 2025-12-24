@@ -139,9 +139,8 @@ class DownloadWorker(
             addOption("-f", download.format_id)
 
             println(download.codec)
-            if (download.codec.equals("opus", true)) {
-                addOption("-x")
-                addOption("--audio-format", "opus")
+            if (download.download_type == "AUDIO") {
+                addOption("--remux-video", "webm>opus")
             }
 
             // Output configuration
@@ -161,7 +160,6 @@ class DownloadWorker(
             addOption("--no-warnings")
 
             addOption("--embed-thumbnail")
-            addOption("--embed-metadata")
             addOption("--embed-subs")
             addOption("--compat-options", "no-live-chat")
         }
