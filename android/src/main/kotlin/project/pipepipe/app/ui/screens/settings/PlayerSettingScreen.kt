@@ -155,6 +155,16 @@ fun PlayerSettingScreen(
         }
     }
 
+    val advancedFormatsEntries = remember {
+        listOf("VP9", "AV01", "HEVC", "EC-3")
+    }
+    val advancedFormatsValues = remember {
+        listOf("VP9", "AV01", "HEVC", "EC-3")
+    }
+    val advancedFormatsDefaultValues = remember {
+        setOf("VP9", "HEVC")
+    }
+
     val preferenceItems = listOf<PreferenceItem>(
         PreferenceItem.ListPref(
             key = "default_resolution",
@@ -163,6 +173,14 @@ fun PlayerSettingScreen(
             entries = resolutionEntries,
             entryValues = resolutionValues,
             defaultValue = "auto"
+        ),
+        PreferenceItem.MultiSelectPref(
+            key = "advanced_formats_key",
+            title = stringResource(MR.strings.advanced_formats_title),
+            summary = stringResource(MR.strings.advanced_formats_summary),
+            entries = advancedFormatsEntries,
+            entryValues = advancedFormatsValues,
+            defaultValues = advancedFormatsDefaultValues
         ),
         PreferenceItem.IntListPref(
             key = "last_resize_mode",

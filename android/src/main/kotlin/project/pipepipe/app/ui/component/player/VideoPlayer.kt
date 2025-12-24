@@ -44,6 +44,7 @@ import project.pipepipe.app.service.setPlaybackMode
 import project.pipepipe.app.service.stopService
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.FormatHelper
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.DanmakuInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
@@ -441,7 +442,7 @@ fun VideoPlayer(
         val resolutions = mutableListOf<ResolutionInfo>()
         currentTracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }.forEach { videoGroup ->
             videoGroup?.forEachIndexed { index, format ->
-                if (videoGroup.isTrackSupported(index)) {
+                if (FormatHelper.isCodecAllowed(format.codecs)) {
                     // Detect HDR using helper function
                     val isHDR = format.isHDR()
                     resolutions.add(
