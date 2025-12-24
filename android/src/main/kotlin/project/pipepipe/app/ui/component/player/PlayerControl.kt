@@ -758,7 +758,7 @@ private fun MoreMenu(
             expanded = showAudioLanguageMenu,
             onDismissRequest = { onAudioLanguageMenuChange(false) }
         ) {
-            val originText = stringResource(MR.strings.sort_origin)
+            val originText = stringResource(MR.strings.original)
             availableLanguages.forEach { language ->
                 // Get localized language name using Locale
                 val languageCode = language.first
