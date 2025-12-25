@@ -7,7 +7,6 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import project.pipepipe.app.database.DataBaseDriverManager
 import project.pipepipe.extractor.Router
-import project.pipepipe.app.global.CookieManager
 import project.pipepipe.app.mediasource.MediaCacheProvider
 import project.pipepipe.app.service.NotificationHelper
 import project.pipepipe.app.service.StreamsNotificationManager
@@ -65,7 +64,6 @@ class PipePipeApplication : Application() {
         SharedContext.isTv = packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
         SharedContext.downloader = Downloader(HttpClient(OkHttp))
         SharedContext.settingsManager = SettingsManager()
-        SharedContext.cookieManager = CookieManager()
         SharedContext.sessionManager = Cache4kSessionManager()
         SharedContext.sharedVideoDetailViewModel = VideoDetailViewModel()
         SharedContext.serverRequestHandler = Router::execute

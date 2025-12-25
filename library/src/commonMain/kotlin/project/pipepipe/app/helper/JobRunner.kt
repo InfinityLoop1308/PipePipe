@@ -25,20 +25,19 @@ suspend fun executeJobFlow(
     serviceId: Int?,
     payload: String? = null
 ): ExtractResult<out Info, out Info> {
-    val cookieManager = SharedContext.cookieManager
     val sessionManager = SharedContext.sessionManager
 
     if (url?.startsWith("cache://") == true) {
         return (sessionManager.loadState(url.substringAfter("cache://")) as CachedExtractState).data
     }
 
-    if (jobType != SupportedJobType.REFRESH_COOKIE && serviceId != null && cookieManager.isCookieExpired(serviceId)) {
+    if (jobType != SupportedJobType.REFRESH_COOKIE && serviceId != null && CookieManager.isCookieExpired(serviceId)) {
         val response = executeJobFlow(
             SupportedJobType.REFRESH_COOKIE, null, serviceId
         )
-        cookieManager.setCookieInfo(serviceId, response.info as CookieInfo, false)
+        CookieManager.setCookieInfo(serviceId, response.info as CookieInfo, false)
     }
-    val cookie = if (serviceId != null)cookieManager.getCookie(serviceId) else null
+    val cookie = if (serviceId != null)CookieManager.getCookie(serviceId) else null
     val state = if (url?.contains("cacheId=") == true) {
         sessionManager.loadState(getQueryValue(url, "cacheId")!!)
     } else payload?.let { PreFetchPayloadState(-1, payload) }

@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import project.pipepipe.database.AppDatabase
-import project.pipepipe.shared.downloader.CookieManager
 import project.pipepipe.shared.downloader.Downloader
 import project.pipepipe.app.viewmodel.BottomSheetMenuViewModel
 import project.pipepipe.app.viewmodel.VideoDetailViewModel
@@ -29,7 +28,6 @@ object SharedContext {
     var isTv: Boolean = false
     lateinit var downloader: Downloader
     val objectMapper = ObjectMapper()
-    lateinit var cookieManager: CookieManager
     lateinit var sharedVideoDetailViewModel: VideoDetailViewModel
     lateinit var database: AppDatabase
     lateinit var serverRequestHandler: suspend (JobRequest) -> JobResponse<out Info, out Info>

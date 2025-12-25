@@ -16,12 +16,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
-import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.CookieManager
 import project.pipepipe.app.helper.ToastManager
+import project.pipepipe.app.helper.isLoggedInCookie
 import project.pipepipe.app.settings.PreferenceItem
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.screens.PreferenceScreen
-import project.pipepipe.shared.downloader.isLoggedInCookie
 import android.webkit.CookieManager as AndroidCookieManager
 
 enum class LoginPlatform(
@@ -65,13 +65,13 @@ fun AccountSettingsScreen(
 
     // Track login states for all platforms
     var bilibiliLoggedIn by remember {
-        mutableStateOf(SharedContext.cookieManager.getCookie(5)?.isLoggedInCookie()?:false)
+        mutableStateOf(CookieManager.getCookie(5)?.isLoggedInCookie()?:false)
     }
     var youtubeLoggedIn by remember {
-        mutableStateOf(SharedContext.cookieManager.getCookie(0)?.isLoggedInCookie()?:false)
+        mutableStateOf(CookieManager.getCookie(0)?.isLoggedInCookie()?:false)
     }
     var niconicoLoggedIn by remember {
-        mutableStateOf(SharedContext.cookieManager.getCookie(6)?.isLoggedInCookie()?:false)
+        mutableStateOf(CookieManager.getCookie(6)?.isLoggedInCookie()?:false)
     }
 
     var showLoginWebView by remember { mutableStateOf<LoginPlatform?>(null) }
@@ -131,7 +131,7 @@ fun AccountSettingsScreen(
                 title = logoutTitle,
                 enabled = youtubeLoggedIn,
                 onClick = {
-                    SharedContext.cookieManager.removeLoggedInCookie(0)
+                    CookieManager.removeLoggedInCookie(0)
                     youtubeLoggedIn = false
                     ToastManager.show(loggedOutMessage)
                 }
@@ -153,7 +153,7 @@ fun AccountSettingsScreen(
                 title = logoutTitle,
                 enabled = bilibiliLoggedIn,
                 onClick = {
-                    SharedContext.cookieManager.removeLoggedInCookie(5)
+                    CookieManager.removeLoggedInCookie(5)
                     bilibiliLoggedIn = false
                     ToastManager.show(loggedOutMessage)
                 }
@@ -176,7 +176,7 @@ fun AccountSettingsScreen(
                 title = logoutTitle,
                 enabled = niconicoLoggedIn,
                 onClick = {
-                    SharedContext.cookieManager.removeLoggedInCookie(6)
+                    CookieManager.removeLoggedInCookie(6)
                     niconicoLoggedIn = false
                     ToastManager.show(loggedOutMessage)
                 }
@@ -196,7 +196,7 @@ fun AccountSettingsScreen(
                     ToastManager.show(tryAgainMessage)
                 } else {
                     val timeout = System.currentTimeMillis() / 1000 + 28L * 24 * 60 * 60
-                    SharedContext.cookieManager.setCookie(serviceId, cookies, timeout, isLoggedInCookie = true)
+                    CookieManager.setCookie(serviceId, cookies, timeout, isLoggedInCookie = true)
 
                     when (platform) {
                         LoginPlatform.BILIBILI -> bilibiliLoggedIn = true
