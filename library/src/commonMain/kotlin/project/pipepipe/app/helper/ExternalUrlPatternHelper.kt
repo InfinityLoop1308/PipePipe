@@ -14,7 +14,7 @@ object ExternalUrlPatternHelper {
      * @param services List of SupportedServiceInfo to check against
      * @return Pair of (serviceId, UrlType) if a match is found, null otherwise
      */
-    fun matchUrl(url: String, services: List<SupportedServiceInfo>): Pair<String, ExternalUrlType>? {
+    fun matchUrl(url: String, services: List<SupportedServiceInfo>): Pair<Int, ExternalUrlType>? {
         for (service in services) {
             for ((urlType, patterns) in service.urlPatterns) {
                 for (pattern in patterns) {

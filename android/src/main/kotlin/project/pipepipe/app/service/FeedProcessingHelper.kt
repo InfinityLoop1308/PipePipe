@@ -14,7 +14,7 @@ import project.pipepipe.shared.infoitem.SupportedServiceInfo
 /**
  * Load fetch interval configurations for all services
  */
-fun loadServiceFetchIntervals(): Map<String, Int> {
+fun loadServiceFetchIntervals(): Map<Int, Int> {
     return try {
         val jsonString = SharedContext.settingsManager.getString("supported_services", "[]")
         val serviceInfoList = Json.decodeFromString<List<SupportedServiceInfo>>(jsonString)
@@ -35,7 +35,7 @@ fun loadServiceFetchIntervals(): Map<String, Int> {
  */
 suspend fun processSubscriptionsConcurrently(
     subscriptions: List<Subscriptions>,
-    serviceFetchIntervals: Map<String, Int>,
+    serviceFetchIntervals: Map<Int, Int>,
     maxConcurrency: Int = 5,
     processOne: suspend (Subscriptions) -> Unit
 ) {

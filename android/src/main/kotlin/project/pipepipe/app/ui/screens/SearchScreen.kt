@@ -78,7 +78,7 @@ import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.url
 import project.pipepipe.shared.infoitem.serviceId
 
-private const val SELECTED_SERVICE_KEY = "selected_service"
+private const val SELECTED_SERVICE_KEY = "selected_search_service"
 private const val SUPPORTED_SERVICES_KEY = "supported_services"
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -86,7 +86,7 @@ private const val SUPPORTED_SERVICES_KEY = "supported_services"
 fun SearchScreen(
     navController: NavController,
     initialQuery: String? = null,
-    initialServiceId: String? = null
+    initialServiceId: Int? = null
 ) {
     var showFilterDialog by remember { mutableStateOf(false) }
     var suggestionToDelete by remember { mutableStateOf<SearchSuggestion?>(null) }
@@ -121,7 +121,7 @@ fun SearchScreen(
     }
 
 
-    fun performSearch(query: String? = null, overrideServiceId: String? = null) {
+    fun performSearch(query: String? = null, overrideServiceId: Int? = null) {
         val searchText = query ?: textFieldValue.text
         if (searchText.isNotEmpty()) {
             if (searchText.startsWith("http://")  || searchText.startsWith("https://")) {
@@ -145,10 +145,8 @@ fun SearchScreen(
 
     LaunchedEffect(Unit) {
         if (uiState.selectedService == null && serviceInfoList.isNotEmpty()) { //todo: a page to show when serviceInfoList is empty
-            val savedServiceId = SharedContext.settingsManager.getString(SELECTED_SERVICE_KEY, "")
-            val savedService = if (savedServiceId.isNotEmpty()) {
-                serviceInfoList.find { it.serviceId == savedServiceId }
-            } else null
+            val savedServiceId = SharedContext.settingsManager.getInt(SELECTED_SERVICE_KEY, 0)
+            val savedService = serviceInfoList.find { it.serviceId == savedServiceId }
             val serviceToUse = savedService ?: serviceInfoList.first()
             viewModel.updateSelectedService(serviceToUse)
         }
@@ -392,7 +390,7 @@ fun SearchScreen(
                 val service = serviceInfoList.find { it.serviceId == serviceId }
                 service?.let {
                     viewModel.updateSelectedService(it)
-                    SharedContext.settingsManager.putString(SELECTED_SERVICE_KEY, serviceId)
+                    SharedContext.settingsManager.putInt(SELECTED_SERVICE_KEY, serviceId)
                 }
             },
             onSearchTypeChange = { searchType ->
@@ -439,10 +437,10 @@ fun SearchScreen(
 @Composable
 fun FilterCard(
     serviceInfoList: List<SupportedServiceInfo>,
-    selectedServiceId: String,
+    selectedServiceId: Int,
     selectedSearchType: SearchType?,
     searchQuery: String,
-    onServiceChange: (String) -> Unit,
+    onServiceChange: (Int) -> Unit,
     onSearchTypeChange: (SearchType) -> Unit,
     onFilterToggle: (String, SearchFilterItem) -> Unit,
     onReset: () -> Unit,
@@ -537,8 +535,8 @@ fun FilterCard(
 @Composable
 fun IntegratedServiceHeader(
     serviceInfoList: List<SupportedServiceInfo>,
-    selectedServiceId: String,
-    onServiceChange: (String) -> Unit
+    selectedServiceId: Int,
+    onServiceChange: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     val selectedService = serviceInfoList.find { it.serviceId == selectedServiceId }
@@ -570,7 +568,7 @@ fun IntegratedServiceHeader(
                         modifier = Modifier.fillMaxWidth().padding(start = (if (serviceInfoList.size > 1)28 else 0).dp)
                     ) {
                         Text(
-                            text = selectedService?.serviceId ?: stringResource(MR.strings.select_service),
+                            text = selectedService?.serviceName ?: stringResource(MR.strings.select_service),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -600,7 +598,7 @@ fun IntegratedServiceHeader(
                                 modifier = Modifier.fillMaxWidth(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(service.serviceId)
+                                Text(service.serviceName)
                             }
                         },
                         onClick = {

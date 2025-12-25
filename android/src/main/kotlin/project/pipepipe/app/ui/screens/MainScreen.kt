@@ -44,7 +44,7 @@ fun MainScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center
     ) {
         Button(onClick = {
-            SharedContext.sharedVideoDetailViewModel.loadVideoDetails("https://www.bilibili.com/video/BV1SB4y1y7GQ?p=1", "BILIBILI")
+            SharedContext.sharedVideoDetailViewModel.loadVideoDetails("https://www.bilibili.com/video/BV1SB4y1y7GQ?p=1", 5)
         }) {
             Text(stringResource(MR.strings.go_to_video_detail))
         }

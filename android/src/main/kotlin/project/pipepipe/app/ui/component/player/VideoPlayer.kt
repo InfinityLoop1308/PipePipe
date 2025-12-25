@@ -909,7 +909,7 @@ fun VideoPlayer(
                             mediaController.seekToNext()
                             SharedContext.sharedVideoDetailViewModel.loadVideoDetails(
                                 url = mediaController.currentMediaItem!!.mediaId,
-                                serviceId = mediaController.currentMediaItem!!.mediaMetadata.extras!!.getString("KEY_SERVICE_ID"),
+                                serviceId = mediaController.currentMediaItem!!.mediaMetadata.extras!!.getInt("KEY_SERVICE_ID"),
                                 shouldDisableLoading = true,
                                 shouldKeepPlaybackMode = true
                             )

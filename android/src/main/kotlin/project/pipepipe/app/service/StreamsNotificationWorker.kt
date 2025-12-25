@@ -207,7 +207,7 @@ class StreamsNotificationWorker(
             // Add PendingIntent to open channel when notification is clicked
             val intent = Intent("project.pipepipe.app.OPEN_CHANNEL").apply {
                 putExtra("channel_url", subscription.url)
-                putExtra("service_id", subscription.service_id.toString())
+                putExtra("service_id", subscription.service_id)
                 putExtra("notification_id", NotificationHelper.STREAMS_NOTIFICATION_BASE_ID)
                 setPackage(applicationContext.packageName)
             }
@@ -289,7 +289,7 @@ class StreamsNotificationWorker(
                 val notificationId = NotificationHelper.STREAMS_NOTIFICATION_BASE_ID + index + 1
                 val intent = Intent("project.pipepipe.app.OPEN_CHANNEL").apply {
                     putExtra("channel_url", subscription.url)
-                    putExtra("service_id", subscription.service_id.toString())
+                    putExtra("service_id", subscription.service_id)
                     putExtra("notification_id", notificationId)
                     setPackage(applicationContext.packageName)
                 }

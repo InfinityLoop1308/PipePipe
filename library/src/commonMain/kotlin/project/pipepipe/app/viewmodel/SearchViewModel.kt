@@ -201,7 +201,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
             addSearchFilter(groupName, filter)
         }
     }
-    suspend fun search(url: String, serviceId: String) {
+    suspend fun search(url: String, serviceId: Int) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true, error = null),
@@ -254,7 +254,7 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
         }
     }
 
-    suspend fun loadMoreResults(serviceId: String) {
+    suspend fun loadMoreResults(serviceId: Int) {
         val nextUrl = uiState.value.list.nextPageUrl ?: return
         setState {
             it.copy(

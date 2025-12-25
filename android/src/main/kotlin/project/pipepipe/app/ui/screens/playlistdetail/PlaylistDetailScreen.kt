@@ -67,7 +67,7 @@ fun PlaylistDetailScreen(
     navController: NavController,
     url: String,
     useAsTab: Boolean = false,
-    serviceId: String? = null
+    serviceId: Int? = null
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current

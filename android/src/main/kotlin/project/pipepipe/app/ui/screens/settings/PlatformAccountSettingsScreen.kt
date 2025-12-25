@@ -26,18 +26,21 @@ import android.webkit.CookieManager as AndroidCookieManager
 
 enum class LoginPlatform(
     val displayName: String,
+    val id: Int,
     val url: String,
     val cookieIndicator: String,
     val userAgent: String,
     val redirectUrl: String? = null
 ) {
     BILIBILI(
+        id = 5,
         displayName = "BiliBili",
         url = "https://passport.bilibili.com/login",
         cookieIndicator = "SESSDATA=",
         userAgent = "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36"
     ),
     YOUTUBE(
+        id = 0,
         displayName = "YouTube",
         url = "https://www.youtube.com/signin",
         cookieIndicator = "LOGIN_INFO=",
@@ -45,6 +48,7 @@ enum class LoginPlatform(
         redirectUrl = "https://music.youtube.com/watch?v=09839DpTctU"
     ),
     NICONICO(
+        id = 6,
         displayName = "NicoNico",
         url = "https://account.nicovideo.jp/login",
         cookieIndicator = "user_session=",
@@ -61,13 +65,13 @@ fun AccountSettingsScreen(
 
     // Track login states for all platforms
     var bilibiliLoggedIn by remember {
-        mutableStateOf(SharedContext.cookieManager.getCookie("BILIBILI")?.isLoggedInCookie()?:false)
+        mutableStateOf(SharedContext.cookieManager.getCookie(5)?.isLoggedInCookie()?:false)
     }
     var youtubeLoggedIn by remember {
-        mutableStateOf(SharedContext.cookieManager.getCookie("YOUTUBE")?.isLoggedInCookie()?:false)
+        mutableStateOf(SharedContext.cookieManager.getCookie(0)?.isLoggedInCookie()?:false)
     }
     var niconicoLoggedIn by remember {
-        mutableStateOf(SharedContext.cookieManager.getCookie("NICONICO")?.isLoggedInCookie()?:false)
+        mutableStateOf(SharedContext.cookieManager.getCookie(6)?.isLoggedInCookie()?:false)
     }
 
     var showLoginWebView by remember { mutableStateOf<LoginPlatform?>(null) }
@@ -127,7 +131,7 @@ fun AccountSettingsScreen(
                 title = logoutTitle,
                 enabled = youtubeLoggedIn,
                 onClick = {
-                    SharedContext.cookieManager.removeLoggedInCookie("YOUTUBE")
+                    SharedContext.cookieManager.removeLoggedInCookie(0)
                     youtubeLoggedIn = false
                     ToastManager.show(loggedOutMessage)
                 }
@@ -149,7 +153,7 @@ fun AccountSettingsScreen(
                 title = logoutTitle,
                 enabled = bilibiliLoggedIn,
                 onClick = {
-                    SharedContext.cookieManager.removeLoggedInCookie("BILIBILI")
+                    SharedContext.cookieManager.removeLoggedInCookie(5)
                     bilibiliLoggedIn = false
                     ToastManager.show(loggedOutMessage)
                 }
@@ -172,7 +176,7 @@ fun AccountSettingsScreen(
                 title = logoutTitle,
                 enabled = niconicoLoggedIn,
                 onClick = {
-                    SharedContext.cookieManager.removeLoggedInCookie("NICONICO")
+                    SharedContext.cookieManager.removeLoggedInCookie(6)
                     niconicoLoggedIn = false
                     ToastManager.show(loggedOutMessage)
                 }
@@ -186,9 +190,9 @@ fun AccountSettingsScreen(
             platform = showLoginWebView!!,
             onLoginSuccess = { cookies ->
                 val platform = showLoginWebView!!
-                val serviceId = platform.name
+                val serviceId = platform.id
 
-                if (serviceId == "YOUTUBE" && (!cookies.contains("SAPISID=") && !cookies.contains("__Secure-3PAPISID="))) {
+                if (serviceId == 0 && (!cookies.contains("SAPISID=") && !cookies.contains("__Secure-3PAPISID="))) {
                     ToastManager.show(tryAgainMessage)
                 } else {
                     val timeout = System.currentTimeMillis() / 1000 + 28L * 24 * 60 * 60

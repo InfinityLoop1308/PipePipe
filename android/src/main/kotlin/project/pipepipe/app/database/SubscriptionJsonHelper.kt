@@ -95,7 +95,7 @@ object SubscriptionJsonHelper {
                 val url = item["url"]?.jsonPrimitive?.content ?: continue
                 val name = item["name"]?.jsonPrimitive?.content ?: continue
 
-                val serviceId = parseServiceId(item["service_id"]) ?: continue
+                val serviceId = item["service_id"]?.jsonPrimitive?.int ?: continue
 
                 if (url.isNotEmpty() && name.isNotEmpty()) {
                     val channelInfo = ChannelInfo(
@@ -116,35 +116,5 @@ object SubscriptionJsonHelper {
         }
 
         return importCount
-    }
-
-    /**
-     * Parse service_id with backward compatibility
-     * Returns null if service_id is invalid (skip this subscription)
-     */
-    private fun parseServiceId(serviceIdElement: JsonElement?): String? {
-        if (serviceIdElement == null) {
-            return null
-        }
-
-        return try {
-            val intValue = serviceIdElement.jsonPrimitive.int
-            convertLegacyServiceId(intValue)
-        } catch (e: Exception) {
-            try {
-                serviceIdElement.jsonPrimitive.content
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    private fun convertLegacyServiceId(intServiceId: Int): String? {
-        return when (intServiceId) {
-            0 -> "YOUTUBE"
-            5 -> "BILIBILI"
-            6 -> "NICONICO"
-            else -> null
-        }
     }
 }

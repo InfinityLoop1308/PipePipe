@@ -15,13 +15,13 @@ class PlaylistDetailViewModel : ViewModel() {
     private val sharedViewModel: SharedPlaylistDetailViewModel = SharedPlaylistDetailViewModel()
     val uiState: StateFlow<PlaylistUiState> = sharedViewModel.uiState
 
-    fun loadPlaylist(url: String, serviceId: String? = null) {
+    fun loadPlaylist(url: String, serviceId: Int? = null) {
         viewModelScope.launch {
             sharedViewModel.loadPlaylist(url, serviceId)
         }
     }
 
-    fun loadRemotePlaylistMoreItems (serviceId: String) {
+    fun loadRemotePlaylistMoreItems (serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadRemotePlaylistMoreItems(serviceId)
         }

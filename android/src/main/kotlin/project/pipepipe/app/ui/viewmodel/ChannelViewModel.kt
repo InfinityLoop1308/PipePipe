@@ -12,62 +12,62 @@ class ChannelViewModel : ViewModel() {
     private val sharedViewModel = SharedChannelViewModel()
     val uiState: StateFlow<ChannelUiState> = sharedViewModel.uiState
 
-    fun loadChannelMainTab(url: String, serviceId: String) {
+    fun loadChannelMainTab(url: String, serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadChannelMainTab(url, serviceId)
         }
     }
 
-    fun loadMainTabMoreItems(serviceId: String) {
+    fun loadMainTabMoreItems(serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadMainTabMoreItems(serviceId)
         }
     }
 
-    fun loadChannelLiveTab(url: String, serviceId: String) {
+    fun loadChannelLiveTab(url: String, serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadChannelLiveTab(url, serviceId)
         }
     }
 
-    fun loadLiveTabMoreItems(serviceId: String) {
+    fun loadLiveTabMoreItems(serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadLiveTabMoreItems(serviceId)
         }
     }
 
-    fun loadChannelShortsTab(url: String, serviceId: String) {
+    fun loadChannelShortsTab(url: String, serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadChannelShortsTab(url, serviceId)
         }
     }
 
-    fun loadShortsTabMoreItems(serviceId: String) {
+    fun loadShortsTabMoreItems(serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadShortsTabMoreItems(serviceId)
         }
     }
 
 
-    fun loadChannelPlaylistTab(url: String, serviceId: String) {
+    fun loadChannelPlaylistTab(url: String, serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadChannelPlaylistTab(url, serviceId)
         }
     }
 
-    fun loadPlaylistTabMoreItems(serviceId: String) {
+    fun loadPlaylistTabMoreItems(serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadPlaylistTabMoreItems(serviceId)
         }
     }
 
-    fun loadChannelAlbumTab(url: String, serviceId: String) {
+    fun loadChannelAlbumTab(url: String, serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadChannelAlbumTab(url, serviceId)
         }
     }
 
-    fun loadAlbumTabMoreItems(serviceId: String) {
+    fun loadAlbumTabMoreItems(serviceId: Int) {
         viewModelScope.launch {
             sharedViewModel.loadAlbumTabMoreItems(serviceId)
         }

@@ -55,7 +55,7 @@ import java.net.URLEncoder
 fun ChannelScreen(
     navController: NavController,
     channelUrl: String,
-    serviceId: String,
+    serviceId: Int,
     useAsTab: Boolean = false
 ) {
     val context = LocalContext.current

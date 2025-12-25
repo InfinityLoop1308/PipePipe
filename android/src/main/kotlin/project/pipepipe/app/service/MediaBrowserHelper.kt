@@ -39,7 +39,7 @@ object MediaBrowserHelper {
 
     // Settings keys
     private const val SUPPORTED_SERVICES_KEY = "supported_services"
-    private const val SELECTED_SERVICE_KEY = "selected_service"
+    private const val SELECTED_SERVICE_KEY = "selected_search_service"
 
     // Android Auto media ID scheme - format: auto://{serviceId}/{realUrl}?name=...&artist=...
     // All metadata is encoded in the URL since extras are lost during IPC
@@ -170,10 +170,8 @@ object MediaBrowserHelper {
 
         if (serviceInfoList.isEmpty()) return
 
-        val savedServiceId = SharedContext.settingsManager.getString(SELECTED_SERVICE_KEY, "")
-        val savedService = if (savedServiceId.isNotEmpty()) {
-            serviceInfoList.find { it.serviceId == savedServiceId }
-        } else null
+        val savedServiceId = SharedContext.settingsManager.getInt(SELECTED_SERVICE_KEY, 0)
+        val savedService = serviceInfoList.find { it.serviceId == savedServiceId }
         val serviceToUse = savedService ?: serviceInfoList.first()
         searchVm.updateSelectedService(serviceToUse)
     }
@@ -301,7 +299,7 @@ object MediaBrowserHelper {
         // Build URL with query parameters to preserve metadata across IPC
         val uriBuilder = Uri.Builder()
             .scheme("auto")
-            .authority(streamInfo.serviceId)
+            .authority(streamInfo.serviceId.toString())
             .appendPath(streamInfo.url)
 
         streamInfo.name?.let { uriBuilder.appendQueryParameter("name", it) }
@@ -331,7 +329,7 @@ object MediaBrowserHelper {
      * Parsed Android Auto media ID containing all encoded metadata.
      */
     data class AutoMediaInfo(
-        val serviceId: String,
+        val serviceId: Int,
         val realUrl: String,
         val name: String?,
         val artist: String?,
@@ -346,7 +344,7 @@ object MediaBrowserHelper {
     fun parseAutoMediaId(mediaId: String): AutoMediaInfo? {
         if (!mediaId.startsWith("auto://")) return null
         val uri = Uri.parse(mediaId)
-        val serviceId = uri.authority ?: return null
+        val serviceId = uri.authority?.toInt() ?: return null
         val realUrl = uri.pathSegments.firstOrNull() ?: return null
 
         return AutoMediaInfo(

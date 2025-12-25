@@ -495,7 +495,7 @@ class PlaybackService : MediaLibraryService() {
                 if (player.currentMediaItem?.mediaId == event.mediaId) {
                     loadSponsorBlock(event.mediaId, event.sponsorblockUrl)
                     loadAutoplayNext(event.mediaId, event.relatedItemUrl,
-                        player.currentMediaItem?.mediaMetadata?.extras?.getString("KEY_SERVICE_ID"))
+                        player.currentMediaItem?.mediaMetadata?.extras?.getInt("KEY_SERVICE_ID"))
                 }
             }
         }
@@ -729,11 +729,11 @@ class PlaybackService : MediaLibraryService() {
     private fun loadAutoplayNextForMedia(mediaItem: MediaItem) {
         val mediaId = mediaItem.mediaId
         val relatedItemUrl = mediaItem.mediaMetadata.extras?.getString("KEY_RELATED_ITEM_URL")
-        val serviceId = mediaItem.mediaMetadata.extras?.getString("KEY_SERVICE_ID")
+        val serviceId = mediaItem.mediaMetadata.extras?.getInt("KEY_SERVICE_ID")
         loadAutoplayNext(mediaId, relatedItemUrl, serviceId)
     }
 
-    private fun loadAutoplayNext(mediaId: String, relatedItemUrl: String?, serviceId: String?) {
+    private fun loadAutoplayNext(mediaId: String, relatedItemUrl: String?, serviceId: Int?) {
         if (!SharedContext.settingsManager.getBoolean("auto_queue_key", false)) return
 
         val currentIndex = player.currentMediaItemIndex
@@ -813,7 +813,7 @@ class PlaybackService : MediaLibraryService() {
             try {
                 // Get service ID from current media item
                 val currentItem = player.currentMediaItem ?: return@launch
-                val serviceId = currentItem.mediaMetadata.extras?.getString("KEY_SERVICE_ID")
+                val serviceId = currentItem.mediaMetadata.extras?.getInt("KEY_SERVICE_ID")
 
                 // Fetch fresh stream info
                 val streamInfo = withContext(Dispatchers.IO) {

@@ -265,7 +265,7 @@ fun PlayQueueScreen() {
                         },
                         onItemLongClick = {
                             val streamInfo = StreamInfo(
-                                serviceId = window.mediaItem.mediaMetadata.extras!!.getString("KEY_SERVICE_ID")!!,
+                                serviceId = window.mediaItem.mediaMetadata.extras!!.getInt("KEY_SERVICE_ID")!!,
                                 url = window.mediaItem.mediaId,
                                 name = window.mediaItem.mediaMetadata.title?.toString() ?: "",
                                 thumbnailUrl = window.mediaItem.mediaMetadata.artworkUri?.toString(),
@@ -328,7 +328,7 @@ fun PlayQueueScreen() {
 				val window = timeline.getWindow(index, androidx.media3.common.Timeline.Window())
 				try {
 					StreamInfo(
-						serviceId = window.mediaItem.mediaMetadata.extras!!.getString("KEY_SERVICE_ID")!!,
+						serviceId = window.mediaItem.mediaMetadata.extras!!.getInt("KEY_SERVICE_ID")!!,
 						url = window.mediaItem.mediaId,
 						name = window.mediaItem.mediaMetadata.title?.toString() ?: "",
 						thumbnailUrl = window.mediaItem.mediaMetadata.artworkUri?.toString(),

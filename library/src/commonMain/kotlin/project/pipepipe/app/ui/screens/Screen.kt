@@ -7,7 +7,7 @@ sealed class Screen(val route: String) {
     object Subscription: Screen("subscription")
     object BookmarkedPlaylist : Screen("bookmarked_playlist")
     object PlaylistDetail : Screen("playlist?url={url}&serviceId={serviceId}") {
-        fun createRoute(url: String, serviceId: String? = null): String {
+        fun createRoute(url: String, serviceId: Int? = null): String {
             val encodedUrl = URLEncoder.encode(url, "UTF-8")
             return if (serviceId != null) {
                 "playlist?url=${encodedUrl}&serviceId=${serviceId}"
@@ -20,7 +20,7 @@ sealed class Screen(val route: String) {
     object History : Screen("history")
     object Settings : Screen("settings")
     object Search : Screen("search?query={query}&serviceId={serviceId}") {
-        fun createRoute(query: String? = null, serviceId: String? = null): String {
+        fun createRoute(query: String? = null, serviceId: Int? = null): String {
             return if (query != null && serviceId != null) {
                 val encodedQuery = URLEncoder.encode(query, "UTF-8").replace("+", "%20")
                 "search?query=${encodedQuery}&serviceId=${serviceId}"
@@ -30,7 +30,7 @@ sealed class Screen(val route: String) {
         }
     }
     object Channel : Screen("channel?url={url}&serviceId={serviceId}") {
-        fun createRoute(url: String, serviceId: String): String {
+        fun createRoute(url: String, serviceId: Int): String {
             val encodedUrl = URLEncoder.encode(url, "UTF-8")
             return "channel?url=${encodedUrl}&serviceId=${serviceId}"
         }

@@ -52,7 +52,7 @@ fun PlaylistContent(
     reorderableLazyGridState: ReorderableLazyGridState,
     isSearchActive: Boolean,
     url: String,
-    serviceId: String?,
+    serviceId: Int?,
     scope: CoroutineScope,
     onStartPlayAll: (index: Int, shuffle: Boolean) -> Unit,
     onClearSearchFocus: () -> Unit

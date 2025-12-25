@@ -17,7 +17,7 @@ data class SubscriptionExportData(
 @Serializable
 data class SubscriptionItemJson(
     @SerialName("service_id")
-    val serviceId: String,
+    val serviceId: Int,
 
     @SerialName("url")
     val url: String,

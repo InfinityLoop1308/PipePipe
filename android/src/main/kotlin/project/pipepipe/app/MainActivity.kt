@@ -325,8 +325,8 @@ class MainActivity : ComponentActivity() {
     private fun checkIntentForChannelNavigation(intent: Intent) {
         if (intent.getBooleanExtra("navigate_to_channel", false)) {
             val channelUrl = intent.getStringExtra("channel_url")
-            val serviceId = intent.getStringExtra("service_id")
-            if (channelUrl != null && serviceId != null) {
+            val serviceId = intent.getIntExtra("service_id", -1)
+            if (channelUrl != null && serviceId != -1) {
                 navController.navigate(Screen.Channel.createRoute(channelUrl, serviceId))
                 intent.removeExtra("navigate_to_channel")
                 intent.removeExtra("channel_url")

@@ -1,0 +1,131 @@
+-- Migration 905: Convert service_id back to INTEGER
+-- Mapping: YOUTUBE->0, BILIBILI->5, NICONICO->6
+
+-- ============================================================
+-- Part 1: Rebuild subscriptions table
+-- ============================================================
+
+CREATE TABLE subscriptions_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id INTEGER AS kotlin.Int NOT NULL,
+    url TEXT,
+    name TEXT,
+    avatar_url TEXT,
+    subscriber_count INTEGER,
+    description TEXT,
+    notification_mode INTEGER NOT NULL DEFAULT 1
+);
+
+INSERT INTO subscriptions_new (uid, service_id, url, name, avatar_url, subscriber_count, description, notification_mode)
+SELECT uid,
+    CASE service_id
+        WHEN 'YOUTUBE' THEN 0
+        WHEN 'BILIBILI' THEN 5
+        WHEN 'NICONICO' THEN 6
+        ELSE 0
+    END,
+    url, name, avatar_url, subscriber_count, description, notification_mode
+FROM subscriptions;
+
+DROP TABLE subscriptions;
+ALTER TABLE subscriptions_new RENAME TO subscriptions;
+CREATE UNIQUE INDEX index_subscriptions_service_id_url ON subscriptions (service_id, url);
+
+-- ============================================================
+-- Part 2: Rebuild streams table
+-- ============================================================
+
+CREATE TABLE streams_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id INTEGER AS kotlin.Int NOT NULL,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    is_live INTEGER NOT NULL DEFAULT 0,
+    view_count INTEGER,
+    duration INTEGER NOT NULL,
+    uploader TEXT NOT NULL,
+    uploader_url TEXT,
+    thumbnail_url TEXT,
+    upload_date INTEGER,
+    last_access_date INTEGER,
+    repeat_count INTEGER NOT NULL DEFAULT 0,
+    progress_time INTEGER NOT NULL DEFAULT 0,
+    is_paid INTEGER NOT NULL DEFAULT 0,
+    is_short INTEGER NOT NULL DEFAULT 0
+);
+
+INSERT INTO streams_new (uid, service_id, url, title, is_live, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, last_access_date, repeat_count, progress_time, is_paid, is_short)
+SELECT uid,
+    CASE service_id
+        WHEN 'YOUTUBE' THEN 0
+        WHEN 'BILIBILI' THEN 5
+        WHEN 'NICONICO' THEN 6
+        ELSE 0
+    END,
+    url, title, is_live, view_count, duration, uploader, uploader_url, thumbnail_url, upload_date, last_access_date, repeat_count, progress_time, is_paid, is_short
+FROM streams;
+
+DROP TABLE streams;
+ALTER TABLE streams_new RENAME TO streams;
+CREATE UNIQUE INDEX index_streams_service_id_url ON streams (service_id, url);
+CREATE INDEX index_streams_last_access_date ON streams (last_access_date);
+
+-- ============================================================
+-- Part 3: Rebuild remote_playlists table
+-- ============================================================
+
+CREATE TABLE remote_playlists_new (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    service_id INTEGER AS kotlin.Int NOT NULL,
+    name TEXT,
+    url TEXT,
+    thumbnail_url TEXT,
+    uploader TEXT,
+    display_index INTEGER NOT NULL DEFAULT 0,
+    stream_count INTEGER,
+    is_pinned INTEGER NOT NULL DEFAULT 0
+);
+
+INSERT INTO remote_playlists_new (uid, service_id, name, url, thumbnail_url, uploader, display_index, stream_count, is_pinned)
+SELECT uid,
+    CASE service_id
+        WHEN 'YOUTUBE' THEN 0
+        WHEN 'BILIBILI' THEN 5
+        WHEN 'NICONICO' THEN 6
+        ELSE 0
+    END,
+    name, url, thumbnail_url, uploader, display_index, stream_count, is_pinned
+FROM remote_playlists;
+
+DROP TABLE remote_playlists;
+ALTER TABLE remote_playlists_new RENAME TO remote_playlists;
+CREATE INDEX index_remote_playlists_name ON remote_playlists (name);
+CREATE UNIQUE INDEX index_remote_playlists_service_id_url ON remote_playlists (service_id, url);
+
+-- ============================================================
+-- Part 4: Rebuild error_log table
+-- ============================================================
+
+CREATE TABLE error_log_new (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    stacktrace TEXT NOT NULL,
+    request TEXT,
+    task TEXT NOT NULL,
+    error_code TEXT NOT NULL,
+    service_id INTEGER AS kotlin.Int
+);
+
+INSERT INTO error_log_new (id, timestamp, stacktrace, request, task, error_code, service_id)
+SELECT id, timestamp, stacktrace, request, task, error_code,
+    CASE service_id
+        WHEN 'YOUTUBE' THEN 0
+        WHEN 'BILIBILI' THEN 5
+        WHEN 'NICONICO' THEN 6
+        ELSE NULL
+    END
+FROM error_log;
+
+DROP TABLE error_log;
+ALTER TABLE error_log_new RENAME TO error_log;
+CREATE INDEX index_error_log_timestamp ON error_log (timestamp DESC);

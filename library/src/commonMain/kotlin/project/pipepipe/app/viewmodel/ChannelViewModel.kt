@@ -16,7 +16,7 @@ import project.pipepipe.app.helper.executeJobFlow
 
 class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
 
-    suspend fun loadChannelMainTab(url: String, serviceId: String) {
+    suspend fun loadChannelMainTab(url: String, serviceId: Int) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true)
@@ -67,7 +67,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         DatabaseOperations.updateSubscriptionFeed((result.info as ChannelInfo).url, rawItems)
     }
 
-    suspend fun loadMainTabMoreItems(serviceId: String) {
+    suspend fun loadMainTabMoreItems(serviceId: Int) {
         val nextUrl = uiState.value.videoTab.nextPageUrl ?: return
         setState {
             it.copy(
@@ -116,7 +116,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
-    suspend fun loadChannelLiveTab(url: String, serviceId: String) {
+    suspend fun loadChannelLiveTab(url: String, serviceId: Int) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true)
@@ -164,7 +164,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
-    suspend fun loadLiveTabMoreItems(serviceId: String) {
+    suspend fun loadLiveTabMoreItems(serviceId: Int) {
         val nextUrl = uiState.value.liveTab.nextPageUrl ?: return
         setState {
             it.copy(
@@ -213,7 +213,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
-    suspend fun loadChannelShortsTab(url: String, serviceId: String) {
+    suspend fun loadChannelShortsTab(url: String, serviceId: Int) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true)
@@ -261,7 +261,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
-    suspend fun loadShortsTabMoreItems(serviceId: String) {
+    suspend fun loadShortsTabMoreItems(serviceId: Int) {
         val nextUrl = uiState.value.shortsTab.nextPageUrl ?: return
         setState {
             it.copy(
@@ -310,7 +310,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
-    suspend fun loadChannelPlaylistTab(url: String, serviceId: String) {
+    suspend fun loadChannelPlaylistTab(url: String, serviceId: Int) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true)
@@ -351,7 +351,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
-    suspend fun loadPlaylistTabMoreItems(serviceId: String) {
+    suspend fun loadPlaylistTabMoreItems(serviceId: Int) {
         val nextUrl = uiState.value.playlistTab.nextPageUrl ?: return
         setState {
             it.copy(
@@ -393,7 +393,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
-    suspend fun loadChannelAlbumTab(url: String, serviceId: String) {
+    suspend fun loadChannelAlbumTab(url: String, serviceId: Int) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true)
@@ -434,7 +434,7 @@ class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
         }
     }
 
-    suspend fun loadAlbumTabMoreItems(serviceId: String) {
+    suspend fun loadAlbumTabMoreItems(serviceId: Int) {
         val nextUrl = uiState.value.albumTab.nextPageUrl ?: return
         setState {
             it.copy(

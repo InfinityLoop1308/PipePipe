@@ -62,22 +62,31 @@ fun TabCustomizationScreen(
                     MainScreenTabDefaults.getDefaultTabs()
                 } else {
                     // Try new format first
-                    try {
+                    val parsedTabs = try {
                         Json.decodeFromString<List<String>>(jsonString)
                     } catch (e: Exception) {
                         // Try old format (List<{route: String, isDefault: Boolean}>)
                         val jsonElement = Json.parseToJsonElement(jsonString)
                         if (jsonElement is JsonArray && jsonElement.firstOrNull() is JsonObject) {
-                            val convertedTabs = jsonElement.mapNotNull { element ->
+                            jsonElement.mapNotNull { element ->
                                 (element as? JsonObject)?.get("route")?.jsonPrimitive?.content
                             }
-                            // Save as new format
-                            settingsManager.putString("custom_tabs_config_key", Json.encodeToString(convertedTabs))
-                            convertedTabs
                         } else {
                             throw e // Neither format worked, fall through to default
                         }
                     }
+                    // Migrate old serviceId format (string -> int)
+                    val migratedTabs = parsedTabs.map { route ->
+                        route.replace("serviceId=YOUTUBE", "serviceId=0")
+                            .replace("serviceId=BILIBILI", "serviceId=5")
+                            .replace("serviceId=NICONICO", "serviceId=6")
+                    }
+                    // Save if migrated
+                    val migratedJson = Json.encodeToString(migratedTabs)
+                    if (migratedJson != jsonString) {
+                        settingsManager.putString("custom_tabs_config_key", migratedJson)
+                    }
+                    migratedTabs
                 }
             } catch (e: Exception) {
                 MainScreenTabDefaults.getDefaultTabs()

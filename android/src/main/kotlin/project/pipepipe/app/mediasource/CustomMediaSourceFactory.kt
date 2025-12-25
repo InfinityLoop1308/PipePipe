@@ -64,7 +64,7 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
         val autoMediaInfo = MediaBrowserHelper.parseAutoMediaId(mediaItem.mediaId)
         if (autoMediaInfo != null) {
             val rebuiltExtras = Bundle().apply {
-                putString("KEY_SERVICE_ID", autoMediaInfo.serviceId)
+                putInt("KEY_SERVICE_ID", autoMediaInfo.serviceId)
             }
             item = mediaItem.buildUpon()
                 .setMediaId(autoMediaInfo.realUrl)
@@ -166,7 +166,7 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
 
     private fun MediaItem.copyWithStreamInfo(uri: Uri, mimeType: String, sponsorblockUrl: String?, relatedItemUrl: String?): MediaItem {
         val extras = Bundle().apply {
-            putString("KEY_SERVICE_ID", mediaMetadata.extras!!.getString("KEY_SERVICE_ID"))
+            putInt("KEY_SERVICE_ID", mediaMetadata.extras!!.getInt("KEY_SERVICE_ID"))
             putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)
             putString("KEY_RELATED_ITEM_URL", relatedItemUrl)
         }
@@ -231,7 +231,7 @@ class LazyUrlMediaSource(
         mediaSourceCaller = caller
         prepareJob = coroutineScope.launch {
             try {
-                val serviceId = mediaItem.mediaMetadata.extras!!.getString("KEY_SERVICE_ID")
+                val serviceId = mediaItem.mediaMetadata.extras!!.getInt("KEY_SERVICE_ID")
                 val streamInfo = withContext(Dispatchers.IO) {
                     executeJobFlow(
                         SupportedJobType.FETCH_INFO, mediaItem.mediaId,
@@ -365,7 +365,7 @@ fun StreamInfo.toMediaItem(): MediaItem {
         putString("KEY_DASH_MANIFEST", dashManifest)
         putString("KEY_DASH_URL", dashUrl)
         putString("KEY_HLS_URL", hlsUrl)
-        putString("KEY_SERVICE_ID", serviceId)
+        putInt("KEY_SERVICE_ID", serviceId)
         putSerializable("KEY_HEADER_MAP", headers)
         putBoolean("KEY_USE_CACHE", !isLive)
         putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)

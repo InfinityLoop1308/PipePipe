@@ -6,7 +6,7 @@
 
 CREATE TABLE subscriptions (
     uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    service_id TEXT NOT NULL,
+    service_id INTEGER AS kotlin.Int NOT NULL,
     url TEXT,
     name TEXT,
     avatar_url TEXT,
@@ -23,7 +23,7 @@ CREATE TABLE search_history (
 
 CREATE TABLE streams (
     uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    service_id TEXT NOT NULL,
+    service_id INTEGER AS kotlin.Int NOT NULL,
     url TEXT NOT NULL,
     title TEXT NOT NULL,
     is_live INTEGER NOT NULL DEFAULT 0,
@@ -59,7 +59,7 @@ CREATE TABLE playlist_stream_join (
 
 CREATE TABLE remote_playlists (
     uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    service_id TEXT NOT NULL,
+    service_id INTEGER AS kotlin.Int NOT NULL,
     name TEXT,
     url TEXT,
     thumbnail_url TEXT,
@@ -107,7 +107,7 @@ CREATE TABLE error_log (
     request TEXT,
     task TEXT NOT NULL,
     error_code TEXT NOT NULL,
-    service_id TEXT
+    service_id INTEGER AS kotlin.Int
 );
 
 

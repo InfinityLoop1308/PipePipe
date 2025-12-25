@@ -557,7 +557,7 @@ object DatabaseOperations {
         task: String,
         errorCode: String,
         request: String? = null,
-        serviceId: String? = null,
+        serviceId: Int? = null,
     ): Long = withContext(Dispatchers.IO) {
         println(stacktrace)
         database.appDatabaseQueries.insertErrorLog(
@@ -588,7 +588,7 @@ object DatabaseOperations {
     }
 
     suspend fun insertOrReplaceRemotePlaylist(
-        serviceId: String,
+        serviceId: Int,
         name: String?,
         url: String,
         thumbnailUrl: String?,

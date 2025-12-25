@@ -3,6 +3,7 @@ package project.pipepipe.app.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +20,10 @@ import project.pipepipe.app.helper.MainScreenTabDefaults
 import project.pipepipe.app.serialize.SavedTabsPayload
 import project.pipepipe.app.serialize.SavedTabPayload
 import project.pipepipe.app.PipePipeApplication
+import project.pipepipe.database.Error_log
+import project.pipepipe.database.Remote_playlists
+import project.pipepipe.database.Streams
+import project.pipepipe.database.Subscriptions
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
 import java.net.URLEncoder
 import java.io.BufferedInputStream
@@ -57,11 +62,6 @@ class DatabaseImporter(
             ignoreUnknownKeys = true
             isLenient = true
             coerceInputValues = true
-        }
-
-        private val tabConfigJsonParser = Json {
-            ignoreUnknownKeys = false
-            isLenient = false
         }
     }
 
@@ -343,15 +343,6 @@ class DatabaseImporter(
         }
     }
 
-    private fun convertLegacyServiceId(intServiceId: Int): String? {
-        return when (intServiceId) {
-            0 -> "YOUTUBE"
-            5 -> "BILIBILI"
-            6 -> "NICONICO"
-            else -> null
-        }
-    }
-
     private fun convertLegacyKioskId(kioskId: String?): String {
         return when (kioskId) {
             "Trending" -> "trending"
@@ -370,8 +361,7 @@ class DatabaseImporter(
     }
 
     private fun convertKioskTab(tab: SavedTabPayload): String? {
-        val legacyServiceId = tab.serviceId ?: return null
-        val serviceId = convertLegacyServiceId(legacyServiceId) ?: return null
+        val serviceId = tab.serviceId ?: return null
         val targetKioskName = convertLegacyKioskId(tab.kioskId)
 
         val services = getSupportedServices()
@@ -595,7 +585,21 @@ class DatabaseImporter(
     private fun verifyImportedDatabase() {
         try {
             val driver = AndroidSqliteDriver(AppDatabase.Schema, context, DATABASE_NAME)
-            val database = AppDatabase(driver)
+            val database = AppDatabase(
+                driver = DataBaseDriverManager.driver,
+                error_logAdapter = Error_log.Adapter(
+                    service_idAdapter = IntColumnAdapter
+                ),
+                remote_playlistsAdapter = Remote_playlists.Adapter(
+                    service_idAdapter = IntColumnAdapter
+                ),
+                streamsAdapter = Streams.Adapter(
+                    service_idAdapter = IntColumnAdapter
+                ),
+                subscriptionsAdapter = Subscriptions.Adapter(
+                    service_idAdapter = IntColumnAdapter
+                ),
+            )
             database.appDatabaseQueries.selectStreamsCount().executeAsOne()
             driver.close()
         } catch (e: Exception) {

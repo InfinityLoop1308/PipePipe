@@ -22,7 +22,7 @@ import kotlin.io.encoding.Base64
 suspend fun executeJobFlow(
     jobType: SupportedJobType,
     url: String?,
-    serviceId: String?,
+    serviceId: Int?,
     payload: String? = null
 ): ExtractResult<out Info, out Info> {
     val cookieManager = SharedContext.cookieManager

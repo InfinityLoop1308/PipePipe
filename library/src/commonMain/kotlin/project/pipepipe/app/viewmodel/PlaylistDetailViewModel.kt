@@ -60,7 +60,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         scope.cancel()
     }
 
-    suspend fun loadPlaylist(url: String, serviceId: String? = null) {
+    suspend fun loadPlaylist(url: String, serviceId: Int? = null) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true, error = null)
@@ -150,7 +150,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
     }
 
-    suspend fun loadRemotePlaylistDetail(url: String, serviceId: String, isTrending: Boolean = false) {
+    suspend fun loadRemotePlaylistDetail(url: String, serviceId: Int, isTrending: Boolean = false) {
         val result = withContext(Dispatchers.IO) {
             executeJobFlow(
                 SupportedJobType.FETCH_INFO,
@@ -222,7 +222,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
     }
 
-    suspend fun loadRemotePlaylistMoreItems(serviceId: String) {
+    suspend fun loadRemotePlaylistMoreItems(serviceId: Int) {
         val nextUrl = uiState.value.list.nextPageUrl ?: return
         setState {
             it.copy(

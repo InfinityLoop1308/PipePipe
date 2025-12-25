@@ -66,7 +66,7 @@ fun NavGraph(
         composable(Screen.PlaylistDetail.route) { backStackEntry ->
             PlaylistDetailScreen(
                 url = backStackEntry.arguments!!.getString("url")!!,
-                serviceId = backStackEntry.arguments!!.getString("serviceId"),
+                serviceId = backStackEntry.arguments!!.getString("serviceId")?.toInt(),
                 navController = navController
             )
         }
@@ -129,7 +129,7 @@ fun NavGraph(
         }
         composable(Screen.Search.route) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query")
-            val serviceId = backStackEntry.arguments?.getString("serviceId")
+            val serviceId = backStackEntry.arguments?.getString("serviceId")?.toInt()
             SearchScreen(
                 navController = navController,
                 initialQuery = query,
@@ -138,7 +138,7 @@ fun NavGraph(
         }
         composable(Screen.Channel.route) { backStackEntry ->
             val channelUrl = backStackEntry.arguments!!.getString("url")!!
-            val serviceId = backStackEntry.arguments!!.getString("serviceId")!!
+            val serviceId = backStackEntry.arguments!!.getString("serviceId")!!.toInt()
             ChannelScreen(navController = navController, channelUrl = channelUrl, serviceId = serviceId)
         }
         composable(Screen.Feed.route) { backStackEntry ->

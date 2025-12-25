@@ -41,7 +41,7 @@ class VideoDetailViewModel()
     }
 
 
-    fun loadVideoDetails(url: String, serviceId: String? = null, shouldDisableLoading: Boolean = false, shouldKeepPlaybackMode: Boolean = false) {
+    fun loadVideoDetails(url: String, serviceId: Int? = null, shouldDisableLoading: Boolean = false, shouldKeepPlaybackMode: Boolean = false) {
         GlobalScope.launch {
             showAsDetailPage()
             val currentEntry = uiState.value.currentEntry
@@ -67,7 +67,7 @@ class VideoDetailViewModel()
                 return@launch
             }
 
-            val resolvedServiceId = serviceId ?: DatabaseOperations.getStreamByUrl(url)?.service_id
+            val resolvedServiceId = serviceId ?: DatabaseOperations.getStreamByUrl(url)?.service_id?.toInt()
             if (!shouldDisableLoading) {
                 setState {
                     it.copy(common = it.common.copy(isLoading = true, error = null))
@@ -233,7 +233,7 @@ class VideoDetailViewModel()
     }
 
 
-    suspend fun loadMoreComments(serviceId: String) {
+    suspend fun loadMoreComments(serviceId: Int) {
         val nextUrl = uiState.value.currentComments.comments.nextPageUrl ?: return
         updateCurrentEntry { entry ->
             entry.copy(
@@ -281,7 +281,7 @@ class VideoDetailViewModel()
     }
 
 
-    suspend fun loadReplies(commentInfo: CommentInfo, serviceId: String) {
+    suspend fun loadReplies(commentInfo: CommentInfo, serviceId: Int) {
         updateCurrentEntry { entry ->
             entry.copy(
                 cachedComments = entry.cachedComments.copy(
@@ -332,7 +332,7 @@ class VideoDetailViewModel()
         }
     }
 
-    suspend fun loadMoreReplies(serviceId: String) {
+    suspend fun loadMoreReplies(serviceId: Int) {
         updateCurrentEntry { entry ->
             entry.copy(
                 cachedComments = entry.cachedComments.copy(
@@ -473,7 +473,7 @@ class VideoDetailViewModel()
                     common = entry.cachedSponsorBlock.common.copy(
                         isLoading = false,
                         error = result.fatalError?.let { fatalError ->
-                            ErrorInfo(fatalError.errorId!!, fatalError.code, "")
+                            ErrorInfo(fatalError.errorId!!, fatalError.code, -1)
                         }
                     ),
                     segments = result.pagedData?.itemList as List<SponsorBlockSegmentInfo>? ?: emptyList()
@@ -506,7 +506,7 @@ class VideoDetailViewModel()
         ToastManager.show("Success")
     }
 
-    suspend fun loadDanmaku(url: String, serviceId: String) {
+    suspend fun loadDanmaku(url: String, serviceId: Int) {
         val result = withContext(Dispatchers.IO) {
             executeJobFlow(
                 SupportedJobType.FETCH_FIRST_PAGE,
