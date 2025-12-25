@@ -3,9 +3,7 @@ package project.pipepipe.app
 import android.Manifest
 import android.app.AlertDialog
 import android.app.PictureInPictureParams
-import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -28,37 +26,31 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.material.navigation.NavigationView
-import com.google.common.util.concurrent.ListenableFuture
-import com.google.common.util.concurrent.MoreExecutors
 import dev.icerock.moko.resources.desc.desc
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import project.pipepipe.app.global.PipHelper
 import project.pipepipe.app.helper.ExternalUrlPatternHelper
 import project.pipepipe.app.helper.ToastManager
-import project.pipepipe.app.service.PlaybackService
-import project.pipepipe.app.service.setPlaybackMode
+import project.pipepipe.app.service.FeedUpdateManager
 import project.pipepipe.app.ui.component.*
 import project.pipepipe.app.ui.navigation.NavGraph
 import project.pipepipe.app.ui.screens.PlayQueueScreen
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.ui.screens.videodetail.VideoDetailScreen
-import project.pipepipe.app.ui.theme.PipePipeTheme
-import project.pipepipe.app.ui.theme.customTopBarColor
-import project.pipepipe.app.ui.theme.onCustomTopBarColor
 import project.pipepipe.app.uistate.VideoDetailPageState
+import project.pipepipe.app.platform.AndroidActions
+import project.pipepipe.app.platform.AndroidMediaController
+import project.pipepipe.app.platform.PlatformMediaController
 
 val LocalDrawerLayout = staticCompositionLocalOf<DrawerLayout?> { null }
 
 class MainActivity : ComponentActivity() {
-    private var controllerFuture: ListenableFuture<MediaController>? = null
-    private var mediaController: MediaController? = null
     lateinit var navController: NavHostController
     private var wasInPipMode = false
     private lateinit var drawerLayout: DrawerLayout
@@ -73,13 +65,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Initialize MediaController
-        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
-        controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture?.addListener({
-            mediaController = controllerFuture?.get()
-        }, MoreExecutors.directExecutor())
-
         checkIntentForPlayQueue(intent)
         checkIntentForFeedFailures(intent)
         checkIntentForStreamsFailures(intent)
@@ -93,6 +78,16 @@ class MainActivity : ComponentActivity() {
         val navigationView = findViewById<NavigationView>(R.id.navigation)
 
         setupNavigationView(navigationView)
+
+        SharedContext.systemBarColorsManager = SystemBarColorsManager(WindowCompat.getInsetsController(window, window.decorView))
+        SharedContext.platformActions = AndroidActions(
+            context = this,
+            drawerLayout = drawerLayout,
+            feedWorkState = FeedUpdateManager.workState,
+            onStartFeedUpdate = { groupId -> FeedUpdateManager.startFeedUpdate(this, groupId) },
+            onResetFeedState = { FeedUpdateManager.resetState() },
+        )
+
 
         composeView.setContent {
             navController = rememberNavController()
@@ -114,6 +109,8 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(Unit) {
                 checkAndTriggerDialogs()
+                // Initialize platformMediaController
+                SharedContext.platformMediaController = AndroidMediaController.getInstance(this@MainActivity)
             }
 
             // Listen for dialog check trigger (e.g., after backup import)
@@ -170,11 +167,13 @@ class MainActivity : ComponentActivity() {
                                     )
                             )
                             var videoDetailScreenModifier = Modifier
-                            .navigationBarsPadding()
-                            .statusBarsPadding()
+                                .navigationBarsPadding()
+                                .statusBarsPadding()
 
                             if (SharedContext.isTv && videoDetailUiState.pageState != VideoDetailPageState.HIDDEN) {
-                                videoDetailScreenModifier = videoDetailScreenModifier.fillMaxSize().focusGroup()
+                                videoDetailScreenModifier = videoDetailScreenModifier
+                                    .fillMaxSize()
+                                    .focusGroup()
                                     .focusRequester(focusRequester)
                                 runCatching { focusRequester.requestFocus() }.onFailure { it.printStackTrace() }
                             }
@@ -435,7 +434,8 @@ class MainActivity : ComponentActivity() {
 
     private fun handleExitPip() {
         SharedContext.exitPipMode()
-        if (SharedContext.sharedVideoDetailViewModel.uiState.value.currentStreamInfo?.url == mediaController?.currentMediaItem?.mediaId) {
+        val currentMediaId = SharedContext.platformMediaController?.currentMediaItem?.value?.mediaId
+        if (SharedContext.sharedVideoDetailViewModel.uiState.value.currentStreamInfo?.url == currentMediaId) {
             SharedContext.sharedVideoDetailViewModel.showAsDetailPage()
         } else {
             SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
@@ -461,7 +461,7 @@ class MainActivity : ComponentActivity() {
         super.onStop()
         // If in PiP mode and Activity is stopping, user closed the PiP window
         if (wasInPipMode && isInPictureInPictureMode) {
-            mediaController?.pause()
+            SharedContext.platformMediaController?.pause()
             handleExitPip()
             wasInPipMode = false
         }
@@ -483,7 +483,7 @@ class MainActivity : ComponentActivity() {
 
         // Only trigger when in DETAIL_PAGE or FULLSCREEN_PLAYER and player is playing
         if ((pageState == VideoDetailPageState.DETAIL_PAGE || pageState == VideoDetailPageState.FULLSCREEN_PLAYER)
-            && mediaController?.isPlaying == true
+            && SharedContext.platformMediaController?.isPlaying?.value == true
         ) {
 
             val minimizeSetting =
@@ -493,29 +493,25 @@ class MainActivity : ComponentActivity() {
             when (minimizeSetting) {
                 "minimize_on_exit_background_key" -> {
                     // Minimize to background player
-                    mediaController?.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+                    SharedContext.platformMediaController?.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
                 }
 
                 "minimize_on_exit_popup_key" -> {
                     // Minimize to popup player (PiP)
-                    if (streamInfo != null && mediaController != null) {
-                        PipHelper.enterPipMode(mediaController!!, streamInfo, this)
+                    if (streamInfo != null) {
+                        SharedContext.platformActions.enterPictureInPicture(streamInfo)
                     }
                 }
 
                 "minimize_on_exit_none_key" -> {
-                    mediaController?.pause()
+                    SharedContext.platformMediaController?.pause()
                 }
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        controllerFuture?.let { future ->
-            MediaController.releaseFuture(future)
-        }
-    }
+    // Note: onDestroy no longer needs to release controllerFuture because
+    // MediaController is now managed by MediaControllerHolder singleton
 
     private fun updateDrawerColorsFromCompose(
         navigationView: NavigationView,

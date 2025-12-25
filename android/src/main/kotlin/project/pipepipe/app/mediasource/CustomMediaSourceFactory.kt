@@ -16,25 +16,20 @@ import androidx.media3.exoplayer.dash.manifest.DashManifestParser
 import androidx.media3.exoplayer.drm.DrmSessionEventListener
 import androidx.media3.exoplayer.drm.DrmSessionManagerProvider
 import androidx.media3.exoplayer.hls.HlsMediaSource
-import androidx.media3.exoplayer.source.MediaPeriod
-import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.exoplayer.source.MediaSourceEventListener
-import androidx.media3.exoplayer.source.SampleStream
-import androidx.media3.exoplayer.source.TrackGroupArray
+import androidx.media3.exoplayer.source.*
 import androidx.media3.exoplayer.trackselection.ExoTrackSelection
 import androidx.media3.exoplayer.upstream.Allocator
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
-
 import androidx.media3.extractor.metadata.icy.IcyHeaders
 import kotlinx.coroutines.*
-import java.io.IOException
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.service.MediaBrowserHelper
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
-import project.pipepipe.app.helper.executeJobFlow
-import project.pipepipe.app.SharedContext
 import java.io.ByteArrayInputStream
+import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 @UnstableApi
@@ -268,7 +263,7 @@ class LazyUrlMediaSource(
             } catch (e: Exception) { // can be cancelled if service get destroyed
                 e.printStackTrace()
                 // Wrap with IOException to include mediaId, which ExoPlayer can handle
-                prepareError = java.io.IOException("Failed to prepare media: ${mediaItem.mediaId}", e)
+                prepareError = IOException("Failed to prepare media: ${mediaItem.mediaId}", e)
             }
         }
     }

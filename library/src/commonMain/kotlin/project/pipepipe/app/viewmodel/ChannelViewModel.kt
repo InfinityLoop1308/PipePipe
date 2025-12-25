@@ -1,6 +1,8 @@
 package project.pipepipe.app.viewmodel
 
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.database.DatabaseOperations.withProgress
@@ -16,510 +18,536 @@ import project.pipepipe.app.helper.executeJobFlow
 
 class ChannelViewModel : BaseViewModel<ChannelUiState>(ChannelUiState()) {
 
-    suspend fun loadChannelMainTab(url: String, serviceId: Int) {
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_INFO,
-                url,
-                serviceId
-            )
-        }
+    fun loadChannelMainTab(url: String, serviceId: Int) {
+        viewModelScope.launch {
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_INFO,
+                    url,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            // Apply filters
+            val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.CHANNELS
+            )
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    channelInfo = result.info!! as ChannelInfo,
+                    videoTab = ListUiState(
+                        itemList = filteredItems.withProgress(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
+            DatabaseOperations.insertOrUpdateSubscription(result.info!! as ChannelInfo, true)
+            DatabaseOperations.updateSubscriptionFeed((result.info as ChannelInfo).url, rawItems)
         }
-
-        // Apply filters
-        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
-        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
-            rawItems,
-            FilterHelper.FilterScope.CHANNELS
-        )
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                channelInfo = result.info!! as ChannelInfo,
-                videoTab = ListUiState(
-                    itemList = filteredItems.withProgress(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
-        }
-        DatabaseOperations.insertOrUpdateSubscription(result.info!! as ChannelInfo, true)
-        DatabaseOperations.updateSubscriptionFeed((result.info as ChannelInfo).url, rawItems)
     }
 
-    suspend fun loadMainTabMoreItems(serviceId: Int) {
-        val nextUrl = uiState.value.videoTab.nextPageUrl ?: return
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_GIVEN_PAGE,
-                nextUrl,
-                serviceId
-            )
-        }
+    fun loadMainTabMoreItems(serviceId: Int) {
+        viewModelScope.launch {
+            val nextUrl = uiState.value.videoTab.nextPageUrl ?: return@launch
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_GIVEN_PAGE,
+                    nextUrl,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            // Apply filters
+            val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.CHANNELS
+            )
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    videoTab = it.videoTab.copy(
+                        itemList = it.videoTab.itemList + filteredItems.withProgress(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        // Apply filters
-        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
-        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
-            rawItems,
-            FilterHelper.FilterScope.CHANNELS
-        )
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                videoTab = it.videoTab.copy(
-                    itemList = it.videoTab.itemList + filteredItems.withProgress(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun loadChannelLiveTab(url: String, serviceId: Int) {
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_FIRST_PAGE,
-                url,
-                serviceId
-            )
-        }
+    fun loadChannelLiveTab(url: String, serviceId: Int) {
+        viewModelScope.launch {
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_FIRST_PAGE,
+                    url,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            // Apply filters
+            val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.CHANNELS
+            )
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    liveTab = ListUiState(
+                        itemList = filteredItems.withProgress(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        // Apply filters
-        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
-        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
-            rawItems,
-            FilterHelper.FilterScope.CHANNELS
-        )
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                liveTab = ListUiState(
-                    itemList = filteredItems.withProgress(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun loadLiveTabMoreItems(serviceId: Int) {
-        val nextUrl = uiState.value.liveTab.nextPageUrl ?: return
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_GIVEN_PAGE,
-                nextUrl,
-                serviceId
-            )
-        }
+    fun loadLiveTabMoreItems(serviceId: Int) {
+        viewModelScope.launch {
+            val nextUrl = uiState.value.liveTab.nextPageUrl ?: return@launch
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_GIVEN_PAGE,
+                    nextUrl,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            // Apply filters
+            val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.CHANNELS
+            )
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    liveTab = it.liveTab.copy(
+                        itemList = it.liveTab.itemList + filteredItems.withProgress(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        // Apply filters
-        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
-        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
-            rawItems,
-            FilterHelper.FilterScope.CHANNELS
-        )
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                liveTab = it.liveTab.copy(
-                    itemList = it.liveTab.itemList + filteredItems.withProgress(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun loadChannelShortsTab(url: String, serviceId: Int) {
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_FIRST_PAGE,
-                url,
-                serviceId
-            )
-        }
+    fun loadChannelShortsTab(url: String, serviceId: Int) {
+        viewModelScope.launch {
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_FIRST_PAGE,
+                    url,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            // Apply filters
+            val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.CHANNELS
+            )
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    shortsTab = ListUiState(
+                        itemList = filteredItems.withProgress(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        // Apply filters
-        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
-        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
-            rawItems,
-            FilterHelper.FilterScope.CHANNELS
-        )
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                shortsTab = ListUiState(
-                    itemList = filteredItems.withProgress(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun loadShortsTabMoreItems(serviceId: Int) {
-        val nextUrl = uiState.value.shortsTab.nextPageUrl ?: return
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_GIVEN_PAGE,
-                nextUrl,
-                serviceId
-            )
-        }
+    fun loadShortsTabMoreItems(serviceId: Int) {
+        viewModelScope.launch {
+            val nextUrl = uiState.value.shortsTab.nextPageUrl ?: return@launch
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_GIVEN_PAGE,
+                    nextUrl,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            // Apply filters
+            val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val (filteredItems, _) = FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.CHANNELS
+            )
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    shortsTab = it.shortsTab.copy(
+                        itemList = it.shortsTab.itemList + filteredItems.withProgress(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        // Apply filters
-        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
-        val (filteredItems, _) = FilterHelper.filterStreamInfoList(
-            rawItems,
-            FilterHelper.FilterScope.CHANNELS
-        )
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                shortsTab = it.shortsTab.copy(
-                    itemList = it.shortsTab.itemList + filteredItems.withProgress(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun loadChannelPlaylistTab(url: String, serviceId: Int) {
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_FIRST_PAGE,
-                url,
-                serviceId
-            )
-        }
+    fun loadChannelPlaylistTab(url: String, serviceId: Int) {
+        viewModelScope.launch {
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_FIRST_PAGE,
+                    url,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    playlistTab = ListUiState(
+                        itemList = (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                playlistTab = ListUiState(
-                    itemList = (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun loadPlaylistTabMoreItems(serviceId: Int) {
-        val nextUrl = uiState.value.playlistTab.nextPageUrl ?: return
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_GIVEN_PAGE,
-                nextUrl,
-                serviceId
-            )
-        }
+    fun loadPlaylistTabMoreItems(serviceId: Int) {
+        viewModelScope.launch {
+            val nextUrl = uiState.value.playlistTab.nextPageUrl ?: return@launch
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_GIVEN_PAGE,
+                    nextUrl,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    playlistTab = it.playlistTab.copy(
+                        itemList = it.playlistTab.itemList + (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                playlistTab = it.playlistTab.copy(
-                    itemList = it.playlistTab.itemList + (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun loadChannelAlbumTab(url: String, serviceId: Int) {
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_FIRST_PAGE,
-                url,
-                serviceId
-            )
-        }
+    fun loadChannelAlbumTab(url: String, serviceId: Int) {
+        viewModelScope.launch {
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_FIRST_PAGE,
+                    url,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    albumTab = ListUiState(
+                        itemList = (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                albumTab = ListUiState(
-                    itemList = (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun loadAlbumTabMoreItems(serviceId: Int) {
-        val nextUrl = uiState.value.albumTab.nextPageUrl ?: return
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_GIVEN_PAGE,
-                nextUrl,
-                serviceId
-            )
-        }
+    fun loadAlbumTabMoreItems(serviceId: Int) {
+        viewModelScope.launch {
+            val nextUrl = uiState.value.albumTab.nextPageUrl ?: return@launch
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_GIVEN_PAGE,
+                    nextUrl,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    albumTab = it.albumTab.copy(
+                        itemList = it.albumTab.itemList + (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                albumTab = it.albumTab.copy(
-                    itemList = it.albumTab.itemList + (result.pagedData?.itemList as? List<PlaylistInfo>).orEmpty(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 
-    suspend fun toggleSubscription(channelInfo: ChannelInfo) {
-        val isCurrentlySubscribed = DatabaseOperations.isSubscribed(channelInfo.url)
+    fun toggleSubscription(channelInfo: ChannelInfo) {
+        viewModelScope.launch {
+            val isCurrentlySubscribed = DatabaseOperations.isSubscribed(channelInfo.url)
 
-        if (isCurrentlySubscribed) {
-            DatabaseOperations.deleteSubscription(channelInfo.url)
-        } else {
-            DatabaseOperations.insertOrUpdateSubscription(channelInfo, false)
-        }
+            if (isCurrentlySubscribed) {
+                DatabaseOperations.deleteSubscription(channelInfo.url)
+            } else {
+                DatabaseOperations.insertOrUpdateSubscription(channelInfo, false)
+            }
 
-        // Update UI state
-        setState {
-            it.copy(isSubscribed = !isCurrentlySubscribed)
-        }
-    }
-
-    suspend fun updateFeedGroups(channelInfo: ChannelInfo, selectedGroupIds: Set<Long>) {
-        // Ensure subscription exists
-        var subscription = DatabaseOperations.getSubscriptionByUrl(channelInfo.url)
-        if (subscription == null) {
-            DatabaseOperations.insertOrUpdateSubscription(channelInfo, false)
-            subscription = DatabaseOperations.getSubscriptionByUrl(channelInfo.url)!!
-        }
-
-        val currentGroups = DatabaseOperations.getFeedGroupsBySubscription(subscription.uid).toSet()
-
-        // Remove groups that are no longer selected
-        currentGroups.subtract(selectedGroupIds).forEach { groupId ->
-            DatabaseOperations.deleteFeedGroupSubscription(groupId, subscription.uid)
-        }
-
-        // Add newly selected groups
-        selectedGroupIds.subtract(currentGroups).forEach { groupId ->
-            DatabaseOperations.insertFeedGroupSubscription(groupId, subscription.uid)
-        }
-
-        setState {
-            it.copy(isSubscribed = true)
+            // Update UI state
+            setState {
+                it.copy(isSubscribed = !isCurrentlySubscribed)
+            }
         }
     }
 
-    suspend fun checkSubscriptionStatus(url: String) {
-        val isSubscribed = DatabaseOperations.isSubscribed(url)
-        setState {
-            it.copy(isSubscribed = isSubscribed)
+    fun updateFeedGroups(channelInfo: ChannelInfo, selectedGroupIds: Set<Long>) {
+        viewModelScope.launch {
+            // Ensure subscription exists
+            var subscription = DatabaseOperations.getSubscriptionByUrl(channelInfo.url)
+            if (subscription == null) {
+                DatabaseOperations.insertOrUpdateSubscription(channelInfo, false)
+                subscription = DatabaseOperations.getSubscriptionByUrl(channelInfo.url)!!
+            }
+
+            val currentGroups = DatabaseOperations.getFeedGroupsBySubscription(subscription.uid).toSet()
+
+            // Remove groups that are no longer selected
+            currentGroups.subtract(selectedGroupIds).forEach { groupId ->
+                DatabaseOperations.deleteFeedGroupSubscription(groupId, subscription.uid)
+            }
+
+            // Add newly selected groups
+            selectedGroupIds.subtract(currentGroups).forEach { groupId ->
+                DatabaseOperations.insertFeedGroupSubscription(groupId, subscription.uid)
+            }
+
+            setState {
+                it.copy(isSubscribed = true)
+            }
+        }
+    }
+
+    fun checkSubscriptionStatus(url: String) {
+        viewModelScope.launch {
+            val isSubscribed = DatabaseOperations.isSubscribed(url)
+            setState {
+                it.copy(isSubscribed = isSubscribed)
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import project.pipepipe.app.platform.FeedWorkState
 import java.util.UUID
 
 object FeedUpdateManager {
@@ -66,20 +67,4 @@ object FeedUpdateManager {
     fun resetState() {
         _workState.value = FeedWorkState.Idle
     }
-}
-
-sealed class FeedWorkState {
-    object Idle : FeedWorkState()
-    data class Running(
-        val progress: Int,
-        val completed: Int,
-        val total: Int,
-        val failed: Int
-    ) : FeedWorkState()
-    data class Success(
-        val completed: Int,
-        val failed: Int,
-        val total: Int
-    ) : FeedWorkState()
-    data class Failed(val error: String) : FeedWorkState()
 }

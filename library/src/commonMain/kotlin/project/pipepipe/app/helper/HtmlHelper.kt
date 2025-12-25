@@ -1,15 +1,15 @@
 package project.pipepipe.app.helper
 
-/**
- * Helper interface for parsing and handling HTML content across platforms
- */
-interface HtmlHelper {
-    /**
-     * Parses HTML string and returns a platform-specific formatted text object
-     * @param html The HTML string to parse
-     * @return Platform-specific formatted text representation
-     */
-    fun parseHtml(html: String): Any
-}
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 
-expect fun getHtmlHelper(): HtmlHelper
+expect object HtmlHelper {
+    fun parseHtml(
+        html: String,
+        linkColor: Color,
+        textStyle: TextStyle,
+        enableHashtag: Boolean,
+        enableTimestamp: Boolean
+    ): AnnotatedString
+}

@@ -145,9 +145,6 @@ object MediaBrowserHelper {
 
         val searchUrl = generateQueryUrl(query, searchType)
         searchVm.search(searchUrl, service.serviceId)
-        println(searchUrl)
-        println(service.serviceId)
-        println(searchVm.uiState.value.list.itemList.filterIsInstance<StreamInfo>())
 
         // Return StreamInfo items only
         searchVm.uiState.value.list.itemList

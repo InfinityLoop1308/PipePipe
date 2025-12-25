@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 buildscript {
     repositories {
         google()
@@ -61,7 +63,16 @@ kotlin {
                 implementation("io.coil-kt.coil3:coil-compose:3.3.0")
                 implementation("dev.icerock.moko:resources-compose:0.25.1")
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+                implementation("org.jetbrains.compose.ui:ui:1.7.3")
+                implementation("org.jetbrains.compose.ui:ui-text:1.7.3")
+                implementation("org.jetbrains.compose.foundation:foundation:1.7.3")
+                implementation("org.jetbrains.compose.material3:material3:1.7.3")
+                implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.9.6")
+                implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3:1.4.0")
+                implementation("sh.calvin.reorderable:reorderable:3.0.0")
 
+                // FileKit for cross-platform file picker
+                implementation("io.github.vinceglb:filekit-dialogs-compose:0.12.0")
 
             }
         }
@@ -70,6 +81,12 @@ kotlin {
                 implementation("org.ocpsoft.prettytime:prettytime:5.0.7.Final")
                 implementation("androidx.compose.runtime:runtime")
                 implementation("androidx.core:core-ktx:1.17.0")
+                implementation("app.cash.sqldelight:android-driver:2.0.2")
+                implementation("app.cash.sqldelight:primitive-adapters:2.0.2")
+                implementation("androidx.media3:media3-session:1.8.0")
+                implementation("androidx.media3:media3-exoplayer:1.8.0")
+                implementation("androidx.media3:media3-ui:1.8.0")
+                implementation("androidx.media3:media3-common:1.8.0")
             }
         }
     }

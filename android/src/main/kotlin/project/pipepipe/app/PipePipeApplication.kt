@@ -5,7 +5,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
-import project.pipepipe.app.database.DataBaseDriverManager
 import project.pipepipe.extractor.Router
 import project.pipepipe.app.mediasource.MediaCacheProvider
 import project.pipepipe.app.service.NotificationHelper
@@ -24,28 +23,10 @@ import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.ffmpeg.FFmpeg
 import android.util.Log
 import android.content.pm.PackageManager
+import android.os.Build
+import project.pipepipe.app.platform.AndroidPlatformDatabaseActions
 
 class PipePipeApplication : Application() {
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
-    companion object {
-        suspend fun initializeSupportedServices() {
-            try {
-                withContext(Dispatchers.IO) {
-                    val result = executeJobFlow(
-                        SupportedJobType.GET_SUPPORTED_SERVICES,
-                        null,
-                        null
-                    ).pagedData!!.itemList as List<SupportedServiceInfo>
-                    val jsonString = Json.encodeToString(result)
-                    SharedContext.settingsManager.putString("supported_services", jsonString)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
 
@@ -61,6 +42,7 @@ class PipePipeApplication : Application() {
         }
 
         // Initialize SharedContext
+        SharedContext.androidVersion = Build.VERSION.SDK_INT
         SharedContext.isTv = packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
         SharedContext.downloader = Downloader(HttpClient(OkHttp))
         SharedContext.settingsManager = SettingsManager()
@@ -71,9 +53,8 @@ class PipePipeApplication : Application() {
         // Initialize Media and Notifications
         MediaCacheProvider.init(this)
         NotificationHelper.initNotificationChannels(this)
-
-        // Initialize Database
-        DataBaseDriverManager.initialize(this)
+        SharedContext.platformDatabaseActions = AndroidPlatformDatabaseActions(this)
+        SharedContext.platformDatabaseActions.initializeDatabase()
 
         // Initialize youtubedl-android and FFmpeg
         try {
@@ -96,8 +77,8 @@ class PipePipeApplication : Application() {
         StreamsNotificationManager.schedulePeriodicWork(this)
 
         // Async initialization
-        applicationScope.launch {
-            initializeSupportedServices()
+        GlobalScope.launch {
+            SharedContext.initializeSupportedServices()
         }
     }
 }

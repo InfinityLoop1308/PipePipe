@@ -29,11 +29,12 @@ import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
 import project.pipepipe.app.mediasource.toMediaItem
-import project.pipepipe.app.ui.component.player.SponsorBlockHelper
+import project.pipepipe.app.helper.SponsorBlockHelper
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.RelatedItemInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
+import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 import project.pipepipe.shared.job.SupportedJobType
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -714,7 +715,18 @@ class PlaybackService : MediaLibraryService() {
 
                 if (SponsorBlockHelper.isNotificationsEnabled()) {
                     MainScope().launch {
-                        val categoryName = project.pipepipe.app.ui.component.player.SponsorBlockUtils.getCategoryName(segment.category, this@PlaybackService)
+                        val categoryName = when (segment.category) {
+                            SponsorBlockCategory.SPONSOR -> MR.strings.sponsor_block_category_sponsor
+                            SponsorBlockCategory.INTRO -> MR.strings.sponsor_block_category_intro
+                            SponsorBlockCategory.OUTRO -> MR.strings.sponsor_block_category_outro
+                            SponsorBlockCategory.INTERACTION -> MR.strings.sponsor_block_category_interaction
+                            SponsorBlockCategory.HIGHLIGHT -> MR.strings.sponsor_block_category_highlight
+                            SponsorBlockCategory.SELF_PROMO -> MR.strings.sponsor_block_category_self_promo
+                            SponsorBlockCategory.NON_MUSIC -> MR.strings.sponsor_block_category_non_music
+                            SponsorBlockCategory.PREVIEW -> MR.strings.sponsor_block_category_preview
+                            SponsorBlockCategory.FILLER -> MR.strings.sponsor_block_category_filler
+                            SponsorBlockCategory.PENDING -> MR.strings.missions_header_pending
+                        }.desc().toString(this@PlaybackService)
                         val message = MR.strings.player_skipped_category.desc()
                             .toString(this@PlaybackService)
                             .format(categoryName)
@@ -983,7 +995,7 @@ class PlaybackService : MediaLibraryService() {
                         return
                     }
                 }
-
+//todo: 403 is still wrong
 
                 // For non-403 errors, show error and remove current item
                 ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))

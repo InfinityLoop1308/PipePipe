@@ -1,6 +1,13 @@
 package project.pipepipe.app.viewmodel
 
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.SharedContext
@@ -22,23 +29,45 @@ import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.shared.utils.json.requireArray
 import project.pipepipe.shared.utils.json.requireString
 
-class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
+@OptIn(FlowPreview::class)
+class SearchViewModel : BaseViewModel<SearchUiState>(SearchUiState()) {
+
+    private val searchQueryFlow = MutableStateFlow("")
+    private val debounceDelay = 600L
+
+    init {
+        searchQueryFlow
+            .debounce(debounceDelay)
+            .distinctUntilChanged()
+            .onEach { query ->
+                getSuggestionInternal(query)
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun updateSearchQuery(query: String) {
         setState {
             it.copy(searchQuery = query)
         }
+        searchQueryFlow.value = query
     }
 
-    suspend fun removeSuggestion(text: String) {
-        DatabaseOperations.deleteSearchHistoryByText(text)
-        setState {
-            it.copy(searchSuggestionList = it.searchSuggestionList.filterNot { suggestion ->  suggestion.isLocal && suggestion.text == text })
+    fun removeSuggestion(text: String) {
+        viewModelScope.launch {
+            DatabaseOperations.deleteSearchHistoryByText(text)
+            setState {
+                it.copy(searchSuggestionList = it.searchSuggestionList.filterNot { suggestion -> suggestion.isLocal && suggestion.text == text })
+            }
         }
     }
 
-    suspend fun getSuggestion(query: String) {
+    fun getSuggestion(query: String) {
+        viewModelScope.launch {
+            getSuggestionInternal(query)
+        }
+    }
 
+    private suspend fun getSuggestionInternal(query: String) {
         if (query.isEmpty()) {
             val localHistory = DatabaseOperations.getSearchHistory()
             setState {
@@ -46,9 +75,9 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
             }
         } else {
             if (query.startsWith("http://") || query.startsWith("https://")) return
-            val service = uiState.value.selectedService!!
+            val service = uiState.value.selectedService ?: return
             val localHistory = DatabaseOperations.getSearchHistoryByPattern(query)
-            var remoteSuggestionsReponse = service.suggestionPayload!!.let {
+            var remoteSuggestionsResponse = service.suggestionPayload?.let {
                 withContext(Dispatchers.IO) {
                     try {
                         executeClientTasksConcurrent(listOf(ClientTask(payload = service.suggestionPayload!!.copy(url = it.url + query))))[0].result
@@ -65,12 +94,12 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
                 }
             }
             try {
-                if (remoteSuggestionsReponse != null && service.suggestionJsonBetween != null) {
-                    remoteSuggestionsReponse = remoteSuggestionsReponse
+                if (remoteSuggestionsResponse != null && service.suggestionJsonBetween != null) {
+                    remoteSuggestionsResponse = remoteSuggestionsResponse
                         .substringBeforeLast(service.suggestionJsonBetween!!.second)
                         .substringAfter(service.suggestionJsonBetween!!.first)
                 }
-                val remoteSuggestionsResult: List<String>? = remoteSuggestionsReponse?.let { SharedContext.objectMapper.readTree(it)}
+                val remoteSuggestionsResult: List<String>? = remoteSuggestionsResponse?.let { SharedContext.objectMapper.readTree(it) }
                     ?.requireArray(service.suggestionStringPath!!.first)
                     ?.map { it.requireString(service.suggestionStringPath!!.second) }
 
@@ -186,7 +215,6 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
         }
     }
 
-    // Helper function to toggle a filter (add if not present, remove if present)
     fun toggleSearchFilter(groupName: String, filter: SearchFilterItem) {
         val currentState = uiState.value
         val group = currentState.selectedSearchType?.availableSearchFilterGroups
@@ -201,107 +229,110 @@ class SearchViewModel() : BaseViewModel<SearchUiState>(SearchUiState()) {
             addSearchFilter(groupName, filter)
         }
     }
-    suspend fun search(url: String, serviceId: Int) {
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true, error = null),
-                list = ListUiState()
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_FIRST_PAGE,
-                url,
-                serviceId
-            )
-        }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+    fun search(url: String, serviceId: Int = uiState.value.selectedService!!.serviceId) {
+        viewModelScope.launch {
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true, error = null),
+                    list = ListUiState()
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_FIRST_PAGE,
+                    url,
+                    serviceId
+                )
+            }
+
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            // Apply filters
+            val shouldFilter = result.pagedData!!.itemList.getOrNull(0) is StreamInfo
+
+            val rawItems = (result.pagedData!!.itemList as? List<StreamInfo>) ?: emptyList()
+            val (filteredItems, _) = if (shouldFilter) FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.SEARCH_RESULT
+            ) else Pair(emptyList(), null)
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
-                    )
+                        error = null
+                    ),
+                    list = it.list.copy(
+                        itemList = if (shouldFilter) filteredItems.withProgress() else result.pagedData!!.itemList,
+                        nextPageUrl = result.pagedData!!.nextPageUrl
+                    ),
                 )
             }
-            return
-        }
-
-
-        // Apply filters
-        val shouldFilter = result.pagedData!!.itemList.getOrNull(0) is StreamInfo
-
-        val rawItems = (result.pagedData!!.itemList as? List<StreamInfo>) ?: emptyList()
-        val (filteredItems, _) = if (shouldFilter) FilterHelper.filterStreamInfoList(
-            rawItems,
-            FilterHelper.FilterScope.SEARCH_RESULT
-        ) else Pair(emptyList(), null)
-
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                list = it.list.copy(
-                    itemList = if(shouldFilter) filteredItems.withProgress() else result.pagedData!!.itemList,
-                    nextPageUrl = result.pagedData!!.nextPageUrl
-                ),
-            )
         }
     }
 
-    suspend fun loadMoreResults(serviceId: Int) {
-        val nextUrl = uiState.value.list.nextPageUrl ?: return
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true, error = null)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_GIVEN_PAGE,
-                nextUrl,
-                serviceId
-            )
-        }
+    fun loadMoreResults(serviceId: Int) {
+        viewModelScope.launch {
+            val nextUrl = uiState.value.list.nextPageUrl ?: return@launch
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true, error = null)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_GIVEN_PAGE,
+                    nextUrl,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+            // Apply filters
+            val shouldFilter = result.pagedData?.itemList?.getOrNull(0) is StreamInfo
+
+            val rawItems = (result.pagedData?.itemList as? List<StreamInfo>) ?: emptyList()
+            val (filteredItems, _) = if (shouldFilter) FilterHelper.filterStreamInfoList(
+                rawItems,
+                FilterHelper.FilterScope.SEARCH_RESULT
+            ) else Pair(emptyList(), 0)
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    list = it.list.copy(
+                        itemList = it.list.itemList + (if (shouldFilter) filteredItems.withProgress() else result.pagedData?.itemList ?: emptyList()),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
-        }
-
-        // Apply filters
-        val shouldFilter = result.pagedData?.itemList?.getOrNull(0) is StreamInfo
-
-        val rawItems = (result.pagedData?.itemList as? List<StreamInfo>) ?: emptyList()
-        val (filteredItems, _) = if (shouldFilter) FilterHelper.filterStreamInfoList(
-            rawItems,
-            FilterHelper.FilterScope.SEARCH_RESULT
-        ) else Pair(emptyList(), 0)
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                list = it.list.copy(
-                    itemList = it.list.itemList + (if (shouldFilter) filteredItems.withProgress() else result.pagedData?.itemList ?: emptyList()),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
         }
     }
 }

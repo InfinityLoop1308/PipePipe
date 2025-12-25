@@ -1,0 +1,453 @@
+package project.pipepipe.app.ui.component.player
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.Popup
+import coil3.BitmapImage
+import coil3.ImageLoader
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.maxBitmapSize
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.SponsorBlockHelper
+import project.pipepipe.app.helper.getFrameBoundsAt
+import project.pipepipe.app.platform.PlatformMediaController
+import project.pipepipe.app.platform.PlatformVideoSurface
+import project.pipepipe.app.platform.ResizeMode
+import project.pipepipe.app.platform.SubtitleCue
+import project.pipepipe.app.utils.toComposeImageBitmap
+import project.pipepipe.app.utils.toDurationString
+import project.pipepipe.shared.infoitem.DanmakuInfo
+import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
+import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
+import project.pipepipe.shared.infoitem.helper.stream.Frameset
+import androidx.compose.ui.Alignment as PopupAlignment
+
+@Composable
+fun rememberPlaybackTimeMs(controller: PlatformMediaController): State<Long> {
+    val position by controller.currentPosition.collectAsState()
+    return rememberUpdatedState(position)
+}
+
+@Composable
+fun VideoSurface(
+    modifier: Modifier = Modifier,
+    controller: PlatformMediaController,
+    danmakuState: DanmakuState,
+    danmakuPool: List<DanmakuInfo>? = null,
+    danmakuEnabled: Boolean = true,
+) {
+    val playbackTimeMs by rememberPlaybackTimeMs(controller)
+    val isPlaying by controller.isPlaying.collectAsState()
+    val playbackSpeed by controller.playbackSpeed.collectAsState()
+    val subtitles by controller.currentSubtitles.collectAsState()
+
+    LaunchedEffect(danmakuEnabled, isPlaying) {
+        danmakuState.setPlaying(isPlaying && danmakuEnabled)
+    }
+
+    LaunchedEffect(playbackSpeed) {
+        danmakuState.updatePlaybackSpeed(playbackSpeed)
+    }
+
+    val resizeModeInt = SharedContext.settingsManager.getInt("last_resize_mode", 0)
+    val resizeMode = when (resizeModeInt) {
+        0 -> ResizeMode.FIT
+        1 -> ResizeMode.FILL
+        else -> ResizeMode.ZOOM
+    }
+
+    Box(modifier = modifier) {
+        PlatformVideoSurface(
+            controller = controller,
+            resizeMode = resizeMode,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        SubtitleOverlay(
+            subtitles = subtitles,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        if (danmakuPool != null) {
+            DanmakuOverlay(
+                modifier = Modifier.fillMaxSize(),
+                state = danmakuState,
+                danmakuPool = danmakuPool,
+                playbackTimeMs = playbackTimeMs,
+                enabled = danmakuEnabled
+            )
+        }
+    }
+}
+
+@Composable
+fun VideoProgressBar(
+    currentPosition: Long,
+    duration: Long,
+    bufferedPosition: Long,
+    onSeek: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    sponsorBlockSegments: List<SponsorBlockSegmentInfo> = emptyList(),
+    previewFrames: List<Frameset>? = null,
+    onDraggingChange: (Boolean) -> Unit = {}
+) {
+    val context = LocalPlatformContext.current
+
+    var isDragging by remember { mutableStateOf(false) }
+    var dragPosition by remember { mutableLongStateOf(0L) }
+    var dragOffsetX by remember { mutableFloatStateOf(0f) }
+    var frameset: Frameset? by remember { mutableStateOf(null) }
+
+    // Cache for loaded storyboard images, recreated when previewFrames changes
+    val loadedStoryboards = remember(previewFrames) { mutableStateMapOf<Int, ImageBitmap>() }
+
+    // Preload all storyboard images
+    LaunchedEffect(previewFrames) {
+        if (previewFrames.isNullOrEmpty()) {
+            frameset = null
+            return@LaunchedEffect
+        }
+        frameset = previewFrames.maxBy { it.frameWidth * it.frameHeight }
+        frameset!!.urls.forEachIndexed { index, url ->
+            launch(Dispatchers.IO) {
+                try {
+                    val imageLoader = ImageLoader(context)
+                    val request = ImageRequest.Builder(context)
+                        .data(url)
+                        .maxBitmapSize(coil3.size.Size(8192,8192)) // must have to avoid cut
+                        .build()
+                    val result = imageLoader.execute(request)
+                    result.image?.let { image ->
+                        if (image is BitmapImage) {
+                            loadedStoryboards[index] = image.bitmap.toComposeImageBitmap()
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Silently ignore loading failures
+                }
+            }
+        }
+    }
+
+    val progress = if (isDragging) {
+        dragPosition.toFloat() / duration.toFloat()
+    } else {
+        currentPosition.toFloat() / duration.toFloat()
+    }.coerceIn(0f, 1f)
+
+    val bufferedProgress = (bufferedPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+
+    BoxWithConstraints(
+        modifier = modifier
+            .height(40.dp)
+            .pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    val newPosition = (offset.x / size.width * duration).toLong()
+                    onSeek(newPosition.coerceIn(0L, duration))
+                }
+            }
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        isDragging = true
+                        onDraggingChange(true)
+                        dragPosition = (offset.x / size.width * duration).toLong()
+                        dragOffsetX = offset.x
+                    },
+                    onDragEnd = {
+                        onSeek(dragPosition.coerceIn(0L, duration))
+                        isDragging = false
+                        onDraggingChange(false)
+                    }
+                ) { change, dragAmount ->
+                    change.consume()  // Consume the event to prevent parent gesture detection
+                    val newPosition = dragPosition + (dragAmount.x / size.width * duration).toLong()
+                    dragPosition = newPosition.coerceIn(0L, duration)
+                    dragOffsetX = change.position.x
+                }
+            }
+    ) {
+        val boxWidth = maxWidth
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .align(Alignment.Center)
+
+        ) {
+            // Background track
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Color.White.copy(alpha = 0.3f),
+                        RoundedCornerShape(2.dp)
+                    )
+            )
+
+            // Buffered progress
+            if (bufferedProgress > 0f) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(bufferedProgress)
+                        .fillMaxHeight()
+                        .background(
+                            Color.White.copy(alpha = 0.5f),
+                            RoundedCornerShape(2.dp)
+                        )
+                )
+            }
+
+            if (duration > 0 && sponsorBlockSegments.isNotEmpty()) {
+                sponsorBlockSegments.forEach { segment ->
+                    val segmentStart = (segment.startTime / duration.toFloat()).coerceIn(0.0, 1.0)
+                    val segmentEnd = (segment.endTime / duration.toFloat()).coerceIn(0.0, 1.0)
+                    val segmentWidth: Double = segmentEnd - segmentStart
+
+                    if (segmentWidth > 0f) {
+                        val segmentColor = getSponsorBlockColor(segment.category)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(segmentWidth.toFloat())
+                                .fillMaxHeight()
+                                .offset(x = segmentStart * boxWidth)
+                                .background(
+                                    segmentColor.copy(alpha = 0.7f),
+                                    RoundedCornerShape(2.dp)
+                                )
+                        )
+                    }
+                }
+            }
+
+            // Current progress
+            if (progress > 0f) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(progress)
+                        .fillMaxHeight()
+                        .background(Color.White, RoundedCornerShape(2.dp))
+                )
+            }
+        }
+
+        if (progress > 0f || isDragging) {
+            val thumbSize = if (isDragging) 16.dp else 12.dp
+            Box(
+                modifier = Modifier
+                    .size(thumbSize)
+                    .offset(x = progress * boxWidth - thumbSize / 2)
+                    .background(Color.White, CircleShape)
+                    .align(Alignment.CenterStart)
+            )
+        }
+
+        // Preview card when dragging - always show timestamp
+        if (isDragging && duration > 0) {
+            val bounds = frameset?.getFrameBoundsAt(dragPosition)
+            val storyboardIndex = bounds?.get(0)
+            val storyboardBitmap = storyboardIndex?.let { loadedStoryboards[it] }
+
+            Popup(
+                alignment = PopupAlignment.BottomStart,
+                offset = IntOffset(dragOffsetX.toInt(), (-64))
+            ) {
+                VideoPreviewCard(
+                    position = dragPosition,
+                    frameset = frameset,
+                    previewBitmap = storyboardBitmap,
+                    cropLeft = bounds?.get(1) ?: 0,
+                    cropTop = bounds?.get(2) ?: 0,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun getSponsorBlockColor(category: SponsorBlockCategory): Color {
+    return SponsorBlockHelper.getCategoryColor(category)
+}
+
+/**
+ * Preview card showing thumbnail and timestamp when scrubbing the progress bar
+ * Note: This is designed to be used inside a Popup for proper positioning
+ */
+@Composable
+fun VideoPreviewCard(
+    position: Long,
+    previewBitmap: ImageBitmap?,
+    frameset: Frameset?,
+    cropLeft: Int,
+    cropTop: Int,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .then(
+                if (frameset != null) {
+                    val previewWidth = 120.dp
+                    Modifier.width(previewWidth)
+                } else {
+                    Modifier.wrapContentWidth()
+                }
+            )
+            .background(
+                color = Color.Black.copy(alpha = 0.9f),
+                shape = RoundedCornerShape(8.dp)
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Always show timestamp
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = position.toDurationString(true),
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+        if (frameset == null) {
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+        // Only show thumbnail section if frameset exists
+        frameset?.let {
+            val previewWidth = 120.dp
+            val previewHeight = (it.frameHeight.toFloat() / it.frameWidth.toFloat() * 120).dp
+
+            if (previewBitmap != null) {
+                val painter = remember(previewBitmap, cropLeft, cropTop, it) {
+                    CroppedBitmapPainter(
+                        previewBitmap,
+                        cropLeft,
+                        cropTop,
+                        it.frameWidth,
+                        it.frameHeight
+                    )
+                }
+
+                Image(
+                    painter = painter,
+                    contentDescription = "Video preview at ${position.toDurationString(true)}",
+                    modifier = Modifier
+                        .width(previewWidth)
+                        .height(previewHeight)
+                        .clip(RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Fit
+                )
+            } else {
+                // Placeholder when bitmap is not loaded yet
+                Box(
+                    modifier = Modifier
+                        .width(previewWidth)
+                        .height(previewHeight)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color.Gray.copy(alpha = 0.3f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * Custom Painter that draws a cropped region from an ImageBitmap
+ */
+private class CroppedBitmapPainter(
+    private val imageBitmap: ImageBitmap,
+    private val cropLeft: Int,
+    private val cropTop: Int,
+    private val cropWidth: Int,
+    private val cropHeight: Int
+) : Painter() {
+
+    override val intrinsicSize: Size
+        get() = Size(cropWidth.toFloat(), cropHeight.toFloat())
+
+    override fun DrawScope.onDraw() {
+        drawImage(
+            image = imageBitmap,
+            srcOffset = IntOffset(cropLeft, cropTop),
+            srcSize = IntSize(cropWidth, cropHeight),
+            dstOffset = IntOffset.Zero,
+            dstSize = IntSize(size.width.toInt(), size.height.toInt())
+        )
+    }
+}
+
+/**
+ * Platform-independent subtitle overlay component.
+ * Renders subtitles from a list of SubtitleCue.
+ */
+@Composable
+fun SubtitleOverlay(
+    subtitles: List<SubtitleCue>,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 16.sp,
+    textColor: Color = Color.White,
+    backgroundColor: Color = Color.Black.copy(alpha = 0.6f),
+) {
+    if (subtitles.isEmpty()) return
+
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            subtitles.forEach { cue ->
+                Text(
+                    text = cue.text,
+                    color = textColor,
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .background(
+                            color = backgroundColor,
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
+        }
+    }
+}

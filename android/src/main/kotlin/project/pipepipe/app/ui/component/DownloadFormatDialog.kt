@@ -23,7 +23,7 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.download.DownloadManagerHolder
 import project.pipepipe.app.helper.FormatHelper
-import project.pipepipe.app.helper.YtDlpFormatHelper
+import project.pipepipe.app.download.YtDlpFormatHelper
 import project.pipepipe.app.uistate.DownloadType
 import project.pipepipe.shared.infoitem.StreamInfo
 

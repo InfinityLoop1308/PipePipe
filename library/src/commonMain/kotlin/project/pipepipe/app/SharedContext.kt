@@ -2,12 +2,15 @@ package project.pipepipe.app
 
 import androidx.navigation.NavHostController
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import project.pipepipe.database.AppDatabase
 import project.pipepipe.shared.downloader.Downloader
 import project.pipepipe.app.viewmodel.BottomSheetMenuViewModel
@@ -17,6 +20,13 @@ import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.JobRequest
 import project.pipepipe.shared.job.JobResponse
 import project.pipepipe.app.helper.SettingsManager
+import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.app.platform.PlatformDatabaseActions
+import project.pipepipe.app.platform.PlatformActions
+import project.pipepipe.app.platform.PlatformMediaController
+import project.pipepipe.app.platform.PlatformRouteHandler
+import project.pipepipe.shared.infoitem.SupportedServiceInfo
+import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.shared.state.SessionManager
 
 enum class PlaybackMode {
@@ -26,6 +36,7 @@ enum class PlaybackMode {
 
 object SharedContext {
     var isTv: Boolean = false
+    var androidVersion: Int = -1
     lateinit var downloader: Downloader
     val objectMapper = ObjectMapper()
     lateinit var sharedVideoDetailViewModel: VideoDetailViewModel
@@ -34,6 +45,11 @@ object SharedContext {
     lateinit var settingsManager: SettingsManager
     val bottomSheetMenuViewModel = BottomSheetMenuViewModel()
     lateinit var sessionManager: SessionManager
+    lateinit var systemBarColorsManager: SystemBarColorsManager
+    lateinit var platformActions: PlatformActions
+    lateinit var platformDatabaseActions: PlatformDatabaseActions
+    var platformMediaController: PlatformMediaController? = null
+    lateinit var platformRouteHandler: PlatformRouteHandler
 //    Safe in single-activity architecture where Activity lifecycle matches application lifecycle
     lateinit var navController: NavHostController
 
@@ -147,5 +163,23 @@ object SharedContext {
 
     suspend fun notifyDecoderError() {
         _decoderErrorEvent.emit(Unit)
+    }
+
+    // =========== methods ==============
+
+    suspend fun initializeSupportedServices() {
+        try {
+            withContext(Dispatchers.IO) {
+                val result = executeJobFlow(
+                    SupportedJobType.GET_SUPPORTED_SERVICES,
+                    null,
+                    null
+                ).pagedData!!.itemList as List<SupportedServiceInfo>
+                val jsonString = Json.encodeToString(result)
+                SharedContext.settingsManager.putString("supported_services", jsonString)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

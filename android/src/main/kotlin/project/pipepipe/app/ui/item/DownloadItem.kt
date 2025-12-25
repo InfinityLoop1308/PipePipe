@@ -23,8 +23,9 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.ui.screens.settings.copyLogToClipboard
+import project.pipepipe.app.ui.screens.settings.buildLogJson
 import project.pipepipe.app.uistate.DownloadItemState
 import project.pipepipe.app.uistate.DownloadStatus
 import project.pipepipe.app.uistate.DownloadType
@@ -270,7 +271,7 @@ private fun TitleRow(
                                     expanded = false
                                     GlobalScope.launch {
                                         DatabaseOperations.getErrorLogById(state.errorLogId!!)?.let {
-                                            copyLogToClipboard(context, it)
+                                            SharedContext.platformActions.copyToClipboard(buildLogJson(it))
                                         }
                                     }
                                 }

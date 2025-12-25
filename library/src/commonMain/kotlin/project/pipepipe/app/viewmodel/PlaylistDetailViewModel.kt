@@ -1,11 +1,10 @@
 package project.pipepipe.app.viewmodel
 
-import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.database.DatabaseOperations.withProgress
@@ -24,8 +23,6 @@ import kotlin.collections.plus
 
 class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()) {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
     init {
         // Listen for playlist changes
         SharedContext.playlistChanged
@@ -37,10 +34,10 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                 if (currentPlaylistId == changedPlaylistId &&
                     currentUrl != null &&
                     uiState.value.playlistType == PlaylistType.LOCAL) {
-                    loadPlaylist(currentUrl, uiState.value.playlistInfo?.serviceId)
+                    loadPlaylistInternal(currentUrl, uiState.value.playlistInfo?.serviceId)
                 }
             }
-            .launchIn(scope)
+            .launchIn(viewModelScope)
 
         // Listen for history changes
         SharedContext.historyChanged
@@ -50,17 +47,19 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                 // Reload if this is the history playlist
                 if (currentUrl == "local://history" &&
                     uiState.value.playlistType == PlaylistType.HISTORY) {
-                    loadPlaylist(currentUrl, uiState.value.playlistInfo?.serviceId)
+                    loadPlaylistInternal(currentUrl, uiState.value.playlistInfo?.serviceId)
                 }
             }
-            .launchIn(scope)
+            .launchIn(viewModelScope)
     }
 
-    fun onCleared() {
-        scope.cancel()
+    fun loadPlaylist(url: String, serviceId: Int? = null) {
+        viewModelScope.launch {
+            loadPlaylistInternal(url, serviceId)
+        }
     }
 
-    suspend fun loadPlaylist(url: String, serviceId: Int? = null) {
+    private suspend fun loadPlaylistInternal(url: String, serviceId: Int? = null) {
         setState {
             it.copy(
                 common = it.common.copy(isLoading = true, error = null)
@@ -139,7 +138,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
                         previousItemUrls = itemsWithNewFlag.map { it.url }.toSet()
                     )
                 }
-                updateFeedLastUpdated(feedId)
+                updateFeedLastUpdatedInternal(feedId)
             }
             url.startsWith("trending://") -> {
                 loadRemotePlaylistDetail(url, serviceId!!, isTrending = true)
@@ -150,7 +149,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
     }
 
-    suspend fun loadRemotePlaylistDetail(url: String, serviceId: Int, isTrending: Boolean = false) {
+    private suspend fun loadRemotePlaylistDetail(url: String, serviceId: Int, isTrending: Boolean = false) {
         val result = withContext(Dispatchers.IO) {
             executeJobFlow(
                 SupportedJobType.FETCH_INFO,
@@ -222,64 +221,65 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
     }
 
-    suspend fun loadRemotePlaylistMoreItems(serviceId: Int) {
-        val nextUrl = uiState.value.list.nextPageUrl ?: return
-        setState {
-            it.copy(
-                common = it.common.copy(isLoading = true, error = null)
-            )
-        }
-        val result = withContext(Dispatchers.IO) {
-            executeJobFlow(
-                SupportedJobType.FETCH_GIVEN_PAGE,
-                nextUrl,
-                serviceId
-            )
-        }
+    fun loadRemotePlaylistMoreItems(serviceId: Int) {
+        viewModelScope.launch {
+            val nextUrl = uiState.value.list.nextPageUrl ?: return@launch
+            setState {
+                it.copy(
+                    common = it.common.copy(isLoading = true, error = null)
+                )
+            }
+            val result = withContext(Dispatchers.IO) {
+                executeJobFlow(
+                    SupportedJobType.FETCH_GIVEN_PAGE,
+                    nextUrl,
+                    serviceId
+                )
+            }
 
-        // Check for fatal error first
-        if (result.fatalError != null) {
+            // Check for fatal error first
+            if (result.fatalError != null) {
+                setState {
+                    it.copy(
+                        common = it.common.copy(
+                            isLoading = false,
+                            error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        )
+                    )
+                }
+                return@launch
+            }
+
+
+            val newItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
+            val currentItems = uiState.value.list.itemList
+            val combinedList = (currentItems + newItems).distinctBy { it.url }
+
+            // Apply filters only for trending
+            val finalList = if (uiState.value.playlistType == PlaylistType.TRENDING) {
+                val (filteredList, _) = FilterHelper.filterStreamInfoList(
+                    combinedList,
+                    FilterHelper.FilterScope.RECOMMENDATIONS
+                )
+                filteredList
+            } else {
+                combinedList
+            }
+
             setState {
                 it.copy(
                     common = it.common.copy(
                         isLoading = false,
-                        error = ErrorInfo(result.fatalError!!.errorId!!, result.fatalError!!.code, serviceId)
+                        error = null
+                    ),
+                    list = it.list.copy(
+                        itemList = finalList.withProgress(),
+                        nextPageUrl = result.pagedData?.nextPageUrl
                     )
                 )
             }
-            return
+            updateDisplayItems()
         }
-
-
-        val newItems = (result.pagedData?.itemList as? List<StreamInfo>).orEmpty()
-        val currentItems = uiState.value.list.itemList
-        val combinedList = (currentItems + newItems).distinctBy { it.url }
-
-        // Apply filters only for trending
-        val finalList = if (uiState.value.playlistType == PlaylistType.TRENDING) {
-            val (filteredList, _) = FilterHelper.filterStreamInfoList(
-                combinedList,
-                FilterHelper.FilterScope.RECOMMENDATIONS
-            )
-            filteredList
-        } else {
-            combinedList
-        }
-
-        setState {
-            it.copy(
-                common = it.common.copy(
-                    isLoading = false,
-                    error = null
-                ),
-                list = it.list.copy(
-                    itemList = finalList.withProgress(),
-                    nextPageUrl = result.pagedData?.nextPageUrl
-                )
-            )
-        }
-        updateDisplayItems()
-
     }
 
     fun updateSearchQuery(query: String) {
@@ -299,23 +299,33 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         updateDisplayItems()
     }
 
-    fun reorderItems(fromIndex: Int, toIndex: Int){
+    fun reorderItems(fromIndex: Int, toIndex: Int) {
         val playlistItems = uiState.value.list.itemList.toMutableList()
         val item = playlistItems.removeAt(calculateDisplayIndex(fromIndex))
-        playlistItems.add(calculateDisplayIndex(toIndex),item)
+        playlistItems.add(calculateDisplayIndex(toIndex), item)
         setState { state ->
             state.copy(
                 list = state.list.copy(itemList = playlistItems)
             )
         }
         updateDisplayItems()
+
+        // Persist to database for local playlists
+        if (uiState.value.playlistType == PlaylistType.LOCAL) {
+            viewModelScope.launch {
+                val orderedJoinIds = playlistItems.map { it.joinId!! }
+                DatabaseOperations.reorderPlaylistItem(orderedJoinIds)
+            }
+        }
     }
 
-    suspend fun removeItem(streamInfo: StreamInfo) {
+    fun removeItem(streamInfo: StreamInfo) {
         val playlistId = uiState.value.playlistInfo?.uid
+        val playlistType = uiState.value.playlistType
+
         setState { state ->
             val playlistItems = uiState.value.list.itemList.toMutableList().filter {
-                when (uiState.value.playlistType) {
+                when (playlistType) {
                     PlaylistType.LOCAL -> {
                         it.joinId != streamInfo.joinId
                     }
@@ -331,9 +341,28 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
         updateDisplayItems()
 
-        // Notify playlist changed for local playlists
-        if (uiState.value.playlistType == PlaylistType.LOCAL && playlistId != null) {
-            SharedContext.notifyPlaylistChanged(playlistId)
+        // Persist to database
+        viewModelScope.launch {
+            when (playlistType) {
+                PlaylistType.LOCAL -> {
+                    DatabaseOperations.removeStreamFromPlaylistByJoinId(streamInfo.joinId!!)
+                    // Notify playlist changed for local playlists
+                    if (playlistId != null) {
+                        SharedContext.notifyPlaylistChanged(playlistId)
+                    }
+                }
+                PlaylistType.HISTORY -> {
+                    DatabaseOperations.deleteStreamHistory(streamInfo.url)
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun clearHistory() {
+        viewModelScope.launch {
+            DatabaseOperations.clearAllStreamHistory()
+            loadPlaylistInternal(uiState.value.playlistInfo?.url ?: "", uiState.value.playlistInfo?.serviceId)
         }
     }
 
@@ -346,6 +375,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
             else -> actualIndex
         }
     }
+
     fun StreamInfo.matchFilter(query: String): Boolean {
         val title = this.name?.lowercase() ?: ""
         val uploader = this.uploaderName?.lowercase() ?: ""
@@ -365,6 +395,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
     }
 
     private val sortedAndFilteredItems: List<StreamInfo> get() = sortedItems.filter { it.matchFilter(uiState.value.searchQuery) }
+
     fun updateDisplayItems() {
         setState { state ->
             state.copy(
@@ -381,7 +412,13 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
     }
 
-    suspend fun updateFeedLastUpdated(feedId: Long) {
+    fun updateFeedLastUpdated(feedId: Long) {
+        viewModelScope.launch {
+            updateFeedLastUpdatedInternal(feedId)
+        }
+    }
+
+    private suspend fun updateFeedLastUpdatedInternal(feedId: Long) {
         val lastUpdated = if (feedId != -1L) {
             DatabaseOperations.getEarliestLastUpdatedByFeedGroup(feedId)
         } else {

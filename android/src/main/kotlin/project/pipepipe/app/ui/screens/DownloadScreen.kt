@@ -1,7 +1,6 @@
 package project.pipepipe.app.ui.screens
 
 import android.content.Intent
-import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,15 +20,15 @@ import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.download.DownloadManagerHolder
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.item.DownloadItem
-import project.pipepipe.app.ui.viewmodel.DownloadViewModel
 import project.pipepipe.app.uistate.DownloadStatus
-import project.pipepipe.app.uistate.DownloadType
+import project.pipepipe.app.viewmodel.DownloadViewModel
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +45,7 @@ fun DownloadScreen(
     LaunchedEffect(Unit) {
         while (true) {
             viewModel.refreshDownloads()
-            kotlinx.coroutines.delay(1000) // Refresh every second
+            delay(1000) // Refresh every second
         }
     }
 
