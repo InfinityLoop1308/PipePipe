@@ -155,8 +155,9 @@ fun SearchScreen(
     LaunchedEffect(Unit) {
         // Only focus if no initial query is provided
         if (initialQuery == null) {
-            if (uiState.searchQuery.isEmpty())
-            focusRequester.requestFocus()
+            if (uiState.searchQuery.isEmpty()) {
+                focusRequester.requestFocus()
+            }
         } else {
             delay(300)
             viewModel.updateSearchQuery(initialQuery)
@@ -565,7 +566,9 @@ fun IntegratedServiceHeader(
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth().padding(start = (if (serviceInfoList.size > 1)28 else 0).dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = (if (serviceInfoList.size > 1) 28 else 0).dp)
                     ) {
                         Text(
                             text = selectedService?.serviceName ?: stringResource(MR.strings.select_service),
