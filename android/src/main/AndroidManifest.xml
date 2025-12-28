@@ -35,6 +35,11 @@
             android:shell="true"
             tools:targetApi="29" />
 
+        <!-- Remove FileKit's Google Play Services dependency -->
+        <service
+            android:name="com.google.android.gms.metadata.ModuleDependencies"
+            tools:node="remove" />
+
         <!-- Android Auto support -->
         <meta-data
             android:name="com.google.android.gms.car.application"
