@@ -23,6 +23,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext.navController
 import project.pipepipe.app.download.DownloadManagerHolder
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.ui.component.CustomTopBar
@@ -34,7 +35,6 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DownloadScreen(
-    navController: NavController,
     useAsTab: Boolean = false
 ) {
     val viewModel: DownloadViewModel = viewModel()

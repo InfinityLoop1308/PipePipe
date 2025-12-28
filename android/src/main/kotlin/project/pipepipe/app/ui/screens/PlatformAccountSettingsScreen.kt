@@ -11,9 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.helper.CookieManager
@@ -57,10 +55,8 @@ enum class LoginPlatform(
 
 @Composable
 fun AccountSettingsScreen(
-    navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
 
     // Track login states for all platforms
     var bilibiliLoggedIn by remember {
@@ -192,7 +188,6 @@ fun AccountSettingsScreen(
 
     if (showLoginWebView != null) {
         LoginWebViewScreen(
-            navController = navController,
             platform = showLoginWebView!!,
             onLoginSuccess = { cookies ->
                 val platform = showLoginWebView!!
@@ -227,7 +222,6 @@ fun AccountSettingsScreen(
 
 @Composable
 fun LoginWebViewScreen(
-    navController: NavController,
     platform: LoginPlatform,
     onLoginSuccess: (cookies: String) -> Unit,
     onClose: () -> Unit

@@ -33,10 +33,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.material.navigation.NavigationView
 import dev.icerock.moko.resources.desc.desc
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.helper.ExternalUrlPatternHelper
 import project.pipepipe.app.helper.ToastManager
+import project.pipepipe.app.platform.AndroidActions
+import project.pipepipe.app.platform.AndroidMediaController
+import project.pipepipe.app.platform.AndroidRouteHandler
 import project.pipepipe.app.service.FeedUpdateManager
 import project.pipepipe.app.ui.component.*
 import project.pipepipe.app.ui.navigation.NavGraph
@@ -44,9 +46,6 @@ import project.pipepipe.app.ui.screens.PlayQueueScreen
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.ui.screens.videodetail.VideoDetailScreen
 import project.pipepipe.app.uistate.VideoDetailPageState
-import project.pipepipe.app.platform.AndroidActions
-import project.pipepipe.app.platform.AndroidMediaController
-import project.pipepipe.app.platform.PlatformMediaController
 
 val LocalDrawerLayout = staticCompositionLocalOf<DrawerLayout?> { null }
 
@@ -87,6 +86,7 @@ class MainActivity : ComponentActivity() {
             onStartFeedUpdate = { groupId -> FeedUpdateManager.startFeedUpdate(this, groupId) },
             onResetFeedState = { FeedUpdateManager.resetState() },
         )
+        SharedContext.platformRouteHandler = AndroidRouteHandler()
 
 
         composeView.setContent {

@@ -12,16 +12,14 @@ import project.pipepipe.app.ui.screens.Screen
 class AndroidRouteHandler : PlatformRouteHandler {
     @Composable
     override fun handleDownloadRoute(): Boolean {
-        DownloadScreen(navController = SharedContext.navController)
+        DownloadScreen()
         return true
     }
 
     @Composable
     override fun handleAccountSettingsRoute(): Boolean {
         // AccountSettingsScreen is in androidMain
-        project.pipepipe.app.ui.screens.AccountSettingsScreen(
-            navController = SharedContext.navController
-        )
+        project.pipepipe.app.ui.screens.AccountSettingsScreen()
         return true
     }
 }
