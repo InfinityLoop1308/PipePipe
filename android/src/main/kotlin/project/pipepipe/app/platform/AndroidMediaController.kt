@@ -34,6 +34,8 @@ import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.global.MediaControllerHolder
+import project.pipepipe.app.helper.FormatHelper.isCodecAllowed
+import project.pipepipe.app.helper.FormatHelper.isHDRFromCodec
 import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.service.PlaybackService
 import project.pipepipe.app.service.stopService
@@ -332,6 +334,9 @@ class AndroidMediaController(
         for (trackGroup in tracks.groups) {
             if (trackGroup.type == C.TRACK_TYPE_VIDEO) {
                 trackGroup.forEachIndexed { trackIndex, format ->
+                    if (!isCodecAllowed(format.codecs)) {
+                        return@forEachIndexed
+                    }
                     val isSelected = trackGroup.isTrackSelected(trackIndex)
                     val isHDR = isHDRFromCodec(format.codecs)
 
@@ -499,6 +504,9 @@ class AndroidMediaController(
         for (trackGroup in tracks.groups) {
             if (trackGroup.type == C.TRACK_TYPE_VIDEO) {
                 trackGroup.forEachIndexed { trackIndex, format ->
+                    if (!isCodecAllowed(format.codecs)) {
+                        return@forEachIndexed
+                    }
                     val isSelected = trackGroup.isTrackSelected(trackIndex)
                     val isHDR = isHDRFromCodec(format.codecs)
 
@@ -583,11 +591,6 @@ class AndroidMediaController(
         }
     }
 
-    private fun isHDRFromCodec(codecString: String?): Boolean {
-        if (codecString == null) return false
-        return codecString.contains("vp9.2", ignoreCase = true) ||
-            Regex("av01\\.0\\.(09|1[0-3])M", RegexOption.IGNORE_CASE).containsMatchIn(codecString)
-    }
 
     private inline fun Tracks.Group.forEachIndexed(action: (index: Int, item: Format) -> Unit) {
         for (i in 0 until length) {

@@ -61,16 +61,8 @@ data class ResolutionInfo(
      */
     val codecPriority: Int get() = FormatHelper.getCodecPriority(codec)
 
-    /**
-     * Check if codec string indicates HDR
-     * - vp9.2 = VP9 Profile 2 (10-bit HDR)
-     * - av01.0.09M to av01.0.13M = AV1 Main 10 Profile (HDR capable)
-     */
-    fun isHDRFromCodec(codecString: String?): Boolean {
-        if (codecString == null) return false
-        return codecString.contains("vp9.2", ignoreCase = true) ||
-            Regex("av01\\.0\\.(09|1[0-3])M", RegexOption.IGNORE_CASE).containsMatchIn(codecString)
-    }
+
+
 }
 
 /**
