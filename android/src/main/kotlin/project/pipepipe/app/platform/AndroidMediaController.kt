@@ -60,6 +60,8 @@ class AndroidMediaController(
     private val _currentPosition = MutableStateFlow(mediaController.currentPosition)
     override val currentPosition: StateFlow<Long> = _currentPosition.asStateFlow()
 
+    override fun getCurrentPositionRealtime(): Long = mediaController.currentPosition
+
     private val _duration = MutableStateFlow(mediaController.duration)
     override val duration: StateFlow<Long> = _duration.asStateFlow()
 

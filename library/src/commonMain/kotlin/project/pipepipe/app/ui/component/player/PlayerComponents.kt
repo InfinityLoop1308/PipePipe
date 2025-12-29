@@ -48,8 +48,12 @@ import androidx.compose.ui.Alignment as PopupAlignment
 
 @Composable
 fun rememberPlaybackTimeMs(controller: PlatformMediaController): State<Long> {
-    val position by controller.currentPosition.collectAsState()
-    return rememberUpdatedState(position)
+    return produceState(initialValue = controller.getCurrentPositionRealtime(), key1 = controller) {
+        while (true) {
+            value = controller.getCurrentPositionRealtime()
+            withFrameNanos { }  // 每帧更新
+        }
+    }
 }
 
 @Composable

@@ -101,8 +101,11 @@ interface PlatformMediaController {
     /** Whether media is currently playing */
     val isPlaying: StateFlow<Boolean>
 
-    /** Current playback position in milliseconds */
+    /** Current playback position in milliseconds (updated periodically for UI) */
     val currentPosition: StateFlow<Long>
+
+    /** Get current playback position in real-time (for animations like danmaku) */
+    fun getCurrentPositionRealtime(): Long
 
     /** Duration of current item in milliseconds */
     val duration: StateFlow<Long>
