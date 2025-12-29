@@ -314,9 +314,10 @@ class AndroidMediaController(
                     DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
                 }
             }
+            mediaController.prepare()
+            mediaController.play()
         }
-        mediaController.prepare()
-        mediaController.play()
+
         if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
             SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
         }
