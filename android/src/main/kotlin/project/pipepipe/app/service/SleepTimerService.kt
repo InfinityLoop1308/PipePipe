@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.media3.common.util.UnstableApi
 import dev.icerock.moko.resources.desc.desc
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.utils.toDurationString
 import project.pipepipe.app.R as AppR
 
@@ -74,7 +75,7 @@ class SleepTimerService : Service() {
             }
 
             override fun onFinish() {
-                stopPlaybackService()
+                SharedContext.platformActions.stopPlaybackService()
                 stopTimer()
             }
         }.start()
@@ -116,12 +117,6 @@ class SleepTimerService : Service() {
                 cancelPendingIntent
             )
             .build()
-    }
-
-    @OptIn(UnstableApi::class)
-    private fun stopPlaybackService() {
-        val intent = Intent("project.pipepipe.app.action.STOP_PLAYBACK")
-        sendBroadcast(intent)
     }
 
     private fun stopTimer() {

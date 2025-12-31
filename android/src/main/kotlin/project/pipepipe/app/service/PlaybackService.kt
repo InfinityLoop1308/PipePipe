@@ -48,8 +48,6 @@ class PlaybackService : MediaLibraryService() {
     private lateinit var player: Player
     private var session: MediaLibrarySession? = null
 
-    private var stopPlaybackReceiver: BroadcastReceiver? = null
-
     private lateinit var sessionCallbackExecutor: ExecutorService
     private var playbackButtonState = PlaybackButtonState.ALL_OFF
 
@@ -161,25 +159,6 @@ class PlaybackService : MediaLibraryService() {
             }
 
         setMediaNotificationProvider(notificationProvider)
-
-        stopPlaybackReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == "project.pipepipe.app.action.STOP_PLAYBACK") {
-                    saveCurrentProgress()
-                    player.stop()
-                    player.clearMediaItems()
-                    stopSelf()
-                }
-            }
-        }
-
-        val filter = IntentFilter("project.pipepipe.app.action.STOP_PLAYBACK")
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(stopPlaybackReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            @Suppress("UnspecifiedRegisterReceiverFlag")
-            registerReceiver(stopPlaybackReceiver, filter)
-        }
 
         sessionCallbackExecutor = Executors.newSingleThreadExecutor { r ->
             Thread(r, "PlaybackService-SessionCallback").apply { isDaemon = true }
@@ -532,13 +511,6 @@ class PlaybackService : MediaLibraryService() {
 
     override fun onDestroy() {
         saveCurrentProgress()
-        stopPlaybackReceiver?.let {
-            try {
-                unregisterReceiver(it)
-            } catch (e: IllegalArgumentException) {
-            }
-            stopPlaybackReceiver = null
-        }
 
         // Clean up SponsorBlock resources
         stopSponsorBlockCheck()
