@@ -65,19 +65,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 
     val controller = SharedContext.platformMediaController
 
-    val showAsBottomTask = {
-        if (SharedContext.playbackMode.value == PlaybackMode.VIDEO_AUDIO
-            && controller?.currentMediaItem?.value?.mediaId == streamInfo?.url) {
-            SharedContext.playingVideoUrlBeforeMinimizing = streamInfo?.url
-        }
-        SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
-        if (streamInfo != null && controller != null &&
-            (controller.mediaItemCount.value == 0 ||
-             (controller.mediaItemCount.value == 1 && controller.playbackState.value == PlaybackState.IDLE))) {
-            controller.setStreamInfoAsOnlyMediaItem(streamInfo)
-        }
-    }
-
     var showPlaylistPopup by remember { mutableStateOf(false) }
     var showDecoderErrorDialog by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
@@ -367,7 +354,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                 BackHandler {
                     if (!viewModel.navigateBack()) {
                         viewModel.showAsBottomPlayer()
-                        showAsBottomTask()
                     }
                 }
             }
@@ -430,10 +416,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                         onDragEnd = {
                                                             // If dragged down more than threshold, minimize to bottom player
                                                             if (totalDragDistance > 100.dp.toPx()) {
-                                                                scope.launch {
-                                                                    showAsBottomTask()
-                                                                    viewModel.setPageState(VideoDetailPageState.BOTTOM_PLAYER)
-                                                                }
+                                                                viewModel.showAsBottomPlayer()
                                                             }
                                                             if (SharedContext.playbackMode.value == PlaybackMode.AUDIO_ONLY) return@detectVerticalDragGestures
                                                             else if (totalDragDistance < -50.dp.toPx()) {
@@ -495,7 +478,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                 onPlayAudioClick = {
                                                     controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
                                                     if (controller.currentMediaItem.value?.mediaId != streamInfo.url) {
-                                                        scope.launch{ controller.playFromStreamInfo(streamInfo) }
+                                                        controller.playFromStreamInfo(streamInfo)
                                                     } else if (!controller.isPlaying.value) {
                                                         controller.play()
                                                     }

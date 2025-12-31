@@ -5,25 +5,16 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import project.pipepipe.app.PlaybackMode
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.FilterHelper
 import project.pipepipe.app.helper.ToastManager
-import project.pipepipe.app.uistate.CommonUiState
-import project.pipepipe.app.uistate.ErrorInfo
-import project.pipepipe.app.uistate.ListUiState
-import project.pipepipe.app.uistate.VideoDetailEntry
-import project.pipepipe.app.uistate.VideoDetailPageState
-import project.pipepipe.app.uistate.VideoDetailUiState
-import project.pipepipe.app.PlaybackMode
-import project.pipepipe.app.SharedContext
-import project.pipepipe.shared.infoitem.CommentInfo
-import project.pipepipe.shared.infoitem.DanmakuInfo
-import project.pipepipe.shared.infoitem.RelatedItemInfo
-import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
-import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
-import project.pipepipe.shared.infoitem.serviceId
+import project.pipepipe.app.platform.PlaybackState
+import project.pipepipe.app.uistate.*
+import project.pipepipe.shared.infoitem.*
+import project.pipepipe.shared.job.SupportedJobType
 
 class VideoDetailViewModel()
     : BaseViewModel<VideoDetailUiState>(VideoDetailUiState()) {
@@ -165,6 +156,18 @@ class VideoDetailViewModel()
 
     fun showAsBottomPlayer() {
         setState { it.copy(pageState = VideoDetailPageState.BOTTOM_PLAYER) }
+        val controller = SharedContext.platformMediaController
+        val streamInfo = uiState.value.currentStreamInfo
+        if (SharedContext.playbackMode.value == PlaybackMode.VIDEO_AUDIO
+            && controller?.currentMediaItem?.value?.mediaId == streamInfo?.url) {
+            SharedContext.playingVideoUrlBeforeMinimizing = streamInfo?.url
+        }
+        SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
+        if (streamInfo != null && controller != null &&
+            (controller.mediaItemCount.value == 0 ||
+                    (controller.mediaItemCount.value == 1 && controller.playbackState.value == PlaybackState.IDLE))) {
+            controller.setStreamInfoAsOnlyMediaItem(streamInfo)
+        }
     }
 
     fun showAsDetailPage() {
