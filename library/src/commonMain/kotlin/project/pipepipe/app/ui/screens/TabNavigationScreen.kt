@@ -62,11 +62,12 @@ fun TabNavigationScreen(navController: NavController) {
                         }
                     }
                     // Migrate old serviceId format (string -> int)
+                    // Also remove legacy "dashboard" route
                     val migratedTabs = tabs.map { route ->
                         route.replace("serviceId=YOUTUBE", "serviceId=0")
                             .replace("serviceId=BILIBILI", "serviceId=5")
                             .replace("serviceId=NICONICO", "serviceId=6")
-                    }
+                    }.filter { it != "dashboard" }
                     // Save if migrated
                     val migratedJson = Json.encodeToString(migratedTabs)
                     if (migratedJson != jsonString) {
