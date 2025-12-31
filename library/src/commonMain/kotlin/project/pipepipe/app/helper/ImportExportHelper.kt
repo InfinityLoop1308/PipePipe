@@ -336,9 +336,9 @@ object ImportExportHelper {
     private suspend fun convertTabToRoute(tab: SavedTabPayload): String? {
         return when (tab.tabId) {
             0 -> "blank"
-            1 -> MainScreenTabDefaults.SUBSCRIPTIONS_ROUTE
+            1 -> "subscriptions"
             2 -> "feed/-1"
-            3 -> MainScreenTabDefaults.BOOKMARKED_PLAYLISTS_ROUTE
+            3 -> "bookmarked_playlists"
             4 -> "history"
             5 -> convertKioskTab(tab)
             6 -> convertChannelTab(tab)

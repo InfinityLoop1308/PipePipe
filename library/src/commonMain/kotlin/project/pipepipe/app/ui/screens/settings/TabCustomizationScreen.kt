@@ -74,12 +74,18 @@ fun TabCustomizationScreen(
                         }
                     }
                     // Migrate old serviceId format (string -> int)
-                    // Also remove legacy "dashboard" route
                     val migratedTabs = parsedTabs.map { route ->
                         route.replace("serviceId=YOUTUBE", "serviceId=0")
                             .replace("serviceId=BILIBILI", "serviceId=5")
                             .replace("serviceId=NICONICO", "serviceId=6")
-                    }.filter { it != "dashboard" }
+                    }.let { list ->
+                        // Replace legacy "dashboard" with "feed/-1" if feed/-1 doesn't exist
+                        if (list.contains("dashboard") && !list.any { it.startsWith("feed/-1") }) {
+                            list.map { if (it == "dashboard") "feed/-1" else it }
+                        } else {
+                            list.filter { it != "dashboard" }
+                        }
+                    }
                     // Save if migrated
                     val migratedJson = Json.encodeToString(migratedTabs)
                     if (migratedJson != jsonString) {
