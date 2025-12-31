@@ -299,7 +299,7 @@ fun PlaylistContent(
                                 showNewItemBorder = uiState.playlistType == PlaylistType.FEED && streamItem.isNew,
                                 onClick = {
                                     focusManager.clearFocus()
-                                    if (uiState.playlistType in listOf(PlaylistType.LOCAL, PlaylistType.FEED)
+                                    if (uiState.playlistType == PlaylistType.LOCAL
                                         && SharedContext.settingsManager.getBoolean("auto_background_play_key")) {
                                         onStartPlayAll(
                                             viewModel.sortedItems.indexOfFirst { it.joinId == streamItem.joinId },
