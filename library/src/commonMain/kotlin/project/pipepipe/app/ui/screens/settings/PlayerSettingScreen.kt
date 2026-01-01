@@ -2,13 +2,16 @@ package project.pipepipe.app.ui.screens.settings
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.screens.PreferenceScreen
+import project.pipepipe.app.ui.screens.Screen
 
 @Composable
 fun PlayerSettingScreen(
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     var musicModeEnabled by remember {
@@ -245,6 +248,13 @@ fun PlayerSettingScreen(
             summary = stringResource(MR.strings.dont_auto_queue_long_description),
             enabled = autoQueueEnabled,
             defaultValue = true
+        ),
+        PreferenceItem.ClickablePref(
+            title = stringResource(MR.strings.danmaku_settings_title),
+            summary = stringResource(MR.strings.settings_category_bullet_comments_summary),
+            onClick = {
+                navController.navigate(Screen.DanmakuSettings.route)
+            }
         ),
     )
 

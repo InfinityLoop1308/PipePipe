@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.DanmakuHelper.elapsedRealtimeMillis
 import project.pipepipe.app.helper.DanmakuHelper.rememberPlatformTypeface
 import project.pipepipe.shared.infoitem.DanmakuInfo
@@ -96,22 +98,109 @@ data class DanmakuConfig(
     val commentRelativeTextSize: Float = 1f / 13.5f
 )
 
-@Immutable
-data class DanmakuStateConfig(
-    val config: DanmakuConfig = DanmakuConfig()
-)
+@Composable
+private fun rememberDanmakuConfig(): DanmakuConfig {
+    val settingsManager = SharedContext.settingsManager
+
+    val commentsDurationSeconds by remember {
+        derivedStateOf {
+            settingsManager.getInt("top_bottom_bullet_comments_duration_key", 8)
+        }
+    }
+
+    val regularDuration by remember {
+        derivedStateOf {
+            settingsManager.getInt("regular_bullet_comments_duration_key", 8)
+        }
+    }
+
+    val outlineRadius by remember {
+        derivedStateOf {
+            settingsManager.getInt("bullet_comments_outline_radius_key", 2).toFloat()
+        }
+    }
+
+    val opacity by remember {
+        derivedStateOf {
+            settingsManager.getInt("bullet_comments_opacity_key", 0xFF)
+        }
+    }
+
+    val enableMaxRowsCustomization by remember {
+        derivedStateOf {
+            settingsManager.getBoolean("enable_max_rows_customization_key", false)
+        }
+    }
+
+    val maxRowsTop by remember(enableMaxRowsCustomization) {
+        derivedStateOf {
+            if (enableMaxRowsCustomization) {
+                settingsManager.getInt("max_bullet_comments_rows_top_key", 15)
+            } else {
+                Int.MAX_VALUE
+            }
+        }
+    }
+
+    val maxRowsBottom by remember(enableMaxRowsCustomization) {
+        derivedStateOf {
+            if (enableMaxRowsCustomization) {
+                settingsManager.getInt("max_bullet_comments_rows_bottom_key", 15)
+            } else {
+                Int.MAX_VALUE
+            }
+        }
+    }
+
+    val maxRowsRegular by remember(enableMaxRowsCustomization) {
+        derivedStateOf {
+            if (enableMaxRowsCustomization) {
+                settingsManager.getInt("max_bullet_comments_rows_regular_key", 15)
+            } else {
+                Int.MAX_VALUE
+            }
+        }
+    }
+
+    return remember(
+        commentsDurationSeconds,
+        regularDuration,
+        outlineRadius,
+        opacity,
+        maxRowsTop,
+        maxRowsBottom,
+        maxRowsRegular
+    ) {
+        val durationFactor = if (commentsDurationSeconds > 0) {
+            regularDuration.toFloat() / commentsDurationSeconds.toFloat()
+        } else {
+            1f
+        }
+
+        DanmakuConfig(
+            commentsDurationSeconds = commentsDurationSeconds,
+            regularDurationFactor = durationFactor,
+            outlineRadius = outlineRadius,
+            opacity = opacity,
+            commentsRowsCount = 11,
+            maxRowsTop = maxRowsTop,
+            maxRowsBottom = maxRowsBottom,
+            maxRowsRegular = maxRowsRegular,
+            commentRelativeTextSize = 1f / 13.5f
+        )
+    }
+}
 
 @Composable
-fun rememberDanmakuState(
-    stateConfig: DanmakuStateConfig = DanmakuStateConfig(),
-): DanmakuState {
+fun rememberDanmakuState(): DanmakuState {
     val density = LocalDensity.current
     val platformTypeface = rememberPlatformTypeface()
     val renderer = remember(platformTypeface) {
         DanmakuRenderer(platformTypeface)
     }
-    return remember(stateConfig, density, renderer) {
-        DanmakuState(stateConfig.config, renderer)
+    val config = rememberDanmakuConfig()
+    return remember(density, renderer, config) {
+        DanmakuState(config, renderer)
     }
 }
 

@@ -62,4 +62,5 @@ sealed class Screen(val route: String) {
     object Download : Screen("download")
     object AccountSettings: Screen("account_settings")
     object HistorySettings: Screen("history_settings")
+    object DanmakuSettings: Screen("danmaku_settings")
 }

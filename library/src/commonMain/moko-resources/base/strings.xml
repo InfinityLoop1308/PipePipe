@@ -375,7 +375,7 @@
     <string name="sort_bookmark">Bookmarks</string>
     <string name="sort_likes">Likes</string>
     <string name="sort_comments">Comments</string>
-    <string name="sort_bullet_comments">Bullet Comments</string>bili
+    <string name="sort_bullet_comments">Danmaku</string>
     <string name="sort_length">Length</string>
     <string name="sort_publish_time">Publish Time</string>
     <string name="sort_last_comment_time">Last Comment Time</string>
@@ -642,4 +642,18 @@
     <string name="delete_search_history_alert_all">Delete entire search history?</string>
     <string name="search_history_deleted">Search history deleted</string>
     <string name="original">Original</string>
+    <!-- Danmaku settings -->
+    <string name="settings_category_bullet_comments_summary">Configure danmaku appearance</string>
+    <string name="regular_bullet_comments_duration_title">Regular danmaku duration</string>
+    <string name="regular_bullet_comments_duration_summary">Change the duration of regular/rolling danmaku. A shorter duration may cause stutter/choppy/lag.</string>
+    <string name="top_bottom_bullet_comments_duration_title">Top/bottom danmaku duration</string>
+    <string name="top_bottom_bullet_comments_duration_summary">Change the duration of top/bottom danmaku. </string>
+    <string name="bullet_comments_outline_radius_title">Outline radius</string>
+    <string name="bullet_comments_opacity_title">Opacity</string>
+    <string name="enable_max_rows_customization_title">Customize Max Rows</string>
+    <string name="enable_max_rows_customization_summary">Enable to customize maximum rows for danmaku</string>
+    <string name="max_bullet_comments_rows_top_summary">Max rows for top danmaku</string>
+    <string name="max_bullet_comments_rows_bottom_summary">Max rows for bottom danmaku</string>
+    <string name="max_bullet_comments_rows_regular_summary">Max rows for regular danmaku</string>
+    <string name="danmaku_settings_title">Danmaku Settings</string>
 </resources>

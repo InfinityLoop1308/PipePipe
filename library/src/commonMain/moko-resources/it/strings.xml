@@ -545,4 +545,17 @@
 <string name="settings_gesture_swipe_enqueue_title">Scorri per mettere in coda</string>
 <string name="enqueued">In coda</string>
 <string name="settings_gesture_swipe_enqueue_summary">Scorri gli elementi video per aggiungerli alla coda di riproduzione</string>
+<string name="max_bullet_comments_rows_regular_summary">Numero massimo di righe per i danmaku regolari</string>
+<string name="top_bottom_bullet_comments_duration_summary">Modifica la durata dei danmaku in alto/in basso.</string>
+<string name="bullet_comments_outline_radius_title">Raggio del contorno</string>
+<string name="max_bullet_comments_rows_bottom_summary">Numero massimo di righe per i danmaku in basso</string>
+<string name="settings_category_bullet_comments_summary">Configura l\'aspetto dei danmaku</string>
+<string name="top_bottom_bullet_comments_duration_title">Durata dei danmaku in alto/in basso</string>
+<string name="regular_bullet_comments_duration_summary">Modifica la durata dei danmaku regolari/a scorrimento. Una durata più breve potrebbe causare balbuzie/interruzioni/ritardi.</string>
+<string name="danmaku_settings_title">Impostazioni Danmaku</string>
+<string name="regular_bullet_comments_duration_title">Durata dei danmaku regolari</string>
+<string name="max_bullet_comments_rows_top_summary">Numero massimo di righe per i danmaku in alto</string>
+<string name="enable_max_rows_customization_title">Personalizza il numero massimo di righe</string>
+<string name="bullet_comments_opacity_title">Opacità</string>
+<string name="enable_max_rows_customization_summary">Abilita per personalizzare il numero massimo di righe per i danmaku</string>
 </resources>

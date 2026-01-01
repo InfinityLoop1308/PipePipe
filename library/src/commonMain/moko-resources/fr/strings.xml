@@ -545,4 +545,17 @@
 <string name="settings_gesture_swipe_enqueue_title">Balayer pour mettre en file d\'attente</string>
 <string name="enqueued">Mis en file d\'attente</string>
 <string name="settings_gesture_swipe_enqueue_summary">Balayez les éléments vidéo pour les ajouter à la file d\'attente de lecture</string>
+<string name="max_bullet_comments_rows_regular_summary">Nombre maximal de lignes pour les danmaku réguliers</string>
+<string name="top_bottom_bullet_comments_duration_summary">Modifier la durée des danmaku du haut/bas. </string>
+<string name="bullet_comments_outline_radius_title">Rayon du contour</string>
+<string name="max_bullet_comments_rows_bottom_summary">Nombre maximal de lignes pour les danmaku du bas</string>
+<string name="settings_category_bullet_comments_summary">Configurer l\'apparence des danmaku</string>
+<string name="top_bottom_bullet_comments_duration_title">Durée des danmaku du haut/bas</string>
+<string name="regular_bullet_comments_duration_summary">Modifier la durée des danmaku réguliers/défilants. Une durée plus courte peut provoquer des saccades/hachures/ralentissements.</string>
+<string name="danmaku_settings_title">Paramètres des danmaku</string>
+<string name="regular_bullet_comments_duration_title">Durée des danmaku réguliers</string>
+<string name="max_bullet_comments_rows_top_summary">Nombre maximal de lignes pour les danmaku du haut</string>
+<string name="enable_max_rows_customization_title">Personnaliser le nombre maximal de lignes</string>
+<string name="bullet_comments_opacity_title">Opacité</string>
+<string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les danmaku</string>
 </resources>

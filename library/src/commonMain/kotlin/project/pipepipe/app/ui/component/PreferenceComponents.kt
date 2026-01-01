@@ -251,62 +251,93 @@ fun SliderPreference(
     modifier: Modifier = Modifier
 ) {
     var value by remember {
-        mutableStateOf(SharedContext.settingsManager.getFloat(item.key, item.defaultValue))
+        mutableStateOf(SharedContext.settingsManager.getInt(item.key, item.defaultValue))
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                item.icon?.let {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        it()
-                        Spacer(modifier = Modifier.width(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    item.icon?.let {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            it()
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = item.title,
+                                fontSize = 15.sp,
+                                color = if (item.enabled) {
+                                    MaterialTheme.colorScheme.onSurface
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                                }
+                            )
+                        }
+                    } ?: Text(
+                        text = item.title,
+                        fontSize = 15.sp,
+                        color = if (item.enabled) {
+                            MaterialTheme.colorScheme.onSurface
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                        }
+                    )
+
+                    item.summary?.let { summary ->
+                        val summaryText = if (summary == "%s") {
+                            value.toString()
+                        } else {
+                            summary
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = item.title,
-                            style = MaterialTheme.typography.bodyLarge
+                            text = summaryText,
+                            fontSize = 13.sp,
+                            color = if (item.enabled) {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                            },
+                            style = TextStyle(
+                                platformStyle = PlatformTextStyle(
+                                    includeFontPadding = false
+                                )
+                            )
                         )
                     }
-                } ?: Text(
-                    text = item.title,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                }
 
-                item.summary?.let {
+                if (item.showValue) {
                     Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = value.toString(),
+                        fontSize = 13.sp
                     )
                 }
             }
 
-            if (item.showValue) {
-                Text(
-                    text = "%.2f".format(value),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Slider(
-            value = value,
-            onValueChange = {
-                value = it
-                SharedContext.settingsManager.putFloat(item.key, it)
-                item.onValueChange?.invoke(it)
-            },
-            valueRange = item.valueRange,
-            steps = item.steps,
-            enabled = item.enabled
-        )
+            Slider(
+                value = value.toFloat(),
+                onValueChange = {
+                    val intValue = it.toInt()
+                    value = intValue
+                    SharedContext.settingsManager.putInt(item.key, intValue)
+                    item.onValueChange?.invoke(intValue)
+                },
+                valueRange = item.valueRange.start.toFloat()..item.valueRange.endInclusive.toFloat(),
+                steps = item.steps,
+                enabled = item.enabled
+            )
+        }
     }
 }
 

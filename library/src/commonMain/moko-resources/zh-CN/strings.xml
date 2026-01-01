@@ -545,4 +545,17 @@
 <string name="settings_gesture_swipe_enqueue_title">滑动以加入队列</string>
 <string name="enqueued">已加入队列</string>
 <string name="settings_gesture_swipe_enqueue_summary">滑动视频项目以将其添加到播放队列</string>
+<string name="max_bullet_comments_rows_regular_summary">常规弹幕最大行数</string>
+<string name="top_bottom_bullet_comments_duration_summary">更改顶部/底部弹幕的持续时间。</string>
+<string name="bullet_comments_outline_radius_title">描边半径</string>
+<string name="max_bullet_comments_rows_bottom_summary">底部弹幕最大行数</string>
+<string name="settings_category_bullet_comments_summary">配置弹幕外观</string>
+<string name="top_bottom_bullet_comments_duration_title">顶部/底部弹幕持续时间</string>
+<string name="regular_bullet_comments_duration_summary">更改常规/滚动弹幕的持续时间。持续时间越短，可能会导致卡顿/不流畅。</string>
+<string name="danmaku_settings_title">弹幕设置</string>
+<string name="regular_bullet_comments_duration_title">常规弹幕持续时间</string>
+<string name="max_bullet_comments_rows_top_summary">顶部弹幕最大行数</string>
+<string name="enable_max_rows_customization_title">自定义最大行数</string>
+<string name="bullet_comments_opacity_title">不透明度</string>
+<string name="enable_max_rows_customization_summary">启用以自定义弹幕的最大行数</string>
 </resources>

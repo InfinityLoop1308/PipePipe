@@ -545,4 +545,17 @@
 <string name="settings_gesture_swipe_enqueue_title">スワイプしてキューに追加</string>
 <string name="enqueued">キューに追加済み</string>
 <string name="settings_gesture_swipe_enqueue_summary">動画アイテムをスワイプして再生キューに追加します</string>
+<string name="max_bullet_comments_rows_regular_summary">通常の弾幕の最大行数</string>
+<string name="top_bottom_bullet_comments_duration_summary">上/下の弾幕の表示時間を変更します。</string>
+<string name="bullet_comments_outline_radius_title">アウトラインの半径</string>
+<string name="max_bullet_comments_rows_bottom_summary">下の弾幕の最大行数</string>
+<string name="settings_category_bullet_comments_summary">弾幕の表示を設定する</string>
+<string name="top_bottom_bullet_comments_duration_title">上/下の弾幕の表示時間</string>
+<string name="regular_bullet_comments_duration_summary">通常/流れる弾幕の表示時間を変更します。表示時間が短いと、カクつきやラグが発生する可能性があります。</string>
+<string name="danmaku_settings_title">弾幕設定</string>
+<string name="regular_bullet_comments_duration_title">通常の弾幕の表示時間</string>
+<string name="max_bullet_comments_rows_top_summary">上の弾幕の最大行数</string>
+<string name="enable_max_rows_customization_title">最大行数をカスタマイズ</string>
+<string name="bullet_comments_opacity_title">不透明度</string>
+<string name="enable_max_rows_customization_summary">弾幕の最大行数をカスタマイズできるようにする</string>
 </resources>

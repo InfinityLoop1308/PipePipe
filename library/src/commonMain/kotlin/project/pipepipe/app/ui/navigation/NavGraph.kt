@@ -20,6 +20,7 @@ import project.pipepipe.app.ui.screens.playlistdetail.PlaylistDetailScreen
 import project.pipepipe.app.ui.screens.settings.AboutScreen
 import project.pipepipe.app.ui.screens.settings.AppearanceSettingsScreen
 import project.pipepipe.app.ui.screens.settings.ChannelNotificationSelectionScreen
+import project.pipepipe.app.ui.screens.settings.DanmakuSettingsScreen
 import project.pipepipe.app.ui.screens.settings.FeedSettingsScreen
 import project.pipepipe.app.ui.screens.settings.FilterByKeywordsScreen
 import project.pipepipe.app.ui.screens.settings.FilterSettingScreen
@@ -74,7 +75,7 @@ fun NavGraph(
             GestureSettingScreen()
         }
         composable(Screen.PlayerSettings.route) {
-            PlayerSettingScreen()
+            PlayerSettingScreen(navController = navController)
         }
         composable(Screen.FilterSettings.route) {
             FilterSettingScreen(navController = navController)
@@ -119,6 +120,9 @@ fun NavGraph(
         }
         composable(Screen.HistorySettings.route) {
             HistorySettingScreen()
+        }
+        composable(Screen.DanmakuSettings.route) {
+            DanmakuSettingsScreen(navController = navController)
         }
         composable(Screen.AboutSettings.route) {
             AboutScreen(navController = navController)

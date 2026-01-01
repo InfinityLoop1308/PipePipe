@@ -49,11 +49,11 @@ sealed class PreferenceItem {
         override val summary: String? = null,
         override val icon: (@Composable () -> Unit)? = null,
         override val enabled: Boolean = true,
-        val defaultValue: Float = 0f,
-        val valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+        val defaultValue: Int = 0,
+        val valueRange: IntRange = 0..1,
         val steps: Int = 0,
         val showValue: Boolean = true,
-        val onValueChange: ((Float) -> Unit)? = null
+        val onValueChange: ((Int) -> Unit)? = null
     ) : PreferenceItem()
 
     data class ClickablePref(
