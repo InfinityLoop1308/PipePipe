@@ -186,6 +186,12 @@ fun PlayerSettingScreen(
                 zoomValue = value
             }
         ),
+        PreferenceItem.SwitchPref(
+            key = "playback_skip_silence_key",
+            title = stringResource(MR.strings.playback_skip_silence_title),
+            summary = stringResource(MR.strings.playback_skip_silence_summary),
+            defaultValue = false
+        ),
         PreferenceItem.ListPref(
             key = "autoplay_key",
             title = stringResource(MR.strings.autoplay_title),
@@ -222,12 +228,6 @@ fun PlayerSettingScreen(
             title = stringResource(MR.strings.settings_player_music_random_title),
             summary = randomSummary,
             enabled = musicModeEnabled,
-            defaultValue = false
-        ),
-        PreferenceItem.SwitchPref(
-            key = "playback_skip_silence_key",
-            title = stringResource(MR.strings.playback_skip_silence_title),
-            summary = stringResource(MR.strings.playback_skip_silence_summary),
             defaultValue = false
         ),
         PreferenceItem.SwitchPref(

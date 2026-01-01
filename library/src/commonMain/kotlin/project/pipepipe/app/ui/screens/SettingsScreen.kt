@@ -62,16 +62,16 @@ fun SettingsScreen(
             }
             item {
                 SettingsItem(
-                    icon = Icons.Default.AccountCircle,
-                    title = stringResource(MR.strings.settings_section_account),
-                    onClick = { navController.navigate(Screen.AccountSettings.route) }
+                    icon = Icons.Default.History,
+                    title = stringResource(MR.strings.title_activity_history),
+                    onClick = { navController.navigate(Screen.HistorySettings.route) }
                 )
             }
             item {
                 SettingsItem(
-                    icon = Icons.Default.History,
-                    title = stringResource(MR.strings.title_activity_history),
-                    onClick = { navController.navigate(Screen.HistorySettings.route) }
+                    icon = Icons.Default.AccountCircle,
+                    title = stringResource(MR.strings.settings_section_account),
+                    onClick = { navController.navigate(Screen.AccountSettings.route) }
                 )
             }
             item {
