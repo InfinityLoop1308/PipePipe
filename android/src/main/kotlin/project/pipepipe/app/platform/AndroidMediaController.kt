@@ -422,20 +422,19 @@ class AndroidMediaController(
         val tracks = mediaController.currentTracks
 
         for (trackGroup in tracks.groups) {
-            if (trackGroup.type == C.TRACK_TYPE_TEXT) {
-                trackGroup.find { format ->
-                    format.language == subtitle.language
-                }?.let { format ->
-                    val trackIndex = trackGroup.indexOfFirst { it == format }
-                    if (trackIndex >= 0) {
-                        val params = mediaController.trackSelectionParameters
-                            .buildUpon()
-                            .setOverrideForType(
-                                TrackSelectionOverride(trackGroup.mediaTrackGroup, trackIndex)
-                            )
-                            .build()
-                        mediaController.trackSelectionParameters = params
-                    }
+            trackGroup.find { format ->
+                format.language == subtitle.language && trackGroup.type == C.TRACK_TYPE_TEXT
+            }?.let { format ->
+                val trackIndex = trackGroup.indexOfFirst { it == format }
+                if (trackIndex >= 0) {
+                    val params = mediaController.trackSelectionParameters
+                        .buildUpon()
+                        .setOverrideForType(
+                            TrackSelectionOverride(trackGroup.mediaTrackGroup, trackIndex)
+                        )
+                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+                        .build()
+                    mediaController.trackSelectionParameters = params
                 }
                 break
             }
