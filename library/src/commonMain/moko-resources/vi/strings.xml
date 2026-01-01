@@ -542,4 +542,7 @@
 <string name="original">Bản gốc</string>
 <string name="advanced_formats_summary">Nếu thiết bị của bạn có hỗ trợ, việc bật định dạng nâng cao có thể giảm mức tiêu thụ dữ liệu và cung cấp độ phân giải cao hơn. Bạn có thể không xem được video độ phân giải cao nếu không bật định dạng nâng cao.</string>
 <string name="advanced_formats_title">Bật định dạng nâng cao</string>
+<string name="settings_gesture_swipe_enqueue_title">Vuốt để xếp hàng chờ</string>
+<string name="enqueued">Đã xếp hàng chờ</string>
+<string name="settings_gesture_swipe_enqueue_summary">Vuốt các mục video để thêm chúng vào hàng đợi phát</string>
 </resources>

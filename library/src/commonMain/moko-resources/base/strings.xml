@@ -59,6 +59,8 @@
     <string name="settings_gesture_swipe_seek_summary">Toggle swipe-to-seek gestures</string>
     <string name="settings_gesture_seek_duration_title">Seek duration</string>
     <string name="settings_gesture_playback_speed_title">Playback speed gesture</string>
+    <string name="settings_gesture_swipe_enqueue_title">Swipe to enqueue</string>
+    <string name="settings_gesture_swipe_enqueue_summary">Swipe video items to add them to the play queue</string>
     <string name="common_seconds">seconds</string>
     <string name="settings_category_backup_title">Backup</string>
     <string name="settings_import_export_export_title">Export backup</string>
@@ -268,6 +270,7 @@
     <string name="download">Download</string>
     <string name="enqueue_next_stream">Enqueue next</string>
     <string name="enqueue_stream">Enqueue</string>
+    <string name="enqueued">Enqueued</string>
     <string name="feed_notification_loading">Loading feed…</string>
     <string name="feed_oldest_subscription_update">Feed last updated: %s</string>
     <string name="filter_by_channel_summary">Add the channel names you want to block here</string>

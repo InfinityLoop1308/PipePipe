@@ -154,24 +154,20 @@ private fun StreamInfoMenuItems(
         }
     }
 
-    val mediaActions = SharedContext.platformActions
+    val platformMediaController = SharedContext.platformMediaController
 
     val menuItems = buildList {
         if (!disablePlayOperations) {
             add(Triple(Icons.Default.PlayCircle, stringResource(MR.strings.bottom_sheet_background_play)) {
-                GlobalScope.launch {
-                    mediaActions.backgroundPlay(streamInfo)
-                }
+                platformMediaController?.backgroundPlay(streamInfo)
                 onDismiss()
             })
             add(Triple(Icons.Default.Queue, stringResource(MR.strings.enqueue_stream)) {
-                GlobalScope.launch {
-                    mediaActions.enqueue(streamInfo)
-                }
+                platformMediaController?.enqueue(streamInfo)
                 onDismiss()
             })
             add(Triple(Icons.Default.PictureInPicture, stringResource(MR.strings.pip)) {
-                mediaActions.enterPictureInPicture(streamInfo)
+                SharedContext.platformActions.enterPictureInPicture(streamInfo)
                 onDismiss()
             })
         }
@@ -194,7 +190,7 @@ private fun StreamInfoMenuItems(
             onDismiss()
         })
         add(Triple(Icons.Default.Share, stringResource(MR.strings.share)) {
-            mediaActions.share(streamInfo.url, streamInfo.name)
+            SharedContext.platformActions.share(streamInfo.url, streamInfo.name)
             onDismiss()
         })
         if (showProvideDetailButton) {

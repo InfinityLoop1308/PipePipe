@@ -8,11 +8,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.PlaylistAdd
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -32,6 +32,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ColorHelper
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.supportingTextColor
 import project.pipepipe.app.utils.formatAbsoluteTime
 import project.pipepipe.app.utils.formatCount
@@ -185,6 +186,7 @@ private fun ChannelListItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StreamOrPlaylistListItem(
     item: Info,
@@ -254,7 +256,12 @@ private fun StreamOrPlaylistListItem(
 
     }.takeIf { it.isNotEmpty() }
 
-    Row(
+    val swipeEnqueueEnabled = item is StreamInfo &&
+        SharedContext.settingsManager.getBoolean("swipe_enqueue_gesture_key", false)
+    val msg = stringResource(MR.strings.enqueued)
+
+    val content: @Composable () -> Unit = {
+        Row(
         modifier = modifier
             .fillMaxWidth()
             .height(thumbnailHeight)
@@ -453,6 +460,30 @@ private fun StreamOrPlaylistListItem(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+    }
+
+    if (swipeEnqueueEnabled) {
+        val dismissState = rememberSwipeToDismissBoxState(
+            initialValue = SwipeToDismissBoxValue.Settled,
+            positionalThreshold = { totalDistance -> totalDistance * 0.6f },
+            confirmValueChange = { newValue ->
+                if (newValue == SwipeToDismissBoxValue.StartToEnd) {
+                    SharedContext.platformMediaController?.enqueue(item)
+                    ToastManager.show(msg)
+                }
+                false
+            }
+        )
+        SwipeToDismissBox(
+            state = dismissState,
+            enableDismissFromStartToEnd = true,
+            enableDismissFromEndToStart = false,
+            content = { content() },
+            backgroundContent = {},
+        )
+    } else {
+        content()
     }
 }
 

@@ -542,4 +542,7 @@
 <string name="original">Original</string>
 <string name="advanced_formats_summary">Si tu dispositivo es compatible, habilitar formatos avanzados puede reducir el consumo de datos y proporcionar resoluciones más altas. Es posible que no puedas ver videos de alta resolución sin habilitar los formatos avanzados.</string>
 <string name="advanced_formats_title">Habilitar formatos avanzados</string>
+<string name="settings_gesture_swipe_enqueue_title">Deslizar para encolar</string>
+<string name="enqueued">Encolado</string>
+<string name="settings_gesture_swipe_enqueue_summary">Desliza los elementos de vídeo para añadirlos a la cola de reproducción</string>
 </resources>

@@ -542,4 +542,7 @@
 <string name="original">Original</string>
 <string name="advanced_formats_summary">Wenn Ihr Gerät dies unterstützt, kann das Aktivieren erweiterter Formate den Datenverbrauch reduzieren und höhere Auflösungen ermöglichen. Möglicherweise können Sie keine Videos in hoher Auflösung ansehen, ohne erweiterte Formate zu aktivieren.</string>
 <string name="advanced_formats_title">Erweiterte Formate aktivieren</string>
+<string name="settings_gesture_swipe_enqueue_title">Zum Einreihen wischen</string>
+<string name="enqueued">Eingereiht</string>
+<string name="settings_gesture_swipe_enqueue_summary">Wischen Sie über Videoelemente, um sie zur Wiedergabeliste hinzuzufügen</string>
 </resources>

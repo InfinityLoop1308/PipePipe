@@ -78,6 +78,8 @@ fun GestureSettingScreen(
     val swipeSeekSummary = stringResource(MR.strings.settings_gesture_swipe_seek_summary)
     val seekDurationTitle = stringResource(MR.strings.settings_gesture_seek_duration_title)
     val playbackSpeedTitle = stringResource(MR.strings.settings_gesture_playback_speed_title)
+    val swipeEnqueueTitle = stringResource(MR.strings.settings_gesture_swipe_enqueue_title)
+    val swipeEnqueueSummary = stringResource(MR.strings.settings_gesture_swipe_enqueue_summary)
 
     val preferenceItems = remember(secondsLabel, seekDurationEntries) {
         listOf(
@@ -104,6 +106,12 @@ fun GestureSettingScreen(
                 title = swipeSeekTitle,
                 summary = swipeSeekSummary,
                 defaultValue = true
+            ),
+            PreferenceItem.SwitchPref(
+                key = "swipe_enqueue_gesture_key",
+                title = swipeEnqueueTitle,
+                summary = swipeEnqueueSummary,
+                defaultValue = false
             ),
             PreferenceItem.ListPref(
                 key = "seek_duration_key",

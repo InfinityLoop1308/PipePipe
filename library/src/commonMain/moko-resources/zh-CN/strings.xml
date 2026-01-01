@@ -542,4 +542,7 @@
 <string name="original">原始</string>
 <string name="advanced_formats_summary">如果您的设备支持，启用高级格式可以减少数据消耗并提供更高的分辨率。如果不启用高级格式，您可能无法观看高分辨率视频。</string>
 <string name="advanced_formats_title">启用高级格式</string>
+<string name="settings_gesture_swipe_enqueue_title">滑动以加入队列</string>
+<string name="enqueued">已加入队列</string>
+<string name="settings_gesture_swipe_enqueue_summary">滑动视频项目以将其添加到播放队列</string>
 </resources>

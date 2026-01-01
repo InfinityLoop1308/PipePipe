@@ -62,24 +62,6 @@ class AndroidActions(
         _screenOrientation.value = getCurrentOrientation()
     }
 
-    override suspend fun backgroundPlay(streamInfo: StreamInfo) {
-        val controller = MediaControllerHolder.getInstance(context)
-        MainScope().launch{
-            controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-            controller.playFromStreamInfo(streamInfo)
-        }
-    }
-
-    override suspend fun enqueue(streamInfo: StreamInfo) {
-        val controller = MediaControllerHolder.getInstance(context)
-        MainScope().launch {
-            controller.addMediaItem(streamInfo.toMediaItem())
-            if (controller.mediaItemCount == 1) {
-                controller.play()
-            }
-        }
-    }
-
     override fun enterPictureInPicture(streamInfo: StreamInfo) {
         val activity = context as? MainActivity ?: return
         MainScope().launch {

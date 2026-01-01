@@ -245,6 +245,17 @@ interface PlatformMediaController {
      */
     fun setStreamInfoAsOnlyMediaItem(streamInfo: StreamInfo)
 
+    /**
+     * Start background (audio-only) playback for the given stream.
+     */
+    fun backgroundPlay(streamInfo: StreamInfo)
+
+    /**
+     * Add stream to the playback queue.
+     * If queue was empty, starts playback automatically.
+     */
+    fun enqueue(streamInfo: StreamInfo)
+
     // ===== Track Selection =====
 
     /**

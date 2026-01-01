@@ -198,6 +198,11 @@ object ImportExportHelper {
                     settingsManager.putString("watch_history_mode", watchHistoryMode)
                 }
 
+                val localPlaylistSwipeAction = snapshot["local_playlist_swipe_action_key"] as? String
+                if (localPlaylistSwipeAction == "enqueue") {
+                    settingsManager.putBoolean("swipe_enqueue_gesture_key", true)
+                }
+
                 SharedContext.initializeSupportedServices()
             }
 

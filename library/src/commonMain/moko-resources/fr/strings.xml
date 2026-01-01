@@ -542,4 +542,7 @@
 <string name="original">Original</string>
 <string name="advanced_formats_summary">Si votre appareil est compatible, l\'activation des formats avancés peut réduire la consommation de données et offrir des résolutions plus élevées. Vous ne pourrez peut-être pas regarder des vidéos haute résolution sans activer les formats avancés.</string>
 <string name="advanced_formats_title">Activer les formats avancés</string>
+<string name="settings_gesture_swipe_enqueue_title">Balayer pour mettre en file d\'attente</string>
+<string name="enqueued">Mis en file d\'attente</string>
+<string name="settings_gesture_swipe_enqueue_summary">Balayez les éléments vidéo pour les ajouter à la file d\'attente de lecture</string>
 </resources>

@@ -21,17 +21,6 @@ interface PlatformActions {
     val screenOrientation: StateFlow<ScreenOrientation>
 
     /**
-     * Start background (audio-only) playback for the given stream.
-     */
-    suspend fun backgroundPlay(streamInfo: StreamInfo)
-
-    /**
-     * Add stream to the playback queue.
-     * If queue was empty, starts playback automatically.
-     */
-    suspend fun enqueue(streamInfo: StreamInfo)
-
-    /**
      * Enter Picture-in-Picture mode with the given stream.
      */
     fun enterPictureInPicture(streamInfo: StreamInfo)

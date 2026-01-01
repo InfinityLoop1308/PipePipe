@@ -327,6 +327,20 @@ class AndroidMediaController(
         mediaController.setMediaItem(streamInfo.toMediaItem(), runBlocking{ DatabaseOperations.getStreamProgress(streamInfo.url) ?: 0L })
     }
 
+    override fun backgroundPlay(streamInfo: StreamInfo) {
+        setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+        playFromStreamInfo(streamInfo)
+    }
+
+    override fun enqueue(streamInfo: StreamInfo) {
+        MainScope().launch {
+            mediaController.addMediaItem(streamInfo.toMediaItem())
+            if (mediaController.mediaItemCount == 1) {
+                mediaController.play()
+            }
+        }
+    }
+
     // ===== Track Selection =====
 
     @OptIn(UnstableApi::class)

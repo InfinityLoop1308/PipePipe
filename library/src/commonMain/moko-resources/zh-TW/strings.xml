@@ -542,4 +542,7 @@
 <string name="original">原始</string>
 <string name="advanced_formats_summary">如果您的裝置支援，啟用進階格式可以減少數據消耗並提供更高的解析度。如果不安裝進階格式，您可能無法觀看高解析度影片。</string>
 <string name="advanced_formats_title">啟用進階格式</string>
+<string name="settings_gesture_swipe_enqueue_title">滑動以加入佇列</string>
+<string name="enqueued">已加入佇列</string>
+<string name="settings_gesture_swipe_enqueue_summary">滑動影片項目以將其加入播放佇列</string>
 </resources>

@@ -542,4 +542,7 @@
 <string name="original">オリジナル</string>
 <string name="advanced_formats_summary">お使いのデバイスが対応している場合、アドバンストフォーマットを有効にすると、データ消費量を削減し、より高解像度を提供できます。アドバンストフォーマットを有効にしないと、高解像度の動画を視聴できない場合があります。</string>
 <string name="advanced_formats_title">アドバンストフォーマットを有効にする</string>
+<string name="settings_gesture_swipe_enqueue_title">スワイプしてキューに追加</string>
+<string name="enqueued">キューに追加済み</string>
+<string name="settings_gesture_swipe_enqueue_summary">動画アイテムをスワイプして再生キューに追加します</string>
 </resources>
