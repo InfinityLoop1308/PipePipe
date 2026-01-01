@@ -473,20 +473,12 @@ fun VideoPlayer(
     val isSystemDark = isSystemInDarkTheme()
 
     LaunchedEffect(isControlsVisible, isFullscreenMode) {
-        if (isFullscreenMode) {
-            platformActions.setSystemBarsVisible(
-                visible = isControlsVisible,
-                isFullscreen = true,
-                useLightBars = false
-            )
-        } else {
-            platformActions.applySystemBarColors(!isSystemDark)
-            platformActions.setSystemBarsVisible(
-                visible = true,
-                isFullscreen = false,
-                useLightBars = !isSystemDark
-            )
-        }
+        platformActions.setSystemBarsVisible(
+            visible = isControlsVisible,
+            isFullscreen = isFullscreenMode,
+            colorScheme = colorScheme,
+            isSystemDark = isSystemDark
+        )
     }
 
     // Manage brightness based on fullscreen mode

@@ -15,30 +15,26 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.view.WindowManager
+import androidx.compose.material3.ColorScheme
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.sqlite.db.SupportSQLiteDatabase
-import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import project.pipepipe.app.MR
-import project.pipepipe.app.MainActivity
-import project.pipepipe.app.PlaybackMode
-import project.pipepipe.app.SharedContext
+import project.pipepipe.app.*
 import project.pipepipe.app.global.MediaControllerHolder
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.service.*
 import project.pipepipe.app.uistate.VideoDetailPageState
-import project.pipepipe.database.*
 import project.pipepipe.shared.infoitem.StreamInfo
 
 class AndroidActions(
@@ -341,7 +337,7 @@ class AndroidActions(
 
     // ========== System UI Control ==========
 
-    override fun setSystemBarsVisible(visible: Boolean, isFullscreen: Boolean, useLightBars: Boolean) {
+    override fun setSystemBarsVisible(visible: Boolean, isFullscreen: Boolean, colorScheme: ColorScheme, isSystemDark: Boolean) {
         val activity = context as? Activity ?: return
         val window = activity.window ?: return
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
@@ -361,8 +357,7 @@ class AndroidActions(
                 )
             }
         } else {
-            insetsController.isAppearanceLightStatusBars = useLightBars
-            insetsController.isAppearanceLightNavigationBars = useLightBars
+            applySystemBarColors(colorScheme, isSystemDark)
             insetsController.show(
                 WindowInsetsCompat.Type.statusBars() or
                         WindowInsetsCompat.Type.navigationBars()
@@ -370,11 +365,29 @@ class AndroidActions(
         }
     }
 
-    override fun applySystemBarColors(useLightBars: Boolean) {
+    override fun applySystemBarColors(colorScheme: ColorScheme, isSystemDark: Boolean) {
         val activity = context as? Activity ?: return
         val window = activity.window ?: return
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-        insetsController.isAppearanceLightStatusBars = useLightBars
-        insetsController.isAppearanceLightNavigationBars = useLightBars
+
+        val pureBlackEnabled = isPureBlackEnabled()
+        val materialYouEnabled = isMaterialYouEnabled()
+        val customPrimaryColor = getCustomPrimaryColor()
+        val isDark = isDarkTheme(isSystemDark)
+
+        val topBarColor = if (pureBlackEnabled && isDark) {
+            Color.Black
+        } else if (materialYouEnabled || customPrimaryColor == Color.White) {
+            colorScheme.surface
+        } else {
+            if (isDark) {
+                getCustomDarkColor(customPrimaryColor)
+            } else {
+                customPrimaryColor
+            }
+        }
+        val useLightIcons = topBarColor.luminance() < 0.5f
+        insetsController.isAppearanceLightStatusBars = !useLightIcons
+        insetsController.isAppearanceLightNavigationBars = !isDark
     }
 }

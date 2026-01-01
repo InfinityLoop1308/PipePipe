@@ -45,7 +45,6 @@ object SharedContext {
     lateinit var settingsManager: SettingsManager
     val bottomSheetMenuViewModel = BottomSheetMenuViewModel()
     lateinit var sessionManager: SessionManager
-    lateinit var systemBarColorsManager: SystemBarColorsManager
     lateinit var platformActions: PlatformActions
     lateinit var platformDatabaseActions: PlatformDatabaseActions
     var platformMediaController: PlatformMediaController? = null

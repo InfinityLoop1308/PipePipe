@@ -78,7 +78,6 @@ class MainActivity : ComponentActivity() {
 
         setupNavigationView(navigationView)
 
-        SharedContext.systemBarColorsManager = SystemBarColorsManager(WindowCompat.getInsetsController(window, window.decorView))
         SharedContext.platformActions = AndroidActions(
             context = this,
             drawerLayout = drawerLayout,

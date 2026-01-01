@@ -1,5 +1,6 @@
 package project.pipepipe.app.platform
 
+import androidx.compose.material3.ColorScheme
 import kotlinx.coroutines.flow.StateFlow
 import project.pipepipe.shared.infoitem.StreamInfo
 
@@ -189,19 +190,8 @@ interface PlatformActions {
 
     // ========== System UI Control ==========
 
-    /**
-     * Control system bars visibility in fullscreen mode.
-     * @param visible True to show system bars, false to hide
-     * @param isFullscreen True if in fullscreen video mode
-     * @param useLightBars True to use light status/navigation bars (for dark backgrounds)
-     */
-    fun setSystemBarsVisible(visible: Boolean, isFullscreen: Boolean, useLightBars: Boolean = false)
-
-    /**
-     * Apply system bar colors based on current theme.
-     * @param useLightBars True to use light bars appearance
-     */
-    fun applySystemBarColors(useLightBars: Boolean)
+    fun setSystemBarsVisible(visible: Boolean, isFullscreen: Boolean, colorScheme: ColorScheme, isSystemDark: Boolean)
+    fun applySystemBarColors(colorScheme: ColorScheme, isSystemDark: Boolean)
 }
 
 /**

@@ -142,7 +142,7 @@ fun PipePipeTheme(
 
     val isSystemDark = isSystemInDarkTheme()
     SideEffect {
-        SharedContext.systemBarColorsManager.applySystemBarColors(colorScheme, isSystemDark)
+        SharedContext.platformActions.applySystemBarColors(colorScheme, isSystemDark)
     }
 
     MaterialTheme(colorScheme = colorScheme, content = content)
