@@ -533,6 +533,8 @@
     <string name="saved">Saved</string>
     <string name="playback_skip_silence_title">Skip silence</string>
     <string name="playback_skip_silence_summary">Automatically skip silent parts during playback</string>
+    <string name="start_main_player_fullscreen_title">Start in fullscreen</string>
+    <string name="start_main_player_fullscreen_summary">Start playback in fullscreen directly</string>
     <string name="advanced_formats_title">Enable advanced formats</string>
     <string name="advanced_formats_summary">If your device has support, enabling advanced formats can reduce data
         consumption and provide higher resolutions. You may not be able to watch high resolution videos without enabling

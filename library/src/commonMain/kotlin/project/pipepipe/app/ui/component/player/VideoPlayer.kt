@@ -526,6 +526,9 @@ fun VideoPlayer(
                     .clickable {
                         mediaController.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
                         mediaController.playFromStreamInfo(streamInfo)
+                        if (SharedContext.settingsManager.getBoolean("start_main_player_fullscreen_key")) {
+                            SharedContext.sharedVideoDetailViewModel.toggleFullscreenPlayer()
+                        }
                         if (SharedContext.isTv) {
                             gestureScope.launch {
                                 delay(100)
