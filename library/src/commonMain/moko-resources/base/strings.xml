@@ -490,8 +490,10 @@
     <string name="tab_already_exists">This tab already exists.</string>
     <string name="all_feed_title">What\'s New</string>
     <string name="blank_page_hint">Tap the magnifying glass to get started.</string>
-    <string name="customize_tabs">Customize Tabs</string>
-    <string name="customize_tabs_summary">Configure main interface tabs</string>
+    <string name="customize_tabs">Main screen Tabs</string>
+    <string name="customize_tabs_summary">Configure main screen tabs</string>
+    <string name="video_tabs_title">Video Tabs</string>
+    <string name="video_tabs_summary">Configure which tabs to show on video detail screen</string>
     <string name="add_tab">Add Tab</string>
     <string name="select_tab_type">Select Tab Type</string>
     <string name="blank_page">Blank Page</string>
@@ -665,4 +667,6 @@
     <string name="default_content_country_title">Preferred trending country</string>
     <string name="preferred_audio_language_title">Preferred audio language</string>
     <string name="systems_language">System default</string>
+
+    <string name="no_available_tabs">No available tabs</string>
 </resources>

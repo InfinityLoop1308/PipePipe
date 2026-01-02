@@ -233,11 +233,13 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         }
     }
 
+    val configuredTabs = SharedContext.settingsManager.getStringSet("video_tabs_key")
+
     val allTabs = listOf(
         TabConfig(
             title = stringResource(MR.strings.comments_tab_description),
             icon = Icons.AutoMirrored.Filled.Comment,
-            isAvailable = streamInfo?.commentUrl != null,
+            isAvailable = streamInfo?.commentUrl != null && configuredTabs.contains("comments"),
             content = {
                 streamInfo?.commentUrl?.let {
                     CommentSection(
@@ -253,13 +255,13 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         TabConfig(
             title = stringResource(MR.strings.related_videos),
             icon = Icons.Default.ArtTrack,
-            isAvailable = streamInfo?.relatedItemUrl != null,
+            isAvailable = streamInfo?.relatedItemUrl != null && configuredTabs.contains("related"),
             content = { RelatedItemSection() }
         ),
         TabConfig(
             title = stringResource(MR.strings.sponsor_block),
             icon = Icons.Default.Shield,
-            isAvailable = streamInfo?.sponsorblockUrl != null && isSponsorBlockEnabled,
+            isAvailable = streamInfo?.sponsorblockUrl != null && isSponsorBlockEnabled  && configuredTabs.contains("sponsorblock"),
             content = {
                 val sponsorBlockState = uiState.currentSponsorBlock
                 if (sponsorBlockState.common.isLoading) {
@@ -289,7 +291,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         TabConfig(
             title = stringResource(MR.strings.description_tab),
             icon = Icons.Default.Description,
-            isAvailable = streamInfo != null,
+            isAvailable = streamInfo != null && configuredTabs.contains("description"),
             content = {
                 streamInfo?.let {
                     DescriptionSection(
@@ -488,16 +490,31 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                             )
                                         }
                                         item {
-                                            HorizontalPager(
-                                                state = pagerState,
-                                                modifier = Modifier
-                                                    .fillParentMaxHeight()
-                                                    .padding(horizontal = 16.dp)
-                                                    .padding(top = 8.dp)
-                                                    .nestedScroll(nestedScrollConnection1),
-                                                beyondViewportPageCount = 4
-                                            ) { page ->
-                                                availableTabs[page].content()
+                                            if (availableTabs.isNotEmpty()) {
+                                                HorizontalPager(
+                                                    state = pagerState,
+                                                    modifier = Modifier
+                                                        .fillParentMaxHeight()
+                                                        .padding(horizontal = 16.dp)
+                                                        .padding(top = 8.dp)
+                                                        .nestedScroll(nestedScrollConnection1),
+                                                    beyondViewportPageCount = 4
+                                                ) { page ->
+                                                    availableTabs[page].content()
+                                                }
+                                            } else {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(32.dp),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Text(
+                                                        text = stringResource(MR.strings.no_available_tabs),
+                                                        style = MaterialTheme.typography.bodyLarge,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
                                             }
                                         }
                                     }

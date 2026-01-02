@@ -170,6 +170,26 @@ object ImportExportHelper {
                     settingsManager.putString("supported_services", currentSupportedServices)
                 }
 
+                // Map old video tab boolean keys to new video_tabs_key set
+                val hasVideoTabsKey = snapshot.containsKey("video_tabs_key")
+                val showComments = snapshot["show_comments_key"] as? Boolean
+                val showNextVideo = snapshot["show_next_video_key"] as? Boolean
+                val showDescription = snapshot["show_description_key"] as? Boolean
+
+                if (!hasVideoTabsKey && (showComments != null || showNextVideo != null || showDescription != null)) {
+                    val videoTabs = mutableSetOf<String>()
+
+                    // Add default sponsorblock tab
+                    videoTabs.add("sponsorblock")
+
+                    // Add tabs based on old settings, defaulting to true if key not found
+                    if (showComments ?: true) videoTabs.add("comments")
+                    if (showNextVideo ?: true) videoTabs.add("related")
+                    if (showDescription ?: true) videoTabs.add("description")
+
+                    settingsManager.putStringSet("video_tabs_key", videoTabs)
+                }
+
                 val listViewMode = snapshot["list_view_mode_key"] as? String
                 when (listViewMode) {
                     "grid", "large_grid", "auto" -> {

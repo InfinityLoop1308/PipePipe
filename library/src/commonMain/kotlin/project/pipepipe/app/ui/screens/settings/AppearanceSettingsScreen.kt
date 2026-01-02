@@ -108,6 +108,9 @@ fun AppearanceSettingsScreen(
     val customizeTabsTitle = stringResource(MR.strings.customize_tabs)
     val customizeTabsSummary = stringResource(MR.strings.customize_tabs_summary)
 
+    val videoTabsTitle = stringResource(MR.strings.video_tabs_title)
+    val videoTabsSummary = stringResource(MR.strings.video_tabs_summary)
+
     val dynamicColorForSearchTitle = stringResource(MR.strings.settings_appearance_dynamic_color_for_search_title)
     val dynamicColorForSearchSummary = stringResource(MR.strings.settings_appearance_dynamic_color_for_search_summary)
 
@@ -115,6 +118,16 @@ fun AppearanceSettingsScreen(
     val gridCategory = stringResource(MR.strings.grid)
     val tabCategory = stringResource(MR.strings.tab)
     val searchCategory = stringResource(MR.strings.search)
+
+    // Video tabs entries
+    val videoTabsEntries = listOf(
+        stringResource(MR.strings.comments_tab_description),
+        stringResource(MR.strings.related_items_tab_description),
+        stringResource(MR.strings.sponsor_block),
+        stringResource(MR.strings.description_tab)
+    )
+    val videoTabsValues = listOf("comments", "related", "sponsorblock", "description")
+    val videoTabsDefaultValues = videoTabsValues.toSet()
 
     val preferenceItems = listOf(
         PreferenceItem.CategoryPref(
@@ -170,6 +183,14 @@ fun AppearanceSettingsScreen(
             onClick = {
                 navController.navigate(Screen.TabCustomization.route)
             }
+        ),
+        PreferenceItem.MultiSelectPref(
+            key = "video_tabs_key",
+            title = videoTabsTitle,
+            summary = videoTabsSummary,
+            entries = videoTabsEntries,
+            entryValues = videoTabsValues,
+            defaultValues = videoTabsDefaultValues
         ),
         PreferenceItem.CategoryPref(
             key = "grid_category",
@@ -229,6 +250,7 @@ fun AppearanceSettingsScreen(
                         }
                     }
                     is PreferenceItem.ClickablePref -> ClickablePreference(item = item)
+                    is PreferenceItem.MultiSelectPref -> MultiSelectPreference(item = item)
                     else -> Unit
                 }
             }
