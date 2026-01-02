@@ -566,4 +566,9 @@
 <string name="settings_section_language">言語</string>
 <string name="default_content_country_title">優先するトレンド国</string>
 <string name="systems_language">システムデフォルト</string>
+<string name="show_channel_tabs_summary">チャンネルページに表示されるタブを設定します</string>
+<string name="video_tabs_title">動画タブ</string>
+<string name="show_channel_tabs">チャンネルタブ</string>
+<string name="video_tabs_summary">動画詳細画面に表示するタブを設定します</string>
+<string name="no_available_tabs">利用可能なタブはありません</string>
 </resources>

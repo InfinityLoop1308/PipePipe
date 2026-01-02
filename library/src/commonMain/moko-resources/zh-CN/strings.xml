@@ -566,4 +566,9 @@
 <string name="settings_section_language">语言</string>
 <string name="default_content_country_title">首选热门国家/地区</string>
 <string name="systems_language">系统默认</string>
+<string name="show_channel_tabs_summary">配置频道页面上显示的选项卡</string>
+<string name="video_tabs_title">视频标签页</string>
+<string name="show_channel_tabs">频道标签页</string>
+<string name="video_tabs_summary">配置在视频详情屏幕上显示哪些标签页</string>
+<string name="no_available_tabs">没有可用的标签页</string>
 </resources>

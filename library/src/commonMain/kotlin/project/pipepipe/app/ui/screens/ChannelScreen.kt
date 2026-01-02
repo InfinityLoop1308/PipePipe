@@ -61,8 +61,25 @@ fun ChannelScreen(
     val tabs = uiState.channelInfo?.tabs.orEmpty()
     val hasDescription = !uiState.channelInfo?.description.isNullOrEmpty()
     val filterShorts = remember { SharedContext.settingsManager.getBoolean("filter_shorts_key", false) }
-    val tabTypes = remember(tabs, hasDescription, filterShorts) {
+    val showChannelTabsSettings = remember {
+        SharedContext.settingsManager.getStringSet("show_channel_tabs_key", emptySet())
+    }
+    val tabTypes = remember(tabs, hasDescription, filterShorts, showChannelTabsSettings) {
         val types = tabs.map { it.type }.toMutableList()
+
+        // Filter based on user preferences
+        types.retainAll { tabType ->
+            when (tabType) {
+                ChannelTabType.PLAYLISTS -> "show_channel_tabs_playlists" in showChannelTabsSettings
+                ChannelTabType.LIVE -> "show_channel_tabs_live" in showChannelTabsSettings
+                ChannelTabType.SHORTS -> "show_channel_tabs_shorts" in showChannelTabsSettings
+                ChannelTabType.ALBUMS -> "show_channel_tabs_albums" in showChannelTabsSettings
+                ChannelTabType.INFO -> "show_channel_tabs_info" in showChannelTabsSettings
+                ChannelTabType.VIDEOS -> true // Always show videos tab
+                else -> true
+            }
+        }
+
         if (filterShorts) {
             types.removeAll { it == ChannelTabType.SHORTS }
         }

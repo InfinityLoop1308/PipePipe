@@ -566,4 +566,9 @@
 <string name="settings_section_language">Idioma</string>
 <string name="default_content_country_title">País de tendencias preferido</string>
 <string name="systems_language">Predeterminado del sistema</string>
+<string name="show_channel_tabs_summary">Configura qué pestañas se muestran en las páginas del canal</string>
+<string name="video_tabs_title">Pestañas de video</string>
+<string name="show_channel_tabs">Pestañas del canal</string>
+<string name="video_tabs_summary">Configurar qué pestañas mostrar en la pantalla de detalles del video</string>
+<string name="no_available_tabs">No hay pestañas disponibles</string>
 </resources>

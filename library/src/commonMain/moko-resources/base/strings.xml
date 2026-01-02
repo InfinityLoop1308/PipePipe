@@ -440,6 +440,8 @@
     <string name="channel_tab_channels">Channels</string>
     <string name="channel_tab_albums">Albums</string>
     <string name="channel_tab_info">Info</string>
+    <string name="show_channel_tabs">Channel tabs</string>
+    <string name="show_channel_tabs_summary">Configure what tabs are shown on the channel pages</string>
     <!-- Error code messages -->
     <string name="error_code_geo_001">This content is not available in your region</string>
     <string name="error_code_block_001">Content unavailable</string>

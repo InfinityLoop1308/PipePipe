@@ -566,4 +566,9 @@
 <string name="settings_section_language">語言</string>
 <string name="default_content_country_title">偏好熱門國家/地區</string>
 <string name="systems_language">系統預設</string>
+<string name="show_channel_tabs_summary">設定頻道頁面顯示的標籤頁</string>
+<string name="video_tabs_title">影片分頁</string>
+<string name="show_channel_tabs">頻道分頁</string>
+<string name="video_tabs_summary">設定影片詳細資訊畫面顯示哪些分頁</string>
+<string name="no_available_tabs">沒有可用的分頁</string>
 </resources>

@@ -566,4 +566,9 @@
 <string name="settings_section_language">Sprache</string>
 <string name="default_content_country_title">Bevorzugtes Trendland</string>
 <string name="systems_language">Systemstandard</string>
+<string name="show_channel_tabs_summary">Konfigurieren Sie, welche Registerkarten auf den Kanalseiten angezeigt werden</string>
+<string name="video_tabs_title">Video-Registerkarten</string>
+<string name="show_channel_tabs">Kanal-Registerkarten</string>
+<string name="video_tabs_summary">Konfigurieren Sie, welche Registerkarten auf dem Videodetailbildschirm angezeigt werden sollen</string>
+<string name="no_available_tabs">Keine verfügbaren Registerkarten</string>
 </resources>

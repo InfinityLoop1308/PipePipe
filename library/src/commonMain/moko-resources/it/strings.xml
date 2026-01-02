@@ -566,4 +566,9 @@
 <string name="settings_section_language">Lingua</string>
 <string name="default_content_country_title">Paese di tendenza preferito</string>
 <string name="systems_language">Predefinito di sistema</string>
+<string name="show_channel_tabs_summary">Configura quali schede vengono mostrate sulle pagine del canale</string>
+<string name="video_tabs_title">Schede video</string>
+<string name="show_channel_tabs">Schede canale</string>
+<string name="video_tabs_summary">Configura quali schede mostrare nella schermata dei dettagli del video</string>
+<string name="no_available_tabs">Nessuna scheda disponibile</string>
 </resources>

@@ -111,6 +111,9 @@ fun AppearanceSettingsScreen(
     val videoTabsTitle = stringResource(MR.strings.video_tabs_title)
     val videoTabsSummary = stringResource(MR.strings.video_tabs_summary)
 
+    val channelTabsTitle = stringResource(MR.strings.show_channel_tabs)
+    val channelTabsSummary = stringResource(MR.strings.show_channel_tabs_summary)
+
     val dynamicColorForSearchTitle = stringResource(MR.strings.settings_appearance_dynamic_color_for_search_title)
     val dynamicColorForSearchSummary = stringResource(MR.strings.settings_appearance_dynamic_color_for_search_summary)
 
@@ -128,6 +131,25 @@ fun AppearanceSettingsScreen(
     )
     val videoTabsValues = listOf("comments", "related", "sponsorblock", "description")
     val videoTabsDefaultValues = videoTabsValues.toSet()
+
+    // Channel tabs entries
+    val channelTabsEntries = listOf(
+        stringResource(MR.strings.channel_tab_playlists),
+        stringResource(MR.strings.channel_tab_livestreams),
+        stringResource(MR.strings.channel_tab_shorts),
+//        stringResource(MR.strings.channel_tab_channels),
+        stringResource(MR.strings.channel_tab_albums),
+        stringResource(MR.strings.channel_tab_info)
+    )
+    val channelTabsValues = listOf(
+        "show_channel_tabs_playlists",
+        "show_channel_tabs_live",
+        "show_channel_tabs_shorts",
+//        "show_channel_tabs_channels",
+        "show_channel_tabs_albums",
+        "show_channel_tabs_info"
+    )
+    val channelTabsDefaultValues = channelTabsValues.toSet()
 
     val preferenceItems = listOf(
         PreferenceItem.CategoryPref(
@@ -191,6 +213,14 @@ fun AppearanceSettingsScreen(
             entries = videoTabsEntries,
             entryValues = videoTabsValues,
             defaultValues = videoTabsDefaultValues
+        ),
+        PreferenceItem.MultiSelectPref(
+            key = "show_channel_tabs_key",
+            title = channelTabsTitle,
+            summary = channelTabsSummary,
+            entries = channelTabsEntries,
+            entryValues = channelTabsValues,
+            defaultValues = channelTabsDefaultValues
         ),
         PreferenceItem.CategoryPref(
             key = "grid_category",

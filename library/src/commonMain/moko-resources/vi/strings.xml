@@ -566,4 +566,9 @@
 <string name="settings_section_language">Ngôn ngữ</string>
 <string name="default_content_country_title">Quốc gia thịnh hành ưu tiên</string>
 <string name="systems_language">Mặc định hệ thống</string>
+<string name="show_channel_tabs_summary">Cấu hình các tab được hiển thị trên trang kênh</string>
+<string name="video_tabs_title">Các tab video</string>
+<string name="show_channel_tabs">Các tab kênh</string>
+<string name="video_tabs_summary">Cấu hình các tab sẽ hiển thị trên màn hình chi tiết video</string>
+<string name="no_available_tabs">Không có tab nào khả dụng</string>
 </resources>

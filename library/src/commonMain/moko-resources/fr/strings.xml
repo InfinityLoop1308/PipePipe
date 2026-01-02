@@ -566,4 +566,9 @@
 <string name="settings_section_language">Langue</string>
 <string name="default_content_country_title">Pays tendance préféré</string>
 <string name="systems_language">Par défaut du système</string>
+<string name="show_channel_tabs_summary">Configurez les onglets affichés sur les pages de chaîne</string>
+<string name="video_tabs_title">Onglets vidéo</string>
+<string name="show_channel_tabs">Onglets de la chaîne</string>
+<string name="video_tabs_summary">Configurer les onglets à afficher sur l\'écran de détail de la vidéo</string>
+<string name="no_available_tabs">Aucun onglet disponible</string>
 </resources>
