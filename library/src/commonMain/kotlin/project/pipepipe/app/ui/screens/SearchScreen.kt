@@ -11,6 +11,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -89,6 +94,15 @@ fun SearchScreen(
         uiState.list.itemList.distinctBy { it.url }
     }
     val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
+
+    // Read grid layout settings
+    val isGridLayout = remember {
+        SharedContext.settingsManager.getBoolean("grid_layout_enabled_key", false)
+    }
+    val gridColumns = remember {
+        SharedContext.settingsManager.getString("grid_columns_key", "4").toIntOrNull() ?: 4
+    }
 
     LaunchedEffect(uiState.searchQuery) {
         if (uiState.searchQuery != textFieldValue.text) {
@@ -119,7 +133,13 @@ fun SearchScreen(
             // Normal search flow
             val searchUrl = generateQueryUrl(searchText, uiState.selectedSearchType!!)
             val serviceId = overrideServiceId ?: uiState.selectedService!!.serviceId
-            scope.launch{ listState.scrollToItem(0) }
+            scope.launch{
+                if (isGridLayout) {
+                    gridState.scrollToItem(0)
+                } else {
+                    listState.scrollToItem(0)
+                }
+            }
             viewModel.search(searchUrl, serviceId)
             focusManager.clearFocus()
             GlobalScope.launch {
@@ -151,23 +171,44 @@ fun SearchScreen(
         }
     }
 
-    LaunchedEffect(listState, uiState.list.nextPageUrl, uiState.common.isLoading) {
-        snapshotFlow {
-            val layoutInfo = listState.layoutInfo
-            val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-            lastVisible to layoutInfo.totalItemsCount
-        }
-            .distinctUntilChanged()
-            .collect { (lastVisible, totalCount) ->
-                val hasNextPage = uiState.list.nextPageUrl != null
-                val canLoadMore = !uiState.common.isLoading && hasNextPage
-                val atBottom = totalCount > 0 && lastVisible == totalCount - 1
-
-                if (canLoadMore && atBottom) {
-                    val serviceId = uniqueItems.firstOrNull()?.serviceId ?: return@collect
-                    viewModel.loadMoreResults(serviceId)
-                }
+    if (isGridLayout) {
+        LaunchedEffect(gridState, uiState.list.nextPageUrl, uiState.common.isLoading) {
+            snapshotFlow {
+                val layoutInfo = gridState.layoutInfo
+                val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+                lastVisible to layoutInfo.totalItemsCount
             }
+                .distinctUntilChanged()
+                .collect { (lastVisible, totalCount) ->
+                    val hasNextPage = uiState.list.nextPageUrl != null
+                    val canLoadMore = !uiState.common.isLoading && hasNextPage
+                    val atBottom = totalCount > 0 && lastVisible == totalCount - 1
+
+                    if (canLoadMore && atBottom) {
+                        val serviceId = uniqueItems.firstOrNull()?.serviceId ?: return@collect
+                        viewModel.loadMoreResults(serviceId)
+                    }
+                }
+        }
+    } else {
+        LaunchedEffect(listState, uiState.list.nextPageUrl, uiState.common.isLoading) {
+            snapshotFlow {
+                val layoutInfo = listState.layoutInfo
+                val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+                lastVisible to layoutInfo.totalItemsCount
+            }
+                .distinctUntilChanged()
+                .collect { (lastVisible, totalCount) ->
+                    val hasNextPage = uiState.list.nextPageUrl != null
+                    val canLoadMore = !uiState.common.isLoading && hasNextPage
+                    val atBottom = totalCount > 0 && lastVisible == totalCount - 1
+
+                    if (canLoadMore && atBottom) {
+                        val serviceId = uniqueItems.firstOrNull()?.serviceId ?: return@collect
+                        viewModel.loadMoreResults(serviceId)
+                    }
+                }
+        }
     }
     val isDynamicColorForSearchEnabled = SharedContext.settingsManager.getBoolean("dynamic_color_for_search_enabled_key", false)
     val themeSearchBarColor = if (isDynamicColorForSearchEnabled)ColorHelper.parseHexColor(uiState.selectedService?.themeColor) else customTopBarColor()
@@ -253,60 +294,119 @@ fun SearchScreen(
                     }
                 )
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    state = listState
-                ) {
-                    if (uiState.common.isLoading && uiState.list.itemList.isEmpty()) {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(32.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                    itemsIndexed(
-                        items = uniqueItems,
-                        key = {_, item -> item.url }
-                    ) { index, item ->
-                        CommonItem(
-                            item = item,
-                            onClick = {
-                                when (item) {
-                                    is StreamInfo -> SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url, item.serviceId)
-                                    is PlaylistInfo -> navController.navigate(Screen.PlaylistDetail.createRoute(item.url, item.serviceId!!))
-                                    is ChannelInfo -> navController.navigate(Screen.Channel.createRoute(item.url, item.serviceId))
-                                    else -> error("Unexpected info")
+                if (isGridLayout) {
+                    // Grid layout
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(gridColumns),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
+                        state = gridState,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        if (uiState.common.isLoading && uiState.list.itemList.isEmpty()) {
+                            item(span = { GridItemSpan(gridColumns) }) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(32.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
                                 }
                             }
-                        )
-                        if (index < uniqueItems.lastIndex) {
-                            Spacer(Modifier.height(16.dp))
                         }
-                    }
+                        item(span = { GridItemSpan(gridColumns) }) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        gridItemsIndexed(
+                            items = uniqueItems,
+                            key = {_, item -> item.url }
+                        ) { index, item ->
+                            CommonItem(
+                                item = item,
+                                isGridLayout = true,
+                                onClick = {
+                                    when (item) {
+                                        is StreamInfo -> SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url, item.serviceId)
+                                        is PlaylistInfo -> navController.navigate(Screen.PlaylistDetail.createRoute(item.url, item.serviceId!!))
+                                        is ChannelInfo -> navController.navigate(Screen.Channel.createRoute(item.url, item.serviceId))
+                                        else -> error("Unexpected info")
+                                    }
+                                }
+                            )
+                        }
 
-                    if (uiState.common.isLoading && uiState.list.itemList.isNotEmpty()) {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
+                        if (uiState.common.isLoading && uiState.list.itemList.isNotEmpty()) {
+                            item(span = { GridItemSpan(gridColumns) }) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
                             }
                         }
                     }
+                } else {
+                    // List layout
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
+                        state = listState
+                    ) {
+                        if (uiState.common.isLoading && uiState.list.itemList.isEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(32.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        itemsIndexed(
+                            items = uniqueItems,
+                            key = {_, item -> item.url }
+                        ) { index, item ->
+                            CommonItem(
+                                item = item,
+                                onClick = {
+                                    when (item) {
+                                        is StreamInfo -> SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url, item.serviceId)
+                                        is PlaylistInfo -> navController.navigate(Screen.PlaylistDetail.createRoute(item.url, item.serviceId!!))
+                                        is ChannelInfo -> navController.navigate(Screen.Channel.createRoute(item.url, item.serviceId))
+                                        else -> error("Unexpected info")
+                                    }
+                                }
+                            )
+                            if (index < uniqueItems.lastIndex) {
+                                Spacer(Modifier.height(16.dp))
+                            }
+                        }
 
+                        if (uiState.common.isLoading && uiState.list.itemList.isNotEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+                    }
                 }
             }
             if (isSearchFieldFocused) {
