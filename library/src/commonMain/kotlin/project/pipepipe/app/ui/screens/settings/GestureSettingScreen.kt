@@ -5,7 +5,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
-import project.pipepipe.app.ui.screens.PreferenceScreen
 
 @Composable
 fun GestureSettingScreen(

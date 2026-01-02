@@ -35,7 +35,6 @@ import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.component.CustomTopBar
-import project.pipepipe.app.ui.screens.PreferenceScreen
 import project.pipepipe.app.ui.screens.Screen
 
 @Composable

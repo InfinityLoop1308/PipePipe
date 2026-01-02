@@ -17,7 +17,7 @@ import project.pipepipe.app.ui.screens.SettingsScreen
 import project.pipepipe.app.ui.screens.SubscriptionsScreen
 import project.pipepipe.app.ui.screens.TabNavigationScreen
 import project.pipepipe.app.ui.screens.playlistdetail.PlaylistDetailScreen
-import project.pipepipe.app.ui.screens.settings.AboutScreen
+import project.pipepipe.app.ui.screens.AboutScreen
 import project.pipepipe.app.ui.screens.settings.AppearanceSettingsScreen
 import project.pipepipe.app.ui.screens.settings.ChannelNotificationSelectionScreen
 import project.pipepipe.app.ui.screens.settings.DanmakuSettingsScreen

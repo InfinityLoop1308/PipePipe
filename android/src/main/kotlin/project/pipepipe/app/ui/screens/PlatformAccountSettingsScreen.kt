@@ -19,6 +19,7 @@ import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.isLoggedInCookie
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.screens.settings.PreferenceItem
+import project.pipepipe.app.ui.screens.settings.PreferenceScreen
 import android.webkit.CookieManager as AndroidCookieManager
 
 enum class LoginPlatform(

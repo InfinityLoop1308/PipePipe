@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.ToastManager
-import project.pipepipe.app.ui.screens.PreferenceScreen
 
 @Composable
 fun HistorySettingScreen(

@@ -1,4 +1,4 @@
-package project.pipepipe.app.ui.screens
+package project.pipepipe.app.ui.screens.settings
 
 // PreferenceScreen.kt
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import project.pipepipe.app.ui.screens.settings.PreferenceItem
 import project.pipepipe.app.ui.component.*
 
 @Composable

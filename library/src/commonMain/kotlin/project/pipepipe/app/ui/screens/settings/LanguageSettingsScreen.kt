@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.StringDesc
 import project.pipepipe.app.MR
-import project.pipepipe.app.ui.screens.PreferenceScreen
 
 @Composable
 fun LanguageSettingsScreen(

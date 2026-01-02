@@ -27,7 +27,6 @@ import project.pipepipe.app.helper.ImportExportHelper.exportSubscriptionsToJson
 import project.pipepipe.app.helper.ImportExportHelper.importBackupFromBytes
 import project.pipepipe.app.helper.ImportExportHelper.importSubscriptionsFromJson
 import project.pipepipe.app.helper.ToastManager
-import project.pipepipe.app.ui.screens.PreferenceScreen
 import project.pipepipe.app.ui.screens.Screen
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
