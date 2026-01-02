@@ -19,6 +19,7 @@ import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.ui.component.ClickablePreference
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.ListPreference
+import project.pipepipe.app.ui.component.MultiSelectPreference
 import project.pipepipe.app.ui.component.SwitchPreference
 import project.pipepipe.app.ui.screens.Screen
 
@@ -64,6 +65,34 @@ fun FeedSettingsScreen(
         } else {
             "5 minutes"
         }
+    }
+
+    // Channel tabs to fetch when updating the feed
+    val feedFetchChannelTabsEntries = listOf(
+        stringResource(MR.strings.channel_tab_videos),
+        stringResource(MR.strings.channel_tab_tracks),
+        stringResource(MR.strings.channel_tab_shorts),
+        stringResource(MR.strings.channel_tab_livestreams)
+    )
+
+    val feedFetchChannelTabsValues = listOf(
+        "fetch_channel_tabs_videos",
+        "fetch_channel_tabs_tracks",
+        "fetch_channel_tabs_shorts",
+        "fetch_channel_tabs_live"
+    )
+
+    var feedFetchChannelTabsValue by remember {
+        mutableStateOf(
+            SharedContext.settingsManager.getStringSet("feed_fetch_channel_tabs_key", feedFetchChannelTabsValues.toSet())
+        )
+    }
+
+    val feedFetchChannelTabsSummary = remember(feedFetchChannelTabsValue, feedFetchChannelTabsEntries, feedFetchChannelTabsValues) {
+        val selectedEntries = feedFetchChannelTabsValues.mapIndexedNotNull { index, value ->
+            if (feedFetchChannelTabsValue.contains(value)) feedFetchChannelTabsEntries.getOrNull(index) else null
+        }
+        selectedEntries.takeIf { it.isNotEmpty() }?.joinToString(", ")
     }
 
     // New streams notifications settings
@@ -142,6 +171,17 @@ fun FeedSettingsScreen(
                 feedUpdateThresholdValue = value
             }
         ),
+        PreferenceItem.MultiSelectPref(
+            key = "feed_fetch_channel_tabs_key",
+            title = stringResource(MR.strings.feed_fetch_channel_tabs),
+            summary = stringResource(MR.strings.feed_fetch_channel_tabs_summary),
+            entries = feedFetchChannelTabsEntries,
+            entryValues = feedFetchChannelTabsValues,
+            defaultValues = feedFetchChannelTabsValues.toSet(),
+            onValuesChange = { values ->
+                feedFetchChannelTabsValue = values
+            }
+        ),
         PreferenceItem.SwitchPref(
             key = "enable_streams_notifications",
             title = stringResource(MR.strings.enable_streams_notifications_title),
@@ -194,6 +234,7 @@ fun FeedSettingsScreen(
             ) { item ->
                 when (item) {
                     is PreferenceItem.ListPref -> ListPreference(item = item)
+                    is PreferenceItem.MultiSelectPref -> MultiSelectPreference(item = item)
                     is PreferenceItem.SwitchPref -> SwitchPreference(item = item)
                     is PreferenceItem.ClickablePref -> ClickablePreference(item = item)
                     else -> Unit
