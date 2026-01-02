@@ -24,6 +24,7 @@ import com.yausername.ffmpeg.FFmpeg
 import android.util.Log
 import android.content.pm.PackageManager
 import android.os.Build
+import dev.icerock.moko.resources.desc.StringDesc
 import project.pipepipe.app.platform.AndroidPlatformDatabaseActions
 
 class PipePipeApplication : Application() {
@@ -49,6 +50,12 @@ class PipePipeApplication : Application() {
         SharedContext.sessionManager = Cache4kSessionManager()
         SharedContext.sharedVideoDetailViewModel = VideoDetailViewModel()
         SharedContext.serverRequestHandler = Router::execute
+
+        SharedContext.settingsManager.getString("app_language_key").let {
+            if (it != "system") {
+                StringDesc.localeType = StringDesc.LocaleType.Custom(it)
+            }
+        }
 
         // Initialize Media and Notifications
         MediaCacheProvider.init(this)

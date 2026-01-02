@@ -558,4 +558,12 @@
 <string name="enable_max_rows_customization_title">Personnaliser le nombre maximal de lignes</string>
 <string name="bullet_comments_opacity_title">Opacité</string>
 <string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les danmaku</string>
+<string name="start_main_player_fullscreen_title">Démarrer en plein écran</string>
+<string name="content_language_title">Langue des sous-titres préférée</string>
+<string name="app_language_title">Langue de l\'application</string>
+<string name="start_main_player_fullscreen_summary">Démarrer la lecture directement en plein écran</string>
+<string name="preferred_audio_language_title">Langue audio préférée</string>
+<string name="settings_section_language">Langue</string>
+<string name="default_content_country_title">Pays tendance préféré</string>
+<string name="systems_language">Par défaut du système</string>
 </resources>

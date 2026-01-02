@@ -558,4 +558,12 @@
 <string name="enable_max_rows_customization_title">自定义最大行数</string>
 <string name="bullet_comments_opacity_title">不透明度</string>
 <string name="enable_max_rows_customization_summary">启用以自定义弹幕的最大行数</string>
+<string name="start_main_player_fullscreen_title">全屏启动</string>
+<string name="content_language_title">首选字幕语言</string>
+<string name="app_language_title">应用语言</string>
+<string name="start_main_player_fullscreen_summary">直接全屏播放</string>
+<string name="preferred_audio_language_title">首选音频语言</string>
+<string name="settings_section_language">语言</string>
+<string name="default_content_country_title">首选热门国家/地区</string>
+<string name="systems_language">系统默认</string>
 </resources>

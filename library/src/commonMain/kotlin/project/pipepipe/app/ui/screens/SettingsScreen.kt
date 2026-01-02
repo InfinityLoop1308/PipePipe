@@ -69,6 +69,13 @@ fun SettingsScreen(
             }
             item {
                 SettingsItem(
+                    icon = Icons.Default.Language,
+                    title = stringResource(MR.strings.settings_section_language),
+                    onClick = { navController.navigate(Screen.LanguageSettings.route) }
+                )
+            }
+            item {
+                SettingsItem(
                     icon = Icons.Default.AccountCircle,
                     title = stringResource(MR.strings.settings_section_account),
                     onClick = { navController.navigate(Screen.AccountSettings.route) }
@@ -109,6 +116,7 @@ fun SettingsScreen(
                     onClick = { navController.navigate(Screen.SponsorBlockSettings.route) }
                 )
             }
+
         }
     }
 }

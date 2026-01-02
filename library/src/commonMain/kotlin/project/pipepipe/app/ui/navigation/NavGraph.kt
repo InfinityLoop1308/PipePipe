@@ -27,6 +27,7 @@ import project.pipepipe.app.ui.screens.settings.FilterSettingScreen
 import project.pipepipe.app.ui.screens.settings.GestureSettingScreen
 import project.pipepipe.app.ui.screens.settings.HistorySettingScreen
 import project.pipepipe.app.ui.screens.settings.ImportExportSettingScreen
+import project.pipepipe.app.ui.screens.settings.LanguageSettingsScreen
 import project.pipepipe.app.ui.screens.settings.LogSettingScreen
 import project.pipepipe.app.ui.screens.settings.PlayerSettingScreen
 import project.pipepipe.app.ui.screens.settings.SponsorBlockCategoriesSettingsScreen
@@ -123,6 +124,9 @@ fun NavGraph(
         }
         composable(Screen.DanmakuSettings.route) {
             DanmakuSettingsScreen(navController = navController)
+        }
+        composable(Screen.LanguageSettings.route) {
+            LanguageSettingsScreen()
         }
         composable(Screen.AboutSettings.route) {
             AboutScreen(navController = navController)

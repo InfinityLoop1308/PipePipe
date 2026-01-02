@@ -658,4 +658,11 @@
     <string name="max_bullet_comments_rows_bottom_summary">Max rows for bottom danmaku</string>
     <string name="max_bullet_comments_rows_regular_summary">Max rows for regular danmaku</string>
     <string name="danmaku_settings_title">Danmaku Settings</string>
+    <!-- Language settings -->
+    <string name="settings_section_language">Language</string>
+    <string name="app_language_title">App language</string>
+    <string name="content_language_title">Preferred subtitle language</string>
+    <string name="default_content_country_title">Preferred trending country</string>
+    <string name="preferred_audio_language_title">Preferred audio language</string>
+    <string name="systems_language">System default</string>
 </resources>

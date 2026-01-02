@@ -4,6 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -87,12 +90,27 @@ fun ListPreference(
     )
 
     if (showDialog) {
+        val listState = rememberLazyListState()
+        val selectedIndex = remember(selectedValue) {
+            item.entryValues.indexOf(selectedValue).coerceAtLeast(0)
+        }
+
+        LaunchedEffect(Unit) {
+            listState.animateScrollToItem(
+                index = selectedIndex,
+                scrollOffset = -100
+            )
+        }
+
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text(item.title) },
             text = {
-                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                    item.entries.forEachIndexed { index, entry ->
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.heightIn(max = 400.dp)
+                ) {
+                    itemsIndexed(item.entries) { index, entry ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -122,6 +140,7 @@ fun ListPreference(
             }
         )
     }
+
 }
 
 @Composable

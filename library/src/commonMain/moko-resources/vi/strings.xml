@@ -558,4 +558,12 @@
 <string name="enable_max_rows_customization_title">Tùy chỉnh Số hàng tối đa</string>
 <string name="bullet_comments_opacity_title">Độ mờ</string>
 <string name="enable_max_rows_customization_summary">Bật để tùy chỉnh số hàng tối đa cho danmaku</string>
+<string name="start_main_player_fullscreen_title">Bắt đầu ở chế độ toàn màn hình</string>
+<string name="content_language_title">Ngôn ngữ phụ đề ưu tiên</string>
+<string name="app_language_title">Ngôn ngữ ứng dụng</string>
+<string name="start_main_player_fullscreen_summary">Bắt đầu phát lại trực tiếp ở chế độ toàn màn hình</string>
+<string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>
+<string name="settings_section_language">Ngôn ngữ</string>
+<string name="default_content_country_title">Quốc gia thịnh hành ưu tiên</string>
+<string name="systems_language">Mặc định hệ thống</string>
 </resources>
