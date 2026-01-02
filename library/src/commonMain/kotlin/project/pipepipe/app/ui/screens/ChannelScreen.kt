@@ -13,9 +13,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -96,6 +103,18 @@ fun ChannelScreen(
     val videoListState = rememberLazyListState()
     val liveListState = rememberLazyListState()
     val shortsListState = rememberLazyListState()
+    val videoGridState = remember { LazyGridState() }
+    val liveGridState = remember { LazyGridState() }
+    val shortsGridState = remember { LazyGridState() }
+
+    // Read grid layout settings
+    val isGridEnabled = remember {
+        SharedContext.settingsManager.getBoolean("grid_layout_enabled_key", false)
+    }
+    val gridColumns = remember {
+        SharedContext.settingsManager.getString("grid_columns_key", "4").toInt()
+    }
+
     var showGroupDialog by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
     var notificationMode by remember { mutableStateOf(0L) }
@@ -259,6 +278,7 @@ fun ChannelScreen(
 
                     ChannelTabType.LIVE -> TabContent(
                         listState = liveListState,
+                        gridState = liveGridState,
                         items = uiState.liveTab.itemList,
                         isLoading = uiState.common.isLoading,
                         hasMore = uiState.liveTab.nextPageUrl != null,
@@ -270,11 +290,14 @@ fun ChannelScreen(
                                 item.serviceId
                             )
                         },
-                        emptyMessage = stringResource(MR.strings.empty_channel_lives)
+                        emptyMessage = stringResource(MR.strings.empty_channel_lives),
+                        isGridEnabled = isGridEnabled,
+                        gridColumns = gridColumns
                     )
 
                     ChannelTabType.SHORTS -> TabContent(
                         listState = shortsListState,
+                        gridState = shortsGridState,
                         items = uiState.shortsTab.itemList,
                         isLoading = uiState.common.isLoading,
                         hasMore = uiState.shortsTab.nextPageUrl != null,
@@ -286,11 +309,14 @@ fun ChannelScreen(
                                 item.serviceId
                             )
                         },
-                        emptyMessage = stringResource(MR.strings.empty_channel_shorts)
+                        emptyMessage = stringResource(MR.strings.empty_channel_shorts),
+                        isGridEnabled = isGridEnabled,
+                        gridColumns = gridColumns
                     )
 
                     ChannelTabType.VIDEOS -> TabContent(
                         listState = videoListState,
+                        gridState = videoGridState,
                         items = uiState.videoTab.itemList,
                         isLoading = uiState.common.isLoading,
                         hasMore = uiState.videoTab.nextPageUrl != null,
@@ -302,11 +328,14 @@ fun ChannelScreen(
                                 item.serviceId
                             )
                         },
-                        emptyMessage = stringResource(MR.strings.empty_channel_videos)
+                        emptyMessage = stringResource(MR.strings.empty_channel_videos),
+                        isGridEnabled = isGridEnabled,
+                        gridColumns = gridColumns
                     )
 
                     ChannelTabType.PLAYLISTS -> TabContent(
                         listState = rememberLazyListState(),
+                        gridState = remember { LazyGridState() },
                         items = uiState.playlistTab.itemList,
                         isLoading = uiState.common.isLoading,
                         hasMore = uiState.playlistTab.nextPageUrl != null,
@@ -316,11 +345,14 @@ fun ChannelScreen(
                             "playlist?url=" + URLEncoder.encode(item.url, "UTF-8")
                                     + if(item.serviceId != null) "&serviceId=${item.serviceId}" else ""
                         )},
-                        emptyMessage = stringResource(MR.strings.empty_channel_playlists)
+                        emptyMessage = stringResource(MR.strings.empty_channel_playlists),
+                        isGridEnabled = isGridEnabled,
+                        gridColumns = gridColumns
                     )
 
                     ChannelTabType.ALBUMS -> TabContent(
                         listState = rememberLazyListState(),
+                        gridState = remember { LazyGridState() },
                         items = uiState.albumTab.itemList,
                         isLoading = uiState.common.isLoading,
                         hasMore = uiState.albumTab.nextPageUrl != null,
@@ -330,7 +362,9 @@ fun ChannelScreen(
                             "playlist?url=" + URLEncoder.encode(item.url, "UTF-8")
                                     + if(item.serviceId != null) "&serviceId=${item.serviceId}" else ""
                         )},
-                        emptyMessage = stringResource(MR.strings.empty_channel_albums)
+                        emptyMessage = stringResource(MR.strings.empty_channel_albums),
+                        isGridEnabled = isGridEnabled,
+                        gridColumns = gridColumns
                     )
 
                     else -> {
@@ -476,31 +510,50 @@ private fun ChannelHeader(
 @Composable
 private fun <T: Info> TabContent(
     listState: LazyListState,
+    gridState: LazyGridState,
     items: List<T>,
     isLoading: Boolean,
     hasMore: Boolean,
     onLoadMore: () -> Unit,
     getUrl: (T) -> String,
     onItemClick: (T) -> Unit,
-    emptyMessage: String? = null
+    emptyMessage: String? = null,
+    isGridEnabled: Boolean = false,
+    gridColumns: Int = 4
 ) {
     val uniqueItems = remember(items) { items.distinctBy { getUrl(it) } }
     val loadMoreInvoker = rememberUpdatedState(onLoadMore)
 
-    LaunchedEffect(listState, hasMore, isLoading, uniqueItems) {
-        snapshotFlow {
-            val layoutInfo = listState.layoutInfo
-            val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-            val totalItemsCount = layoutInfo.totalItemsCount
-            lastVisibleIndex to totalItemsCount
-        }
-            .distinctUntilChanged()
-            .collect { (lastVisibleIndex, totalItemsCount) ->
-                val isAtBottom = totalItemsCount > 0 && lastVisibleIndex == totalItemsCount - 1
-                if (isAtBottom && hasMore && !isLoading) {
-                    loadMoreInvoker.value.invoke()
-                }
+    LaunchedEffect(listState, gridState, hasMore, isLoading, uniqueItems) {
+        if (isGridEnabled) {
+            snapshotFlow {
+                val layoutInfo = gridState.layoutInfo
+                val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+                val totalItemsCount = layoutInfo.totalItemsCount
+                lastVisibleIndex to totalItemsCount
             }
+                .distinctUntilChanged()
+                .collect { (lastVisibleIndex, totalItemsCount) ->
+                    val isAtBottom = totalItemsCount > 0 && lastVisibleIndex == totalItemsCount - 1
+                    if (isAtBottom && hasMore && !isLoading) {
+                        loadMoreInvoker.value.invoke()
+                    }
+                }
+        } else {
+            snapshotFlow {
+                val layoutInfo = listState.layoutInfo
+                val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+                val totalItemsCount = layoutInfo.totalItemsCount
+                lastVisibleIndex to totalItemsCount
+            }
+                .distinctUntilChanged()
+                .collect { (lastVisibleIndex, totalItemsCount) ->
+                    val isAtBottom = totalItemsCount > 0 && lastVisibleIndex == totalItemsCount - 1
+                    if (isAtBottom && hasMore && !isLoading) {
+                        loadMoreInvoker.value.invoke()
+                    }
+                }
+        }
     }
 
     if (isLoading && uniqueItems.isEmpty()) {
@@ -526,33 +579,70 @@ private fun <T: Info> TabContent(
             )
         }
     } else {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            state = listState,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(top = 4.dp)
-        ) {
-            items(
-                items = uniqueItems,
-                key = { getUrl(it) }
-            ) { item ->
-                CommonItem(
-                    item = item,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    onClick = { onItemClick(item) }
-                )
+        if (isGridEnabled) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(gridColumns),
+                state = gridState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clipToBounds(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(
+                    count = uniqueItems.size,
+                    key = { index -> getUrl(uniqueItems[index]) }
+                ) { index ->
+                    val interactionSource = remember { MutableInteractionSource() }
+                    CommonItem(
+                        item = uniqueItems[index],
+                        isGridLayout = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { onItemClick(uniqueItems[index]) }
+                    )
+                }
+                if (isLoading && uniqueItems.isNotEmpty()) {
+                    item(span = { GridItemSpan(gridColumns) }) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
             }
-            if (isLoading && uniqueItems.isNotEmpty()) {
-                item {
-                    Box(
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(top = 4.dp)
+            ) {
+                items(
+                    items = uniqueItems,
+                    key = { getUrl(it) }
+                ) { item ->
+                    CommonItem(
+                        item = item,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
+                            .fillMaxWidth(),
+                        onClick = { onItemClick(item) }
+                    )
+                }
+                if (isLoading && uniqueItems.isNotEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }
