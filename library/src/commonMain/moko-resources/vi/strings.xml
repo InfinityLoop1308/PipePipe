@@ -407,7 +407,7 @@
 <string name="newpipe_backup_warning_title">Đã phát hiện bản sao lưu NewPipe</string>
 <string name="newpipe_backup_warning_message">Bạn đang nhập bản sao lưu NewPipe. Xin lưu ý rằng bản sao lưu NewPipe và PipePipe không hoàn toàn tương thích.</string>
 <string name="hint_continue">Tiếp tục</string>
-<string name="settings_appearance_grid_layout_summary">Hiển thị các mục danh sách phát theo bố cục lưới</string>
+<string name="settings_appearance_grid_layout_summary">Hiển thị danh sách video theo bố cục lưới</string>
 <string name="settings_appearance_grid_layout_title">Bố cục lưới cho danh sách phát</string>
 <string name="theme">Chủ đề</string>
 <string name="settings_appearance_grid_columns_summary">Số cột trong bố cục lưới</string>
@@ -498,8 +498,8 @@
 <string name="sort_upload_time_ascending">Thời gian tải lên (Tăng dần)</string>
 <string name="sort_upload_time_descending">Thời gian tải lên (Giảm dần)</string>
 <string name="sort_duration_descending">Thời lượng (Giảm dần)</string>
-<string name="auto_queue_title">Tự động xếp hàng luồng tiếp theo</string>
-<string name="auto_queue_summary">Tiếp tục kết thúc hàng phát lại (không lặp lại) bằng cách thêm luồng liên quan</string>
+<string name="auto_queue_title">Tự động thêm video tiếp theo vào hàng đợi</string>
+<string name="auto_queue_summary">Tiếp tục kết thúc hàng đợi phát lại (không lặp lại) bằng cách thêm một video liên quan\n    </string>
 <string name="dont_auto_queue_long_title">Đừng tự động xếp hàng các băng hình dài</string>
 <string name="dont_auto_queue_long_description">Chỉ tự động xếp hàng các băng hình ngắn hơn 6 phút</string>
 <string name="settings_category_history_title">Lịch sử và bộ đệm</string>

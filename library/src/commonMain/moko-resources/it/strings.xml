@@ -407,7 +407,7 @@
 <string name="newpipe_backup_warning_title">Backup di NewPipe rilevato</string>
 <string name="newpipe_backup_warning_message">Stai importando un backup di NewPipe. Si prega di notare che i backup di NewPipe e PipePipe non sono completamente compatibili.</string>
 <string name="hint_continue">Continua</string>
-<string name="settings_appearance_grid_layout_summary">Visualizza gli elementi della playlist in un layout a griglia</string>
+<string name="settings_appearance_grid_layout_summary">Visualizza elenchi di video in un layout a griglia</string>
 <string name="settings_appearance_grid_layout_title">Layout a griglia per le playlist</string>
 <string name="theme">Tema</string>
 <string name="settings_appearance_grid_columns_summary">Numero di colonne nel layout a griglia</string>
@@ -498,8 +498,8 @@
 <string name="sort_upload_time_ascending">Ora di caricamento (Crescente)</string>
 <string name="sort_upload_time_descending">Ora di caricamento (Decrescente)</string>
 <string name="sort_duration_descending">Durata (Decrescente)</string>
-<string name="auto_queue_title">Accoda automaticamente il prossimo stream</string>
-<string name="auto_queue_summary">Continua la coda di riproduzione (non ripetitiva) aggiungendo un flusso correlato</string>
+<string name="auto_queue_title">Accoda automaticamente il prossimo video</string>
+<string name="auto_queue_summary">Continua la coda di riproduzione (non ripetitiva) aggiungendo un video correlato\n    </string>
 <string name="dont_auto_queue_long_title">Non mettere in coda automaticamente video lunghi</string>
 <string name="dont_auto_queue_long_description">Metti automaticamente in coda solo video più corti di 6 minuti</string>
 <string name="settings_category_history_title">Storia e cache</string>

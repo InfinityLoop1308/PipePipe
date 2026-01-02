@@ -407,7 +407,7 @@
 <string name="newpipe_backup_warning_title">NewPipeのバックアップを検出しました</string>
 <string name="newpipe_backup_warning_message">NewPipeのバックアップをインポートしています。NewPipeとPipePipeのバックアップは完全に互換性があるわけではないことにご注意ください。</string>
 <string name="hint_continue">続行</string>
-<string name="settings_appearance_grid_layout_summary">プレイリスト項目をグリッドレイアウトで表示する</string>
+<string name="settings_appearance_grid_layout_summary">動画リストをグリッドレイアウトで表示する</string>
 <string name="settings_appearance_grid_layout_title">プレイリストのグリッドレイアウト</string>
 <string name="theme">テーマ</string>
 <string name="settings_appearance_grid_columns_summary">グリッドレイアウトの列数</string>
@@ -498,8 +498,8 @@
 <string name="sort_upload_time_ascending">アップロード時間 (昇順)</string>
 <string name="sort_upload_time_descending">アップロード時間 (降順)</string>
 <string name="sort_duration_descending">期間 (降順)</string>
-<string name="auto_queue_title">次のを自動でキューに追加する</string>
-<string name="auto_queue_summary">キューに関連動画を追加して再生を続ける (繰り返ししない場合)</string>
+<string name="auto_queue_title">次の動画を自動キューに追加</string>
+<string name="auto_queue_summary">関連動画を追加して、終了する（繰り返しではない）再生キューを続行します\n    </string>
 <string name="dont_auto_queue_long_title">長い動画は自動でキューに追加しない</string>
 <string name="dont_auto_queue_long_description">6分以下の動画のみ自動でキューに追加する</string>
 <string name="settings_category_history_title">履歴とキャッシュ</string>
@@ -566,7 +566,7 @@
 <string name="settings_section_language">言語</string>
 <string name="default_content_country_title">優先するトレンド国</string>
 <string name="systems_language">システムデフォルト</string>
-<string name="show_channel_tabs_summary">チャンネルページに表示されるタブを設定します</string>
+<string name="show_channel_tabs_summary">チャンネルページに表示されるタブを設定する</string>
 <string name="video_tabs_title">動画タブ</string>
 <string name="show_channel_tabs">チャンネルタブ</string>
 <string name="video_tabs_summary">動画詳細画面に表示するタブを設定します</string>

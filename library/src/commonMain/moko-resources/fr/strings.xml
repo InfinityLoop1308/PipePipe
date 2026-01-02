@@ -407,7 +407,7 @@
 <string name="newpipe_backup_warning_title">Sauvegarde NewPipe détectée</string>
 <string name="newpipe_backup_warning_message">Vous importez une sauvegarde NewPipe. Veuillez noter que les sauvegardes NewPipe et PipePipe ne sont pas entièrement compatibles.</string>
 <string name="hint_continue">Continuer</string>
-<string name="settings_appearance_grid_layout_summary">Afficher les éléments de la playlist dans une disposition en grille</string>
+<string name="settings_appearance_grid_layout_summary">Afficher les listes de vidéos dans une disposition en grille</string>
 <string name="settings_appearance_grid_layout_title">Disposition en grille pour les playlists</string>
 <string name="theme">Thème</string>
 <string name="settings_appearance_grid_columns_summary">Nombre de colonnes dans la disposition en grille</string>
@@ -498,8 +498,8 @@
 <string name="sort_upload_time_ascending">Heure de téléchargement (Croissant)</string>
 <string name="sort_upload_time_descending">Heure de téléchargement (Décroissant)</string>
 <string name="sort_duration_descending">Durée (Décroissant)</string>
-<string name="auto_queue_title">File d\'attente automatique pour le prochain flux</string>
-<string name="auto_queue_summary">Continuer la file d\'attente de lecture en appendant un flux lié</string>
+<string name="auto_queue_title">Mettre en file d\'attente automatiquement la vidéo suivante</string>
+<string name="auto_queue_summary">Continuer la file d\'attente de lecture (non répétitive) en ajoutant une vidéo associée\n    </string>
 <string name="dont_auto_queue_long_title">Ne pas mettre automatiquement en file d\'attente les longues vidéos</string>
 <string name="dont_auto_queue_long_description">Mettre automatiquement en file d\'attente uniquement les vidéos de moins de 6 minutes</string>
 <string name="settings_category_history_title">Historique et cache</string>
@@ -566,7 +566,7 @@
 <string name="settings_section_language">Langue</string>
 <string name="default_content_country_title">Pays tendance préféré</string>
 <string name="systems_language">Par défaut du système</string>
-<string name="show_channel_tabs_summary">Configurez les onglets affichés sur les pages de chaîne</string>
+<string name="show_channel_tabs_summary">Configurer les onglets affichés sur les pages de chaîne</string>
 <string name="video_tabs_title">Onglets vidéo</string>
 <string name="show_channel_tabs">Onglets de la chaîne</string>
 <string name="video_tabs_summary">Configurer les onglets à afficher sur l\'écran de détail de la vidéo</string>

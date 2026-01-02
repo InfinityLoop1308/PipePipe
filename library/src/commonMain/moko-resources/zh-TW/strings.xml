@@ -411,7 +411,7 @@
 <string name="newpipe_backup_warning_title">偵測到 NewPipe 備份</string>
 <string name="newpipe_backup_warning_message">您正在匯入 NewPipe 備份。請注意，NewPipe 和 PipePipe 備份並非完全相容。</string>
 <string name="hint_continue">繼續</string>
-<string name="settings_appearance_grid_layout_summary">以網格佈局顯示播放列表項目</string>
+<string name="settings_appearance_grid_layout_summary">以格狀佈局顯示影片列表</string>
 <string name="settings_appearance_grid_layout_title">播放列表的網格佈局</string>
 <string name="theme">主題</string>
 <string name="settings_appearance_grid_columns_summary">網格佈局中的列數</string>
@@ -498,8 +498,8 @@
 <string name="download_paused_status">已暫停</string>
 <string name="no_downloads">無下載項目</string>
 <string name="download_select_audio_format">選擇音訊格式</string>
-<string name="auto_queue_title">自動將下一部影片新增至佇列</string>
-<string name="auto_queue_summary">透過加入相關的串流來繼續結束的（未重複）播放佇列</string>
+<string name="auto_queue_title">自動將下一個影片加入佇列</string>
+<string name="auto_queue_summary">透過附加相關影片來繼續結束（非重複）播放佇列\n    </string>
 <string name="dont_auto_queue_long_title">不自動將長影音加入佇列</string>
 <string name="dont_auto_queue_long_description">僅自動加入小於 6 分的影片</string>
 <string name="settings_category_history_title">歷史記錄與快取</string>

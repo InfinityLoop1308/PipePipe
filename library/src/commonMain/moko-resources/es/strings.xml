@@ -407,7 +407,7 @@
 <string name="newpipe_backup_warning_title">Copia de seguridad de NewPipe detectada</string>
 <string name="newpipe_backup_warning_message">Estás importando una copia de seguridad de NewPipe. Ten en cuenta que las copias de seguridad de NewPipe y PipePipe no son totalmente compatibles.</string>
 <string name="hint_continue">Continuar</string>
-<string name="settings_appearance_grid_layout_summary">Mostrar elementos de la lista de reproducción en un diseño de cuadrícula</string>
+<string name="settings_appearance_grid_layout_summary">Mostrar listas de videos en un diseño de cuadrícula</string>
 <string name="settings_appearance_grid_layout_title">Diseño de cuadrícula para listas de reproducción</string>
 <string name="theme">Tema</string>
 <string name="settings_appearance_grid_columns_summary">Número de columnas en el diseño de cuadrícula</string>
@@ -498,8 +498,8 @@
 <string name="sort_upload_time_ascending">Tiempo de subida (Ascendente)</string>
 <string name="sort_upload_time_descending">Tiempo de subida (Descendente)</string>
 <string name="sort_duration_descending">Duración (Descendente)</string>
-<string name="auto_queue_title">Auto-encolar la siguiente transmisión</string>
-<string name="auto_queue_summary">Continuar la cola de reproducción terminada (no repetitiva) añadiendo una transmisión relacionada</string>
+<string name="auto_queue_title">Auto-encolar el siguiente video</string>
+<string name="auto_queue_summary">Continuar terminando la cola de reproducción (no repetitiva) añadiendo un video relacionado\n    </string>
 <string name="dont_auto_queue_long_title">No poner en cola automáticamente vídeos largos</string>
 <string name="dont_auto_queue_long_description">Solo poner en cola automáticamente vídeos de menos de 6 min</string>
 <string name="settings_category_history_title">Historial y caché</string>
@@ -566,7 +566,7 @@
 <string name="settings_section_language">Idioma</string>
 <string name="default_content_country_title">País de tendencias preferido</string>
 <string name="systems_language">Predeterminado del sistema</string>
-<string name="show_channel_tabs_summary">Configura qué pestañas se muestran en las páginas del canal</string>
+<string name="show_channel_tabs_summary">Configurar qué pestañas se muestran en las páginas del canal</string>
 <string name="video_tabs_title">Pestañas de video</string>
 <string name="show_channel_tabs">Pestañas del canal</string>
 <string name="video_tabs_summary">Configurar qué pestañas mostrar en la pantalla de detalles del video</string>

@@ -407,7 +407,7 @@
 <string name="newpipe_backup_warning_title">NewPipe-Sicherung erkannt</string>
 <string name="newpipe_backup_warning_message">Sie importieren eine NewPipe-Sicherung. Bitte beachten Sie, dass NewPipe- und PipePipe-Sicherungen nicht vollständig kompatibel sind.</string>
 <string name="hint_continue">Weiter</string>
-<string name="settings_appearance_grid_layout_summary">Playlist-Elemente in einem Rasterlayout anzeigen</string>
+<string name="settings_appearance_grid_layout_summary">Video-Listen in einem Rasterlayout anzeigen</string>
 <string name="settings_appearance_grid_layout_title">Rasterlayout für Playlists</string>
 <string name="theme">Thema</string>
 <string name="settings_appearance_grid_columns_summary">Anzahl der Spalten im Rasterlayout</string>
@@ -498,8 +498,8 @@
 <string name="sort_upload_time_ascending">Upload-Zeit (Aufsteigend)</string>
 <string name="sort_upload_time_descending">Upload-Zeit (Absteigend)</string>
 <string name="sort_duration_descending">Dauer (Absteigend)</string>
-<string name="auto_queue_title">Automatisches Hinzufügen des nächsten Streams</string>
-<string name="auto_queue_summary">Wiedergabeliste (Einmalige Wiedergabe) durch das Anhängen eines verwandten Streams fortsetzen</string>
+<string name="auto_queue_title">Nächstes Video automatisch in die Warteschlange stellen</string>
+<string name="auto_queue_summary">Wiedergabewarteschlange (nicht wiederholend) fortsetzen, indem ein verwandtes Video angehängt wird\n    </string>
 <string name="dont_auto_queue_long_title">Keine automatische Warteschlange für lange Videos</string>
 <string name="dont_auto_queue_long_description">Nur Videos kürzer als 6 Minuten automatisch in die Warteschlange stellen</string>
 <string name="settings_category_history_title">Verlauf und Cache</string>
@@ -566,7 +566,7 @@
 <string name="settings_section_language">Sprache</string>
 <string name="default_content_country_title">Bevorzugtes Trendland</string>
 <string name="systems_language">Systemstandard</string>
-<string name="show_channel_tabs_summary">Konfigurieren Sie, welche Registerkarten auf den Kanalseiten angezeigt werden</string>
+<string name="show_channel_tabs_summary">Konfigurieren, welche Tabs auf den Kanalseiten angezeigt werden</string>
 <string name="video_tabs_title">Video-Registerkarten</string>
 <string name="show_channel_tabs">Kanal-Registerkarten</string>
 <string name="video_tabs_summary">Konfigurieren Sie, welche Registerkarten auf dem Videodetailbildschirm angezeigt werden sollen</string>

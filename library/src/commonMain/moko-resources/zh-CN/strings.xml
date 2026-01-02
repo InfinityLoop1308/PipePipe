@@ -413,7 +413,7 @@
 <string name="newpipe_backup_warning_title">检测到 NewPipe 备份</string>
 <string name="newpipe_backup_warning_message">您正在导入 NewPipe 备份。请注意，NewPipe 和 PipePipe 备份并非完全兼容。</string>
 <string name="hint_continue">继续</string>
-<string name="settings_appearance_grid_layout_summary">以网格布局显示播放列表项目</string>
+<string name="settings_appearance_grid_layout_summary">以网格布局显示视频列表</string>
 <string name="settings_appearance_grid_layout_title">播放列表的网格布局</string>
 <string name="theme">主题</string>
 <string name="settings_appearance_grid_columns_summary">网格布局中的列数</string>
@@ -498,8 +498,8 @@
 <string name="download_paused_status">已暂停</string>
 <string name="no_downloads">无下载</string>
 <string name="download_select_audio_format">选择音频格式</string>
-<string name="auto_queue_title">自动将下一个串流加入队列</string>
-<string name="auto_queue_summary">通过添加相关串流继续播放（非循环）队列</string>
+<string name="auto_queue_title">自动将下一个视频加入队列</string>
+<string name="auto_queue_summary">通过添加相关视频来继续结束（非重复）播放队列\n    </string>
 <string name="dont_auto_queue_long_title">不要自动入队长视频</string>
 <string name="dont_auto_queue_long_description">只自动入队不超过6分钟的视频</string>
 <string name="settings_category_history_title">历史和缓存</string>
@@ -566,7 +566,7 @@
 <string name="settings_section_language">语言</string>
 <string name="default_content_country_title">首选热门国家/地区</string>
 <string name="systems_language">系统默认</string>
-<string name="show_channel_tabs_summary">配置频道页面上显示的选项卡</string>
+<string name="show_channel_tabs_summary">配置频道页面上显示的标签页</string>
 <string name="video_tabs_title">视频标签页</string>
 <string name="show_channel_tabs">频道标签页</string>
 <string name="video_tabs_summary">配置在视频详情屏幕上显示哪些标签页</string>
