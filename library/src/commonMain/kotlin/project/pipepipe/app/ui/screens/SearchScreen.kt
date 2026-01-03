@@ -327,6 +327,7 @@ fun SearchScreen(
                             CommonItem(
                                 item = item,
                                 isGridLayout = true,
+                                forceListLayout = gridColumns == 1,
                                 onClick = {
                                     when (item) {
                                         is StreamInfo -> SharedContext.sharedVideoDetailViewModel.loadVideoDetails(item.url, item.serviceId)

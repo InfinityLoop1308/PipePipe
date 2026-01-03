@@ -260,7 +260,7 @@ private fun SubscriptionsContent(
             }
 
             else -> {
-                if (isGridEnabled) {
+                if (isGridEnabled && gridColumns > 1) {
                     items(chunkedItems, key = { row -> row.firstOrNull()?.url ?: "empty" }) { row ->
                         Row(
                             modifier = Modifier
@@ -277,6 +277,7 @@ private fun SubscriptionsContent(
                                         CommonItem(
                                             item = channelInfo,
                                             isGridLayout = true,
+                                            forceListLayout = gridColumns == 1,
                                             onClick = { onSubscriptionClick(subscription) }
                                         )
                                     }

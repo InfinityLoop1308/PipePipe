@@ -60,11 +60,12 @@ fun CommonItem(
     displayType: DisplayType = DisplayType.ORIGIN,
     shouldUseSecondaryColor: Boolean = false,
     isGridLayout: Boolean = false,
+    forceListLayout: Boolean = false,
     showNewItemBorder: Boolean = false,
 ) {
     when (item) {
         is ChannelInfo -> {
-            if (isGridLayout) {
+            if (isGridLayout && !forceListLayout) {
                 ChannelGridItem(
                     item = item,
                     modifier = modifier,
@@ -200,19 +201,22 @@ private fun ChannelGridItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val itemWidth = 100.dp
+    val avatarSize = 60.dp
+
     Column(
         modifier = modifier
-            .fillMaxWidth()
+            .width(itemWidth)
             .combinedClickable(
                 onClick = { onClick() },
             )
-            .padding(4.dp)
+            .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 圆形头像 (占据正方形空间)
+        // 圆形头像 (较小且居中)
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
+                .size(avatarSize)
                 .clip(CircleShape)
         ) {
             AsyncImage(
@@ -236,7 +240,8 @@ private fun ChannelGridItem(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
 
         // 订阅数
@@ -248,7 +253,8 @@ private fun ChannelGridItem(
                 fontSize = 11.sp,
                 color = supportingTextColor(),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }
