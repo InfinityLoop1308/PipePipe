@@ -674,4 +674,6 @@
 
     <string name="feed_fetch_channel_tabs">Fetch channel tabs</string>
     <string name="feed_fetch_channel_tabs_summary">Tabs to fetch when updating the feed</string>
+    <string name="playlist_menu_remove_duplicates">Remove Duplicates</string>
+    <string name="playlist_remove_duplicates_message">Remove all duplicate items from this playlist?</string>
 </resources>

@@ -144,3 +144,35 @@ fun ClearHistoryDialog(
         }
     )
 }
+
+@Composable
+fun RemoveDuplicatesDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(MR.strings.playlist_menu_remove_duplicates)) },
+        text = {
+            Text(stringResource(MR.strings.playlist_remove_duplicates_message))
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirm()
+                    onDismiss()
+                },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text(stringResource(MR.strings.delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(MR.strings.cancel))
+            }
+        }
+    )
+}

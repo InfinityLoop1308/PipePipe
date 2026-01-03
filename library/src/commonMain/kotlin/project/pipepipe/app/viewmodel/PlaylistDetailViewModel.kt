@@ -2,6 +2,7 @@ package project.pipepipe.app.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -15,10 +16,12 @@ import project.pipepipe.app.uistate.PlaylistSortMode
 import project.pipepipe.app.uistate.PlaylistType
 import project.pipepipe.app.uistate.PlaylistUiState
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.app.ui.component.Toast
 import kotlin.collections.plus
 
 class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()) {
@@ -363,6 +366,24 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         viewModelScope.launch {
             DatabaseOperations.clearAllStreamHistory()
             loadPlaylistInternal(uiState.value.playlistInfo?.url ?: "", uiState.value.playlistInfo?.serviceId)
+        }
+    }
+
+    fun removeDuplicates(msg: String) {
+        val playlistType = uiState.value.playlistType
+        if (playlistType != PlaylistType.LOCAL) return
+
+        val playlistId = uiState.value.playlistInfo?.uid ?: return
+
+        GlobalScope.launch {
+            DatabaseOperations.removeDuplicatesFromPlaylist(playlistId)
+            SharedContext.notifyPlaylistChanged(playlistId)
+            ToastManager.show(msg)
+            viewModelScope.launch {
+                uiState.value.playlistInfo?.let {
+                    loadPlaylistInternal(it.url, it.serviceId)
+                }
+            }
         }
     }
 

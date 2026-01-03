@@ -328,6 +328,16 @@ VALUES (
 deleteStreamFromPlaylistById:
 DELETE FROM playlist_stream_join WHERE id = ?;
 
+removeDuplicatesFromPlaylist:
+DELETE FROM playlist_stream_join
+WHERE playlist_id = ?
+  AND id NOT IN (
+    SELECT MIN(id)
+    FROM playlist_stream_join
+    WHERE playlist_id = ?
+    GROUP BY stream_id
+);
+
 -- Used to re-order the playlist after a drag-and-drop operation.
 updatePlaylistStreamOrder:
 UPDATE playlist_stream_join SET join_index = ? WHERE id = ?;

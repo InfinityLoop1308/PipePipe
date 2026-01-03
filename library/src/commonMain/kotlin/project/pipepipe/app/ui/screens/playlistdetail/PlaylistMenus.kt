@@ -107,6 +107,7 @@ fun PlaylistMoreMenu(
     onReloadPlaylist: () -> Unit,
     onClearHistoryClick: (() -> Unit)? = null,
     onAddToPlaylistClick: (() -> Unit)? = null,
+    onRemoveDuplicatesClick: (() -> Unit)? = null,
 ) {
     var showMoreMenu by remember { mutableStateOf(false) }
 
@@ -137,7 +138,7 @@ fun PlaylistMoreMenu(
                             showMoreMenu = false
                             onRemoveDuplicatesClick?.invoke()
                         },
-                        leadingIcon = { Icon(Icons.Default.ContentCopy, contentDescription = null) }
+                        leadingIcon = { Icon(Icons.Default.ContentPasteOff, contentDescription = null) }
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(MR.strings.action_add_to)) },

@@ -60,6 +60,7 @@ fun PlaylistDetailScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showClearHistoryDialog by remember { mutableStateOf(false) }
     var showAddToPlaylistDialog by remember { mutableStateOf(false) }
+    var showRemoveDuplicatesDialog by remember { mutableStateOf(false) }
 
     val titleTextRaw =
         if (url.getType() == "trending") StringResourceHelper.getTranslatedTrendingName(getQueryValue(url, "name")!!)
@@ -254,6 +255,14 @@ fun PlaylistDetailScreen(
         )
     }
 
+    if (showRemoveDuplicatesDialog) {
+        val msg = stringResource(MR.strings.done)
+        RemoveDuplicatesDialog(
+            onDismiss = { showRemoveDuplicatesDialog = false },
+            onConfirm = { viewModel.removeDuplicates(msg) }
+        )
+    }
+
     if (isSearchActive) {
         BackHandler {
             focusManager.clearFocus()
@@ -367,6 +376,9 @@ fun PlaylistDetailScreen(
                                 onAddToPlaylistClick = {
                                     showAddToPlaylistDialog = true
                                 },
+                                onRemoveDuplicatesClick = {
+                                    showRemoveDuplicatesDialog = true
+                                }
                             )
                         }
                     }
