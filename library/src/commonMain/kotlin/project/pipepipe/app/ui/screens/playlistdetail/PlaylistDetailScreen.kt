@@ -96,10 +96,20 @@ fun PlaylistDetailScreen(
         }
     }
 
-    LaunchedEffect(listState, uiState.displayItems.size) {
-        snapshotFlow {
-            listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-        }.collect { lastVisibleIndex ->
+    LaunchedEffect(listState, gridState, uiState.displayItems.size) {
+        val isGridEnabled = SharedContext.settingsManager.getBoolean("grid_layout_enabled_key", false)
+
+        val lastVisibleIndexFlow = if (isGridEnabled) {
+            snapshotFlow {
+                gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            }
+        } else {
+            snapshotFlow {
+                listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            }
+        }
+
+        lastVisibleIndexFlow.collect { lastVisibleIndex ->
             if (lastVisibleIndex != null &&
                 uiState.playlistType in listOf(PlaylistType.REMOTE, PlaylistType.TRENDING) &&
                 !uiState.common.isLoading &&
@@ -161,8 +171,10 @@ fun PlaylistDetailScreen(
         }
     }
 
-    LaunchedEffect(listState.isScrollInProgress) {
-        if (isSearchActive && listState.isScrollInProgress) {
+    LaunchedEffect(listState.isScrollInProgress, gridState.isScrollInProgress) {
+        val isGridEnabled = SharedContext.settingsManager.getBoolean("grid_layout_enabled_key", false)
+        val isScrolling = if (isGridEnabled) gridState.isScrollInProgress else listState.isScrollInProgress
+        if (isSearchActive && isScrolling) {
             focusManager.clearFocus()
         }
     }
