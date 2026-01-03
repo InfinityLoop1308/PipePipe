@@ -286,8 +286,10 @@ fun ImportExportSettingScreen(
                                     messages = importMessages,
                                     onSuccess = {
                                         // Navigate to Main screen and trigger dialog checks
-                                        navController.navigate(Screen.Main.route) {
-                                            popUpTo(Screen.Main.route) { inclusive = true }
+                                        MainScope().launch {
+                                            navController.navigate(Screen.Main.route) {
+                                                popUpTo(Screen.Main.route) { inclusive = true }
+                                            }
                                         }
                                         // Trigger dialog check after a short delay to ensure navigation completes
                                         scope.launch {
