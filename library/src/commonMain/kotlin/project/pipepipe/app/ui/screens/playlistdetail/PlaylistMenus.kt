@@ -106,6 +106,7 @@ fun PlaylistMoreMenu(
     onDeleteClick: () -> Unit,
     onReloadPlaylist: () -> Unit,
     onClearHistoryClick: (() -> Unit)? = null,
+    onAddToPlaylistClick: (() -> Unit)? = null,
 ) {
     var showMoreMenu by remember { mutableStateOf(false) }
 
@@ -129,6 +130,22 @@ fun PlaylistMoreMenu(
                             onRenameClick()
                         },
                         leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(MR.strings.playlist_menu_remove_duplicates)) },
+                        onClick = {
+                            showMoreMenu = false
+                            onRemoveDuplicatesClick?.invoke()
+                        },
+                        leadingIcon = { Icon(Icons.Default.ContentCopy, contentDescription = null) }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(MR.strings.action_add_to)) },
+                        onClick = {
+                            showMoreMenu = false
+                            onAddToPlaylistClick?.invoke()
+                        },
+                        leadingIcon = { Icon(Icons.Default.PlaylistAdd, contentDescription = null) }
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(MR.strings.playlist_menu_delete)) },
@@ -201,6 +218,15 @@ fun PlaylistMoreMenu(
                                 contentDescription = null
                             )
                         }
+                    )
+
+                    DropdownMenuItem(
+                        text = { Text(stringResource(MR.strings.action_add_to)) },
+                        onClick = {
+                            showMoreMenu = false
+                            onAddToPlaylistClick?.invoke()
+                        },
+                        leadingIcon = { Icon(Icons.Default.PlaylistAdd, contentDescription = null) }
                     )
 
                     DropdownMenuItem(

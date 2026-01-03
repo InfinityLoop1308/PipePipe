@@ -59,6 +59,7 @@ fun PlaylistDetailScreen(
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showClearHistoryDialog by remember { mutableStateOf(false) }
+    var showAddToPlaylistDialog by remember { mutableStateOf(false) }
 
     val titleTextRaw =
         if (url.getType() == "trending") StringResourceHelper.getTranslatedTrendingName(getQueryValue(url, "name")!!)
@@ -243,6 +244,16 @@ fun PlaylistDetailScreen(
         )
     }
 
+    if (showAddToPlaylistDialog) {
+        project.pipepipe.app.ui.component.PlaylistSelectorPopup(
+            streamInfoList = uiState.displayItems,
+            onDismiss = { showAddToPlaylistDialog = false },
+            onPlaylistSelected = {
+                showAddToPlaylistDialog = false
+            }
+        )
+    }
+
     if (isSearchActive) {
         BackHandler {
             focusManager.clearFocus()
@@ -353,6 +364,9 @@ fun PlaylistDetailScreen(
                                 onDeleteClick = { showDeleteDialog = true },
                                 onReloadPlaylist = { viewModel.loadPlaylist(url, serviceId) },
                                 onClearHistoryClick = { showClearHistoryDialog = true },
+                                onAddToPlaylistClick = {
+                                    showAddToPlaylistDialog = true
+                                },
                             )
                         }
                     }
