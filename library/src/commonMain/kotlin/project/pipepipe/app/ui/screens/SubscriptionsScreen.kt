@@ -41,11 +41,13 @@ import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.MainScreenTabHelper.categoryIconFor
 import project.pipepipe.app.ui.component.CustomTopBar
+import project.pipepipe.app.ui.items.CommonItem
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.utils.formatCount
 import project.pipepipe.app.viewmodel.SubscriptionsViewModel
 import project.pipepipe.database.Feed_group
 import project.pipepipe.database.Subscriptions
+import project.pipepipe.shared.infoitem.ChannelInfo
 import java.net.URLEncoder
 
 @Composable
@@ -113,14 +115,39 @@ private fun SubscriptionsContent(
     var searchQuery by rememberSaveable { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
-    val filteredSubscriptions = remember(subscriptions, searchQuery) {
+    val isGridEnabled = remember {
+        SharedContext.settingsManager.getBoolean("grid_layout_enabled_key", false)
+    }
+    val gridColumns = remember {
+        SharedContext.settingsManager.getString("grid_columns_key", "4").toIntOrNull() ?: 4
+    }
+
+    // Convert Subscriptions to ChannelInfo for CommonItem
+    val channelInfoList = remember(subscriptions) {
+        subscriptions.map { sub ->
+            ChannelInfo(
+                url = sub.url ?: "",
+                name = sub.name ?: "",
+                serviceId = sub.service_id,
+                thumbnailUrl = sub.avatar_url,
+                description = sub.description,
+                subscriberCount = sub.subscriber_count
+            )
+        }
+    }
+
+    val filteredChannelInfoList = remember(subscriptions, searchQuery) {
         if (searchQuery.isBlank()) {
-            subscriptions
+            channelInfoList
         } else {
-            subscriptions.filter { subscription ->
-                subscription.name?.contains(searchQuery, ignoreCase = true) == true
+            channelInfoList.filter { channelInfo ->
+                channelInfo.name.contains(searchQuery, ignoreCase = true) == true
             }
         }
+    }
+
+    val chunkedItems = remember(filteredChannelInfoList, gridColumns) {
+        filteredChannelInfoList.chunked(gridColumns)
     }
 
     LaunchedEffect(isSearchActive) {
@@ -149,7 +176,7 @@ private fun SubscriptionsContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -182,6 +209,7 @@ private fun SubscriptionsContent(
         item {
             Divider(
                 thickness = 1.dp,
+                modifier = Modifier.padding(top = 4.dp),
                 color = MaterialTheme.colorScheme.outlineVariant
             )
         }
@@ -201,7 +229,7 @@ private fun SubscriptionsContent(
         }
 
         when {
-            isLoading && filteredSubscriptions.isEmpty() -> {
+            isLoading && filteredChannelInfoList.isEmpty() -> {
                 item {
                     Box(
                         modifier = Modifier
@@ -214,7 +242,7 @@ private fun SubscriptionsContent(
                 }
             }
 
-            filteredSubscriptions.isEmpty() -> {
+            filteredChannelInfoList.isEmpty() -> {
                 item {
                     Box(
                         modifier = Modifier
@@ -232,11 +260,49 @@ private fun SubscriptionsContent(
             }
 
             else -> {
-                items(filteredSubscriptions, key = { it.uid }) { subscription ->
-                    SubscriptionRow(
-                        subscription = subscription,
-                        onClick = { onSubscriptionClick(subscription) }
-                    )
+                if (isGridEnabled) {
+                    items(chunkedItems, key = { row -> row.firstOrNull()?.url ?: "empty" }) { row ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            row.forEach { channelInfo ->
+                                val subscription = subscriptions.firstOrNull { sub ->
+                                    sub.url == channelInfo.url
+                                }
+                                if (subscription != null) {
+                                    Box(modifier = Modifier.weight(1f)) {
+                                        CommonItem(
+                                            item = channelInfo,
+                                            isGridLayout = true,
+                                            onClick = { onSubscriptionClick(subscription) }
+                                        )
+                                    }
+                                }
+                            }
+                            // Fill remaining slots in the row
+                            repeat(gridColumns - row.size) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                        if (row == chunkedItems.last()) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                    }
+                } else {
+                    items(filteredChannelInfoList, key = { it.url }) { channelInfo ->
+                        val subscription = subscriptions.firstOrNull { sub ->
+                            sub.url == channelInfo.url
+                        }
+                        if (subscription != null) {
+                            SubscriptionRow(
+                                subscription = subscription,
+                                onClick = { onSubscriptionClick(subscription) }
+                            )
+                        }
+                    }
                 }
                 if (isLoading) {
                     item {
@@ -345,7 +411,7 @@ private fun SubscriptionsHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (isSearchActive) {
@@ -390,12 +456,11 @@ private fun SubscriptionsHeader(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = onSearchClick) {
-                Icon(
-                    imageVector = Icons.Outlined.Search,
-                    contentDescription = stringResource(MR.strings.search_subscriptions)
-                )
-            }
+            Icon(
+                imageVector = Icons.Outlined.Search,
+                contentDescription = stringResource(MR.strings.search_subscriptions),
+                modifier = Modifier.clickable{ onSearchClick() }
+            )
         }
     }
 }

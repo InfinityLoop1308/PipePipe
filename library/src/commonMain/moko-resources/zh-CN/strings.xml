@@ -413,10 +413,10 @@
 <string name="newpipe_backup_warning_title">检测到 NewPipe 备份</string>
 <string name="newpipe_backup_warning_message">您正在导入 NewPipe 备份。请注意，NewPipe 和 PipePipe 备份并非完全兼容。</string>
 <string name="hint_continue">继续</string>
-<string name="settings_appearance_grid_layout_summary">以网格布局显示视频列表</string>
-<string name="settings_appearance_grid_layout_title">播放列表的网格布局</string>
+<string name="settings_appearance_grid_layout_summary">以网格而非列表形式显示项目</string>
+<string name="settings_appearance_grid_layout_title">网格布局</string>
 <string name="theme">主题</string>
-<string name="settings_appearance_grid_columns_summary">网格布局中的列数</string>
+<string name="settings_appearance_grid_columns_summary">调整列数</string>
 <string name="tab">选项卡</string>
 <string name="settings_appearance_grid_columns_title">网格列</string>
 <string name="grid">网格</string>

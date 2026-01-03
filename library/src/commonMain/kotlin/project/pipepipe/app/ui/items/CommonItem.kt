@@ -64,11 +64,19 @@ fun CommonItem(
 ) {
     when (item) {
         is ChannelInfo -> {
-            ChannelListItem(
-                item = item,
-                modifier = modifier,
-                onClick = onClick
-            )
+            if (isGridLayout) {
+                ChannelGridItem(
+                    item = item,
+                    modifier = modifier,
+                    onClick = onClick
+                )
+            } else {
+                ChannelListItem(
+                    item = item,
+                    modifier = modifier,
+                    onClick = onClick
+                )
+            }
         }
         else -> {
             if (isGridLayout) {
@@ -174,7 +182,7 @@ private fun ChannelListItem(
             // 订阅数
             item.subscriberCount?.let { count ->
                 Text(
-                    text = "${formatCount(count)} ${stringResource(MR.strings.subscribers) }",
+                    text = "${formatCount(count)} ${stringResource(MR.strings.subscribers)}",
                     style = MaterialTheme.typography.bodySmall,
                     fontSize = 11.sp,
                     color = supportingTextColor(),
@@ -182,6 +190,66 @@ private fun ChannelListItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ChannelGridItem(
+    item: ChannelInfo,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = { onClick() },
+            )
+            .padding(4.dp)
+    ) {
+        // 圆形头像 (占据正方形空间)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(CircleShape)
+        ) {
+            AsyncImage(
+                model = item.thumbnailUrl,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 频道名
+        Text(
+            text = item.name,
+            style = TextStyle(
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        // 订阅数
+        item.subscriberCount?.let { count ->
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "${formatCount(count)} ${stringResource(MR.strings.subscribers)}",
+                style = MaterialTheme.typography.bodySmall,
+                fontSize = 11.sp,
+                color = supportingTextColor(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

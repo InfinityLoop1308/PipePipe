@@ -407,10 +407,10 @@
 <string name="newpipe_backup_warning_title">Copia de seguridad de NewPipe detectada</string>
 <string name="newpipe_backup_warning_message">Estás importando una copia de seguridad de NewPipe. Ten en cuenta que las copias de seguridad de NewPipe y PipePipe no son totalmente compatibles.</string>
 <string name="hint_continue">Continuar</string>
-<string name="settings_appearance_grid_layout_summary">Mostrar listas de videos en un diseño de cuadrícula</string>
-<string name="settings_appearance_grid_layout_title">Diseño de cuadrícula para listas de reproducción</string>
+<string name="settings_appearance_grid_layout_summary">Mostrar elementos como cuadrícula en lugar de lista</string>
+<string name="settings_appearance_grid_layout_title">Diseño de cuadrícula</string>
 <string name="theme">Tema</string>
-<string name="settings_appearance_grid_columns_summary">Número de columnas en el diseño de cuadrícula</string>
+<string name="settings_appearance_grid_columns_summary">Ajustar el número de columnas</string>
 <string name="tab">Pestaña</string>
 <string name="settings_appearance_grid_columns_title">Columnas de la cuadrícula</string>
 <string name="grid">Cuadrícula</string>

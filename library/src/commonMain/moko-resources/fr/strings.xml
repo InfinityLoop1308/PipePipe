@@ -407,10 +407,10 @@
 <string name="newpipe_backup_warning_title">Sauvegarde NewPipe détectée</string>
 <string name="newpipe_backup_warning_message">Vous importez une sauvegarde NewPipe. Veuillez noter que les sauvegardes NewPipe et PipePipe ne sont pas entièrement compatibles.</string>
 <string name="hint_continue">Continuer</string>
-<string name="settings_appearance_grid_layout_summary">Afficher les listes de vidéos dans une disposition en grille</string>
-<string name="settings_appearance_grid_layout_title">Disposition en grille pour les playlists</string>
+<string name="settings_appearance_grid_layout_summary">Afficher les éléments sous forme de grille au lieu d\'une liste</string>
+<string name="settings_appearance_grid_layout_title">Disposition en grille</string>
 <string name="theme">Thème</string>
-<string name="settings_appearance_grid_columns_summary">Nombre de colonnes dans la disposition en grille</string>
+<string name="settings_appearance_grid_columns_summary">Ajuster le nombre de colonnes</string>
 <string name="tab">Onglet</string>
 <string name="settings_appearance_grid_columns_title">Colonnes de la grille</string>
 <string name="grid">Grille</string>

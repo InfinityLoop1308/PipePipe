@@ -407,10 +407,10 @@
 <string name="newpipe_backup_warning_title">NewPipeのバックアップを検出しました</string>
 <string name="newpipe_backup_warning_message">NewPipeのバックアップをインポートしています。NewPipeとPipePipeのバックアップは完全に互換性があるわけではないことにご注意ください。</string>
 <string name="hint_continue">続行</string>
-<string name="settings_appearance_grid_layout_summary">動画リストをグリッドレイアウトで表示する</string>
-<string name="settings_appearance_grid_layout_title">プレイリストのグリッドレイアウト</string>
+<string name="settings_appearance_grid_layout_summary">アイテムをリストではなくグリッドとして表示する</string>
+<string name="settings_appearance_grid_layout_title">グリッドレイアウト</string>
 <string name="theme">テーマ</string>
-<string name="settings_appearance_grid_columns_summary">グリッドレイアウトの列数</string>
+<string name="settings_appearance_grid_columns_summary">列数を調整する</string>
 <string name="tab">タブ</string>
 <string name="settings_appearance_grid_columns_title">グリッドの列</string>
 <string name="grid">グリッド</string>
