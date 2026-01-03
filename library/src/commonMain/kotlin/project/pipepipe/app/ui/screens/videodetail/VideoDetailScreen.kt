@@ -233,7 +233,21 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         }
     }
 
-    val configuredTabs = SharedContext.settingsManager.getStringSet("video_tabs_key")
+    var configuredTabs by remember {
+        mutableStateOf(SharedContext.settingsManager.getStringSet("video_tabs_key", setOf("comments", "related", "sponsorblock", "description")))
+    }
+
+    DisposableEffect(Unit) {
+        val listener = SharedContext.settingsManager.addStringSetListener(
+            "video_tabs_key",
+            setOf("comments", "related", "sponsorblock", "description")
+        ) { newValue ->
+            configuredTabs = newValue
+        }
+        onDispose {
+            listener?.deactivate()
+        }
+    }
 
     val allTabs = listOf(
         TabConfig(

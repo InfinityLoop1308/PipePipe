@@ -37,6 +37,12 @@ class SettingsManager(private val settings: Settings = Settings()) {
         return (settings as? ObservableSettings)?.addDoubleListener(key, defaultValue, callback)
     }
 
+    fun addStringSetListener(key: String, defaultValues: Set<String> = emptySet(), callback: (Set<String>) -> Unit): SettingsListener? {
+        return (settings as? ObservableSettings)?.addStringListener(key, encodeStringSet(defaultValues)) { value ->
+            callback(decodeStringSet(value) ?: defaultValues)
+        }
+    }
+
     fun getString(key: String, defaultValue: String = ""): String {
         return settings.getString(key, defaultValue)
     }
@@ -151,6 +157,11 @@ class SettingsManager(private val settings: Settings = Settings()) {
         safeGet { settings.getDoubleOrNull(key) }?.let { return it }
         val stringValue = safeGet { settings.getStringOrNull(key) } ?: return null
         return decodeStringSet(stringValue) ?: stringValue
+    }
+
+    private fun encodeStringSet(values: Set<String>): String {
+        if (values.isEmpty()) return ""
+        return json.encodeToString(values.toList())
     }
 
     private fun decodeStringSet(value: String): Set<String>? {

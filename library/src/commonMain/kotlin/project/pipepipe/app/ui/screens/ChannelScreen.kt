@@ -68,8 +68,36 @@ fun ChannelScreen(
     val tabs = uiState.channelInfo?.tabs.orEmpty()
     val hasDescription = !uiState.channelInfo?.description.isNullOrEmpty()
     val filterShorts = remember { SharedContext.settingsManager.getBoolean("filter_shorts_key", false) }
-    val showChannelTabsSettings = remember {
-        SharedContext.settingsManager.getStringSet("show_channel_tabs_key", emptySet())
+
+    var showChannelTabsSettings by remember {
+        mutableStateOf(SharedContext.settingsManager.getStringSet(
+            "show_channel_tabs_key",
+            setOf(
+                "show_channel_tabs_playlists",
+                "show_channel_tabs_live",
+                "show_channel_tabs_shorts",
+                "show_channel_tabs_albums",
+                "show_channel_tabs_info"
+            )
+        ))
+    }
+
+    DisposableEffect(Unit) {
+        val listener = SharedContext.settingsManager.addStringSetListener(
+            "show_channel_tabs_key",
+            setOf(
+                "show_channel_tabs_playlists",
+                "show_channel_tabs_live",
+                "show_channel_tabs_shorts",
+                "show_channel_tabs_albums",
+                "show_channel_tabs_info"
+            )
+        ) { newValue ->
+            showChannelTabsSettings = newValue
+        }
+        onDispose {
+            listener?.deactivate()
+        }
     }
     val tabTypes = remember(tabs, hasDescription, filterShorts, showChannelTabsSettings) {
         val types = tabs.map { it.type }.toMutableList()
