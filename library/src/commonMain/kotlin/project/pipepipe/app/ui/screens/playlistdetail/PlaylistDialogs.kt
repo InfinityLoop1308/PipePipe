@@ -1,7 +1,11 @@
 package project.pipepipe.app.ui.screens.playlistdetail
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -172,6 +176,36 @@ fun RemoveDuplicatesDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(stringResource(MR.strings.cancel))
+            }
+        }
+    )
+}
+@Composable
+fun RemoveWatchedDialog(
+    onDismiss: () -> Unit,
+    onConfirmPartiallyWatched: () -> Unit,
+    onConfirmFullyWatched: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(MR.strings.playlist_menu_remove_watched)) },
+        text = {
+            Text(stringResource(MR.strings.playlist_remove_watched_message))
+        },
+        confirmButton = {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                TextButton(onClick = { onConfirmFullyWatched(); onDismiss() }) {
+                    Text(stringResource(MR.strings.playlist_remove_fully_watched))
+                }
+                TextButton(onClick = { onConfirmPartiallyWatched(); onDismiss() }) {
+                    Text(stringResource(MR.strings.playlist_remove_partially_watched))
+                }
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(MR.strings.cancel))
+                }
             }
         }
     )

@@ -338,6 +338,25 @@ WHERE playlist_id = ?
     GROUP BY stream_id
 );
 
+-- removePartiallyWatchedFromPlaylist
+removePartiallyWatchedFromPlaylist:
+DELETE FROM playlist_stream_join
+WHERE playlist_id = ?
+  AND EXISTS (
+    SELECT 1 FROM streams
+    WHERE streams.uid = playlist_stream_join.stream_id
+      AND streams.progress_time > 0
+  );
+
+-- removeFullyWatchedFromPlaylist
+removeFullyWatchedFromPlaylist:
+DELETE FROM playlist_stream_join
+WHERE playlist_id = ?
+  AND EXISTS (
+    SELECT 1 FROM streams
+    WHERE streams.uid = playlist_stream_join.stream_id
+      AND streams.progress_time / 1000 >= streams.duration
+  );
 -- Used to re-order the playlist after a drag-and-drop operation.
 updatePlaylistStreamOrder:
 UPDATE playlist_stream_join SET join_index = ? WHERE id = ?;

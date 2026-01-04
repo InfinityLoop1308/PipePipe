@@ -387,6 +387,28 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         }
     }
 
+    fun removePartiallyWatched(msg: String, type: String) {
+        val playlistType = uiState.value.playlistType
+        if (playlistType != PlaylistType.LOCAL) return
+
+        val playlistId = uiState.value.playlistInfo?.uid ?: return
+
+        GlobalScope.launch {
+            if (type == "full") {
+                DatabaseOperations.removeFullyWatchedFromPlaylist(playlistId)
+            } else {
+                DatabaseOperations.removePartiallyWatchedFromPlaylist(playlistId)
+            }
+            SharedContext.notifyPlaylistChanged(playlistId)
+            ToastManager.show(msg)
+            viewModelScope.launch {
+                uiState.value.playlistInfo?.let {
+                    loadPlaylistInternal(it.url, it.serviceId)
+                }
+            }
+        }
+    }
+
     fun calculateDisplayIndex(originalIndex: Int): Int {
         val actualIndex = originalIndex - 1
         val state = uiState.value

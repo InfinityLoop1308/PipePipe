@@ -108,6 +108,7 @@ fun PlaylistMoreMenu(
     onClearHistoryClick: (() -> Unit)? = null,
     onAddToPlaylistClick: (() -> Unit)? = null,
     onRemoveDuplicatesClick: (() -> Unit)? = null,
+    onRemoveWatchedClick: (() -> Unit)? = null,
 ) {
     var showMoreMenu by remember { mutableStateOf(false) }
 
@@ -139,6 +140,14 @@ fun PlaylistMoreMenu(
                             onRemoveDuplicatesClick?.invoke()
                         },
                         leadingIcon = { Icon(Icons.Default.ContentPasteOff, contentDescription = null) }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(MR.strings.playlist_menu_remove_watched)) },
+                        onClick = {
+                            showMoreMenu = false
+                            onRemoveWatchedClick?.invoke()
+                        },
+                        leadingIcon = { Icon(Icons.Default.VisibilityOff, contentDescription = null) }
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(MR.strings.action_add_to)) },

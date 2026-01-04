@@ -247,6 +247,14 @@ object DatabaseOperations {
         database.appDatabaseQueries.removeDuplicatesFromPlaylist(playlistId, playlistId)
     }
 
+    suspend fun removePartiallyWatchedFromPlaylist(playlistId: Long) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.removePartiallyWatchedFromPlaylist(playlistId)
+    }
+
+    suspend fun removeFullyWatchedFromPlaylist(playlistId: Long) = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.removeFullyWatchedFromPlaylist(playlistId)
+    }
+
     suspend fun reorderPlaylistItem(orderedJoinIds: List<Long>) = withContext(Dispatchers.IO) {
         database.transaction {
             // First, shift all join_index values to avoid conflicts

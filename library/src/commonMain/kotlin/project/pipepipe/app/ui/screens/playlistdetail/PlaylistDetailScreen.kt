@@ -61,6 +61,7 @@ fun PlaylistDetailScreen(
     var showClearHistoryDialog by remember { mutableStateOf(false) }
     var showAddToPlaylistDialog by remember { mutableStateOf(false) }
     var showRemoveDuplicatesDialog by remember { mutableStateOf(false) }
+    var showRemoveWatchedDialog by remember { mutableStateOf(false) }
 
     val titleTextRaw =
         if (url.getType() == "trending") StringResourceHelper.getTranslatedTrendingName(getQueryValue(url, "name")!!)
@@ -263,6 +264,15 @@ fun PlaylistDetailScreen(
         )
     }
 
+    if (showRemoveWatchedDialog) {
+        val msg = stringResource(MR.strings.done)
+        RemoveWatchedDialog(
+            onDismiss = { showRemoveWatchedDialog = false },
+            onConfirmPartiallyWatched = { viewModel.removePartiallyWatched(msg, "partially") },
+            onConfirmFullyWatched = { viewModel.removePartiallyWatched(msg, "full") }
+        )
+    }
+
     if (isSearchActive) {
         BackHandler {
             focusManager.clearFocus()
@@ -378,6 +388,9 @@ fun PlaylistDetailScreen(
                                 },
                                 onRemoveDuplicatesClick = {
                                     showRemoveDuplicatesDialog = true
+                                },
+                                onRemoveWatchedClick = {
+                                    showRemoveWatchedDialog = true
                                 }
                             )
                         }
