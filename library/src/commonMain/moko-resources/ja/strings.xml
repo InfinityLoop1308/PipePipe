@@ -571,4 +571,12 @@
 <string name="show_channel_tabs">チャンネルタブ</string>
 <string name="video_tabs_summary">動画詳細画面に表示するタブを設定します</string>
 <string name="no_available_tabs">利用可能なタブはありません</string>
+<string name="playlist_menu_remove_watched">視聴済みを削除</string>
+<string name="feed_fetch_channel_tabs_summary">フィード更新時に取得するタブ</string>
+<string name="playlist_menu_remove_duplicates">重複を削除</string>
+<string name="playlist_remove_watched_message">このプレイリストから視聴済みのアイテムをすべて削除しますか？</string>
+<string name="playlist_remove_fully_watched">完全に視聴済みを削除</string>
+<string name="playlist_remove_duplicates_message">このプレイリストから重複するアイテムをすべて削除しますか？</string>
+<string name="feed_fetch_channel_tabs">チャンネルタブを取得</string>
+<string name="playlist_remove_partially_watched">部分的に視聴済みを削除</string>
 </resources>

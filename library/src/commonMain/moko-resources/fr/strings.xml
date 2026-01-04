@@ -571,4 +571,12 @@
 <string name="show_channel_tabs">Onglets de la chaîne</string>
 <string name="video_tabs_summary">Configurer les onglets à afficher sur l\'écran de détail de la vidéo</string>
 <string name="no_available_tabs">Aucun onglet disponible</string>
+<string name="playlist_menu_remove_watched">Supprimer les vues</string>
+<string name="feed_fetch_channel_tabs_summary">Onglets à récupérer lors de la mise à jour du flux</string>
+<string name="playlist_menu_remove_duplicates">Supprimer les doublons</string>
+<string name="playlist_remove_watched_message">Supprimer tous les éléments vus de cette playlist ?</string>
+<string name="playlist_remove_fully_watched">Supprimer les entièrement vus</string>
+<string name="playlist_remove_duplicates_message">Supprimer tous les éléments en double de cette playlist ?</string>
+<string name="feed_fetch_channel_tabs">Récupérer les onglets de la chaîne</string>
+<string name="playlist_remove_partially_watched">Supprimer les partiellement vus</string>
 </resources>

@@ -571,4 +571,12 @@
 <string name="show_channel_tabs">頻道分頁</string>
 <string name="video_tabs_summary">設定影片詳細資訊畫面顯示哪些分頁</string>
 <string name="no_available_tabs">沒有可用的分頁</string>
+<string name="playlist_menu_remove_watched">移除已觀看</string>
+<string name="feed_fetch_channel_tabs_summary">更新訂閱時要擷取的標籤頁</string>
+<string name="playlist_menu_remove_duplicates">移除重複項目</string>
+<string name="playlist_remove_watched_message">從此播放清單中移除所有已觀看項目？</string>
+<string name="playlist_remove_fully_watched">移除已完整觀看</string>
+<string name="playlist_remove_duplicates_message">從此播放清單中移除所有重複項目？</string>
+<string name="feed_fetch_channel_tabs">擷取頻道標籤頁</string>
+<string name="playlist_remove_partially_watched">移除部分觀看</string>
 </resources>

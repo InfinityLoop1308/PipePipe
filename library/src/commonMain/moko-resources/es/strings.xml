@@ -571,4 +571,12 @@
 <string name="show_channel_tabs">Pestañas del canal</string>
 <string name="video_tabs_summary">Configurar qué pestañas mostrar en la pantalla de detalles del video</string>
 <string name="no_available_tabs">No hay pestañas disponibles</string>
+<string name="playlist_menu_remove_watched">Eliminar vistos</string>
+<string name="feed_fetch_channel_tabs_summary">Pestañas a buscar al actualizar el feed</string>
+<string name="playlist_menu_remove_duplicates">Eliminar duplicados</string>
+<string name="playlist_remove_watched_message">¿Eliminar todos los elementos vistos de esta lista de reproducción?</string>
+<string name="playlist_remove_fully_watched">Eliminar completamente vistos</string>
+<string name="playlist_remove_duplicates_message">¿Eliminar todos los elementos duplicados de esta lista de reproducción?</string>
+<string name="feed_fetch_channel_tabs">Obtener pestañas del canal</string>
+<string name="playlist_remove_partially_watched">Eliminar parcialmente vistos</string>
 </resources>

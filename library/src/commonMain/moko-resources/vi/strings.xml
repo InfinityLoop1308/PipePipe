@@ -571,4 +571,12 @@
 <string name="show_channel_tabs">Các tab kênh</string>
 <string name="video_tabs_summary">Cấu hình các tab sẽ hiển thị trên màn hình chi tiết video</string>
 <string name="no_available_tabs">Không có tab nào khả dụng</string>
+<string name="playlist_menu_remove_watched">Xóa đã xem</string>
+<string name="feed_fetch_channel_tabs_summary">Các tab cần tìm nạp khi cập nhật nguồn cấp dữ liệu</string>
+<string name="playlist_menu_remove_duplicates">Xóa trùng lặp</string>
+<string name="playlist_remove_watched_message">Xóa tất cả các mục đã xem khỏi danh sách phát này?</string>
+<string name="playlist_remove_fully_watched">Xóa đã xem hoàn toàn</string>
+<string name="playlist_remove_duplicates_message">Xóa tất cả các mục trùng lặp khỏi danh sách phát này?</string>
+<string name="feed_fetch_channel_tabs">Tìm nạp tab kênh</string>
+<string name="playlist_remove_partially_watched">Xóa đã xem một phần</string>
 </resources>

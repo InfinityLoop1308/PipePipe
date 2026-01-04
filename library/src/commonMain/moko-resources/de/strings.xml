@@ -571,4 +571,12 @@
 <string name="show_channel_tabs">Kanal-Registerkarten</string>
 <string name="video_tabs_summary">Konfigurieren Sie, welche Registerkarten auf dem Videodetailbildschirm angezeigt werden sollen</string>
 <string name="no_available_tabs">Keine verfügbaren Registerkarten</string>
+<string name="playlist_menu_remove_watched">Gesehene entfernen</string>
+<string name="feed_fetch_channel_tabs_summary">Tabs, die beim Aktualisieren des Feeds abgerufen werden sollen</string>
+<string name="playlist_menu_remove_duplicates">Duplikate entfernen</string>
+<string name="playlist_remove_watched_message">Alle angesehenen Elemente aus dieser Wiedergabeliste entfernen?</string>
+<string name="playlist_remove_fully_watched">Vollständig gesehene entfernen</string>
+<string name="playlist_remove_duplicates_message">Alle doppelten Elemente aus dieser Wiedergabeliste entfernen?</string>
+<string name="feed_fetch_channel_tabs">Kanal-Tabs abrufen</string>
+<string name="playlist_remove_partially_watched">Teilweise gesehene entfernen</string>
 </resources>
