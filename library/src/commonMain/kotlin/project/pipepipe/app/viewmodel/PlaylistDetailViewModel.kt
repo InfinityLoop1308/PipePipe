@@ -153,10 +153,16 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
     }
 
     private suspend fun loadRemotePlaylistDetail(url: String, serviceId: Int, isTrending: Boolean = false) {
+        val requestUrl = url + if (isTrending) {
+            var country = SharedContext.settingsManager.getString("content_country")
+            if (country == "system") country = SharedContext.platformActions.getSystemCountry()
+            "&country=${country}"
+        } else ""
+
         val result = withContext(Dispatchers.IO) {
             executeJobFlow(
                 SupportedJobType.FETCH_INFO,
-                url,
+                requestUrl,
                 serviceId
             )
         }

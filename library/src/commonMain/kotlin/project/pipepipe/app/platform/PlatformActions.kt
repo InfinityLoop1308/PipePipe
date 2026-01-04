@@ -61,6 +61,12 @@ interface PlatformActions {
     fun getOsInfo(): String
 
     /**
+     * Get system country code (ISO 3166-1 alpha-2).
+     * @return Two-letter country code, e.g., "US", "CN", "JP"
+     */
+    fun getSystemCountry(): String
+
+    /**
      * Start feed update for a specific group.
      * @param groupId The feed group ID, -1 for all feeds
      */

@@ -148,6 +148,10 @@ class AndroidActions(
                 " - " + Build.VERSION.SDK_INT
     }
 
+    override fun getSystemCountry(): String {
+        return context.resources.configuration.locales.get(0).country.ifEmpty { "US" }
+    }
+
     override fun startFeedUpdate(groupId: Long) {
         onStartFeedUpdate(groupId)
     }
