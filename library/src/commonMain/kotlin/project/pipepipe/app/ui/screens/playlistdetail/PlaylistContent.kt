@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
@@ -198,8 +199,16 @@ fun PlaylistContent(
                                 } else null,
                                 onDelete = if(uiState.playlistType !in listOf(PlaylistType.REMOTE, PlaylistType.TRENDING)) {
                                     {
-                                        scope.launch {
-                                            viewModel.removeItem(streamItem)
+                                        viewModel.removeItem(streamItem)
+                                    }
+                                } else null,
+                                onSetAsCover = if (uiState.playlistType == PlaylistType.LOCAL) {
+                                    {
+                                        GlobalScope.launch {
+                                            val playlistId = url.substringAfter("local://playlist/").substringBefore("?").toLongOrNull()
+                                            if (playlistId != null && streamItem.thumbnailUrl != null) {
+                                                DatabaseOperations.updatePlaylistThumbnail(playlistId, streamItem.thumbnailUrl)
+                                            }
                                         }
                                     }
                                 } else null,
@@ -330,6 +339,16 @@ fun PlaylistContent(
                                     {
                                         scope.launch {
                                             viewModel.removeItem(streamItem)
+                                        }
+                                    }
+                                } else null,
+                                onSetAsCover = if (uiState.playlistType == PlaylistType.LOCAL) {
+                                    {
+                                        scope.launch {
+                                            val playlistId = url.substringAfter("local://playlist/").substringBefore("?").toLongOrNull()
+                                            if (playlistId != null && streamItem.thumbnailUrl != null) {
+                                                DatabaseOperations.updatePlaylistThumbnail(playlistId, streamItem.thumbnailUrl)
+                                            }
                                         }
                                     }
                                 } else null,

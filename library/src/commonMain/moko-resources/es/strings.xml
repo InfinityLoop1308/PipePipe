@@ -580,4 +580,5 @@
 <string name="feed_fetch_channel_tabs">Obtener pestañas del canal</string>
 <string name="playlist_remove_partially_watched">Eliminar parcialmente vistos</string>
 <string name="playlist_menu_share_url_list">Compartir lista de URL</string>
+<string name="set_as_cover">Establecer como portada</string>
 </resources>

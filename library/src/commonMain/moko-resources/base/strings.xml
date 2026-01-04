@@ -257,6 +257,7 @@
     </string>
     <string name="add_filter">Add Filter</string>
     <string name="add_to_playlist">Add to playlist</string>
+    <string name="set_as_cover">Set as cover</string>
     <string name="mark_as_watched">Mark as watched</string>
     <string name="back">Back</string>
     <string name="channel_videos">Channel videos</string>

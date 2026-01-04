@@ -62,6 +62,7 @@ fun CommonItem(
     isGridLayout: Boolean = false,
     forceListLayout: Boolean = false,
     showNewItemBorder: Boolean = false,
+    onSetAsCover: (() -> Unit)? = null,
 ) {
     when (item) {
         is ChannelInfo -> {
@@ -94,7 +95,8 @@ fun CommonItem(
                     showDragHandle = showDragHandle,
                     dragHandleModifier = dragHandleModifier,
                     displayType = displayType,
-                    showNewItemBorder = showNewItemBorder
+                    showNewItemBorder = showNewItemBorder,
+                    onSetAsCover = onSetAsCover
                 )
             } else {
                 StreamOrPlaylistListItem(
@@ -110,7 +112,8 @@ fun CommonItem(
                     dragHandleModifier = dragHandleModifier,
                     showProvideDetailButton = showProvideDetailButton,
                     displayType = displayType,
-                    showNewItemBorder = showNewItemBorder
+                    showNewItemBorder = showNewItemBorder,
+                    onSetAsCover = onSetAsCover
                 )
             }
         }
@@ -274,6 +277,7 @@ private fun StreamOrPlaylistListItem(
     dragHandleModifier: Modifier = Modifier,
     displayType: DisplayType = DisplayType.ORIGIN,
     showNewItemBorder: Boolean = false,
+    onSetAsCover: (() -> Unit)? = null,
 ) {
     var thumbnailUrl: String? = null
     var title: String
@@ -349,7 +353,8 @@ private fun StreamOrPlaylistListItem(
                                     item,
                                     onNavigateTo = onNavigateTo,
                                     onDelete = onDelete,
-                                    showProvideDetailButton = showProvideDetailButton
+                                    showProvideDetailButton = showProvideDetailButton,
+                                    onSetAsCover = onSetAsCover
                                 )
                             )
                         }
@@ -574,6 +579,7 @@ private fun StreamOrPlaylistGridItem(
     dragHandleModifier: Modifier = Modifier,
     displayType: DisplayType = DisplayType.ORIGIN,
     showNewItemBorder: Boolean = false,
+    onSetAsCover: (() -> Unit)? = null,
 ) {
     var thumbnailUrl: String? = null
     var title: String
@@ -641,7 +647,8 @@ private fun StreamOrPlaylistGridItem(
                                     item,
                                     onNavigateTo = onNavigateTo,
                                     onDelete = onDelete,
-                                    showProvideDetailButton = showProvideDetailButton
+                                    showProvideDetailButton = showProvideDetailButton,
+                                    onSetAsCover = onSetAsCover
                                 )
                             )
                         }

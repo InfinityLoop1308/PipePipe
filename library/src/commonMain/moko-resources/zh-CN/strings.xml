@@ -580,4 +580,5 @@
 <string name="feed_fetch_channel_tabs">获取频道标签页</string>
 <string name="playlist_remove_partially_watched">移除部分观看</string>
 <string name="playlist_menu_share_url_list">分享网址列表</string>
+<string name="set_as_cover">设为封面</string>
 </resources>

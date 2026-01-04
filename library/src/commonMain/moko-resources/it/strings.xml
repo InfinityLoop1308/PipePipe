@@ -580,4 +580,5 @@
 <string name="feed_fetch_channel_tabs">Recupera schede canale</string>
 <string name="playlist_remove_partially_watched">Rimuovi parzialmente guardati</string>
 <string name="playlist_menu_share_url_list">Condividi Elenco URL</string>
+<string name="set_as_cover">Imposta come copertina</string>
 </resources>

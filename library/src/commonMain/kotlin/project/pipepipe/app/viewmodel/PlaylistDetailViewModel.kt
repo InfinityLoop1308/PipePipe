@@ -345,7 +345,7 @@ class PlaylistDetailViewModel : BaseViewModel<PlaylistUiState>(PlaylistUiState()
         updateDisplayItems()
 
         // Persist to database
-        viewModelScope.launch {
+        GlobalScope.launch {
             when (playlistType) {
                 PlaylistType.LOCAL -> {
                     DatabaseOperations.removeStreamFromPlaylistByJoinId(streamInfo.joinId!!)
