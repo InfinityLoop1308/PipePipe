@@ -351,6 +351,8 @@
     <string name="settings_appearance_grid_layout_summary">Show items as grid instead of list</string>
     <string name="settings_appearance_grid_columns_title">Grid columns</string>
     <string name="settings_appearance_grid_columns_summary">Adjust the number of columns</string>
+    <string name="feed_groups_grid_layout_title">Grid layout for feed groups</string>
+    <string name="feed_groups_grid_layout_summary">Display feed groups in a grid instead of a horizontal list</string>
     <string name="view_details">View Details</string>
     <string name="msg_copied">Copied to clipboard</string>
     <string name="stacktrace">StackTrace</string>

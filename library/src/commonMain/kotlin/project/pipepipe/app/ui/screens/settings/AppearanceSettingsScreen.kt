@@ -105,6 +105,9 @@ fun AppearanceSettingsScreen(
     val gridColumnsTitle = stringResource(MR.strings.settings_appearance_grid_columns_title)
     val gridColumnsSummary = stringResource(MR.strings.settings_appearance_grid_columns_summary)
 
+    val feedGroupsGridLayoutTitle = stringResource(MR.strings.feed_groups_grid_layout_title)
+    val feedGroupsGridLayoutSummary = stringResource(MR.strings.feed_groups_grid_layout_summary)
+
     val customizeTabsTitle = stringResource(MR.strings.customize_tabs)
     val customizeTabsSummary = stringResource(MR.strings.customize_tabs_summary)
 
@@ -243,6 +246,12 @@ fun AppearanceSettingsScreen(
             entryValues = listOf("1", "2", "3", "4", "5", "6", "7", "8"),
             defaultValue = "4",
             enabled = gridLayoutEnabledState.value
+        ),
+        PreferenceItem.SwitchPref(
+            key = "feed_groups_grid_layout",
+            title = feedGroupsGridLayoutTitle,
+            summary = feedGroupsGridLayoutSummary,
+            defaultValue = false
         ),
 
     )

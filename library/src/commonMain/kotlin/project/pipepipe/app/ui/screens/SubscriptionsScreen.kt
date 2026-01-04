@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -118,6 +119,9 @@ private fun SubscriptionsContent(
     val isGridEnabled = remember {
         SharedContext.settingsManager.getBoolean("grid_layout_enabled_key", false)
     }
+    val isGridFeedGroupEnabled = remember {
+        SharedContext.settingsManager.getBoolean("feed_groups_grid_layout", false)
+    }
     val gridColumns = remember {
         SharedContext.settingsManager.getString("grid_columns_key", "4").toIntOrNull() ?: 4
     }
@@ -203,6 +207,7 @@ private fun SubscriptionsContent(
                     onChannelGroupClick = { group ->
                         onChannelGroupClick(group.uid, group.name)
                     },
+                    isGridMode = isGridFeedGroupEnabled
                 )
             }
         }
@@ -327,25 +332,48 @@ fun ChannelGroupsRow(
     channelGroups: List<Feed_group>,
     onAllGroupsClick: () -> Unit,
     onChannelGroupClick: (Feed_group) -> Unit,
+    isGridMode: Boolean = false
 ) {
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        item(key = "all") {
+    if (isGridMode) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             ChannelGroupCard(
                 title = stringResource(MR.strings.all),
                 iconId = 0,
                 onClick = onAllGroupsClick
             )
-        }
 
-        items(channelGroups, key = { it.uid }) { group ->
-            ChannelGroupCard(
-                title = group.name,
-                iconId = group.icon_id.toInt(),
-                onClick = { onChannelGroupClick(group) }
-            )
+            channelGroups.forEach { group ->
+                ChannelGroupCard(
+                    title = group.name,
+                    iconId = group.icon_id.toInt(),
+                    onClick = { onChannelGroupClick(group) }
+                )
+            }
+        }
+    } else {
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item(key = "all") {
+                ChannelGroupCard(
+                    title = stringResource(MR.strings.all),
+                    iconId = 0,
+                    onClick = onAllGroupsClick
+                )
+            }
+
+            items(channelGroups, key = { it.uid }) { group ->
+                ChannelGroupCard(
+                    title = group.name,
+                    iconId = group.icon_id.toInt(),
+                    onClick = { onChannelGroupClick(group) }
+                )
+            }
         }
     }
 }

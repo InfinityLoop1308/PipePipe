@@ -581,4 +581,6 @@
 <string name="playlist_remove_partially_watched">Eliminar parcialmente vistos</string>
 <string name="playlist_menu_share_url_list">Compartir lista de URL</string>
 <string name="set_as_cover">Establecer como portada</string>
+<string name="feed_groups_grid_layout_title">Diseño de cuadrícula para grupos de feeds</string>
+<string name="feed_groups_grid_layout_summary">Mostrar grupos de feeds en una cuadrícula en lugar de una lista horizontal</string>
 </resources>

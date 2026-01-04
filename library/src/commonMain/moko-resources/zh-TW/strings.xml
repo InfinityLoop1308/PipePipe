@@ -581,4 +581,6 @@
 <string name="playlist_remove_partially_watched">移除部分觀看</string>
 <string name="playlist_menu_share_url_list">分享網址清單</string>
 <string name="set_as_cover">設為封面</string>
+<string name="feed_groups_grid_layout_title">動態消息群組的格狀佈局</string>
+<string name="feed_groups_grid_layout_summary">以格狀而非水平列表顯示動態消息群組</string>
 </resources>

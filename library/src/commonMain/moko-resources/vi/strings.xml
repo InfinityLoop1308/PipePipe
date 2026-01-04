@@ -581,4 +581,6 @@
 <string name="playlist_remove_partially_watched">Xóa đã xem một phần</string>
 <string name="playlist_menu_share_url_list">Chia sẻ danh sách URL</string>
 <string name="set_as_cover">Đặt làm ảnh bìa</string>
+<string name="feed_groups_grid_layout_title">Bố cục lưới cho nhóm nguồn cấp dữ liệu</string>
+<string name="feed_groups_grid_layout_summary">Hiển thị nhóm nguồn cấp dữ liệu dưới dạng lưới thay vì danh sách ngang</string>
 </resources>

@@ -581,4 +581,6 @@
 <string name="playlist_remove_partially_watched">Teilweise gesehene entfernen</string>
 <string name="playlist_menu_share_url_list">URL-Liste teilen</string>
 <string name="set_as_cover">Als Titelbild festlegen</string>
+<string name="feed_groups_grid_layout_title">Rasterlayout für Feed-Gruppen</string>
+<string name="feed_groups_grid_layout_summary">Feed-Gruppen in einem Raster anstelle einer horizontalen Liste anzeigen</string>
 </resources>
