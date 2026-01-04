@@ -579,4 +579,5 @@
 <string name="playlist_remove_duplicates_message">¿Eliminar todos los elementos duplicados de esta lista de reproducción?</string>
 <string name="feed_fetch_channel_tabs">Obtener pestañas del canal</string>
 <string name="playlist_remove_partially_watched">Eliminar parcialmente vistos</string>
+<string name="playlist_menu_share_url_list">Compartir lista de URL</string>
 </resources>

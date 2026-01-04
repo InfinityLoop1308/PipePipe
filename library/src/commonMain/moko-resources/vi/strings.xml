@@ -579,4 +579,5 @@
 <string name="playlist_remove_duplicates_message">Xóa tất cả các mục trùng lặp khỏi danh sách phát này?</string>
 <string name="feed_fetch_channel_tabs">Tìm nạp tab kênh</string>
 <string name="playlist_remove_partially_watched">Xóa đã xem một phần</string>
+<string name="playlist_menu_share_url_list">Chia sẻ danh sách URL</string>
 </resources>

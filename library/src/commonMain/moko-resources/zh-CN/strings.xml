@@ -579,4 +579,5 @@
 <string name="playlist_remove_duplicates_message">从该播放列表中移除所有重复项？</string>
 <string name="feed_fetch_channel_tabs">获取频道标签页</string>
 <string name="playlist_remove_partially_watched">移除部分观看</string>
+<string name="playlist_menu_share_url_list">分享网址列表</string>
 </resources>

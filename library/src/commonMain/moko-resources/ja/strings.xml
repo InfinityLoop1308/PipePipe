@@ -579,4 +579,5 @@
 <string name="playlist_remove_duplicates_message">このプレイリストから重複するアイテムをすべて削除しますか？</string>
 <string name="feed_fetch_channel_tabs">チャンネルタブを取得</string>
 <string name="playlist_remove_partially_watched">部分的に視聴済みを削除</string>
+<string name="playlist_menu_share_url_list">共有URLリスト</string>
 </resources>

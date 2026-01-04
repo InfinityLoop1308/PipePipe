@@ -680,4 +680,5 @@
     <string name="playlist_remove_watched_message">Remove all watched items from this playlist?</string>
     <string name="playlist_remove_partially_watched">Remove partially watched</string>
     <string name="playlist_remove_fully_watched">Remove fully watched</string>
+    <string name="playlist_menu_share_url_list">Share URL List</string>
 </resources>

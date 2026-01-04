@@ -391,6 +391,13 @@ fun PlaylistDetailScreen(
                                 },
                                 onRemoveWatchedClick = {
                                     showRemoveWatchedDialog = true
+                                },
+                                onShareUrlListClick = {
+                                    val urlList = uiState.displayItems.joinToString("\n") { it.url }
+                                    SharedContext.platformActions.share(
+                                        urlList,
+                                        titleText
+                                    )
                                 }
                             )
                         }

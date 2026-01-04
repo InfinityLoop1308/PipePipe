@@ -109,6 +109,7 @@ fun PlaylistMoreMenu(
     onAddToPlaylistClick: (() -> Unit)? = null,
     onRemoveDuplicatesClick: (() -> Unit)? = null,
     onRemoveWatchedClick: (() -> Unit)? = null,
+    onShareUrlListClick: (() -> Unit)? = null,
 ) {
     var showMoreMenu by remember { mutableStateOf(false) }
 
@@ -156,6 +157,14 @@ fun PlaylistMoreMenu(
                             onAddToPlaylistClick?.invoke()
                         },
                         leadingIcon = { Icon(Icons.Default.PlaylistAdd, contentDescription = null) }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(MR.strings.playlist_menu_share_url_list)) },
+                        onClick = {
+                            showMoreMenu = false
+                            onShareUrlListClick?.invoke()
+                        },
+                        leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) }
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(MR.strings.playlist_menu_delete)) },

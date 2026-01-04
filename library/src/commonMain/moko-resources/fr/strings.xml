@@ -579,4 +579,5 @@
 <string name="playlist_remove_duplicates_message">Supprimer tous les éléments en double de cette playlist ?</string>
 <string name="feed_fetch_channel_tabs">Récupérer les onglets de la chaîne</string>
 <string name="playlist_remove_partially_watched">Supprimer les partiellement vus</string>
+<string name="playlist_menu_share_url_list">Liste des URL à partager</string>
 </resources>
