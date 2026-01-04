@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
     lateinit var navController: NavHostController
     private var wasInPipMode = false
     private lateinit var drawerLayout: DrawerLayout
+    private var openPlayQueueFromIntent = false
 
     companion object {
         private const val REQUEST_NOTIFICATION_PERMISSION = 1001
@@ -334,7 +335,8 @@ class MainActivity : ComponentActivity() {
 
 
     private fun checkIntentForPlayQueue(intent: Intent) {
-        if (intent.getBooleanExtra("open_play_queue", false) && !SharedContext.playQueueVisibility.value) {
+        openPlayQueueFromIntent = intent.getBooleanExtra("open_play_queue", false)
+        if (openPlayQueueFromIntent && !SharedContext.playQueueVisibility.value) {
             SharedContext.toggleShowPlayQueueVisibility()
         }
     }
@@ -470,6 +472,11 @@ class MainActivity : ComponentActivity() {
         if (SharedContext.isInPipMode.value && !isInPictureInPictureMode) {
             handleExitPip() // for unknown reason, onPictureInPictureModeChanged not triggered on some devices.
         }
+        // Close play queue on normal resume (not from mediaSession notification)
+        if (!openPlayQueueFromIntent && SharedContext.playQueueVisibility.value) {
+            SharedContext.toggleShowPlayQueueVisibility()
+        }
+        openPlayQueueFromIntent = false
     }
 
 
