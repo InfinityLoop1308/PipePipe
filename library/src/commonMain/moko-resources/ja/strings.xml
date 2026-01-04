@@ -583,4 +583,7 @@
 <string name="set_as_cover">カバーに設定</string>
 <string name="feed_groups_grid_layout_title">フィードグループのグリッドレイアウト</string>
 <string name="feed_groups_grid_layout_summary">フィードグループを水平リストではなくグリッドで表示する</string>
+<string name="clear_all">すべてクリア</string>
+<string name="clear_all_logs_message">すべてのエラーログをクリアしてもよろしいですか？</string>
+<string name="clear_all_logs_title">すべてのログをクリア</string>
 </resources>

@@ -583,4 +583,7 @@
 <string name="set_as_cover">Als Titelbild festlegen</string>
 <string name="feed_groups_grid_layout_title">Rasterlayout für Feed-Gruppen</string>
 <string name="feed_groups_grid_layout_summary">Feed-Gruppen in einem Raster anstelle einer horizontalen Liste anzeigen</string>
+<string name="clear_all">Alles löschen</string>
+<string name="clear_all_logs_message">Möchten Sie wirklich alle Fehlerprotokolle löschen?</string>
+<string name="clear_all_logs_title">Alle Protokolle löschen</string>
 </resources>

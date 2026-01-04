@@ -583,4 +583,7 @@
 <string name="set_as_cover">设为封面</string>
 <string name="feed_groups_grid_layout_title">信息流群组的网格布局</string>
 <string name="feed_groups_grid_layout_summary">以网格而非水平列表显示信息流群组</string>
+<string name="clear_all">清除所有</string>
+<string name="clear_all_logs_message">您确定要清除所有错误日志吗？</string>
+<string name="clear_all_logs_title">清除所有日志</string>
 </resources>

@@ -587,6 +587,10 @@ object DatabaseOperations {
         database.appDatabaseQueries.deleteErrorLog(id)
     }
 
+    suspend fun deleteAllErrorLogs() = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.deleteAllErrorLogs()
+    }
+
     suspend fun getAllErrorLogs() = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.selectAllErrorLogs().executeAsList()
     }

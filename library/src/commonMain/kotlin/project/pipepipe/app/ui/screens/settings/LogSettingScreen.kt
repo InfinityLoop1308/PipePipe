@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +24,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.ui.component.CustomTopBar
 import project.pipepipe.app.ui.component.StacktraceDialog
 import java.text.SimpleDateFormat
@@ -35,9 +37,12 @@ fun LogSettingScreen(
     val platformActions = SharedContext.platformActions
     var errorLogs by remember { mutableStateOf(emptyList<project.pipepipe.database.Error_log>()) }
     var isLoading by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
+    var showMenu by remember { mutableStateOf(false) }
+    var showClearAllDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        GlobalScope.launch {
+        scope.launch {
             errorLogs = DatabaseOperations.getAllErrorLogs()
             isLoading = false
         }
@@ -45,7 +50,30 @@ fun LogSettingScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
         CustomTopBar(
-            defaultTitleText = stringResource(MR.strings.log)
+            defaultTitleText = stringResource(MR.strings.log),
+            actions = {
+                Box {
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menu"
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(MR.strings.clear_all)) },
+                            onClick = {
+                                showMenu = false
+                                showClearAllDialog = true
+                            },
+                            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
+                        )
+                    }
+                }
+            }
         )
 
         if (isLoading) {
@@ -96,6 +124,35 @@ fun LogSettingScreen(
             }
         }
     }
+
+    // Clear all logs confirmation dialog
+    if (showClearAllDialog) {
+        val msg = stringResource(MR.strings.done)
+        AlertDialog(
+            onDismissRequest = { showClearAllDialog = false },
+            title = { Text(stringResource(MR.strings.clear_all_logs_title)) },
+            text = { Text(stringResource(MR.strings.clear_all_logs_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        errorLogs = emptyList()
+                        GlobalScope.launch {
+                            DatabaseOperations.deleteAllErrorLogs()
+                            ToastManager.show(msg)
+                        }
+                        showClearAllDialog = false
+                    }
+                ) {
+                    Text(stringResource(MR.strings.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearAllDialog = false }) {
+                    Text(stringResource(MR.strings.cancel))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -112,6 +169,15 @@ private fun ErrorLogItem(
     val formattedDate = remember(log.timestamp) {
         dateFormat.format(Date(log.timestamp))
     }
+
+    val stacktracePreview = remember(log.stacktrace) {
+        if (log.stacktrace.length > 500) {
+            log.stacktrace.take(500) + "..."
+        } else {
+            log.stacktrace
+        }.replace("\n", " ")
+    }
+
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -144,7 +210,7 @@ private fun ErrorLogItem(
 
             // Stacktrace preview
             Text(
-                text = log.stacktrace.replace("\n", ""),
+                text = stacktracePreview,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 3,

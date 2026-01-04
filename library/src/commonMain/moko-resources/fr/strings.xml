@@ -583,4 +583,7 @@
 <string name="set_as_cover">Définir comme couverture</string>
 <string name="feed_groups_grid_layout_title">Disposition en grille pour les groupes de flux</string>
 <string name="feed_groups_grid_layout_summary">Afficher les groupes de flux dans une grille au lieu d\'une liste horizontale</string>
+<string name="clear_all">Tout effacer</string>
+<string name="clear_all_logs_message">Êtes-vous sûr de vouloir effacer tous les journaux d\'erreurs ?</string>
+<string name="clear_all_logs_title">Effacer tous les journaux</string>
 </resources>

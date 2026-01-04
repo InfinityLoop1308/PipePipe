@@ -604,6 +604,9 @@ VALUES (?, ?, ?, ?, ?, ?);
 deleteErrorLog:
 DELETE FROM error_log WHERE id = ?;
 
+deleteAllErrorLogs:
+DELETE FROM error_log;
+
 selectAllErrorLogs:
 SELECT * FROM error_log ORDER BY timestamp DESC;
 

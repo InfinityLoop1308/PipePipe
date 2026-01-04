@@ -583,4 +583,7 @@
 <string name="set_as_cover">Imposta come copertina</string>
 <string name="feed_groups_grid_layout_title">Layout a griglia per gruppi di feed</string>
 <string name="feed_groups_grid_layout_summary">Visualizza i gruppi di feed in una griglia invece di un elenco orizzontale</string>
+<string name="clear_all">Cancella tutto</string>
+<string name="clear_all_logs_message">Sei sicuro di voler cancellare tutti i log di errore?</string>
+<string name="clear_all_logs_title">Cancella tutti i log</string>
 </resources>

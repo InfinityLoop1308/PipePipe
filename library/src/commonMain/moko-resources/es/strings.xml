@@ -583,4 +583,7 @@
 <string name="set_as_cover">Establecer como portada</string>
 <string name="feed_groups_grid_layout_title">Diseño de cuadrícula para grupos de feeds</string>
 <string name="feed_groups_grid_layout_summary">Mostrar grupos de feeds en una cuadrícula en lugar de una lista horizontal</string>
+<string name="clear_all">Borrar todo</string>
+<string name="clear_all_logs_message">¿Estás seguro de que quieres borrar todos los registros de errores?</string>
+<string name="clear_all_logs_title">Borrar todos los registros</string>
 </resources>
