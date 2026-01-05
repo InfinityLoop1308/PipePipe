@@ -7,6 +7,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.Player
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 actual fun PlatformVideoSurface(
@@ -34,9 +38,6 @@ actual fun PlatformVideoSurface(
         update = { playerView ->
             playerView.player = player
             playerView.resizeMode = media3ResizeMode
-        },
-        onRelease = { playerView ->
-            playerView.player = null
         },
         modifier = modifier
     )
