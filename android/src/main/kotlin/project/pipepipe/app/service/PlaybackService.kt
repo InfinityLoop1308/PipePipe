@@ -254,7 +254,7 @@ class PlaybackService : MediaLibraryService() {
                 serviceScope.launch {
                     val savedPosition = DatabaseOperations.getStreamProgress(mediaId)
 
-                    if (savedPosition != null && savedPosition > 0) {
+                    if (savedPosition != null && savedPosition > 0 && targetItem.mediaMetadata.durationMs!! - savedPosition > 5000) {
                         seekTo(targetIndex, savedPosition)
                     } else {
                         seekTo(targetIndex, 0L)
