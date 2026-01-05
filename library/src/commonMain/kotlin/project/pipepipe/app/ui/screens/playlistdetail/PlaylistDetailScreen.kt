@@ -205,7 +205,7 @@ fun PlaylistDetailScreen(
     }
 
     fun startPlayAll(index: Int = 0, shuffle: Boolean = false) {
-        SharedContext.platformActions.playAll(viewModel.sortedItems, index, shuffle)
+        SharedContext.platformMediaController!!.playAll(viewModel.sortedItems, index, shuffle)
     }
 
     // Dialogs

@@ -78,14 +78,6 @@ interface PlatformActions {
     fun resetFeedState()
 
     /**
-     * Play all items in a playlist.
-     * @param items List of StreamInfo items to play
-     * @param startIndex Index of the item to start playing from
-     * @param shuffle Whether to shuffle the playlist
-     */
-    fun playAll(items: List<StreamInfo>, startIndex: Int = 0, shuffle: Boolean = false)
-
-    /**
      * Open a URL in the system's default browser.
      * @param url The URL to open
      */

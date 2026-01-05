@@ -160,29 +160,6 @@ class AndroidActions(
         onResetFeedState()
     }
 
-    override fun playAll(items: List<StreamInfo>, startIndex: Int, shuffle: Boolean) {
-        MainScope().launch {
-            val controller = MediaControllerHolder.getInstance(context)
-            controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-
-            // Save items to database
-            items.forEach { item ->
-                project.pipepipe.app.database.DatabaseOperations.insertOrUpdateStream(item)
-            }
-
-            val mediaItems = items.map { it.toMediaItem() }
-            controller.setShuffleModeEnabled(shuffle)
-            controller.setMediaItems(mediaItems, startIndex, 0L)
-            controller.prepare()
-            controller.play()
-
-            if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
-                kotlinx.coroutines.delay(500)
-                SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
-            }
-        }
-    }
-
     override fun openUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         context.startActivity(intent)

@@ -30,6 +30,7 @@ import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
 import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.helper.SponsorBlockHelper
+import project.pipepipe.app.platform.RepeatMode
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.RelatedItemInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
@@ -212,39 +213,135 @@ class PlaybackService : MediaLibraryService() {
             }
 
             override fun seekToNext() {
-                val nextIndex = nextMediaItemIndex
-                if (nextIndex != C.INDEX_UNSET) {
-                    seekToIndexWithRestoredProgress(nextIndex)
-                } else {
-                    super.seekToNext()
+                val nextItem = SharedContext.queueManager.getNextItem(
+                    when (repeatMode) {
+                        Player.REPEAT_MODE_ONE -> RepeatMode.ONE
+                        Player.REPEAT_MODE_ALL -> RepeatMode.ALL
+                        else -> RepeatMode.OFF
+                    }
+                )
+                if (nextItem != null) {
+                    // Update Media3's 3-element queue to include the next item
+                    updateThreeElementQueue(nextItem.mediaId)
+
+                    val targetMedia3Index = indexOfMediaItem(nextItem.mediaId)
+                    if (targetMedia3Index != C.INDEX_UNSET) {
+                        seekToIndexWithRestoredProgress(targetMedia3Index)
+                    }
                 }
             }
 
             override fun seekToPrevious() {
                 val maxSeekBackTime = maxSeekToPreviousPosition
-                if (currentPosition > maxSeekBackTime || previousMediaItemIndex == C.INDEX_UNSET) {
+                if (currentPosition > maxSeekBackTime) {
                     super.seekToPrevious()
                 } else {
-                    seekToIndexWithRestoredProgress(previousMediaItemIndex)
+                    val prevItem = SharedContext.queueManager.getPreviousItem()
+                    if (prevItem != null) {
+                        val targetMedia3Index = indexOfMediaItem(prevItem.mediaId)
+                        if (targetMedia3Index != C.INDEX_UNSET) {
+                            seekToIndexWithRestoredProgress(targetMedia3Index)
+                        }
+                    } else {
+                        super.seekToPrevious()
+                    }
                 }
             }
 
             override fun seekToNextMediaItem() {
-                val nextIndex = nextMediaItemIndex
-                if (nextIndex != C.INDEX_UNSET) {
-                    seekToIndexWithRestoredProgress(nextIndex)
-                } else {
-                    super.seekToNextMediaItem()
+                val nextItem = SharedContext.queueManager.getNextItem(
+                    when (repeatMode) {
+                        Player.REPEAT_MODE_ONE -> RepeatMode.ONE
+                        Player.REPEAT_MODE_ALL -> RepeatMode.ALL
+                        else -> RepeatMode.OFF
+                    }
+                )
+                if (nextItem != null) {
+                    // Update Media3's 3-element queue to include the next item
+                    updateThreeElementQueue(nextItem.mediaId)
+
+                    val targetMedia3Index = indexOfMediaItem(nextItem.mediaId)
+                    if (targetMedia3Index != C.INDEX_UNSET) {
+                        seekToIndexWithRestoredProgress(targetMedia3Index)
+                    }
                 }
             }
 
             override fun seekToPreviousMediaItem() {
-                 val prevIndex = previousMediaItemIndex
-                if (prevIndex != C.INDEX_UNSET) {
-                    seekToIndexWithRestoredProgress(prevIndex)
-                } else {
-                    super.seekToPreviousMediaItem()
+                val prevItem = SharedContext.queueManager.getPreviousItem()
+                if (prevItem != null) {
+                    // Update Media3's 3-element queue to include the previous item
+                    updateThreeElementQueue(prevItem.mediaId)
+
+                    val targetMedia3Index = indexOfMediaItem(prevItem.mediaId)
+                    if (targetMedia3Index != C.INDEX_UNSET) {
+                        seekToIndexWithRestoredProgress(targetMedia3Index)
+                    }
                 }
+            }
+
+            /**
+             * Update Media3's 3-element queue to center around the specified mediaId.
+             * This ensures that subsequent next/prev operations will work correctly.
+             */
+            private fun updateThreeElementQueue(centerMediaId: String) {
+                val currentQueue = SharedContext.queueManager.getCurrentQueue()
+                val currentIndex = SharedContext.queueManager.getIndexOfItem(centerMediaId)
+
+                if (currentIndex < 0) return
+
+                val currentItem = currentQueue[currentIndex]
+                val prevItem = if (currentIndex > 0) currentQueue[currentIndex - 1] else null
+                val nextItem = if (currentIndex < currentQueue.size - 1) currentQueue[currentIndex + 1] else null
+
+                val itemsToLoad = listOfNotNull(prevItem, currentItem, nextItem).map { it ->
+                    // Find existing MediaItem or create new one from PlatformMediaItem
+                    val existingIndex = indexOfMediaItem(it.mediaId)
+                    if (existingIndex != C.INDEX_UNSET) {
+                        getMediaItemAt(existingIndex)
+                    } else {
+                        // Create new MediaItem from PlatformMediaItem
+                        createMediaItemFromPlatform(it)
+                    }
+                }
+
+                if (itemsToLoad.isNotEmpty()) {
+                    val centerMedia3Index = itemsToLoad.indexOfFirst { it.mediaId == centerMediaId }
+                    if (centerMedia3Index >= 0) {
+                        // Update Media3's queue without interrupting playback
+                        setMediaItems(itemsToLoad, centerMedia3Index, currentPosition)
+                    }
+                }
+            }
+
+            private fun createMediaItemFromPlatform(platformItem: project.pipepipe.app.platform.PlatformMediaItem): MediaItem {
+                val extras = Bundle().apply {
+                    platformItem.serviceId?.let { putInt("KEY_SERVICE_ID", it) }
+                    platformItem.extras?.forEach { (key, value) ->
+                        when (value) {
+                            is String -> putString(key, value)
+                            is Int -> putInt(key, value)
+                            is Boolean -> putBoolean(key, value)
+                            is Map<*, *> -> {
+                                @Suppress("UNCHECKED_CAST")
+                                putSerializable(key, value as? java.io.Serializable)
+                            }
+                        }
+                    }
+                }
+                return MediaItem.Builder()
+                    .setUri("placeholder://stream")
+                    .setMediaId(platformItem.mediaId)
+                    .setMediaMetadata(
+                        MediaMetadata.Builder()
+                            .setTitle(platformItem.title)
+                            .setArtist(platformItem.artist)
+                            .setArtworkUri(platformItem.artworkUrl?.let { android.net.Uri.parse(it) })
+                            .setDurationMs(platformItem.durationMs)
+                            .setExtras(extras)
+                            .build()
+                    )
+                    .build()
             }
 
             private fun seekToIndexWithRestoredProgress(targetIndex: Int) {
@@ -260,6 +357,15 @@ class PlaybackService : MediaLibraryService() {
                         seekTo(targetIndex, 0L)
                     }
                 }
+            }
+
+            private fun indexOfMediaItem(mediaId: String): Int {
+                for (i in 0 until mediaItemCount) {
+                    if (getMediaItemAt(i).mediaId == mediaId) {
+                        return i
+                    }
+                }
+                return C.INDEX_UNSET
             }
         }
 
@@ -568,8 +674,18 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun applyPlaybackButtonState(state: PlaybackButtonState) {
+        val previousShuffleEnabled = player.shuffleModeEnabled
         player.repeatMode = state.repeatMode
         player.shuffleModeEnabled = state.shuffleEnabled
+
+        // Sync shuffle state with QueueManager
+        if (previousShuffleEnabled != state.shuffleEnabled) {
+            if (state.shuffleEnabled) {
+                SharedContext.queueManager.shuffle()
+            } else {
+                SharedContext.queueManager.unshuffle()
+            }
+        }
     }
 
     private fun updateMediaButtonPreferences() {
@@ -846,6 +962,13 @@ class PlaybackService : MediaLibraryService() {
                     loadAutoplayNextForMedia(it)
                     // Reset retry state when successfully transitioning to a new item
                     retryStates.remove(it.mediaId)
+
+                    // Update QueueManager index to match current Media3 item
+                    val currentQueue = SharedContext.queueManager.getCurrentQueue()
+                    val newIndex = currentQueue.indexOfFirst { item -> item.mediaId == it.mediaId }
+                    if (newIndex >= 0) {
+                        SharedContext.queueManager.setIndex(newIndex)
+                    }
                 }
             }
 

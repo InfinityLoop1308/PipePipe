@@ -236,7 +236,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     var configuredTabs by remember {
         mutableStateOf(SharedContext.settingsManager.getStringSet("video_tabs_key", setOf("comments", "related", "sponsorblock", "description")))
     }
-    println(configuredTabs)
 
     DisposableEffect(Unit) {
         val listener = SharedContext.settingsManager.addStringSetListener(

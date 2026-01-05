@@ -21,10 +21,12 @@ import project.pipepipe.shared.job.JobRequest
 import project.pipepipe.shared.job.JobResponse
 import project.pipepipe.app.helper.SettingsManager
 import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.app.QueueManager
 import project.pipepipe.app.platform.PlatformDatabaseActions
 import project.pipepipe.app.platform.PlatformActions
 import project.pipepipe.app.platform.PlatformMediaController
 import project.pipepipe.app.platform.PlatformRouteHandler
+import project.pipepipe.app.platform.PlatformMediaItem
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.shared.state.SessionManager
@@ -39,6 +41,7 @@ object SharedContext {
     var androidVersion: Int = -1
     lateinit var downloader: Downloader
     val objectMapper = ObjectMapper()
+    val queueManager = QueueManager()
     lateinit var sharedVideoDetailViewModel: VideoDetailViewModel
     lateinit var database: AppDatabase
     lateinit var serverRequestHandler: suspend (JobRequest) -> JobResponse<out Info, out Info>

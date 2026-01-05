@@ -19,6 +19,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -51,7 +52,7 @@ class AndroidMediaController(
     private val mediaController: MediaController
 ) : PlatformMediaController {
 
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
+    override val scope = CoroutineScope(Dispatchers.Main + Job())
 
     // ===== State Flows =====
     private val _isPlaying = MutableStateFlow(mediaController.isPlaying)
@@ -67,15 +68,6 @@ class AndroidMediaController(
 
     private val _playbackState = MutableStateFlow(mapPlaybackState(mediaController.playbackState))
     override val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
-
-    private val _playQueue = MutableStateFlow(buildPlayQueue())
-    override val playQueue: StateFlow<List<PlatformMediaItem>> = _playQueue.asStateFlow()
-
-    private val _mediaItemCount = MutableStateFlow(mediaController.mediaItemCount)
-    override val mediaItemCount: StateFlow<Int> = _mediaItemCount.asStateFlow()
-
-    private val _currentItemIndex = MutableStateFlow(mediaController.currentMediaItemIndex)
-    override val currentItemIndex: StateFlow<Int> = _currentItemIndex.asStateFlow()
 
     private val _currentMediaItem = MutableStateFlow(mediaController.currentMediaItem?.toPlatformMediaItem())
     override val currentMediaItem: StateFlow<PlatformMediaItem?> = _currentMediaItem.asStateFlow()
@@ -123,14 +115,13 @@ class AndroidMediaController(
         }
 
         override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-            _playQueue.value = buildPlayQueue()
-            _mediaItemCount.value = mediaController.mediaItemCount
-            _currentItemIndex.value = mediaController.currentMediaItemIndex
+            // Media3 timeline changes are ignored - QueueManager is single source of truth
+            // Media3 only plays the current item, doesn't manage queue
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             _currentMediaItem.value = mediaItem?.toPlatformMediaItem()
-            _currentItemIndex.value = mediaController.currentMediaItemIndex
+            // currentIndex comes from QueueManager, not Media3
             playbackEventCallbacks.forEach { it.onMediaItemTransition() }
         }
 
@@ -175,6 +166,16 @@ class AndroidMediaController(
                     playbackEventCallbacks.forEach { it.onSeek() }
                 }
                 Player.DISCONTINUITY_REASON_AUTO_TRANSITION -> {
+                    // Media3 auto-transitioned to next item
+                    // Update QueueManager index to match the new item
+                    val newMediaItem = mediaController.currentMediaItem
+                    newMediaItem?.let { item ->
+                        val currentQueue = SharedContext.queueManager.getCurrentQueue()
+                        val newIndex = currentQueue.indexOfFirst { it.mediaId == item.mediaId }
+                        if (newIndex >= 0) {
+                            SharedContext.queueManager.setIndex(newIndex)
+                        }
+                    }
                     playbackEventCallbacks.forEach { it.onAutoTransition() }
                 }
             }
@@ -185,6 +186,12 @@ class AndroidMediaController(
         mediaController.addListener(listener)
         // Initialize tracks
         updateAvailableTracks(mediaController.currentTracks)
+
+        // Don't initialize QueueManager here - it's managed by higher-level code
+        // Just update currentMediaItem from Media3 if needed
+        val currentItem = mediaController.currentMediaItem?.toPlatformMediaItem()
+        _currentMediaItem.value = currentItem
+
         // Start position update loop
         scope.launch {
             while (isActive) {
@@ -214,49 +221,45 @@ class AndroidMediaController(
         mediaController.seekTo(positionMs)
     }
 
-    override fun seekToItem(index: Int, positionMs: Long) {
-        mediaController.seekTo(index, positionMs)
+    // ===== Queue Navigation (Platform-specific implementations) =====
+
+    override fun loadCurrentItem(startPositionMs: Long) {
+        val item = SharedContext.queueManager.getCurrentItem()
+        if (item != null) {
+            loadMediaItem(item, startPositionMs)
+        }
     }
 
-    override fun seekToPrevious() {
-        mediaController.seekToPrevious()
-    }
-
-    override fun seekToNext() {
-        mediaController.seekToNext()
-    }
-
-    // ===== Queue Operations =====
-
-    override fun setMediaItem(item: PlatformMediaItem, startPositionMs: Long) {
-        mediaController.setMediaItem(item.toMedia3MediaItem(), startPositionMs)
-        mediaController.prepare()
-    }
-
-    override fun setQueue(items: List<PlatformMediaItem>, startIndex: Int, startPositionMs: Long) {
-        val mediaItems = items.map { it.toMedia3MediaItem() }
-        mediaController.setMediaItems(mediaItems, startIndex, startPositionMs)
-        mediaController.prepare()
-    }
-
-    override fun addMediaItem(item: PlatformMediaItem) {
-        mediaController.addMediaItem(item.toMedia3MediaItem())
-    }
-
-    override fun insertItem(index: Int, item: PlatformMediaItem) {
-        mediaController.addMediaItem(index, item.toMedia3MediaItem())
-    }
-
-    override fun removeItem(index: Int) {
-        mediaController.removeMediaItem(index)
-    }
-
-    override fun moveItem(from: Int, to: Int) {
-        mediaController.moveMediaItem(from, to)
-    }
-
-    override fun clearQueue() {
+    override fun clearPlayer() {
         mediaController.clearMediaItems()
+        _currentMediaItem.value = null
+    }
+
+    // ===== 3-Element Queue Mechanism =====
+    // Media3 only holds [previous, current, next] items
+    private var threeElementQueue = Triple<PlatformMediaItem?, PlatformMediaItem?, PlatformMediaItem?>(null, null, null)
+
+    override fun loadMediaItem(item: PlatformMediaItem, startPositionMs: Long) {
+        // Find the item's index in the queue
+        val currentQueue = SharedContext.queueManager.getCurrentQueue()
+        val index = currentQueue.indexOfFirst { it.mediaId == item.mediaId }
+        if (index >= 0) {
+            SharedContext.queueManager.setIndex(index)
+        }
+
+        val prevItem = if (index > 0) currentQueue[index - 1] else null
+        val nextItem = if (index < currentQueue.size - 1) currentQueue[index + 1] else null
+
+        val itemsToLoad = listOfNotNull(prevItem, item, nextItem).map { it.toMedia3MediaItem() }
+        val currentMedia3Index = itemsToLoad.indexOfFirst { it.mediaId == item.mediaId }
+
+        if (itemsToLoad.isNotEmpty()) {
+            mediaController.setMediaItems(itemsToLoad, currentMedia3Index.coerceAtLeast(0), startPositionMs)
+            mediaController.prepare()
+        }
+
+        threeElementQueue = Triple(prevItem, item, nextItem)
+        _currentMediaItem.value = item
     }
 
     // ===== Settings Controls =====
@@ -270,11 +273,53 @@ class AndroidMediaController(
     }
 
     override fun setShuffleModeEnabled(enabled: Boolean) {
-        mediaController.shuffleModeEnabled = enabled
+        // Get the current playing item's mediaId before shuffling
+        val currentMediaId = mediaController.currentMediaItem?.mediaId
+
+        if (enabled) {
+            // Enable shuffle - only update QueueManager, not Media3
+            // Current item continues playing, next item will be loaded from shuffled queue
+            SharedContext.queueManager.shuffle()
+        } else {
+            // Disable shuffle - only update QueueManager, not Media3
+            // Current item continues playing, next item will be loaded from unshuffled queue
+            SharedContext.queueManager.unshuffle()
+        }
+
+        _shuffleModeEnabled.value = enabled
+
+        // Reload the queue to Media3, keeping the current item at the same position
+        // setMediaItems won't interrupt playback if startIndex points to the current item
+        if (currentMediaId != null) {
+            reloadCurrentQueue(currentMediaId)
+        }
     }
 
-    override fun setPlaybackParameters(speed: Float, pitch: Float) {
-        mediaController.playbackParameters = PlaybackParameters(speed, pitch)
+    /**
+     * Reload the current queue to Media3, keeping the specified mediaId as the current item.
+     * This doesn't interrupt playback because we load the 3-element window [prev, current, next].
+     */
+    private fun reloadCurrentQueue(currentMediaId: String) {
+        val currentQueue = SharedContext.queueManager.getCurrentQueue()
+        val currentIndex = SharedContext.queueManager.getIndexOfItem(currentMediaId)
+
+        if (currentIndex < 0) return
+
+        val currentItem = currentQueue[currentIndex]
+        val prevItem = if (currentIndex > 0) currentQueue[currentIndex - 1] else null
+        val nextItem = if (currentIndex < currentQueue.size - 1) currentQueue[currentIndex + 1] else null
+
+        val itemsToLoad = listOfNotNull(prevItem, currentItem, nextItem).map { it.toMedia3MediaItem() }
+        val currentMedia3Index = itemsToLoad.indexOfFirst { it.mediaId == currentMediaId }
+
+        if (itemsToLoad.isNotEmpty() && currentMedia3Index >= 0) {
+            // Use setMediaItems with startIndex to keep the current item playing
+            // This doesn't call prepare() again, so playback isn't interrupted
+            mediaController.setMediaItems(itemsToLoad, currentMedia3Index, C.TIME_UNSET)
+
+            threeElementQueue = Triple(prevItem, currentItem, nextItem)
+            _currentMediaItem.value = currentItem
+        }
     }
 
     // ===== Lifecycle =====
@@ -298,23 +343,28 @@ class AndroidMediaController(
         )
     }
 
+    override fun setPlaybackParameters(speed: Float, pitch: Float) {
+        mediaController.playbackParameters = PlaybackParameters(speed, pitch)
+    }
+
     override fun playFromStreamInfo(streamInfo: StreamInfo) {
         MainScope().launch{
             if (mediaController.currentMediaItem?.mediaId != streamInfo.url) {
-                val mediaItem = streamInfo.toMediaItem()
+                val item = streamInfo.toPlatformMediaItem()
                 val progress = DatabaseOperations.getStreamProgress(streamInfo.url)
-                if (progress != null && streamInfo.duration != null &&
+                val startPositionMs = if (progress != null && streamInfo.duration != null &&
                     streamInfo.duration!! * 1000 - progress > 5000
                 ) {
-                    mediaController.setMediaItem(mediaItem, progress)
+                    progress
                 } else {
-                    mediaController.setMediaItem(mediaItem)
+                    0L
                 }
+                // Set as single item in queue and load it
+                super.setMediaItem(item, startPositionMs)
                 if (SharedContext.settingsManager.getString("watch_history_mode", "on_play") == "on_play") {
                     DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
                 }
             }
-            mediaController.prepare()
             mediaController.play()
         }
 
@@ -324,7 +374,10 @@ class AndroidMediaController(
     }
 
     override fun setStreamInfoAsOnlyMediaItem(streamInfo: StreamInfo) {
-        mediaController.setMediaItem(streamInfo.toMediaItem(), runBlocking{ DatabaseOperations.getStreamProgress(streamInfo.url) ?: 0L })
+        val item = streamInfo.toPlatformMediaItem()
+        val position = runBlocking { DatabaseOperations.getStreamProgress(streamInfo.url) ?: 0L }
+        SharedContext.queueManager.setMediaItem(item)
+        loadMediaItem(item, position)
     }
 
     override fun backgroundPlay(streamInfo: StreamInfo) {
@@ -334,9 +387,37 @@ class AndroidMediaController(
 
     override fun enqueue(streamInfo: StreamInfo) {
         MainScope().launch {
-            mediaController.addMediaItem(streamInfo.toMediaItem())
-            if (mediaController.mediaItemCount == 1) {
+            val item = streamInfo.toPlatformMediaItem()
+            super.addMediaItem(item)
+            // Play if queue was empty
+            if (SharedContext.queueManager.getCurrentQueue().size == 1) {
                 mediaController.play()
+            }
+        }
+    }
+
+    override fun playAll(items: List<StreamInfo>, startIndex: Int, shuffle: Boolean) {
+        MainScope().launch {
+            setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+            // Save items to database
+            GlobalScope.launch {
+                items.forEach { item ->
+                    DatabaseOperations.insertOrUpdateStream(item)
+                }
+            }
+
+            val platformMediaItems = items.map { it.toPlatformMediaItem() }
+            setQueue(platformMediaItems, startIndex, 0L)
+            if (shuffle) {
+                setShuffleModeEnabled(true)
+            }
+            play()
+
+            GlobalScope.launch {
+                if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
+                    kotlinx.coroutines.delay(500)
+                    SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+                }
             }
         }
     }
@@ -594,19 +675,6 @@ class AndroidMediaController(
         }
         _availableSubtitles.value = subtitles
     }
-
-    private fun buildPlayQueue(): List<PlatformMediaItem> {
-        val timeline = mediaController.currentTimeline
-        val windowCount = timeline.windowCount
-        if (windowCount == 0) return emptyList()
-
-        val window = Timeline.Window()
-        return (0 until windowCount).map { index ->
-            timeline.getWindow(index, window)
-            window.mediaItem.toPlatformMediaItem()
-        }
-    }
-
 
     private inline fun Tracks.Group.forEachIndexed(action: (index: Int, item: Format) -> Unit) {
         for (i in 0 until length) {
