@@ -32,7 +32,6 @@ import kotlinx.coroutines.launch
 import project.pipepipe.app.*
 import project.pipepipe.app.global.MediaControllerHolder
 import project.pipepipe.app.helper.ToastManager
-import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.service.*
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.StreamInfo
@@ -65,11 +64,10 @@ class AndroidActions(
     override fun enterPictureInPicture(streamInfo: StreamInfo) {
         val activity = context as? MainActivity ?: return
         MainScope().launch {
-            val controller = MediaControllerHolder.getInstance(context)
             SharedContext.sharedVideoDetailViewModel.loadVideoDetails(streamInfo.url, streamInfo.serviceId)
             SharedContext.enterPipmode()
-            controller.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
-            controller.playFromStreamInfo(streamInfo)
+            SharedContext.platformMediaController?.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
+            SharedContext.platformMediaController?.playFromStreamInfo(streamInfo)
             SharedContext.sharedVideoDetailViewModel.setPageState(VideoDetailPageState.FULLSCREEN_PLAYER)
             activity.enterPipMode(streamInfo.isPortrait)
         }

@@ -29,6 +29,7 @@ class QueueManager {
 
     private val _currentIndex = MutableStateFlow(0)
     val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
+    val isLastIndex: Boolean get() = currentIndex.value == queue.value.size - 1
 
     private var backup: MutableList<PlatformMediaItem>? = null
 

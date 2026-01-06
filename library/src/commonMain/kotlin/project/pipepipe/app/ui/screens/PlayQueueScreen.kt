@@ -81,7 +81,7 @@ fun PlayQueueScreen() {
 
     val listState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(listState) { from, to ->
-        mediaController.moveItem(from.index, to.index)
+        SharedContext.queueManager.moveItem(from.index, to.index)
     }
 
     LaunchedEffect(currentMediaItemIndex) {
@@ -174,9 +174,9 @@ fun PlayQueueScreen() {
         ) {
             itemsIndexed(
                 items = playQueue,
-                key = { index, item -> "${index}_${item.mediaId}"}
+                key = { index, item -> item.uuid}
             ) { index, platformMediaItem ->
-                ReorderableItem(reorderableLazyListState, key = "${index}_${platformMediaItem.mediaId}") { isDragging ->
+                ReorderableItem(reorderableLazyListState, key = platformMediaItem.uuid) { isDragging ->
                     val interactionSource = remember { MutableInteractionSource() }
                     PlayQueueItem(
                         mediaItem = platformMediaItem,

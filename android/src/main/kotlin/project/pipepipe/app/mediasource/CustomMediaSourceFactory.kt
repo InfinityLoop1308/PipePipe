@@ -25,6 +25,7 @@ import kotlinx.coroutines.*
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.executeJobFlow
+import project.pipepipe.app.platform.uuid
 import project.pipepipe.app.service.MediaBrowserHelper
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
@@ -161,6 +162,7 @@ class CustomMediaSourceFactory() : MediaSource.Factory {
 
     private fun MediaItem.copyWithStreamInfo(uri: Uri, mimeType: String, sponsorblockUrl: String?, relatedItemUrl: String?): MediaItem {
         val extras = Bundle().apply {
+            putString("KEY_UUID", uuid)
             putInt("KEY_SERVICE_ID", mediaMetadata.extras!!.getInt("KEY_SERVICE_ID"))
             putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)
             putString("KEY_RELATED_ITEM_URL", relatedItemUrl)
@@ -352,29 +354,4 @@ private class ErrorMediaPeriod(private val mediaId: String) : MediaPeriod {
     override fun continueLoading(loadingInfo: LoadingInfo): Boolean = false
     override fun isLoading(): Boolean = false
     override fun reevaluateBuffer(positionUs: Long) {}
-}
-
-fun StreamInfo.toMediaItem(): MediaItem {
-    val duration = (this.duration?:0) * 1000
-    val extras = Bundle().apply {
-        putString("KEY_DASH_MANIFEST", dashManifest)
-        putString("KEY_DASH_URL", dashUrl)
-        putString("KEY_HLS_URL", hlsUrl)
-        putInt("KEY_SERVICE_ID", serviceId)
-        putSerializable("KEY_HEADER_MAP", headers)
-        putBoolean("KEY_USE_CACHE", !isLive)
-        putString("KEY_SPONSORBLOCK_URL", sponsorblockUrl)
-        putString("KEY_RELATED_ITEM_URL", relatedItemUrl)
-    }
-    return MediaItem.Builder()
-        .setUri("placeholder://stream")
-        .setMediaId(this.url)
-        .setMediaMetadata(MediaMetadata.Builder()
-            .setTitle(this.name)
-            .setArtist(this.uploaderName)
-            .setArtworkUri(this.thumbnailUrl?.toUri())
-            .setDurationMs(duration)
-            .setExtras(extras)
-            .build())
-        .build()
 }

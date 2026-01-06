@@ -37,7 +37,6 @@ import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.global.MediaControllerHolder
 import project.pipepipe.app.helper.FormatHelper.isCodecAllowed
 import project.pipepipe.app.helper.FormatHelper.isHDRFromCodec
-import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.service.PlaybackService
 import project.pipepipe.app.service.stopService
 import project.pipepipe.app.uistate.VideoDetailPageState
@@ -171,7 +170,7 @@ class AndroidMediaController(
                     val newMediaItem = mediaController.currentMediaItem
                     newMediaItem?.let { item ->
                         val currentQueue = SharedContext.queueManager.getCurrentQueue()
-                        val newIndex = currentQueue.indexOfFirst { it.mediaId == item.mediaId }
+                        val newIndex = currentQueue.indexOfFirst { it.uuid == item.uuid }
                         if (newIndex >= 0) {
                             SharedContext.queueManager.setIndex(newIndex)
                         }
@@ -221,6 +220,14 @@ class AndroidMediaController(
         mediaController.seekTo(positionMs)
     }
 
+    override fun seekToPrevious() {
+        mediaController.seekToPrevious()
+    }
+
+    override fun seekToNext() {
+        mediaController.seekToNext()
+    }
+
     // ===== Queue Navigation (Platform-specific implementations) =====
 
     override fun loadCurrentItem(startPositionMs: Long) {
@@ -238,20 +245,33 @@ class AndroidMediaController(
     // ===== 3-Element Queue Mechanism =====
     // Media3 only holds [previous, current, next] items
     private var threeElementQueue = Triple<PlatformMediaItem?, PlatformMediaItem?, PlatformMediaItem?>(null, null, null)
-
+    private fun indexOfMediaItem(mediaId: String): Int {
+        for (i in 0 until mediaController.mediaItemCount) {
+            if (mediaController.getMediaItemAt(i).mediaId == mediaId) {
+                return i
+            }
+        }
+        return C.INDEX_UNSET
+    }
     override fun loadMediaItem(item: PlatformMediaItem, startPositionMs: Long) {
         // Find the item's index in the queue
         val currentQueue = SharedContext.queueManager.getCurrentQueue()
-        val index = currentQueue.indexOfFirst { it.mediaId == item.mediaId }
-        if (index >= 0) {
-            SharedContext.queueManager.setIndex(index)
-        }
+        val index = currentQueue.indexOfFirst { it.uuid == item.uuid }
+        if (index < 0) return
 
         val prevItem = if (index > 0) currentQueue[index - 1] else null
         val nextItem = if (index < currentQueue.size - 1) currentQueue[index + 1] else null
 
-        val itemsToLoad = listOfNotNull(prevItem, item, nextItem).map { it.toMedia3MediaItem() }
-        val currentMedia3Index = itemsToLoad.indexOfFirst { it.mediaId == item.mediaId }
+        val itemsToLoad = listOfNotNull(prevItem, item, nextItem).map { it ->
+            // Find existing MediaItem or create new one from PlatformMediaItem
+            val existingIndex = indexOfMediaItem(it.mediaId)
+            if (existingIndex != C.INDEX_UNSET) {
+                mediaController.getMediaItemAt(existingIndex)
+            } else {
+                it.toMedia3MediaItem()
+            }
+        }
+        val currentMedia3Index = itemsToLoad.indexOfFirst { it.uuid == item.uuid }
 
         if (itemsToLoad.isNotEmpty()) {
             mediaController.setMediaItems(itemsToLoad, currentMedia3Index.coerceAtLeast(0), startPositionMs)
@@ -273,55 +293,14 @@ class AndroidMediaController(
     }
 
     override fun setShuffleModeEnabled(enabled: Boolean) {
-        // Get the current playing item's mediaId before shuffling
-        val currentMediaId = mediaController.currentMediaItem?.mediaId
-
         if (enabled) {
-            // Enable shuffle - only update QueueManager, not Media3
-            // Current item continues playing, next item will be loaded from shuffled queue
             SharedContext.queueManager.shuffle()
         } else {
-            // Disable shuffle - only update QueueManager, not Media3
-            // Current item continues playing, next item will be loaded from unshuffled queue
             SharedContext.queueManager.unshuffle()
         }
-
         _shuffleModeEnabled.value = enabled
 
-        // Reload the queue to Media3, keeping the current item at the same position
-        // setMediaItems won't interrupt playback if startIndex points to the current item
-        if (currentMediaId != null) {
-            reloadCurrentQueue(currentMediaId)
-        }
     }
-
-    /**
-     * Reload the current queue to Media3, keeping the specified mediaId as the current item.
-     * This doesn't interrupt playback because we load the 3-element window [prev, current, next].
-     */
-    private fun reloadCurrentQueue(currentMediaId: String) {
-        val currentQueue = SharedContext.queueManager.getCurrentQueue()
-        val currentIndex = SharedContext.queueManager.getIndexOfItem(currentMediaId)
-
-        if (currentIndex < 0) return
-
-        val currentItem = currentQueue[currentIndex]
-        val prevItem = if (currentIndex > 0) currentQueue[currentIndex - 1] else null
-        val nextItem = if (currentIndex < currentQueue.size - 1) currentQueue[currentIndex + 1] else null
-
-        val itemsToLoad = listOfNotNull(prevItem, currentItem, nextItem).map { it.toMedia3MediaItem() }
-        val currentMedia3Index = itemsToLoad.indexOfFirst { it.mediaId == currentMediaId }
-
-        if (itemsToLoad.isNotEmpty() && currentMedia3Index >= 0) {
-            // Use setMediaItems with startIndex to keep the current item playing
-            // This doesn't call prepare() again, so playback isn't interrupted
-            mediaController.setMediaItems(itemsToLoad, currentMedia3Index, C.TIME_UNSET)
-
-            threeElementQueue = Triple(prevItem, currentItem, nextItem)
-            _currentMediaItem.value = currentItem
-        }
-    }
-
     // ===== Lifecycle =====
 
     override val nativePlayer: Any get() = mediaController
@@ -719,61 +698,6 @@ class AndroidMediaController(
             Player.REPEAT_MODE_ALL -> RepeatMode.ALL
             else -> RepeatMode.OFF
         }
-    }
-
-    private fun MediaItem.toPlatformMediaItem(): PlatformMediaItem {
-        val extrasMap = mediaMetadata.extras?.let { bundle ->
-            val map = mutableMapOf<String, Any?>()
-            bundle.keySet().forEach { key ->
-                // Only support serializable types: String, Int, Boolean, Map<String, String>
-                when (val value = bundle.get(key)) {
-                    is String, is Int, is Boolean, is Map<*, *> -> map[key] = value
-                    // Skip unsupported types
-                }
-            }
-            map.ifEmpty { null }
-        }
-
-        return PlatformMediaItem(
-            mediaId = mediaId,
-            title = mediaMetadata.title?.toString(),
-            artist = mediaMetadata.artist?.toString(),
-            artworkUrl = mediaMetadata.artworkUri?.toString(),
-            durationMs = mediaMetadata.durationMs,
-            serviceId = mediaMetadata.extras?.getInt("KEY_SERVICE_ID"),
-            extras = extrasMap
-        )
-    }
-
-    private fun PlatformMediaItem.toMedia3MediaItem(): MediaItem {
-        val extras = Bundle().apply {
-            serviceId?.let { putInt("KEY_SERVICE_ID", it) }
-            extras?.forEach { (key, value) ->
-                when (value) {
-                    is String -> putString(key, value)
-                    is Int -> putInt(key, value)
-                    is Boolean -> putBoolean(key, value)
-                    is Map<*, *> -> {
-                        // Assuming header map is Map<String, String>
-                        @Suppress("UNCHECKED_CAST")
-                        putSerializable(key, value as? java.io.Serializable)
-                    }
-                }
-            }
-        }
-        return MediaItem.Builder()
-            .setUri("placeholder://stream")
-            .setMediaId(mediaId)
-            .setMediaMetadata(
-                MediaMetadata.Builder()
-                    .setTitle(title)
-                    .setArtist(artist)
-                    .setArtworkUri(artworkUrl?.toUri())
-                    .setDurationMs(durationMs)
-                    .setExtras(extras)
-                    .build()
-            )
-            .build()
     }
 
     companion object {

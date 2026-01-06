@@ -198,30 +198,13 @@ interface PlatformMediaController {
     }
 
     /** Seek to previous item */
-    fun seekToPrevious() {
-        loadItemFromQueue { SharedContext.queueManager.getPreviousItem() }
-    }
+    fun seekToPrevious()
 
     /** Seek to next item */
-    fun seekToNext() {
-        loadItemFromQueue { SharedContext.queueManager.getNextItem(repeatMode.value) }
-    }
+    fun seekToNext()
 
     // ===== Queue Navigation Helpers =====
 
-    /** Load an item from QueueManager into player */
-    fun loadItemFromQueue(getItem: () -> PlatformMediaItem?) {
-        val item = getItem()
-        if (item != null) {
-            // Update QueueManager index
-            val index = SharedContext.queueManager.getCurrentQueue().indexOf(item)
-            if (index >= 0) {
-                SharedContext.queueManager.setIndex(index)
-            }
-            // Load into platform player
-            loadMediaItem(item, 0L)
-        }
-    }
 
     /** Load a specific media item into platform player */
     fun loadMediaItem(item: PlatformMediaItem, startPositionMs: Long)

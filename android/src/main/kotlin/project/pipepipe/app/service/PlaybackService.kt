@@ -28,9 +28,10 @@ import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
-import project.pipepipe.app.mediasource.toMediaItem
 import project.pipepipe.app.helper.SponsorBlockHelper
 import project.pipepipe.app.platform.RepeatMode
+import project.pipepipe.app.platform.toMedia3MediaItem
+import project.pipepipe.app.platform.toPlatformMediaItem
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.RelatedItemInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
@@ -222,7 +223,7 @@ class PlaybackService : MediaLibraryService() {
                 )
                 if (nextItem != null) {
                     // Update Media3's 3-element queue to include the next item
-                    updateThreeElementQueue(nextItem.mediaId)
+                    SharedContext.platformMediaController?.loadMediaItem(nextItem, currentPosition)
 
                     val targetMedia3Index = indexOfMediaItem(nextItem.mediaId)
                     if (targetMedia3Index != C.INDEX_UNSET) {
@@ -238,6 +239,7 @@ class PlaybackService : MediaLibraryService() {
                 } else {
                     val prevItem = SharedContext.queueManager.getPreviousItem()
                     if (prevItem != null) {
+                        SharedContext.platformMediaController?.loadMediaItem(prevItem, currentPosition)
                         val targetMedia3Index = indexOfMediaItem(prevItem.mediaId)
                         if (targetMedia3Index != C.INDEX_UNSET) {
                             seekToIndexWithRestoredProgress(targetMedia3Index)
@@ -258,7 +260,7 @@ class PlaybackService : MediaLibraryService() {
                 )
                 if (nextItem != null) {
                     // Update Media3's 3-element queue to include the next item
-                    updateThreeElementQueue(nextItem.mediaId)
+                    SharedContext.platformMediaController?.loadMediaItem(nextItem, currentPosition)
 
                     val targetMedia3Index = indexOfMediaItem(nextItem.mediaId)
                     if (targetMedia3Index != C.INDEX_UNSET) {
@@ -271,77 +273,13 @@ class PlaybackService : MediaLibraryService() {
                 val prevItem = SharedContext.queueManager.getPreviousItem()
                 if (prevItem != null) {
                     // Update Media3's 3-element queue to include the previous item
-                    updateThreeElementQueue(prevItem.mediaId)
+                    SharedContext.platformMediaController?.loadMediaItem(prevItem, currentPosition)
 
                     val targetMedia3Index = indexOfMediaItem(prevItem.mediaId)
                     if (targetMedia3Index != C.INDEX_UNSET) {
                         seekToIndexWithRestoredProgress(targetMedia3Index)
                     }
                 }
-            }
-
-            /**
-             * Update Media3's 3-element queue to center around the specified mediaId.
-             * This ensures that subsequent next/prev operations will work correctly.
-             */
-            private fun updateThreeElementQueue(centerMediaId: String) {
-                val currentQueue = SharedContext.queueManager.getCurrentQueue()
-                val currentIndex = SharedContext.queueManager.getIndexOfItem(centerMediaId)
-
-                if (currentIndex < 0) return
-
-                val currentItem = currentQueue[currentIndex]
-                val prevItem = if (currentIndex > 0) currentQueue[currentIndex - 1] else null
-                val nextItem = if (currentIndex < currentQueue.size - 1) currentQueue[currentIndex + 1] else null
-
-                val itemsToLoad = listOfNotNull(prevItem, currentItem, nextItem).map { it ->
-                    // Find existing MediaItem or create new one from PlatformMediaItem
-                    val existingIndex = indexOfMediaItem(it.mediaId)
-                    if (existingIndex != C.INDEX_UNSET) {
-                        getMediaItemAt(existingIndex)
-                    } else {
-                        // Create new MediaItem from PlatformMediaItem
-                        createMediaItemFromPlatform(it)
-                    }
-                }
-
-                if (itemsToLoad.isNotEmpty()) {
-                    val centerMedia3Index = itemsToLoad.indexOfFirst { it.mediaId == centerMediaId }
-                    if (centerMedia3Index >= 0) {
-                        // Update Media3's queue without interrupting playback
-                        setMediaItems(itemsToLoad, centerMedia3Index, currentPosition)
-                    }
-                }
-            }
-
-            private fun createMediaItemFromPlatform(platformItem: project.pipepipe.app.platform.PlatformMediaItem): MediaItem {
-                val extras = Bundle().apply {
-                    platformItem.serviceId?.let { putInt("KEY_SERVICE_ID", it) }
-                    platformItem.extras?.forEach { (key, value) ->
-                        when (value) {
-                            is String -> putString(key, value)
-                            is Int -> putInt(key, value)
-                            is Boolean -> putBoolean(key, value)
-                            is Map<*, *> -> {
-                                @Suppress("UNCHECKED_CAST")
-                                putSerializable(key, value as? java.io.Serializable)
-                            }
-                        }
-                    }
-                }
-                return MediaItem.Builder()
-                    .setUri("placeholder://stream")
-                    .setMediaId(platformItem.mediaId)
-                    .setMediaMetadata(
-                        MediaMetadata.Builder()
-                            .setTitle(platformItem.title)
-                            .setArtist(platformItem.artist)
-                            .setArtworkUri(platformItem.artworkUrl?.let { android.net.Uri.parse(it) })
-                            .setDurationMs(platformItem.durationMs)
-                            .setExtras(extras)
-                            .build()
-                    )
-                    .build()
             }
 
             private fun seekToIndexWithRestoredProgress(targetIndex: Int) {
@@ -869,12 +807,9 @@ class PlaybackService : MediaLibraryService() {
                     if (currentIndex != -1 && currentIndex < partitions.size - 1) {
                         // Get next partition item
                         val nextItem = partitions[currentIndex + 1]
-                        val newMediaItem = nextItem.toMediaItem()
 
-                        withContext(Dispatchers.Main) {
-                            if (player.currentMediaItemIndex == player.mediaItemCount - 1) {
-                                player.addMediaItem(newMediaItem)
-                            }
+                        if (SharedContext.queueManager.isLastIndex) {
+                            SharedContext.queueManager.addItem(nextItem.toPlatformMediaItem())
                         }
                         return@launch
                     }
@@ -890,15 +825,8 @@ class PlaybackService : MediaLibraryService() {
                         runCatching { it.duration!! <= 360 }.getOrDefault(true)
                     } else true
                 }.random()
-
-                // Create media item and add to queue
-                val newMediaItem = randomItem.toMediaItem()
-
-                withContext(Dispatchers.Main) {
-                    // Check again if still the last item (queue might have changed)
-                    if (player.currentMediaItemIndex == player.mediaItemCount - 1) {
-                        player.addMediaItem(newMediaItem)
-                    }
+                if (SharedContext.queueManager.isLastIndex) {
+                    SharedContext.queueManager.addItem(randomItem.toPlatformMediaItem())
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -914,6 +842,7 @@ class PlaybackService : MediaLibraryService() {
                 // Get service ID from current media item
                 val currentItem = player.currentMediaItem ?: return@launch
                 val serviceId = currentItem.mediaMetadata.extras?.getInt("KEY_SERVICE_ID")
+                val uuid = currentItem.mediaMetadata.extras?.getString("KEY_UUID")
 
                 // Fetch fresh stream info
                 val streamInfo = withContext(Dispatchers.IO) {
@@ -925,7 +854,7 @@ class PlaybackService : MediaLibraryService() {
                 }
 
                 // Create new media item with fresh stream URLs
-                val newMediaItem = streamInfo.toMediaItem()
+                val newMediaItem = streamInfo.toMedia3MediaItem(uuid)
 
                 // Replace the media item at the current position
                 withContext(Dispatchers.Main) {
@@ -953,8 +882,11 @@ class PlaybackService : MediaLibraryService() {
     private fun createPlayerListener(): Player.Listener {
         return object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                if (reason != Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) {
+                if (reason != Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT && mediaItem != player.currentMediaItem) {
                     saveCurrentProgress()
+                }
+                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO && mediaItem != null) {
+                    SharedContext.platformMediaController?.loadMediaItem(mediaItem.toPlatformMediaItem(), player.currentPosition)
                 }
                 mediaItem?.let {
                     skippedSegments[it.mediaId] = mutableSetOf()
@@ -996,9 +928,10 @@ class PlaybackService : MediaLibraryService() {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                if (!isPlaying) {
-                    saveCurrentProgress()
-                }
+                // seems not correct and not needed at all
+//                if (!isPlaying) {
+//                    saveCurrentProgress()
+//                }
             }
 
             override fun onPlayerError(error: PlaybackException) {
@@ -1112,33 +1045,6 @@ class PlaybackService : MediaLibraryService() {
             MainScope().launch {
                 DatabaseOperations.updateStreamProgress(currentMediaItem.mediaId, currentPosition)
             }
-        }
-    }
-}
-@OptIn(UnstableApi::class)
-fun MediaController.setPlaybackMode(mode: PlaybackMode) {
-    sendCustomCommand(PlaybackService.CustomCommands.buildSetPlaybackModeCommand(mode), android.os.Bundle.EMPTY)
-}
-
-fun MediaController.playFromStreamInfo(streamInfo: StreamInfo) {
-    MainScope().launch {
-        if (currentMediaItem?.mediaId != streamInfo.url) {
-            val mediaItem = streamInfo.toMediaItem()
-            val progress = DatabaseOperations.getStreamProgress(streamInfo.url)
-            if (progress != null && streamInfo.duration != null &&
-                streamInfo.duration!! * 1000 - progress > 5000) {
-                setMediaItem(mediaItem, progress)
-            } else {
-                setMediaItem(mediaItem)
-            }
-            if (SharedContext.settingsManager.getString("watch_history_mode", "on_play") == "on_play"){
-                DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
-            }
-        }
-        prepare()
-        play()
-        if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
-            SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
         }
     }
 }
