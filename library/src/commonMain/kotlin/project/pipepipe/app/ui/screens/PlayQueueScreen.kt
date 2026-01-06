@@ -66,8 +66,8 @@ fun PlayQueueScreen() {
         return
     }
 
-    val playQueue by mediaController.playQueue.collectAsState()
-    val currentMediaItemIndex by mediaController.currentItemIndex.collectAsState()
+    val playQueue by SharedContext.queueManager.queue.collectAsState()
+    val currentMediaItemIndex by SharedContext.queueManager.currentIndex.collectAsState()
     val currentMediaItem by mediaController.currentMediaItem.collectAsState()
     val isPlaying by mediaController.isPlaying.collectAsState()
     val currentPosition by mediaController.currentPosition.collectAsState()

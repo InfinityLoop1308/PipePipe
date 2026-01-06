@@ -159,22 +159,19 @@ class AndroidMediaController(
             newPosition: Player.PositionInfo,
             reason: Int
         ) {
+            if (oldPosition.mediaItemIndex != newPosition.mediaItemIndex) {
+                oldPosition.mediaItem?.let {
+                    GlobalScope.launch {
+                        DatabaseOperations.updateStreamProgress(it.mediaId, oldPosition.positionMs)
+                    }
+                }
+            }
             when (reason) {
                 Player.DISCONTINUITY_REASON_SEEK,
                 Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT -> {
                     playbackEventCallbacks.forEach { it.onSeek() }
                 }
                 Player.DISCONTINUITY_REASON_AUTO_TRANSITION -> {
-                    // Media3 auto-transitioned to next item
-                    // Update QueueManager index to match the new item
-                    val newMediaItem = mediaController.currentMediaItem
-                    newMediaItem?.let { item ->
-                        val currentQueue = SharedContext.queueManager.getCurrentQueue()
-                        val newIndex = currentQueue.indexOfFirst { it.uuid == item.uuid }
-                        if (newIndex >= 0) {
-                            SharedContext.queueManager.setIndex(newIndex)
-                        }
-                    }
                     playbackEventCallbacks.forEach { it.onAutoTransition() }
                 }
             }
@@ -230,10 +227,10 @@ class AndroidMediaController(
 
     // ===== Queue Navigation (Platform-specific implementations) =====
 
-    override fun loadCurrentItem(startPositionMs: Long) {
+    override fun loadCurrentItem(startPositionMs: Long?, shouldKeepPosition: Boolean) {
         val item = SharedContext.queueManager.getCurrentItem()
         if (item != null) {
-            loadMediaItem(item, startPositionMs)
+            loadMediaItem(item, startPositionMs, shouldKeepPosition = shouldKeepPosition, shouldPrepare = false)
         }
     }
 
@@ -253,14 +250,20 @@ class AndroidMediaController(
         }
         return C.INDEX_UNSET
     }
-    override fun loadMediaItem(item: PlatformMediaItem, startPositionMs: Long) {
+    override fun loadMediaItem(
+        item: PlatformMediaItem,
+        startPositionMs: Long?,
+        shouldPrepare: Boolean,
+        shouldKeepPosition: Boolean
+    ) {
         // Find the item's index in the queue
         val currentQueue = SharedContext.queueManager.getCurrentQueue()
         val index = currentQueue.indexOfFirst { it.uuid == item.uuid }
         if (index < 0) return
+        SharedContext.queueManager.setIndex(index)
 
-        val prevItem = if (index > 0) currentQueue[index - 1] else null
-        val nextItem = if (index < currentQueue.size - 1) currentQueue[index + 1] else null
+        val prevItem = SharedContext.queueManager.getPreviousItem()
+        val nextItem = SharedContext.queueManager.getNextItem(SharedContext.platformMediaController?.repeatMode?.value?: RepeatMode.OFF)
 
         val itemsToLoad = listOfNotNull(prevItem, item, nextItem).map { it ->
             // Find existing MediaItem or create new one from PlatformMediaItem
@@ -274,8 +277,30 @@ class AndroidMediaController(
         val currentMedia3Index = itemsToLoad.indexOfFirst { it.uuid == item.uuid }
 
         if (itemsToLoad.isNotEmpty()) {
-            mediaController.setMediaItems(itemsToLoad, currentMedia3Index.coerceAtLeast(0), startPositionMs)
-            mediaController.prepare()
+            val startPositionMs = startPositionMs ?: runBlocking {
+                val progress = DatabaseOperations.getStreamProgress(item.mediaId)
+                if (progress != null && item.durationMs != null &&
+                    item.durationMs!! - progress > 5000
+                ) {
+                    progress
+                } else {
+                    0L
+                }
+            }
+
+            if (shouldKeepPosition && mediaController.currentMediaItem?.mediaId == item.mediaId) {
+                repeat(mediaController.currentMediaItemIndex) { mediaController.removeMediaItem(0) }
+                while (mediaController.mediaItemCount > 1) { mediaController.removeMediaItem(1) }
+                if (currentMedia3Index == 1) {
+                    mediaController.addMediaItem(0, itemsToLoad[0])
+                }
+                if (currentMedia3Index != itemsToLoad.lastIndex) {
+                    mediaController.addMediaItem(currentMedia3Index + 1, itemsToLoad.last())
+                }
+            } else {
+                mediaController.setMediaItems(itemsToLoad, currentMedia3Index.coerceAtLeast(0), startPositionMs)
+            }
+            if (shouldPrepare){ mediaController.prepare() }
         }
 
         threeElementQueue = Triple(prevItem, item, nextItem)
@@ -293,10 +318,12 @@ class AndroidMediaController(
     }
 
     override fun setShuffleModeEnabled(enabled: Boolean) {
-        if (enabled) {
+        if (enabled && !shuffleModeEnabled.value) {
             SharedContext.queueManager.shuffle()
-        } else {
+            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+        } else if (!enabled && shuffleModeEnabled.value){
             SharedContext.queueManager.unshuffle()
+            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
         }
         _shuffleModeEnabled.value = enabled
 
@@ -330,20 +357,14 @@ class AndroidMediaController(
         MainScope().launch{
             if (mediaController.currentMediaItem?.mediaId != streamInfo.url) {
                 val item = streamInfo.toPlatformMediaItem()
-                val progress = DatabaseOperations.getStreamProgress(streamInfo.url)
-                val startPositionMs = if (progress != null && streamInfo.duration != null &&
-                    streamInfo.duration!! * 1000 - progress > 5000
-                ) {
-                    progress
-                } else {
-                    0L
-                }
+
                 // Set as single item in queue and load it
-                super.setMediaItem(item, startPositionMs)
+                super.setMediaItem(item, null)
                 if (SharedContext.settingsManager.getString("watch_history_mode", "on_play") == "on_play") {
                     DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
                 }
             }
+            mediaController.prepare()
             mediaController.play()
         }
 
@@ -354,9 +375,8 @@ class AndroidMediaController(
 
     override fun setStreamInfoAsOnlyMediaItem(streamInfo: StreamInfo) {
         val item = streamInfo.toPlatformMediaItem()
-        val position = runBlocking { DatabaseOperations.getStreamProgress(streamInfo.url) ?: 0L }
         SharedContext.queueManager.setMediaItem(item)
-        loadMediaItem(item, position)
+        loadMediaItem(item)
     }
 
     override fun backgroundPlay(streamInfo: StreamInfo) {
@@ -384,12 +404,12 @@ class AndroidMediaController(
                     DatabaseOperations.insertOrUpdateStream(item)
                 }
             }
-
             val platformMediaItems = items.map { it.toPlatformMediaItem() }
-            setQueue(platformMediaItems, startIndex, 0L)
+            setQueue(platformMediaItems, startIndex, null)
             if (shuffle) {
                 setShuffleModeEnabled(true)
             }
+            prepare()
             play()
 
             GlobalScope.launch {

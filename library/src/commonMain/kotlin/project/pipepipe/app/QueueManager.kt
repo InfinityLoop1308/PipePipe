@@ -1,8 +1,7 @@
 package project.pipepipe.app
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.*
 import project.pipepipe.app.platform.PlatformMediaItem
 import project.pipepipe.app.platform.RepeatMode
 
@@ -26,6 +25,10 @@ import project.pipepipe.app.platform.RepeatMode
 class QueueManager {
     private val _queue = MutableStateFlow<List<PlatformMediaItem>>(emptyList())
     val queue: StateFlow<List<PlatformMediaItem>> = _queue.asStateFlow()
+
+    val mediaItemCount: StateFlow<Int>
+        get() = _queue.map { it.size }.stateIn(GlobalScope, SharingStarted.Eagerly, 0)
+
 
     private val _currentIndex = MutableStateFlow(0)
     val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
@@ -66,12 +69,11 @@ class QueueManager {
         val index = _currentIndex.value
 
         return when (repeatMode) {
-            RepeatMode.ONE -> getCurrentItem() // Repeat current
             RepeatMode.ALL -> {
                 if (currentQueue.isEmpty()) null
                 else currentQueue[(index + 1) % currentQueue.size]
             }
-            RepeatMode.OFF -> {
+            RepeatMode.OFF, RepeatMode.ONE -> {
                 if (index + 1 < currentQueue.size) currentQueue[index + 1]
                 else null
             }

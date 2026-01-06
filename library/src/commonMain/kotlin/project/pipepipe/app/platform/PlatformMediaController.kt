@@ -1,10 +1,7 @@
 package project.pipepipe.app.platform
 
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.FormatHelper
@@ -126,23 +123,6 @@ interface PlatformMediaController {
     /** Current subtitle cues */
     val currentSubtitles: StateFlow<List<SubtitleCue>>
 
-    // ===== Queue State =====
-
-    /** Current play queue */
-    val playQueue: StateFlow<List<PlatformMediaItem>>
-        get() = SharedContext.queueManager.queue
-
-    /** Number of items in the queue */
-    val mediaItemCount: StateFlow<Int>
-        get() = SharedContext.queueManager.queue
-            .map { it.size }
-            .stateIn(scope, SharingStarted.Eagerly, 0)
-
-    /** Index of currently playing item in the queue */
-    val currentItemIndex: StateFlow<Int>
-        get() = SharedContext.queueManager.currentIndex
-
-    /** Currently playing media item */
     val currentMediaItem: StateFlow<PlatformMediaItem?>
 
     // ===== Playback Settings =====
@@ -189,7 +169,7 @@ interface PlatformMediaController {
     fun seekTo(positionMs: Long)
 
     /** Seek to specific item in queue */
-    fun seekToItem(index: Int, positionMs: Long = 0) {
+    fun seekToItem(index: Int, positionMs: Long? = null) {
         val item = SharedContext.queueManager.getCurrentQueue().getOrNull(index)
         if (item != null) {
             SharedContext.queueManager.setIndex(index)
@@ -207,18 +187,18 @@ interface PlatformMediaController {
 
 
     /** Load a specific media item into platform player */
-    fun loadMediaItem(item: PlatformMediaItem, startPositionMs: Long)
+    fun loadMediaItem(item: PlatformMediaItem, startPositionMs: Long? = null, shouldPrepare: Boolean = true, shouldKeepPosition: Boolean = false)
 
     // ===== Queue Operations =====
 
     /** Set a single media item and optionally start playback */
-    fun setMediaItem(item: PlatformMediaItem, startPositionMs: Long = 0) {
+    fun setMediaItem(item: PlatformMediaItem, startPositionMs: Long? = null) {
         SharedContext.queueManager.setMediaItem(item)
         loadCurrentItem(startPositionMs)
     }
 
     /** Set queue with multiple items */
-    fun setQueue(items: List<PlatformMediaItem>, startIndex: Int = 0, startPositionMs: Long = 0) {
+    fun setQueue(items: List<PlatformMediaItem>, startIndex: Int = 0, startPositionMs: Long? = null) {
         SharedContext.queueManager.setQueue(items, startIndex)
         loadCurrentItem(startPositionMs)
     }
@@ -252,7 +232,7 @@ interface PlatformMediaController {
     // ===== Queue Navigation (provided by implementation) =====
 
     /** Load the current item from queue into the player */
-    fun loadCurrentItem(startPositionMs: Long = 0)
+    fun loadCurrentItem(startPositionMs: Long? = null, shouldKeepPosition: Boolean = false)
 
     /** Clear the player media items */
     fun clearPlayer()

@@ -212,102 +212,9 @@ class PlaybackService : MediaLibraryService() {
                     else -> super.isCommandAvailable(command)
                 }
             }
-
-            override fun seekToNext() {
-                val nextItem = SharedContext.queueManager.getNextItem(
-                    when (repeatMode) {
-                        Player.REPEAT_MODE_ONE -> RepeatMode.ONE
-                        Player.REPEAT_MODE_ALL -> RepeatMode.ALL
-                        else -> RepeatMode.OFF
-                    }
-                )
-                if (nextItem != null) {
-                    // Update Media3's 3-element queue to include the next item
-                    SharedContext.platformMediaController?.loadMediaItem(nextItem, currentPosition)
-
-                    val targetMedia3Index = indexOfMediaItem(nextItem.mediaId)
-                    if (targetMedia3Index != C.INDEX_UNSET) {
-                        seekToIndexWithRestoredProgress(targetMedia3Index)
-                    }
-                }
-            }
-
-            override fun seekToPrevious() {
-                val maxSeekBackTime = maxSeekToPreviousPosition
-                if (currentPosition > maxSeekBackTime) {
-                    super.seekToPrevious()
-                } else {
-                    val prevItem = SharedContext.queueManager.getPreviousItem()
-                    if (prevItem != null) {
-                        SharedContext.platformMediaController?.loadMediaItem(prevItem, currentPosition)
-                        val targetMedia3Index = indexOfMediaItem(prevItem.mediaId)
-                        if (targetMedia3Index != C.INDEX_UNSET) {
-                            seekToIndexWithRestoredProgress(targetMedia3Index)
-                        }
-                    } else {
-                        super.seekToPrevious()
-                    }
-                }
-            }
-
-            override fun seekToNextMediaItem() {
-                val nextItem = SharedContext.queueManager.getNextItem(
-                    when (repeatMode) {
-                        Player.REPEAT_MODE_ONE -> RepeatMode.ONE
-                        Player.REPEAT_MODE_ALL -> RepeatMode.ALL
-                        else -> RepeatMode.OFF
-                    }
-                )
-                if (nextItem != null) {
-                    // Update Media3's 3-element queue to include the next item
-                    SharedContext.platformMediaController?.loadMediaItem(nextItem, currentPosition)
-
-                    val targetMedia3Index = indexOfMediaItem(nextItem.mediaId)
-                    if (targetMedia3Index != C.INDEX_UNSET) {
-                        seekToIndexWithRestoredProgress(targetMedia3Index)
-                    }
-                }
-            }
-
-            override fun seekToPreviousMediaItem() {
-                val prevItem = SharedContext.queueManager.getPreviousItem()
-                if (prevItem != null) {
-                    // Update Media3's 3-element queue to include the previous item
-                    SharedContext.platformMediaController?.loadMediaItem(prevItem, currentPosition)
-
-                    val targetMedia3Index = indexOfMediaItem(prevItem.mediaId)
-                    if (targetMedia3Index != C.INDEX_UNSET) {
-                        seekToIndexWithRestoredProgress(targetMedia3Index)
-                    }
-                }
-            }
-
-            private fun seekToIndexWithRestoredProgress(targetIndex: Int) {
-                val targetItem = getMediaItemAt(targetIndex)
-                val mediaId = targetItem.mediaId
-
-                serviceScope.launch {
-                    val savedPosition = DatabaseOperations.getStreamProgress(mediaId)
-
-                    if (savedPosition != null && savedPosition > 0 && targetItem.mediaMetadata.durationMs!! - savedPosition > 5000) {
-                        seekTo(targetIndex, savedPosition)
-                    } else {
-                        seekTo(targetIndex, 0L)
-                    }
-                }
-            }
-
-            private fun indexOfMediaItem(mediaId: String): Int {
-                for (i in 0 until mediaItemCount) {
-                    if (getMediaItemAt(i).mediaId == mediaId) {
-                        return i
-                    }
-                }
-                return C.INDEX_UNSET
-            }
         }
 
-        playbackButtonState = PlaybackButtonState.fromPlayer(player.repeatMode, player.shuffleModeEnabled)
+        playbackButtonState = PlaybackButtonState.fromPlayer(player.repeatMode, SharedContext.platformMediaController?.shuffleModeEnabled?.value?:false)
 
         val sessionActivity = buildSessionActivity()
 
@@ -537,6 +444,14 @@ class PlaybackService : MediaLibraryService() {
                 }
             }
         }
+
+        // Monitor shuffleMode changes from platformMediaController
+        serviceScope.launch {
+            delay(1000)
+            SharedContext.platformMediaController?.shuffleModeEnabled?.collect { shuffleEnabled ->
+                syncPlaybackButtonStateWithPlayer()
+            }
+        }
     }
 
     private fun getRepeatModeDisplayName(): String {
@@ -612,18 +527,8 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun applyPlaybackButtonState(state: PlaybackButtonState) {
-        val previousShuffleEnabled = player.shuffleModeEnabled
         player.repeatMode = state.repeatMode
-        player.shuffleModeEnabled = state.shuffleEnabled
-
-        // Sync shuffle state with QueueManager
-        if (previousShuffleEnabled != state.shuffleEnabled) {
-            if (state.shuffleEnabled) {
-                SharedContext.queueManager.shuffle()
-            } else {
-                SharedContext.queueManager.unshuffle()
-            }
-        }
+        SharedContext.platformMediaController?.setShuffleModeEnabled(state.shuffleEnabled)
     }
 
     private fun updateMediaButtonPreferences() {
@@ -643,7 +548,7 @@ class PlaybackService : MediaLibraryService() {
     }
 
     private fun syncPlaybackButtonStateWithPlayer() {
-        val newState = PlaybackButtonState.fromPlayer(player.repeatMode, player.shuffleModeEnabled)
+        val newState = PlaybackButtonState.fromPlayer(player.repeatMode, SharedContext.platformMediaController?.shuffleModeEnabled?.value?:false)
         if (newState != playbackButtonState) {
             playbackButtonState = newState
             updateMediaButtonPreferences()
@@ -882,11 +787,8 @@ class PlaybackService : MediaLibraryService() {
     private fun createPlayerListener(): Player.Listener {
         return object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                if (reason != Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT && mediaItem != player.currentMediaItem) {
-                    saveCurrentProgress()
-                }
-                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO && mediaItem != null) {
-                    SharedContext.platformMediaController?.loadMediaItem(mediaItem.toPlatformMediaItem(), player.currentPosition)
+                if (reason in listOf(Player.MEDIA_ITEM_TRANSITION_REASON_AUTO, Player.MEDIA_ITEM_TRANSITION_REASON_SEEK) && mediaItem != null) {
+                    SharedContext.platformMediaController?.loadMediaItem(mediaItem.toPlatformMediaItem())
                 }
                 mediaItem?.let {
                     skippedSegments[it.mediaId] = mutableSetOf()
@@ -894,13 +796,6 @@ class PlaybackService : MediaLibraryService() {
                     loadAutoplayNextForMedia(it)
                     // Reset retry state when successfully transitioning to a new item
                     retryStates.remove(it.mediaId)
-
-                    // Update QueueManager index to match current Media3 item
-                    val currentQueue = SharedContext.queueManager.getCurrentQueue()
-                    val newIndex = currentQueue.indexOfFirst { item -> item.mediaId == it.mediaId }
-                    if (newIndex >= 0) {
-                        SharedContext.queueManager.setIndex(newIndex)
-                    }
                 }
             }
 
@@ -908,9 +803,6 @@ class PlaybackService : MediaLibraryService() {
                 syncPlaybackButtonStateWithPlayer()
             }
 
-            override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-                syncPlaybackButtonStateWithPlayer()
-            }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED) {
@@ -1042,7 +934,7 @@ class PlaybackService : MediaLibraryService() {
         val currentPosition = player.currentPosition
 
         if (currentMediaItem != null && currentPosition > 0) {
-            MainScope().launch {
+            GlobalScope.launch {
                 DatabaseOperations.updateStreamProgress(currentMediaItem.mediaId, currentPosition)
             }
         }
