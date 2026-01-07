@@ -263,8 +263,10 @@ class LazyUrlMediaSource(
                     )
                 }
             } catch (e: Exception) { // can be cancelled if service get destroyed
-                e.printStackTrace()
-                SharedContext.queueManager.removeItemByUuid(mediaItem.uuid)
+                if (e !is CancellationException) {
+                    e.printStackTrace()
+                    SharedContext.queueManager.removeItemByUuid(mediaItem.uuid)
+                }
             }
         }
     }
