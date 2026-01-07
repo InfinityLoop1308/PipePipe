@@ -509,6 +509,7 @@ class AndroidMediaController(
                 break
             }
         }
+        loadCurrentItem() // don't know why but after refactor this is required to make sure player can restore from mediaCodecError
     }
 
     @OptIn(UnstableApi::class)
