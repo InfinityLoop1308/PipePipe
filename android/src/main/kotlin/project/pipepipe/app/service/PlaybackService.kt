@@ -564,8 +564,7 @@ class PlaybackService : MediaLibraryService() {
             .build()
         player.trackSelectionParameters = params
         if (!disableVideo && player.currentMediaItem != null && player.isPlaying) {
-            player.setMediaItem(player.currentMediaItem!!, player.currentPosition)
-            player.prepare()
+            player.seekTo(player.currentMediaItemIndex, player.currentPosition)
         }
     }
 

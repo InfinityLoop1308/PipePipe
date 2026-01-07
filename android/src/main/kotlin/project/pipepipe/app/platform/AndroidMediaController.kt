@@ -346,17 +346,26 @@ class AndroidMediaController(
 
     override fun playFromStreamInfo(streamInfo: StreamInfo) {
         MainScope().launch{
-            if (mediaController.currentMediaItem?.mediaId != streamInfo.url) {
-                val item = streamInfo.toPlatformMediaItem()
+            val item = streamInfo.toPlatformMediaItem()
+            val currentQueue = SharedContext.queueManager.getCurrentQueue()
+            val queueIndex = currentQueue.indexOfFirst { it.mediaId == streamInfo.url }
 
-                // Set as single item in queue and load it
+            if (mediaController.currentMediaItem?.mediaId == streamInfo.url) {
+                // already current, pass
+            } else if (queueIndex >= 0) {
+                // Item is in queue, just navigate to it
+                SharedContext.queueManager.setIndex(queueIndex)
+                loadMediaItem(item, shouldPrepare = false, shouldKeepPosition = false)
+            } else {
+                // Item is not in queue, set it as single item
                 super.setMediaItem(item, null)
-                if (SharedContext.settingsManager.getString("watch_history_mode", "on_play") == "on_play") {
-                    DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
-                }
             }
             mediaController.prepare()
             mediaController.play()
+
+            if (SharedContext.settingsManager.getString("watch_history_mode", "on_play") == "on_play") {
+                DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
+            }
         }
 
         if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
