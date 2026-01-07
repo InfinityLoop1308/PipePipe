@@ -6,7 +6,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
@@ -14,29 +13,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
-import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
@@ -46,7 +38,6 @@ import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.NetworkStateHelper
-import project.pipepipe.app.platform.PlatformMediaController
 import project.pipepipe.app.platform.ScreenOrientation
 import project.pipepipe.app.ui.component.*
 import project.pipepipe.app.ui.component.player.PlayerGestureSettings
@@ -221,16 +212,11 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
         }
     }
 
-
-
-
     DisposableEffect(Unit) {
         onDispose {
             platformActions.exitImmersiveVideoMode()
         }
     }
-
-
 
     data class TabConfig(
         val tag: String,
@@ -608,7 +594,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                     .align(Alignment.BottomCenter)
                                     .navigationBarsPadding()
                             ) {
-                                BottomSheetContent(controller!!)
+                                VideoDetailScreenBottomSheetContent()
                             }
                         }
 
@@ -642,95 +628,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     Text(stringResource(MR.strings.ok))
                 }
             }
-        )
-    }
-}
-
-@Composable
-private fun BottomSheetContent(controller: PlatformMediaController) {
-    val isPlaying by controller.isPlaying.collectAsState()
-    val currentMediaItem by controller.currentMediaItem.collectAsState()
-    if (currentMediaItem == null) {
-        SharedContext.sharedVideoDetailViewModel.hide()
-        return
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)
-            .clickable { SharedContext.sharedVideoDetailViewModel.loadVideoDetails(currentMediaItem!!.mediaId, null) }
-            .padding(start = 20.dp, end = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AsyncImage(
-            model = currentMediaItem?.artworkUrl,
-            contentDescription = null,
-            modifier = Modifier
-                .size(width = 64.dp, height = 36.dp)
-                .clip(RoundedCornerShape(4.dp)),
-            contentScale = ContentScale.Crop
-        )
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = currentMediaItem?.title.toString(),
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = currentMediaItem?.artist.toString(),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.QueueMusic,
-            contentDescription = stringResource(MR.strings.add_to_queue),
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .clickable { SharedContext.toggleShowPlayQueueVisibility() }
-                .padding(8.dp)
-        )
-
-        Icon(
-            imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-            contentDescription = if (isPlaying) stringResource(MR.strings.pause) else stringResource(MR.strings.player_play),
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .clickable {
-                    if (isPlaying) {
-                        controller.pause()
-                    } else {
-                        controller.play()
-                    }
-                }
-                .padding(8.dp)
-        )
-
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription = stringResource(MR.strings.close),
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .clickable {
-                    SharedContext.platformActions.stopPlaybackService()
-                    SharedContext.sharedVideoDetailViewModel.hide()
-                }
-                .padding(8.dp)
         )
     }
 }
