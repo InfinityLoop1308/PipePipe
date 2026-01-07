@@ -120,6 +120,8 @@ fun VideoPlayer(
     var showUnskipButton by remember { mutableStateOf(false) }
     var lastSkippedSegment by remember { mutableStateOf<SponsorBlockSegmentInfo?>(null) }
     var skippedSegments by remember { mutableStateOf<Set<String>>(emptySet()) }
+    var skipButtonShownTime by remember { mutableLongStateOf(0L) }
+    var skipButtonJob by remember { mutableStateOf<Job?>(null) }
     var unskipButtonJob by remember { mutableStateOf<Job?>(null) }
 
     // Pre-compute display names for all segments to avoid calling @Composable from non-Composable context
@@ -341,6 +343,8 @@ fun VideoPlayer(
         if (!SponsorBlockHelper.isEnabled()) {
             currentSegmentToSkip = null
             showSkipButton = false
+            skipButtonJob?.cancel()
+            skipButtonShownTime = 0L
             return
         }
 
@@ -351,21 +355,37 @@ fun VideoPlayer(
         if (currentSegment != null && !skippedSegments.contains(currentSegment.uuid)) {
             // Only show manual skip button (automatic skipping is handled by PlaybackService)
             if (SponsorBlockHelper.shouldShowSkipButton(currentSegment)) {
-                currentSegmentToSkip = currentSegment
-                showSkipButton = true
+                // Check if 5 seconds have passed since button was first shown
+                if (skipButtonShownTime == 0L || (System.currentTimeMillis() - skipButtonShownTime) < 5000) {
+                    if (skipButtonShownTime == 0L) {
+                        skipButtonShownTime = System.currentTimeMillis()
+                    }
+                    if (!showSkipButton) {
+                        currentSegmentToSkip = currentSegment
+                        showSkipButton = true
+                    }
+                } else {
+                    // 5 seconds elapsed, hide and don't show again for this segment
+                    showSkipButton = false
+                }
             } else {
                 currentSegmentToSkip = null
                 showSkipButton = false
+                skipButtonJob?.cancel()
             }
         } else {
             currentSegmentToSkip = null
             showSkipButton = false
+            skipButtonJob?.cancel()
+            skipButtonShownTime = 0L
         }
     }
 
     // Manual skip function
     fun skipCurrentSegment() {
         currentSegmentToSkip?.let { segment ->
+            skipButtonJob?.cancel()
+            skipButtonShownTime = 0L
             val skipToMs = segment.endTime.toLong()
             mediaController.seekTo(skipToMs)
             skippedSegments = skippedSegments + segment.uuid
@@ -449,6 +469,7 @@ fun VideoPlayer(
 
         onDispose {
             mediaController.removePlaybackEventCallback(callback)
+            skipButtonJob?.cancel()
             unskipButtonJob?.cancel()
             platformActions.setKeepScreenOn(false)
             // Restore system brightness when player is disposed
