@@ -270,17 +270,6 @@ class AndroidMediaController(
         val currentMedia3Index = itemsToLoad.indexOfFirst { it.uuid == item.uuid }
 
         if (itemsToLoad.isNotEmpty()) {
-            val startPositionMs = startPositionMs ?: runBlocking {
-                val progress = DatabaseOperations.getStreamProgress(item.mediaId)
-                if (progress != null && item.durationMs != null &&
-                    item.durationMs!! - progress > 5000
-                ) {
-                    progress
-                } else {
-                    0L
-                }
-            }
-
             if (shouldKeepPosition && mediaController.currentMediaItem?.mediaId == item.mediaId) {
                 repeat(mediaController.currentMediaItemIndex) { mediaController.removeMediaItem(0) }
                 while (mediaController.mediaItemCount > 1) { mediaController.removeMediaItem(1) }
@@ -291,6 +280,20 @@ class AndroidMediaController(
                     mediaController.addMediaItem(currentMedia3Index + 1, itemsToLoad.last())
                 }
             } else {
+                val startPositionMs = startPositionMs ?: runBlocking {
+                    if (SharedContext.playbackMode.value == PlaybackMode.AUDIO_ONLY) {
+                        return@runBlocking 0
+                    }
+                    val progress = DatabaseOperations.getStreamProgress(item.mediaId)
+                    if (progress != null && item.durationMs != null &&
+                        item.durationMs!! - progress > 5000
+                    ) {
+                        progress
+                    } else {
+                        0L
+                    }
+                }
+
                 mediaController.setMediaItems(itemsToLoad, currentMedia3Index.coerceAtLeast(0), startPositionMs)
             }
             if (shouldPrepare){ mediaController.prepare() }
