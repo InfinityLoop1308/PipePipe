@@ -197,7 +197,9 @@ fun PlayQueueScreen() {
                             SharedContext.bottomSheetMenuViewModel.show(
                                 StreamInfoWithCallback(streamInfo,
                                     onNavigateTo = null,
-                                    onDelete = null,
+                                    onDelete = {
+                                        SharedContext.queueManager.removeItemByUuid(platformMediaItem.uuid)
+                                    },
                                     disablePlayOperations = true,
                                     showProvideDetailButton = true
                                 )

@@ -177,18 +177,18 @@ private fun StreamInfoMenuItems(
                 SharedContext.platformActions.enterPictureInPicture(streamInfo)
                 onDismiss()
             })
+            if (streamInfo.duration != null && streamInfo.duration!! > 0) {
+                add(Triple(Icons.Default.Visibility, stringResource(MR.strings.mark_as_watched)) {
+                    GlobalScope.launch {
+                        DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
+                        DatabaseOperations.updateStreamProgress(streamInfo.url, streamInfo.duration!! * 1000)
+                    }
+                    ToastManager.show(doneText)
+                    onDismiss()
+                })
+            }
         }
 
-        if (streamInfo.duration != null && streamInfo.duration!! > 0) {
-            add(Triple(Icons.Default.Visibility, stringResource(MR.strings.mark_as_watched)) {
-                GlobalScope.launch {
-                    DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
-                    DatabaseOperations.updateStreamProgress(streamInfo.url, streamInfo.duration!! * 1000)
-                }
-                ToastManager.show(doneText)
-                onDismiss()
-            })
-        }
         add(Triple(Icons.AutoMirrored.Filled.PlaylistAdd, stringResource(MR.strings.add_to_playlist)) {
             showPlaylistPopup = true
         })
@@ -210,6 +210,9 @@ private fun StreamInfoMenuItems(
         if (showProvideDetailButton) {
             add(Triple(Icons.Default.Info, stringResource(MR.strings.show_details)) {
                 SharedContext.sharedVideoDetailViewModel.loadVideoDetails(streamInfo.url, streamInfo.serviceId)
+                if (SharedContext.playQueueVisibility.value) {
+                    SharedContext.toggleShowPlayQueueVisibility()
+                }
                 onDismiss()
             })
         }
