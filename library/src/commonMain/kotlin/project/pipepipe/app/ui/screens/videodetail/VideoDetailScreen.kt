@@ -210,6 +210,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 
 
     data class TabConfig(
+        val tag: String,
         val title: String,
         val icon: ImageVector,
         val isAvailable: Boolean,
@@ -251,6 +252,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
 
     val allTabs = listOf(
         TabConfig(
+            tag = "COMMENTS",
             title = stringResource(MR.strings.comments_tab_description),
             icon = Icons.AutoMirrored.Filled.Comment,
             isAvailable = streamInfo?.commentUrl != null && configuredTabs.contains("comments"),
@@ -267,12 +269,14 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             }
         ),
         TabConfig(
+            tag = "NEXT VIDEO",
             title = stringResource(MR.strings.related_videos),
             icon = Icons.Default.ArtTrack,
             isAvailable = streamInfo?.relatedItemUrl != null && configuredTabs.contains("related"),
             content = { RelatedItemSection() }
         ),
         TabConfig(
+            tag = "SPONSOR_BLOCK TAB",
             title = stringResource(MR.strings.sponsor_block),
             icon = Icons.Default.Shield,
             isAvailable = streamInfo?.sponsorblockUrl != null && isSponsorBlockEnabled  && configuredTabs.contains("sponsorblock"),
@@ -303,6 +307,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             }
         ),
         TabConfig(
+            tag = "DESCRIPTION TAB",
             title = stringResource(MR.strings.description_tab),
             icon = Icons.Default.Description,
             isAvailable = streamInfo != null && configuredTabs.contains("description"),
@@ -323,10 +328,20 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
     )
 
     val availableTabs = allTabs.filter { it.isAvailable }
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { availableTabs.size }
-    )
+
+    // Calculate initial page index based on saved tab
+    val savedTabTag = SharedContext.settingsManager.getString("stream_info_selected_tab", "")
+    val initialPage = savedTabTag.let { tag ->
+        availableTabs.indexOfFirst { it.tag == tag }.takeIf { it >= 0 }
+    } ?: 0
+
+    // Use key to recreate pagerState when saved tab or available tabs change
+    val pagerState = key(savedTabTag, availableTabs.size) {
+        rememberPagerState(
+            initialPage = initialPage,
+            pageCount = { availableTabs.size }
+        )
+    }
     when (uiState.pageState) {
         VideoDetailPageState.HIDDEN -> {}
         VideoDetailPageState.FULLSCREEN_PLAYER -> {
@@ -546,6 +561,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                                         scope.launch {
                                                             listState.scrollToItem(0)
                                                             pagerState.animateScrollToPage(index)
+                                                            SharedContext.settingsManager.putString("stream_info_selected_tab", tab.tag)
                                                         }
                                                     },
                                                     icon = {
