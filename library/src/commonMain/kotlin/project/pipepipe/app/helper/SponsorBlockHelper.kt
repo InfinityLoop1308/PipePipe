@@ -93,6 +93,10 @@ object SponsorBlockHelper {
         return SharedContext.settingsManager.getBoolean("sponsor_block_enable_key", true)
     }
 
+    fun isSkipEnabled(): Boolean {
+        return SharedContext.settingsManager.getBoolean("sponsor_block_skip_enabled_key", true)
+    }
+
     fun isNotificationsEnabled(): Boolean {
         return SharedContext.settingsManager.getBoolean("sponsor_block_notifications_key", true)
     }

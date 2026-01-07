@@ -38,7 +38,9 @@ fun SponsorBlockSection(
     onEnd: () -> Long?,
     onTimestampClick: (Long) -> Unit = {},
 ) {
-    val skipMarked = remember { mutableStateOf(true) }
+    val skipMarked = remember {
+        mutableStateOf(SponsorBlockHelper.isSkipEnabled())
+    }
 //    val whitelistChannel = remember { mutableStateOf(false) }
     val startTime = remember { mutableStateOf<Long?>(null) }
     val endTime = remember { mutableStateOf<Long?>(null) }
@@ -113,7 +115,10 @@ fun SponsorBlockSection(
             ToggleRow(
                 label = skipMarkedSegmentsLabel,
                 checked = skipMarked.value,
-                onCheckedChange = { skipMarked.value = it }
+                onCheckedChange = {
+                    skipMarked.value = it
+                    SharedContext.settingsManager.putBoolean("sponsor_block_skip_enabled_key", it)
+                }
             )
         }
 

@@ -621,6 +621,7 @@ class PlaybackService : MediaLibraryService() {
 
     private fun checkAndSkipSponsorBlock() {
         if (!SponsorBlockHelper.isEnabled()) return
+        if (!SponsorBlockHelper.isSkipEnabled()) return
 
         val mediaItem = player.currentMediaItem ?: return
         val mediaId = mediaItem.mediaId
