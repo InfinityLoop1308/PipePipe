@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
@@ -50,8 +51,6 @@ fun SponsorBlockSection(
         val end = endTime.value?.toDurationString(true) ?: "00:00:00"
         "$start - $end"
     }
-
-    val scope = rememberCoroutineScope()
     
     val skipMarkedSegmentsLabel = stringResource(MR.strings.sponsor_block_skip_marked_segments)
     val noSponsorSegmentsText = stringResource(MR.strings.no_sponsor_segments)
@@ -90,7 +89,7 @@ fun SponsorBlockSection(
                 },
                 onCategorySelected = { category ->
                     showCategoryMenu.value = false
-                    scope.launch {
+                    GlobalScope.launch {
                         viewModel.submitSponsorBlockSegment(
                             url = viewModel.uiState.value.currentStreamInfo!!.sponsorblockUrl!!,
                             segment = SponsorBlockSegmentInfo(
@@ -98,7 +97,8 @@ fun SponsorBlockSection(
                                 startTime = startTime.value!!.toDouble(),
                                 endTime = endTime.value!!.toDouble(),
                                 category = category
-                            )
+                            ),
+                            msg = successText
                         )
                     }
                 }
@@ -153,11 +153,12 @@ fun SponsorBlockSection(
                         if (segment.hasVoted) {
                             ToastManager.show(alreadyVotedText)
                         } else {
-                            scope.launch {
+                            GlobalScope.launch {
                                 viewModel.voteSponsorBlockSegment(
                                     url = viewModel.uiState.value.currentStreamInfo!!.sponsorblockUrl!!,
                                     uuid = segment.uuid,
-                                    voteType = 1 //upvote
+                                    voteType = 1, //upvote
+                                    msg = successText
                                 )
                             }
                             segment.hasVoted = true
@@ -168,10 +169,11 @@ fun SponsorBlockSection(
                         if (segment.hasVoted) {
                             ToastManager.show(alreadyVotedText)
                         } else {
-                            scope.launch {
+                            GlobalScope.launch {
                                 viewModel.voteSponsorBlockSegment(
                                     url = viewModel.uiState.value.currentStreamInfo!!.sponsorblockUrl!!,
                                     uuid = segment.uuid,
+                                    msg = successText,
                                     voteType = 0 //downvote
                                 )
                             }

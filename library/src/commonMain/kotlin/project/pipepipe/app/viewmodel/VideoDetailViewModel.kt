@@ -485,7 +485,7 @@ class VideoDetailViewModel()
         }
     }
 
-    suspend fun submitSponsorBlockSegment(url: String, segment: SponsorBlockSegmentInfo) {
+    suspend fun submitSponsorBlockSegment(url: String, segment: SponsorBlockSegmentInfo, msg: String) {
         val result = withContext(Dispatchers.IO) {
             executeJobFlow(
                 SupportedJobType.SUBMIT_SPONSORBLOCK_SEGMENT,
@@ -494,11 +494,11 @@ class VideoDetailViewModel()
                 Json.encodeToString(segment)
             )
         }
-        ToastManager.show("Success")
+        ToastManager.show(msg)
         loadSponsorBlock(url)
     }
 
-    suspend fun voteSponsorBlockSegment(url: String, uuid: String, voteType: Int) {
+    suspend fun voteSponsorBlockSegment(url: String, uuid: String, voteType: Int, msg: String) {
         val result = withContext(Dispatchers.IO) {
             executeJobFlow(
                 SupportedJobType.VOTE_SPONSORBLOCK_SEGMENT,
@@ -506,7 +506,7 @@ class VideoDetailViewModel()
                 null,
             )
         }
-        ToastManager.show("Success")
+        ToastManager.show(msg)
     }
 
     suspend fun loadDanmaku(url: String, serviceId: Int) {
