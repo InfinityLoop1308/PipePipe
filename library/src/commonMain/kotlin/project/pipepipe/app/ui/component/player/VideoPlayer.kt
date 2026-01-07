@@ -138,9 +138,10 @@ fun VideoPlayer(
 
     val danmakuState = rememberDanmakuState()
 
-    val controlsTransition = remember { MutableTransitionState(false) }.apply {
-        targetState = isControlsVisible
+    val controlsTransition = remember(isControlsVisible) {
+        MutableTransitionState(isControlsVisible)
     }
+
 
 
     val density = LocalDensity.current
