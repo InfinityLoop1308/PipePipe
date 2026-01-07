@@ -189,45 +189,6 @@ interface PlatformMediaController {
     /** Load a specific media item into platform player */
     fun loadMediaItem(item: PlatformMediaItem, startPositionMs: Long? = null, shouldPrepare: Boolean = true, shouldKeepPosition: Boolean = false)
 
-    // ===== Queue Operations =====
-
-    /** Set a single media item and optionally start playback */
-    fun setMediaItem(item: PlatformMediaItem, startPositionMs: Long? = null) {
-        SharedContext.queueManager.setMediaItem(item)
-        loadCurrentItem(startPositionMs)
-    }
-
-    /** Set queue with multiple items */
-    fun setQueue(items: List<PlatformMediaItem>, startIndex: Int = 0, startPositionMs: Long? = null) {
-        SharedContext.queueManager.setQueue(items, startIndex)
-        loadCurrentItem(startPositionMs)
-    }
-
-    /** Add item to end of queue */
-    fun addMediaItem(item: PlatformMediaItem) {
-        SharedContext.queueManager.addItem(item)
-    }
-
-    /** Insert item at specific position */
-    fun insertItem(index: Int, item: PlatformMediaItem) {
-        SharedContext.queueManager.insertItem(index, item)
-    }
-
-    /** Remove item at specific position */
-    fun removeItem(index: Int) {
-        SharedContext.queueManager.removeItem(index)
-    }
-
-    /** Move item from one position to another */
-    fun moveItem(from: Int, to: Int) {
-        SharedContext.queueManager.moveItem(from, to)
-    }
-
-    /** Clear the queue */
-    fun clearQueue() {
-        SharedContext.queueManager.clear()
-        clearPlayer()
-    }
 
     // ===== Queue Navigation (provided by implementation) =====
 

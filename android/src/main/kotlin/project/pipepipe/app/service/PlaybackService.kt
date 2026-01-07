@@ -3,10 +3,7 @@
 package project.pipepipe.app.service
 
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.media3.common.*
@@ -25,14 +22,12 @@ import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.SharedContext.playbackMode
 import project.pipepipe.app.database.DatabaseOperations
+import project.pipepipe.app.helper.SponsorBlockHelper
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
-import project.pipepipe.app.helper.SponsorBlockHelper
-import project.pipepipe.app.platform.RepeatMode
 import project.pipepipe.app.platform.toMedia3MediaItem
 import project.pipepipe.app.platform.toPlatformMediaItem
-import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.RelatedItemInfo
 import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
@@ -739,7 +734,7 @@ class PlaybackService : MediaLibraryService() {
         }
     }
 
-    private fun refreshStreamAndRetry(mediaId: String) {
+    private fun refreshStreamAndRetry() {
         val currentIndex = player.currentMediaItemIndex
         val savedPosition = player.currentPosition
         serviceScope.launch {
@@ -753,7 +748,7 @@ class PlaybackService : MediaLibraryService() {
                 val streamInfo = withContext(Dispatchers.IO) {
                     executeJobFlow(
                         SupportedJobType.FETCH_INFO,
-                        mediaId,
+                        currentItem.mediaId,
                         serviceId
                     ).info as StreamInfo
                 }
@@ -773,14 +768,6 @@ class PlaybackService : MediaLibraryService() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                // If refresh fails, just skip to next
-                withContext(Dispatchers.Main) {
-                    player.removeMediaItem(currentIndex)
-                    if (player.mediaItemCount > 0) {
-                        player.prepare()
-                        player.play()
-                    }
-                }
             }
         }
     }
@@ -835,7 +822,6 @@ class PlaybackService : MediaLibraryService() {
                 }
 
                 val mediaId = player.currentMediaItem?.mediaId ?: return
-                val currentIndex = player.currentMediaItemIndex
 
                 // Log the error
                 MainScope().launch {
@@ -869,7 +855,7 @@ class PlaybackService : MediaLibraryService() {
                         retryState.retryCount = 0
                         ToastManager.show("Refreshing stream after $MAX_RETRIES_BEFORE_REFRESH retries...")
 
-                        refreshStreamAndRetry(mediaId)
+                        refreshStreamAndRetry()
                         return
                     }
 
@@ -887,8 +873,7 @@ class PlaybackService : MediaLibraryService() {
                     // Final phase: all retries exhausted, give up and skip to next
                     ToastManager.show("Failed after all retries, skipping to next...")
                     retryStates.remove(mediaId)
-                    player.removeMediaItem(currentIndex)
-
+                    SharedContext.queueManager.removeItem(SharedContext.queueManager.currentIndex.value)
                     if (player.mediaItemCount > 0) {
                         player.prepare()
                         player.play()
@@ -920,8 +905,7 @@ class PlaybackService : MediaLibraryService() {
                 // For non-403 errors, show error and remove current item
                 ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))
                 retryStates.remove(mediaId)
-                player.removeMediaItem(currentIndex)
-
+                SharedContext.queueManager.removeItem(SharedContext.queueManager.currentIndex.value)
                 if (player.mediaItemCount > 0) {
                     player.prepare()
                     player.play()

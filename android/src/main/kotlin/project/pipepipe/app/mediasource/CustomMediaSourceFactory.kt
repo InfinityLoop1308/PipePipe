@@ -264,8 +264,7 @@ class LazyUrlMediaSource(
                 }
             } catch (e: Exception) { // can be cancelled if service get destroyed
                 e.printStackTrace()
-                // Wrap with IOException to include mediaId, which ExoPlayer can handle
-                prepareError = IOException("Failed to prepare media: ${mediaItem.mediaId}", e)
+                SharedContext.queueManager.removeItemByUuid(mediaItem.uuid)
             }
         }
     }
@@ -277,8 +276,7 @@ class LazyUrlMediaSource(
         } catch (e: IOException) {
             throw e
         } catch (e: Exception) {
-            // Wrap NPE and other exceptions as IOException so onPlayerError can catch them
-            throw IOException("Failed to prepare media: ${mediaItem.mediaId}", e)
+            SharedContext.queueManager.removeItemByUuid(mediaItem.uuid)
         }
     }
 

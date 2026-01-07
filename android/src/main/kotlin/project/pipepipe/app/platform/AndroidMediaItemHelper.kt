@@ -31,11 +31,12 @@ fun MediaItem.toPlatformMediaItem(): PlatformMediaItem {
         durationMs = mediaMetadata.durationMs,
         serviceId = mediaMetadata.extras?.getInt("KEY_SERVICE_ID"),
         extras = extrasMap,
-        uuid = uuid ?: Uuid.random().toString()
+        uuid = uuid
     )
 }
 
-val MediaItem.uuid: String? get() = this.mediaMetadata.extras?.getString("KEY_UUID")
+@OptIn(ExperimentalUuidApi::class)
+val MediaItem.uuid: String get() = this.mediaMetadata.extras?.getString("KEY_UUID")?: Uuid.random().toString()
 
 fun PlatformMediaItem.toMedia3MediaItem(): MediaItem {
     val extras = Bundle().apply {

@@ -314,13 +314,10 @@ class AndroidMediaController(
     override fun setShuffleModeEnabled(enabled: Boolean) {
         if (enabled && !shuffleModeEnabled.value) {
             SharedContext.queueManager.shuffle()
-            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
         } else if (!enabled && shuffleModeEnabled.value){
             SharedContext.queueManager.unshuffle()
-            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
         }
         _shuffleModeEnabled.value = enabled
-
     }
     // ===== Lifecycle =====
 
@@ -358,10 +355,10 @@ class AndroidMediaController(
             } else if (queueIndex >= 0) {
                 // Item is in queue, just navigate to it
                 SharedContext.queueManager.setIndex(queueIndex)
-                loadMediaItem(item, shouldPrepare = false, shouldKeepPosition = false)
+                loadCurrentItem()
             } else {
                 // Item is not in queue, set it as single item
-                super.setMediaItem(item, null)
+                SharedContext.queueManager.setMediaItem(item)
             }
             mediaController.prepare()
             mediaController.play()
@@ -390,7 +387,7 @@ class AndroidMediaController(
     override fun enqueue(streamInfo: StreamInfo) {
         MainScope().launch {
             val item = streamInfo.toPlatformMediaItem()
-            super.addMediaItem(item)
+            SharedContext.queueManager.addItem(item)
             // Play if queue was empty
             if (SharedContext.queueManager.getCurrentQueue().size == 1) {
                 mediaController.play()
@@ -408,7 +405,7 @@ class AndroidMediaController(
                 }
             }
             val platformMediaItems = items.map { it.toPlatformMediaItem() }
-            setQueue(platformMediaItems, startIndex, null)
+            SharedContext.queueManager.setQueue(platformMediaItems, startIndex)
             if (shuffle) {
                 setShuffleModeEnabled(true)
             }

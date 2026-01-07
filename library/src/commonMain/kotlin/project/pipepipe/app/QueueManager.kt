@@ -61,6 +61,16 @@ class QueueManager {
     }
 
     /**
+     * Get the index of a specific item in the current queue.
+     * @param mediaId The media ID to search for
+     * @return The index of the item, or -1 if not found
+     */
+    fun getIndexOfItemUUID(uuid: String): Int {
+        val currentQueue = _queue.value
+        return currentQueue.indexOfFirst { it.uuid == uuid }
+    }
+
+    /**
      * Get next item in the queue, respecting repeat modes.
      */
     fun getNextItem(): PlatformMediaItem? {
@@ -107,6 +117,7 @@ class QueueManager {
         _queue.value = items.toList()
         _currentIndex.value = startIndex.coerceIn(0, items.size - 1)
         backup = null
+        SharedContext.platformMediaController?.loadCurrentItem()
     }
 
     /**
@@ -116,6 +127,7 @@ class QueueManager {
         _queue.value = items.toList()
         _currentIndex.value = startIndex.coerceIn(0, items.size - 1)
         backup = null
+        SharedContext.platformMediaController?.loadCurrentItem()
     }
 
     /**
@@ -125,10 +137,11 @@ class QueueManager {
         _queue.value = listOf(item)
         _currentIndex.value = 0
         backup = null
+        SharedContext.platformMediaController?.loadCurrentItem()
     }
 
     /**
-     * Set current playback index.
+     * Set current playback index. DOESN'T refresh the queue
      */
     fun setIndex(index: Int) {
         val currentQueue = _queue.value
@@ -141,6 +154,8 @@ class QueueManager {
      * and shuffled before being added to the play queue.
      */
     fun addItem(item: PlatformMediaItem) {
+        val currentThreeElementQueue = getCurrentThreeElementQueue()
+
         var itemToAdd = item
         if (backup != null) {
             // Add to backup queue unshuffled
@@ -151,12 +166,19 @@ class QueueManager {
             itemToAdd = shuffledList[0]
         }
         _queue.value = _queue.value + itemToAdd
+
+        // 检查是否需要重新加载
+        if (getCurrentThreeElementQueue() != currentThreeElementQueue) {
+            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+        }
     }
 
     /**
      * Insert an item at a specific position.
      */
     fun insertItem(index: Int, item: PlatformMediaItem) {
+        val currentThreeElementQueue = getCurrentThreeElementQueue()
+
         val currentQueue = _queue.value
         val newQueue = currentQueue.toMutableList()
         newQueue.add(index.coerceIn(0, currentQueue.size), item)
@@ -168,6 +190,11 @@ class QueueManager {
         }
 
         _queue.value = newQueue
+
+        // 检查是否需要重新加载
+        if (getCurrentThreeElementQueue() != currentThreeElementQueue) {
+            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+        }
     }
 
     /**
@@ -177,6 +204,8 @@ class QueueManager {
     fun removeItem(index: Int) {
         val currentQueue = _queue.value
         if (index in currentQueue.indices) {
+            val currentThreeElementQueue = getCurrentThreeElementQueue()
+
             val item = currentQueue[index]
             val newQueue = currentQueue.toMutableList()
             newQueue.removeAt(index)
@@ -201,7 +230,16 @@ class QueueManager {
             }
 
             _queue.value = newQueue
+
+            // 检查是否需要重新加载
+            if (getCurrentThreeElementQueue() != currentThreeElementQueue) {
+                SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+            }
         }
+    }
+
+    fun removeItemByUuid(uuid: String) {
+        removeItem(getIndexOfItemUUID(uuid))
     }
 
     /**
@@ -288,6 +326,7 @@ class QueueManager {
 
         _queue.value = newQueue
         _currentIndex.value = 0
+        SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
     }
 
     /**
@@ -317,5 +356,6 @@ class QueueManager {
 
         _currentIndex.value = if (newIndex >= 0) newIndex else 0
         backup = null
+        SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
     }
 }
