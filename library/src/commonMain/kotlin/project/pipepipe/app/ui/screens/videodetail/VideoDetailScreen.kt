@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.PlaybackMode
@@ -46,7 +47,6 @@ import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.NetworkStateHelper
 import project.pipepipe.app.platform.PlatformMediaController
-import project.pipepipe.app.platform.PlaybackState
 import project.pipepipe.app.platform.ScreenOrientation
 import project.pipepipe.app.ui.component.*
 import project.pipepipe.app.ui.component.player.PlayerGestureSettings
@@ -84,6 +84,29 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             }
         }
     }
+
+    LaunchedEffect(Unit) {
+        while (SharedContext.platformMediaController == null) {
+            delay(100) // safe, only delay 200-300ms at beginning once in the app lifecycle
+        }
+
+        SharedContext.platformMediaController!!.currentMediaItem
+            .filterNotNull()
+            .collect { item ->
+                // called 2 times for unknown reason, but anyway loadVideoDetails does nothing if same url so should be safe
+                if (SharedContext.playbackMode.value == PlaybackMode.VIDEO_AUDIO) {
+                    SharedContext.sharedVideoDetailViewModel.loadVideoDetails(
+                        url = item.mediaId,
+                        serviceId = item.serviceId,
+                        shouldDisableLoading = true,
+                        shouldKeepPlaybackMode = true,
+                        shouldNotChangePageState = true
+                    )
+                }
+            }
+    }
+
+
 
     val nestedScrollConnection1 = remember {
         object : NestedScrollConnection {

@@ -757,15 +757,6 @@ fun VideoPlayer(
                         },
                         onSeekToNext = {
                             mediaController.seekToNext()
-                            val currentItem = mediaController.currentMediaItem.value
-                            currentItem?.let { item ->
-                                SharedContext.sharedVideoDetailViewModel.loadVideoDetails(
-                                    url = item.mediaId,
-                                    serviceId = item.serviceId ?: 0,
-                                    shouldDisableLoading = true,
-                                    shouldKeepPlaybackMode = true
-                                )
-                            }
                         },
                         onSeek = { position ->
                             mediaController.seekTo(position)

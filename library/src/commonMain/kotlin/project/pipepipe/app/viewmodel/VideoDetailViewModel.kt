@@ -32,9 +32,14 @@ class VideoDetailViewModel()
     }
 
 
-    fun loadVideoDetails(url: String, serviceId: Int? = null, shouldDisableLoading: Boolean = false, shouldKeepPlaybackMode: Boolean = false) {
+    fun loadVideoDetails(url: String, serviceId: Int? = null,
+                         shouldDisableLoading: Boolean = false,
+                         shouldKeepPlaybackMode: Boolean = false,
+                         shouldNotChangePageState: Boolean = false) {
         GlobalScope.launch {
-            showAsDetailPage()
+            if (!shouldNotChangePageState) {
+                showAsDetailPage()
+            }
             val currentEntry = uiState.value.currentEntry
             if (url == currentEntry?.streamInfo?.url) return@launch
             setDanmakuEnabled(SharedContext.settingsManager.getBoolean("danmaku_enabled", false))
