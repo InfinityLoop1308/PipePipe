@@ -84,7 +84,7 @@ fun PlayQueueScreen() {
         SharedContext.queueManager.moveItem(from.index, to.index)
     }
 
-    LaunchedEffect(currentMediaItemIndex) {
+    LaunchedEffect(shuffleModeEnabled) {
         if (currentMediaItemIndex >= 0 && currentMediaItemIndex < playQueue.size) {
             listState.scrollToItem(currentMediaItemIndex)
         }

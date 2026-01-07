@@ -239,9 +239,6 @@ class AndroidMediaController(
         _currentMediaItem.value = null
     }
 
-    // ===== 3-Element Queue Mechanism =====
-    // Media3 only holds [previous, current, next] items
-    private var threeElementQueue = Triple<PlatformMediaItem?, PlatformMediaItem?, PlatformMediaItem?>(null, null, null)
     private fun indexOfMediaItem(mediaId: String): Int {
         for (i in 0 until mediaController.mediaItemCount) {
             if (mediaController.getMediaItemAt(i).mediaId == mediaId) {
@@ -261,11 +258,7 @@ class AndroidMediaController(
         val index = currentQueue.indexOfFirst { it.uuid == item.uuid }
         if (index < 0) return
         SharedContext.queueManager.setIndex(index)
-
-        val prevItem = SharedContext.queueManager.getPreviousItem()
-        val nextItem = SharedContext.queueManager.getNextItem(SharedContext.platformMediaController?.repeatMode?.value?: RepeatMode.OFF)
-
-        val itemsToLoad = listOfNotNull(prevItem, item, nextItem).map { it ->
+        val itemsToLoad = SharedContext.queueManager.getCurrentThreeElementQueue().map {
             // Find existing MediaItem or create new one from PlatformMediaItem
             val existingIndex = indexOfMediaItem(it.mediaId)
             if (existingIndex != C.INDEX_UNSET) {
@@ -302,8 +295,6 @@ class AndroidMediaController(
             }
             if (shouldPrepare){ mediaController.prepare() }
         }
-
-        threeElementQueue = Triple(prevItem, item, nextItem)
         _currentMediaItem.value = item
     }
 

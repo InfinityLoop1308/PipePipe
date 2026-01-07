@@ -508,6 +508,7 @@ class PlaybackService : MediaLibraryService() {
                 saveCurrentProgress()
                 player.stop()
                 player.clearMediaItems()
+                SharedContext.queueManager.clear()
                 stopSelf()
                 SessionResult(SessionResult.RESULT_SUCCESS)
             }

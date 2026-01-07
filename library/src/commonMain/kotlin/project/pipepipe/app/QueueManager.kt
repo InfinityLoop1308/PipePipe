@@ -26,8 +26,7 @@ class QueueManager {
     private val _queue = MutableStateFlow<List<PlatformMediaItem>>(emptyList())
     val queue: StateFlow<List<PlatformMediaItem>> = _queue.asStateFlow()
 
-    val mediaItemCount: StateFlow<Int>
-        get() = _queue.map { it.size }.stateIn(GlobalScope, SharingStarted.Eagerly, 0)
+    val mediaItemCount: StateFlow<Int> = _queue.map { it.size }.stateIn(GlobalScope, SharingStarted.Eagerly, 0)
 
 
     private val _currentIndex = MutableStateFlow(0)
@@ -64,7 +63,8 @@ class QueueManager {
     /**
      * Get next item in the queue, respecting repeat modes.
      */
-    fun getNextItem(repeatMode: RepeatMode): PlatformMediaItem? {
+    fun getNextItem(): PlatformMediaItem? {
+        val repeatMode = SharedContext.platformMediaController?.repeatMode?.value?: RepeatMode.OFF
         val currentQueue = _queue.value
         val index = _currentIndex.value
 
@@ -89,6 +89,8 @@ class QueueManager {
 
         return if (index > 0) currentQueue[index - 1] else null
     }
+
+    fun getCurrentThreeElementQueue(): List<PlatformMediaItem>  = listOfNotNull(getPreviousItem(), getCurrentItem(), getNextItem())
 
     /**
      * Check if queue is currently shuffled.
@@ -204,36 +206,43 @@ class QueueManager {
 
     /**
      * Move an item from one position to another.
-     * Also moves the item in the backup queue if it exists.
+     * Note: This only affects the current play queue, not the backup queue.
+     * The backup queue preserves the original order for unshuffle.
      */
     fun moveItem(from: Int, to: Int) {
         val currentQueue = _queue.value
         val currentIndexValue = _currentIndex.value
 
-        if (from in currentQueue.indices && to in currentQueue.indices && from != to) {
-            val newQueue = currentQueue.toMutableList()
-            val item = newQueue.removeAt(from)
-            newQueue.add(to, item)
+        if (from !in currentQueue.indices || to !in currentQueue.indices || from == to) {
+            return
+        }
 
-            // Adjust current index if needed
-            when {
-                from == currentIndexValue -> _currentIndex.value = to
-                from < currentIndexValue && to >= currentIndexValue -> _currentIndex.value = currentIndexValue - 1
-                from > currentIndexValue && to <= currentIndexValue -> _currentIndex.value = currentIndexValue + 1
-            }
+        val currentThreeElementQueue = getCurrentThreeElementQueue()
+        val newQueue = currentQueue.toMutableList()
+        val item = newQueue.removeAt(from)
+        newQueue.add(to, item)
 
-            // Also move in backup queue if it exists
-            if (backup != null) {
-                val backupIndex = backup!!.indexOf(item)
-                if (backupIndex >= 0) {
-                    backup!!.removeAt(backupIndex)
-                    backup!!.add(to.coerceIn(0, backup!!.size), item)
-                }
-            }
+        // Adjust current index
+        val newIndex = when {
+            // 移动的是当前播放项
+            from == currentIndexValue -> to
+            // 从当前项之前移到当前项或之后
+            from < currentIndexValue && to >= currentIndexValue -> currentIndexValue - 1
+            // 从当前项之后移到当前项或之前
+            from > currentIndexValue && to <= currentIndexValue -> currentIndexValue + 1
+            // 其他情况不影响当前索引
+            else -> currentIndexValue
+        }
 
-            _queue.value = newQueue
+        _currentIndex.value = newIndex
+        _queue.value = newQueue
+
+        // 检查是否需要重新加载
+        if (getCurrentThreeElementQueue() != currentThreeElementQueue) {
+            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
         }
     }
+
 
     /**
      * Clear the entire queue.
