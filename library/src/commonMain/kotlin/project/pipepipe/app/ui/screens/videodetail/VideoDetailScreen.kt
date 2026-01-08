@@ -3,8 +3,10 @@
 package project.pipepipe.app.ui.screens.videodetail
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.gestures.scrollBy
@@ -15,12 +17,16 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArtTrack
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -134,7 +140,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             SharedContext.playingVideoUrlBeforeMinimizing = null // Clear the flag
             if (wasPlayingBeforeMinimizing) {
                 // Resume video playback
-                kotlinx.coroutines.delay(200)
+                kotlinx.coroutines.delay(500) // don't use a small value, this will interfere the animation
                 controller?.let {
                     controller.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
                     if (controller.currentMediaItem.value?.mediaId == streamInfo.url && controller.isPlaying.value) {
@@ -397,208 +403,229 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     }
                 }
             }
-            Crossfade(
-                targetState = uiState.pageState,
-                animationSpec = tween(durationMillis = 300),
-                label = "pageStateTransition"
-            ) { pageState ->
+            BoxWithConstraints(
+                modifier = Modifier
+                .systemBarsPadding()
+                .clipToBounds()
+            ) {
+                val containerHeight = maxHeight
+
+                val transition = updateTransition(
+                    targetState = uiState.pageState,
+                    label = "pageTransition"
+                )
+
+                val detailPageOffsetY by transition.animateDp(
+                    transitionSpec = { tween(250) },
+                    label = "detailOffset"
+                ) { state ->
+                    when (state) {
+                        VideoDetailPageState.DETAIL_PAGE -> 0.dp
+                        VideoDetailPageState.BOTTOM_PLAYER -> containerHeight - 64.dp
+                        else -> 0.dp
+                    }
+                }
+
+                val bottomPlayerAlpha by transition.animateFloat(
+                    transitionSpec = { tween(250) },
+                    label = "bottomPlayerAlpha"
+                ) { state ->
+                    when (state) {
+                        VideoDetailPageState.BOTTOM_PLAYER -> 1f
+                        else -> 0f
+                    }
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
+                        .offset(y = detailPageOffsetY)
                 ) {
-                    when (pageState) {
-                        VideoDetailPageState.DETAIL_PAGE -> {
-                            Column(
-                                modifier = modifier
-                                    .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .statusBarsPadding()
+                    Column(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .alpha(1 - bottomPlayerAlpha)
+                    ) {
+                        if (uiState.common.error != null) {
+                            // Error state: show only ErrorComponent
+                            ErrorComponent(
+                                error = uiState.common.error!!,
+                                onRetry = {
+                                    scope.launch {
+                                        val errorRow =
+                                            DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
+                                        viewModel.loadVideoDetails(
+                                            errorRow!!.request!!,
+                                            serviceId = errorRow.service_id
+                                        )
+                                    }
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else if (streamInfo == null || uiState.common.isLoading) {
+                            // Loading state: show loading indicator
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
                             ) {
-                                if (uiState.common.error != null) {
-                                    // Error state: show only ErrorComponent
-                                    ErrorComponent(
-                                        error = uiState.common.error!!,
-                                        onRetry = {
-                                            scope.launch {
-                                                val errorRow =
-                                                    DatabaseOperations.getErrorLogById(uiState.common.error!!.errorId)
-                                                viewModel.loadVideoDetails(
-                                                    errorRow!!.request!!,
-                                                    serviceId = errorRow.service_id
-                                                )
+                                CircularProgressIndicator()
+                            }
+                        } else if (controller != null) {
+                            // Normal state: show full video detail UI
+                            val isPortrait = screenOrientation == ScreenOrientation.PORTRAIT
+
+                            // Player composable content
+                            val playerContent: @Composable () -> Unit = {
+                                Box(
+                                    modifier = Modifier
+                                        .then(
+                                            if (isPortrait) Modifier.aspectRatio(16f / 9f)
+                                            else Modifier
+                                                .height(200.dp)
+                                        )
+                                        .pointerInput(Unit) {
+                                            detectVerticalDragGestures(
+                                                onDragEnd = {
+                                                    // If dragged down more than threshold, minimize to bottom player
+                                                    if (totalDragDistance > 100.dp.toPx()) {
+                                                        viewModel.showAsBottomPlayer()
+                                                    }
+                                                    if (SharedContext.playbackMode.value == PlaybackMode.AUDIO_ONLY) return@detectVerticalDragGestures
+                                                    else if (totalDragDistance < -50.dp.toPx()) {
+                                                        viewModel.toggleFullscreenPlayer()
+                                                    }
+                                                    totalDragDistance = 0f
+                                                },
+                                                onDragCancel = {
+                                                    totalDragDistance = 0f
+                                                }
+                                            ) { change, dragAmount ->
+                                                change.consume()
+                                                totalDragDistance += dragAmount
+                                            }
+                                        }
+                                ) {
+                                    VideoPlayer(
+                                        mediaController = controller!!,
+                                        streamInfo = streamInfo,
+                                        onFullScreenClicked = { viewModel.toggleFullscreenPlayer() },
+                                        modifier = Modifier.fillMaxSize(),
+                                        danmakuPool = uiState.currentDanmaku,
+                                        gestureSettings = PlayerGestureSettings(
+                                            swipeSeekEnabled = SharedContext.settingsManager.getBoolean("swipe_seek_gesture_control_key"),
+                                            volumeGestureEnabled = SharedContext.settingsManager.getBoolean("volume_gesture_control_key"),
+                                            brightnessGestureEnabled = SharedContext.settingsManager.getBoolean("brightness_gesture_control_key"),
+                                            fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean("fullscreen_gesture_control_key")
+                                        ),
+                                        danmakuEnabled = uiState.danmakuEnabled,
+                                        onToggleDanmaku = { viewModel.toggleDanmaku() },
+                                        sponsorBlockSegments = if (isSponsorBlockEnabled) uiState.currentSponsorBlock.segments else emptyList()
+                                    )
+                                }
+                            }
+
+                            if (isPortrait) {
+                                // Portrait mode: Player is sticky (outside LazyColumn)
+                                playerContent()
+                            }
+
+                            LazyColumn(
+                                modifier = Modifier
+                                    .weight(1f),
+                                state = listState
+                            ) {
+                                if (!isPortrait) {
+                                    // Landscape mode: Player participates in scrolling (inside LazyColumn)
+                                    item { playerContent() }
+                                }
+                                item { VideoTitleSection(name = streamInfo.name) }
+                                item {
+                                    VideoDetailSection(
+                                        streamInfo = streamInfo,
+                                        navController = navController
+                                    )
+                                }
+                                item {
+                                    ActionButtons(
+                                        onPlayAudioClick = {
+                                            controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+                                            if (controller.currentMediaItem.value?.mediaId != streamInfo.url) {
+                                                controller.playFromStreamInfo(streamInfo)
+                                            } else if (!controller.isPlaying.value) {
+                                                controller.play()
                                             }
                                         },
-                                        modifier = Modifier.fillMaxSize()
+                                        onAddToPlaylistClick = { showPlaylistPopup = true },
+                                        streamInfo = streamInfo
                                     )
-                                } else if (streamInfo == null || uiState.common.isLoading) {
-                                    // Loading state: show loading indicator
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator()
-                                    }
-                                } else if (controller != null) {
-                                    // Normal state: show full video detail UI
-                                    val isPortrait = screenOrientation == ScreenOrientation.PORTRAIT
-
-                                    // Player composable content
-                                    val playerContent: @Composable () -> Unit = {
+                                }
+                                item {
+                                    if (availableTabs.isNotEmpty()) {
+                                        HorizontalPager(
+                                            state = pagerState,
+                                            modifier = Modifier
+                                                .fillParentMaxHeight()
+                                                .padding(horizontal = 16.dp)
+                                                .padding(top = 8.dp)
+                                                .nestedScroll(nestedScrollConnection1),
+                                            beyondViewportPageCount = 4
+                                        ) { page ->
+                                            availableTabs[page].content()
+                                        }
+                                    } else {
                                         Box(
                                             modifier = Modifier
-                                                .then(
-                                                    if (isPortrait) Modifier.aspectRatio(16f / 9f)
-                                                    else Modifier
-                                                        .height(200.dp)
-                                                )
-                                                .pointerInput(Unit) {
-                                                    detectVerticalDragGestures(
-                                                        onDragEnd = {
-                                                            // If dragged down more than threshold, minimize to bottom player
-                                                            if (totalDragDistance > 100.dp.toPx()) {
-                                                                viewModel.showAsBottomPlayer()
-                                                            }
-                                                            if (SharedContext.playbackMode.value == PlaybackMode.AUDIO_ONLY) return@detectVerticalDragGestures
-                                                            else if (totalDragDistance < -50.dp.toPx()) {
-                                                                viewModel.toggleFullscreenPlayer()
-                                                            }
-                                                            totalDragDistance = 0f
-                                                        },
-                                                        onDragCancel = {
-                                                            totalDragDistance = 0f
-                                                        }
-                                                    ) { change, dragAmount ->
-                                                        change.consume()
-                                                        totalDragDistance += dragAmount
-                                                    }
-                                                }
-                                        ) {
-                                            VideoPlayer(
-                                                mediaController = controller!!,
-                                                streamInfo = streamInfo,
-                                                onFullScreenClicked = { viewModel.toggleFullscreenPlayer() },
-                                                modifier = Modifier.fillMaxSize(),
-                                                danmakuPool = uiState.currentDanmaku,
-                                                gestureSettings = PlayerGestureSettings(
-                                                    swipeSeekEnabled = SharedContext.settingsManager.getBoolean("swipe_seek_gesture_control_key"),
-                                                    volumeGestureEnabled = SharedContext.settingsManager.getBoolean("volume_gesture_control_key"),
-                                                    brightnessGestureEnabled = SharedContext.settingsManager.getBoolean("brightness_gesture_control_key"),
-                                                    fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean("fullscreen_gesture_control_key")
-                                                ),
-                                                danmakuEnabled = uiState.danmakuEnabled,
-                                                onToggleDanmaku = { viewModel.toggleDanmaku() },
-                                                sponsorBlockSegments = if (isSponsorBlockEnabled) uiState.currentSponsorBlock.segments else emptyList()
-                                            )
-                                        }
-                                    }
-
-                                    if (isPortrait) {
-                                        // Portrait mode: Player is sticky (outside LazyColumn)
-                                        playerContent()
-                                    }
-
-                                    LazyColumn(
-                                        modifier = Modifier
-                                            .weight(1f),
-                                        state = listState
-                                    ) {
-                                        if (!isPortrait) {
-                                            // Landscape mode: Player participates in scrolling (inside LazyColumn)
-                                            item { playerContent() }
-                                        }
-                                        item { VideoTitleSection(name = streamInfo.name) }
-                                        item {
-                                            VideoDetailSection(
-                                                streamInfo = streamInfo,
-                                                navController = navController
-                                            )
-                                        }
-                                        item {
-                                            ActionButtons(
-                                                onPlayAudioClick = {
-                                                    controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-                                                    if (controller.currentMediaItem.value?.mediaId != streamInfo.url) {
-                                                        controller.playFromStreamInfo(streamInfo)
-                                                    } else if (!controller.isPlaying.value) {
-                                                        controller.play()
-                                                    }
-                                                },
-                                                onAddToPlaylistClick = { showPlaylistPopup = true },
-                                                streamInfo = streamInfo
-                                            )
-                                        }
-                                        item {
-                                            if (availableTabs.isNotEmpty()) {
-                                                HorizontalPager(
-                                                    state = pagerState,
-                                                    modifier = Modifier
-                                                        .fillParentMaxHeight()
-                                                        .padding(horizontal = 16.dp)
-                                                        .padding(top = 8.dp)
-                                                        .nestedScroll(nestedScrollConnection1),
-                                                    beyondViewportPageCount = 4
-                                                ) { page ->
-                                                    availableTabs[page].content()
-                                                }
-                                            } else {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(32.dp),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Text(
-                                                        text = stringResource(MR.strings.no_available_tabs),
-                                                        style = MaterialTheme.typography.bodyLarge,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (availableTabs.isNotEmpty()) {
-                                        TabRow(
-                                            selectedTabIndex = pagerState.currentPage,
-                                            modifier = Modifier
                                                 .fillMaxWidth()
+                                                .padding(32.dp),
+                                            contentAlignment = Alignment.Center
                                         ) {
-                                            availableTabs.forEachIndexed { index, tab ->
-                                                Tab(
-                                                    selected = pagerState.currentPage == index,
-                                                    onClick = {
-                                                        scope.launch {
-                                                            listState.scrollToItem(0)
-                                                            pagerState.animateScrollToPage(index)
-                                                            SharedContext.settingsManager.putString("stream_info_selected_tab", tab.tag)
-                                                        }
-                                                    },
-                                                    icon = {
-                                                        Icon(
-                                                            imageVector = tab.icon,
-                                                            contentDescription = tab.title,
-                                                            modifier = Modifier.size(22.dp)
-                                                        )
-                                                    }
-                                                )
-                                            }
+                                            Text(
+                                                text = stringResource(MR.strings.no_available_tabs),
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        VideoDetailPageState.BOTTOM_PLAYER -> {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .navigationBarsPadding()
-                            ) {
-                                VideoDetailScreenBottomSheetContent()
+                            if (availableTabs.isNotEmpty()) {
+                                TabRow(
+                                    selectedTabIndex = pagerState.currentPage,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    availableTabs.forEachIndexed { index, tab ->
+                                        Tab(
+                                            selected = pagerState.currentPage == index,
+                                            onClick = {
+                                                scope.launch {
+                                                    listState.scrollToItem(0)
+                                                    pagerState.animateScrollToPage(index)
+                                                    SharedContext.settingsManager.putString("stream_info_selected_tab", tab.tag)
+                                                }
+                                            },
+                                            icon = {
+                                                Icon(
+                                                    imageVector = tab.icon,
+                                                    contentDescription = tab.title,
+                                                    modifier = Modifier.size(22.dp)
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
                             }
                         }
-
-                        else -> {
+                    }
+                    if (bottomPlayerAlpha > 0){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.TopCenter)
+                                .alpha(bottomPlayerAlpha)
+                        ) {
+                            VideoDetailScreenBottomSheetContent()
                         }
                     }
                 }

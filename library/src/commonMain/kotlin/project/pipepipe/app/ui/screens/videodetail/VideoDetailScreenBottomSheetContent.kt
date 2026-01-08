@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.screens.videodetail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -13,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,15 +33,16 @@ fun VideoDetailScreenBottomSheetContent() {
     val controller = SharedContext.platformMediaController!!
     val isPlaying by controller.isPlaying.collectAsState()
     val currentMediaItem by controller.currentMediaItem.collectAsState()
+
     if (currentMediaItem == null) {
         SharedContext.sharedVideoDetailViewModel.hide()
         return
     }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
+            .background(MaterialTheme.colorScheme.background)
             .clickable { SharedContext.sharedVideoDetailViewModel.loadVideoDetails(currentMediaItem!!.mediaId, null) }
             .padding(start = 20.dp, end = 10.dp),
         verticalAlignment = Alignment.CenterVertically
