@@ -776,7 +776,7 @@ class PlaybackService : MediaLibraryService() {
         return object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 if (reason in listOf(Player.MEDIA_ITEM_TRANSITION_REASON_AUTO, Player.MEDIA_ITEM_TRANSITION_REASON_SEEK) && mediaItem != null) {
-                    SharedContext.platformMediaController?.loadMediaItem(mediaItem.toPlatformMediaItem())
+                    SharedContext.platformMediaController?.loadMediaQueueForItem(mediaItem.toPlatformMediaItem())
                 }
                 mediaItem?.let {
                     skippedSegments[it.mediaId] = mutableSetOf()

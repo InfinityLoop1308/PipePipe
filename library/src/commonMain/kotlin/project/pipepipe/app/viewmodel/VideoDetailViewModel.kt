@@ -170,7 +170,7 @@ class VideoDetailViewModel()
         SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
         if (streamInfo != null && controller != null &&
             (SharedContext.queueManager.mediaItemCount.value == 0 ||
-                    (SharedContext.queueManager.mediaItemCount.value == 1 && controller.playbackState.value == PlaybackState.IDLE))) {
+                    (SharedContext.queueManager.mediaItemCount.value in listOf(1,2) && controller.playbackState.value == PlaybackState.IDLE))) {
             controller.setStreamInfoAsOnlyMediaItem(streamInfo)
         }
     }

@@ -173,7 +173,7 @@ interface PlatformMediaController {
         val item = SharedContext.queueManager.getCurrentQueue().getOrNull(index)
         if (item != null) {
             SharedContext.queueManager.setIndex(index)
-            loadMediaItem(item, positionMs)
+            loadMediaQueueForItem(item, positionMs)
         }
     }
 
@@ -187,13 +187,13 @@ interface PlatformMediaController {
 
 
     /** Load a specific media item into platform player */
-    fun loadMediaItem(item: PlatformMediaItem, startPositionMs: Long? = null, shouldPrepare: Boolean = true, shouldKeepPosition: Boolean = false)
+    fun loadMediaQueueForItem(item: PlatformMediaItem, startPositionMs: Long? = null, shouldKeepPosition: Boolean = false)
 
 
     // ===== Queue Navigation (provided by implementation) =====
 
     /** Load the current item from queue into the player */
-    fun loadCurrentItem(startPositionMs: Long? = null, shouldKeepPosition: Boolean = false)
+    fun loadMediaQueueForCurrentItem(startPositionMs: Long? = null, shouldKeepPosition: Boolean = false)
 
     /** Clear the player media items */
     fun clearPlayer()

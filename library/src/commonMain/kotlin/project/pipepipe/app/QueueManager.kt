@@ -117,7 +117,7 @@ class QueueManager {
         _queue.value = items.toList()
         _currentIndex.value = startIndex.coerceIn(0, items.size - 1)
         backup = null
-        SharedContext.platformMediaController?.loadCurrentItem()
+        SharedContext.platformMediaController?.loadMediaQueueForCurrentItem()
     }
 
     /**
@@ -127,7 +127,7 @@ class QueueManager {
         _queue.value = items.toList()
         _currentIndex.value = startIndex.coerceIn(0, items.size - 1)
         backup = null
-        SharedContext.platformMediaController?.loadCurrentItem()
+        SharedContext.platformMediaController?.loadMediaQueueForCurrentItem()
     }
 
     /**
@@ -137,7 +137,7 @@ class QueueManager {
         _queue.value = listOf(item)
         _currentIndex.value = 0
         backup = null
-        SharedContext.platformMediaController?.loadCurrentItem()
+        SharedContext.platformMediaController?.loadMediaQueueForCurrentItem()
     }
 
     /**
@@ -169,7 +169,7 @@ class QueueManager {
 
         // 检查是否需要重新加载
         if (getCurrentThreeElementQueue() != currentThreeElementQueue) {
-            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+            SharedContext.platformMediaController?.loadMediaQueueForCurrentItem(shouldKeepPosition = true)
         }
     }
 
@@ -193,7 +193,7 @@ class QueueManager {
 
         // 检查是否需要重新加载
         if (getCurrentThreeElementQueue() != currentThreeElementQueue) {
-            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+            SharedContext.platformMediaController?.loadMediaQueueForCurrentItem(shouldKeepPosition = true)
         }
     }
 
@@ -233,7 +233,7 @@ class QueueManager {
 
             // 检查是否需要重新加载
             if (getCurrentThreeElementQueue() != currentThreeElementQueue) {
-                SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+                SharedContext.platformMediaController?.loadMediaQueueForCurrentItem(shouldKeepPosition = true)
             }
         }
     }
@@ -277,7 +277,7 @@ class QueueManager {
 
         // 检查是否需要重新加载
         if (getCurrentThreeElementQueue() != currentThreeElementQueue) {
-            SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+            SharedContext.platformMediaController?.loadMediaQueueForCurrentItem(shouldKeepPosition = true)
         }
     }
 
@@ -326,7 +326,7 @@ class QueueManager {
 
         _queue.value = newQueue
         _currentIndex.value = 0
-        SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+        SharedContext.platformMediaController?.loadMediaQueueForCurrentItem(shouldKeepPosition = true)
     }
 
     /**
@@ -356,6 +356,6 @@ class QueueManager {
 
         _currentIndex.value = if (newIndex >= 0) newIndex else 0
         backup = null
-        SharedContext.platformMediaController?.loadCurrentItem(shouldKeepPosition = true)
+        SharedContext.platformMediaController?.loadMediaQueueForCurrentItem(shouldKeepPosition = true)
     }
 }

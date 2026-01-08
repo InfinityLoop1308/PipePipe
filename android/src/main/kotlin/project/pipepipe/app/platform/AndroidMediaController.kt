@@ -3,10 +3,8 @@ package project.pipepipe.app.platform
 import android.content.Context
 import android.os.Bundle
 import androidx.annotation.OptIn
-import androidx.core.net.toUri
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
@@ -227,10 +225,10 @@ class AndroidMediaController(
 
     // ===== Queue Navigation (Platform-specific implementations) =====
 
-    override fun loadCurrentItem(startPositionMs: Long?, shouldKeepPosition: Boolean) {
+    override fun loadMediaQueueForCurrentItem(startPositionMs: Long?, shouldKeepPosition: Boolean) {
         val item = SharedContext.queueManager.getCurrentItem()
         if (item != null) {
-            loadMediaItem(item, startPositionMs, shouldKeepPosition = shouldKeepPosition, shouldPrepare = false)
+            loadMediaQueueForItem(item, startPositionMs, shouldKeepPosition = shouldKeepPosition)
         }
     }
 
@@ -247,10 +245,9 @@ class AndroidMediaController(
         }
         return C.INDEX_UNSET
     }
-    override fun loadMediaItem(
+    override fun loadMediaQueueForItem(
         item: PlatformMediaItem,
         startPositionMs: Long?,
-        shouldPrepare: Boolean,
         shouldKeepPosition: Boolean
     ) {
         // Find the item's index in the queue
@@ -296,7 +293,6 @@ class AndroidMediaController(
 
                 mediaController.setMediaItems(itemsToLoad, currentMedia3Index.coerceAtLeast(0), startPositionMs)
             }
-            if (shouldPrepare){ mediaController.prepare() }
         }
         _currentMediaItem.value = item
     }
@@ -355,7 +351,7 @@ class AndroidMediaController(
             } else if (queueIndex >= 0) {
                 // Item is in queue, just navigate to it
                 SharedContext.queueManager.setIndex(queueIndex)
-                loadCurrentItem()
+                loadMediaQueueForCurrentItem()
             } else {
                 // Item is not in queue, set it as single item
                 SharedContext.queueManager.setMediaItem(item)
@@ -376,7 +372,7 @@ class AndroidMediaController(
     override fun setStreamInfoAsOnlyMediaItem(streamInfo: StreamInfo) {
         val item = streamInfo.toPlatformMediaItem()
         SharedContext.queueManager.setMediaItem(item)
-        loadMediaItem(item)
+        loadMediaQueueForItem(item)
     }
 
     override fun backgroundPlay(streamInfo: StreamInfo) {
@@ -509,7 +505,7 @@ class AndroidMediaController(
                 break
             }
         }
-        loadCurrentItem() // don't know why but after refactor this is required to make sure player can restore from mediaCodecError
+        loadMediaQueueForCurrentItem() // don't know why but after refactor this is required to make sure player can restore from mediaCodecError
     }
 
     @OptIn(UnstableApi::class)
