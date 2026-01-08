@@ -714,7 +714,7 @@ fun VideoPlayer(
                         controller = mediaController,
                         danmakuPool = danmakuPool,
                         danmakuState = danmakuState,
-                        danmakuEnabled = danmakuEnabled
+                        danmakuEnabled = danmakuEnabled && !isInPipMode
                     )
                 }
                 if (!isInPipMode) {
