@@ -330,15 +330,12 @@ interface PlatformMediaController {
 /**
  * Callback interface for playback events that require special handling.
  */
-interface PlaybackEventCallback {
+interface PlaybackEventCallback { // todo: remove?
     /** Called when media item transitions */
     fun onMediaItemTransition() {}
 
     /** Called when seek operation occurs */
     fun onSeek() {}
-
-    /** Called when auto-transition between items occurs (e.g., playlist advancement) */
-    fun onAutoTransition() {}
 
     /** Called when tracks change (resolution, audio, subtitle availability) */
     fun onTracksChanged() {}

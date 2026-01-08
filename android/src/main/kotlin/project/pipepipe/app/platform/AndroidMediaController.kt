@@ -169,9 +169,6 @@ class AndroidMediaController(
                 Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT -> {
                     playbackEventCallbacks.forEach { it.onSeek() }
                 }
-                Player.DISCONTINUITY_REASON_AUTO_TRANSITION -> {
-                    playbackEventCallbacks.forEach { it.onAutoTransition() }
-                }
             }
         }
     }

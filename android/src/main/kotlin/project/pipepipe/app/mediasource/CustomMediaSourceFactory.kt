@@ -245,11 +245,7 @@ class LazyUrlMediaSource(
                     streamInfo.sponsorblockUrl,
                     streamInfo.relatedItemUrl
                 )
-                SharedContext.notifyStreamInfoLoaded(
-                    mediaItem.mediaId,
-                    streamInfo.sponsorblockUrl,
-                    streamInfo.relatedItemUrl
-                )
+
                 withContext(Dispatchers.Main) {
                     eventListeners.forEach { (listener, handler) ->
                         actualMediaSource?.addEventListener(handler, listener)

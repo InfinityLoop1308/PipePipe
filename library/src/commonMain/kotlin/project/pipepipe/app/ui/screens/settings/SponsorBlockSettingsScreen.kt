@@ -152,7 +152,7 @@ fun SponsorBlockCategoriesSettingsScreen(
         mutableStateOf(settingsManager.getBoolean("sponsor_block_category_highlight_key", true))
     }
     val selfPromoCategoryEnabledState = remember {
-        mutableStateOf(settingsManager.getBoolean("sponsor_block_category_self_promo_key", true))
+        mutableStateOf(settingsManager.getBoolean("sponsor_block_category_selfpromo_key", true))
     }
     val nonMusicCategoryEnabledState = remember {
         mutableStateOf(settingsManager.getBoolean("sponsor_block_category_non_music_key"))
@@ -218,7 +218,7 @@ fun SponsorBlockCategoriesSettingsScreen(
         mutableStateOf(
             ColorHelper.sanitizeHexColorInput(
                 settingsManager.getString(
-                    "sponsor_block_category_self_promo_color_key",
+                    "sponsor_block_category_selfpromo_color_key",
                     COLOR_SELF_PROMO_DEFAULT
                 )
             ) ?: COLOR_SELF_PROMO_DEFAULT
@@ -271,7 +271,7 @@ fun SponsorBlockCategoriesSettingsScreen(
         "sponsor_block_category_outro_key" to outroCategoryEnabledState,
         "sponsor_block_category_interaction_key" to interactionCategoryEnabledState,
         "sponsor_block_category_highlight_key" to highlightCategoryEnabledState,
-        "sponsor_block_category_self_promo_key" to selfPromoCategoryEnabledState,
+        "sponsor_block_category_selfpromo_key" to selfPromoCategoryEnabledState,
         "sponsor_block_category_non_music_key" to nonMusicCategoryEnabledState,
         "sponsor_block_category_preview_key" to previewCategoryEnabledState,
         "sponsor_block_category_filler_key" to fillerCategoryEnabledState
@@ -283,7 +283,7 @@ fun SponsorBlockCategoriesSettingsScreen(
         "sponsor_block_category_outro_color_key" to (outroColorState to COLOR_OUTRO_DEFAULT),
         "sponsor_block_category_interaction_color_key" to (interactionColorState to COLOR_INTERACTION_DEFAULT),
         "sponsor_block_category_highlight_color_key" to (highlightColorState to COLOR_HIGHLIGHT_DEFAULT),
-        "sponsor_block_category_self_promo_color_key" to (selfPromoColorState to COLOR_SELF_PROMO_DEFAULT),
+        "sponsor_block_category_selfpromo_color_key" to (selfPromoColorState to COLOR_SELF_PROMO_DEFAULT),
         "sponsor_block_category_non_music_color_key" to (nonMusicColorState to COLOR_NON_MUSIC_DEFAULT),
         "sponsor_block_category_preview_color_key" to (previewColorState to COLOR_PREVIEW_DEFAULT),
         "sponsor_block_category_filler_color_key" to (fillerColorState to COLOR_FILLER_DEFAULT),
@@ -457,10 +457,10 @@ fun SponsorBlockCategoriesSettingsScreen(
             headerTitle = stringResource(MR.strings.sponsor_block_category_self_promo),
             summaryKey = "sponsor_block_category_self_promo_summary_pref",
             summaryText = stringResource(MR.strings.settings_category_sponsor_block_category_self_promo_summary),
-            switchKey = "sponsor_block_category_self_promo_key",
+            switchKey = "sponsor_block_category_selfpromo_key",
             switchState = selfPromoCategoryEnabledState,
-            modeKey = "sponsor_block_category_self_promo_mode_key",
-            colorKey = "sponsor_block_category_self_promo_color_key",
+            modeKey = "sponsor_block_category_selfpromo_mode_key",
+            colorKey = "sponsor_block_category_selfpromo_color_key",
             colorState = selfPromoColorState,
             defaultColor = COLOR_SELF_PROMO_DEFAULT,
             hasModeSelector = hasSkipModeOptions,

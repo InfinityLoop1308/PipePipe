@@ -22,16 +22,13 @@ import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.SharedContext.playbackMode
 import project.pipepipe.app.database.DatabaseOperations
-import project.pipepipe.app.helper.SponsorBlockHelper
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
 import project.pipepipe.app.platform.toMedia3MediaItem
 import project.pipepipe.app.platform.toPlatformMediaItem
 import project.pipepipe.shared.infoitem.RelatedItemInfo
-import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
-import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 import project.pipepipe.shared.job.SupportedJobType
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -48,10 +45,6 @@ class PlaybackService : MediaLibraryService() {
     private lateinit var sessionCallbackExecutor: ExecutorService
     private var playbackButtonState = PlaybackButtonState.ALL_OFF
 
-    // SponsorBlock related fields
-    private val sponsorBlockCache = mutableMapOf<String, List<SponsorBlockSegmentInfo>>()
-    private val skippedSegments = mutableMapOf<String, MutableSet<String>>()
-    private var sponsorBlockCheckJob: Job? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     // Search result cache for Android Auto
@@ -127,7 +120,6 @@ class PlaybackService : MediaLibraryService() {
     }
 
     companion object {
-        private const val SPONSOR_BLOCK_CHECK_INTERVAL_MS = 500L
         private const val MAX_RETRIES_BEFORE_REFRESH = 1
         private const val MAX_RETRIES_AFTER_REFRESH = 1
     }
@@ -414,18 +406,6 @@ class PlaybackService : MediaLibraryService() {
             }
         }
 
-        // Monitor stream info loaded events for SponsorBlock and Autoplay
-        serviceScope.launch {
-            SharedContext.streamInfoLoaded.collect { event ->
-                // Only process if this is the current media item
-                if (player.currentMediaItem?.mediaId == event.mediaId) {
-                    loadSponsorBlock(event.mediaId, event.sponsorblockUrl)
-                    loadAutoplayNext(event.mediaId, event.relatedItemUrl,
-                        player.currentMediaItem?.mediaMetadata?.extras?.getInt("KEY_SERVICE_ID"))
-                }
-            }
-        }
-
         // Monitor history changes for Android Auto
         serviceScope.launch {
             SharedContext.historyChanged.collect {
@@ -466,11 +446,6 @@ class PlaybackService : MediaLibraryService() {
     override fun onDestroy() {
         saveCurrentProgress()
 
-        // Clean up SponsorBlock resources
-        stopSponsorBlockCheck()
-        serviceScope.cancel()
-        sponsorBlockCache.clear()
-        skippedSegments.clear()
 
 
         // Clean up skip silence listener
@@ -573,95 +548,6 @@ class PlaybackService : MediaLibraryService() {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-    }
-
-    // SponsorBlock related methods
-    private fun loadSponsorBlockForMedia(mediaItem: MediaItem) {
-        val mediaId = mediaItem.mediaId
-        val sponsorBlockUrl = mediaItem.mediaMetadata.extras?.getString("KEY_SPONSORBLOCK_URL")
-        loadSponsorBlock(mediaId, sponsorBlockUrl)
-    }
-
-    private fun loadSponsorBlock(mediaId: String, sponsorBlockUrl: String?) {
-        if (sponsorBlockUrl == null || sponsorBlockCache.containsKey(mediaId)) {
-            return
-        }
-
-        serviceScope.launch {
-            try {
-                val result = withContext(Dispatchers.IO) {
-                    executeJobFlow(
-                        SupportedJobType.FETCH_SPONSORBLOCK_SEGMENT_LIST,
-                        sponsorBlockUrl,
-                        null
-                    )
-                }
-
-                val segments = result.pagedData?.itemList as? List<SponsorBlockSegmentInfo> ?: emptyList()
-                sponsorBlockCache[mediaId] = segments
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun startSponsorBlockCheck() {
-        sponsorBlockCheckJob?.cancel()
-        sponsorBlockCheckJob = serviceScope.launch {
-            while (isActive) {
-                checkAndSkipSponsorBlock()
-                delay(SPONSOR_BLOCK_CHECK_INTERVAL_MS)
-            }
-        }
-    }
-
-    private fun stopSponsorBlockCheck() {
-        sponsorBlockCheckJob?.cancel()
-    }
-
-    private fun checkAndSkipSponsorBlock() {
-        if (!SponsorBlockHelper.isEnabled()) return
-        if (!SponsorBlockHelper.isSkipEnabled()) return
-
-        val mediaItem = player.currentMediaItem ?: return
-        val mediaId = mediaItem.mediaId
-        val segments = sponsorBlockCache[mediaId] ?: return
-        val position = player.currentPosition
-        val alreadySkipped = skippedSegments.getOrPut(mediaId) { mutableSetOf() }
-
-        val currentSegment = segments.firstOrNull { segment ->
-            position.toDouble() in segment.startTime..segment.endTime
-        }
-
-        currentSegment?.let { segment ->
-            if (!alreadySkipped.contains(segment.uuid) &&
-                SponsorBlockHelper.shouldSkipSegment(segment)) {
-
-                player.seekTo(segment.endTime.toLong())
-                alreadySkipped.add(segment.uuid)
-
-                if (SponsorBlockHelper.isNotificationsEnabled()) {
-                    MainScope().launch {
-                        val categoryName = when (segment.category) {
-                            SponsorBlockCategory.SPONSOR -> MR.strings.sponsor_block_category_sponsor
-                            SponsorBlockCategory.INTRO -> MR.strings.sponsor_block_category_intro
-                            SponsorBlockCategory.OUTRO -> MR.strings.sponsor_block_category_outro
-                            SponsorBlockCategory.INTERACTION -> MR.strings.sponsor_block_category_interaction
-                            SponsorBlockCategory.HIGHLIGHT -> MR.strings.sponsor_block_category_highlight
-                            SponsorBlockCategory.SELF_PROMO -> MR.strings.sponsor_block_category_self_promo
-                            SponsorBlockCategory.NON_MUSIC -> MR.strings.sponsor_block_category_non_music
-                            SponsorBlockCategory.PREVIEW -> MR.strings.sponsor_block_category_preview
-                            SponsorBlockCategory.FILLER -> MR.strings.sponsor_block_category_filler
-                            SponsorBlockCategory.PENDING -> MR.strings.missions_header_pending
-                        }.desc().toString(this@PlaybackService)
-                        val message = MR.strings.player_skipped_category.desc()
-                            .toString(this@PlaybackService)
-                            .format(categoryName)
-                        ToastManager.show(message)
-                    }
-                }
-            }
-        }
     }
 
     // Autoplay next related methods
@@ -779,8 +665,6 @@ class PlaybackService : MediaLibraryService() {
                     SharedContext.platformMediaController?.loadMediaQueueForItem(mediaItem.toPlatformMediaItem())
                 }
                 mediaItem?.let {
-                    skippedSegments[it.mediaId] = mutableSetOf()
-                    loadSponsorBlockForMedia(it)
                     loadAutoplayNextForMedia(it)
                     // Reset retry state when successfully transitioning to a new item
                     retryStates.remove(it.mediaId)
@@ -795,15 +679,6 @@ class PlaybackService : MediaLibraryService() {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED) {
                     saveCurrentProgress()
-                }
-                when (playbackState) {
-                    Player.STATE_READY -> {
-                        player.currentMediaItem?.let { loadSponsorBlockForMedia(it) }
-                        startSponsorBlockCheck()
-                    }
-                    Player.STATE_ENDED, Player.STATE_IDLE -> {
-                        stopSponsorBlockCheck()
-                    }
                 }
             }
 

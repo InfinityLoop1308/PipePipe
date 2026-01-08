@@ -31,9 +31,11 @@ import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.material.navigation.NavigationView
+import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
 import project.pipepipe.app.helper.ExternalUrlPatternHelper
+import project.pipepipe.app.helper.SponsorBlockHelper
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.platform.AndroidActions
 import project.pipepipe.app.platform.AndroidMediaController
@@ -45,6 +47,7 @@ import project.pipepipe.app.ui.screens.PlayQueueScreen
 import project.pipepipe.app.ui.screens.Screen
 import project.pipepipe.app.ui.screens.videodetail.VideoDetailScreen
 import project.pipepipe.app.uistate.VideoDetailPageState
+import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 
 val LocalDrawerLayout = staticCompositionLocalOf<DrawerLayout?> { null }
 
@@ -105,11 +108,13 @@ class MainActivity : ComponentActivity() {
                     showDataMigrationDialog = true
                 }
             }
-
+            val sponsorBlockNames = SponsorBlockCategory.entries.map { SponsorBlockHelper.getCategoryName(it) }
+            val sponsorBlockSkipMsg = stringResource(MR.strings.player_skipped_category)
             LaunchedEffect(Unit) {
                 checkAndTriggerDialogs()
                 // Initialize platformMediaController
                 SharedContext.platformMediaController = AndroidMediaController.getInstance(this@MainActivity)
+                SharedContext.sponsorBlockManager = SponsorBlockManager(sponsorBlockNames, sponsorBlockSkipMsg)
             }
 
             // Listen for dialog check trigger (e.g., after backup import)

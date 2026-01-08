@@ -64,8 +64,7 @@ fun VideoPlayer(
     modifier: Modifier = Modifier,
     danmakuPool: List<DanmakuInfo>? = null,
     danmakuEnabled: Boolean = false,
-    onToggleDanmaku: () -> Unit,
-    sponsorBlockSegments: List<SponsorBlockSegmentInfo> = emptyList()
+    onToggleDanmaku: () -> Unit
 ) {
     val platformActions = SharedContext.platformActions
 
@@ -119,25 +118,7 @@ fun VideoPlayer(
     val availableLanguages = remember(availableAudioLanguages) {
         availableAudioLanguages.map { it.language to it.isDefault }.toSet()
     }
-
-    // SponsorBlock state variables
-    var currentSegmentToSkip by remember { mutableStateOf<SponsorBlockSegmentInfo?>(null) }
-    var showSkipButton by remember { mutableStateOf(false) }
-    var showUnskipButton by remember { mutableStateOf(false) }
-    var lastSkippedSegment by remember { mutableStateOf<SponsorBlockSegmentInfo?>(null) }
-    var skippedSegments by remember { mutableStateOf<Set<String>>(emptySet()) }
-    var skipButtonShownTime by remember { mutableLongStateOf(0L) }
-    var skipButtonJob by remember { mutableStateOf<Job?>(null) }
-    var unskipButtonJob by remember { mutableStateOf<Job?>(null) }
-
-    // Pre-compute display names for all segments to avoid calling @Composable from non-Composable context
-    val segmentDisplayNames = sponsorBlockSegments.associate { segment ->
-        segment.uuid to SponsorBlockHelper.getCategoryName(segment.category)
-    }
-
-    // Pre-fetch string resources for notifications and track labels
-    val playerSkippedText = stringResource(MR.strings.player_skipped_category)
-    val playerUnskippedText = stringResource(MR.strings.player_unskipped)
+    
 
     fun hasVideoOverride(): Boolean = availableResolutions.count { it.isSelected } == 1
 
@@ -344,104 +325,6 @@ fun VideoPlayer(
         }
     }
 
-    // Check current segment for SponsorBlock
-
-    fun checkCurrentSegment(position: Long) {
-        if (!SponsorBlockHelper.isEnabled()) {
-            currentSegmentToSkip = null
-            showSkipButton = false
-            skipButtonJob?.cancel()
-            skipButtonShownTime = 0L
-            return
-        }
-
-        // Find segment at current position
-        val currentSegment = sponsorBlockSegments.firstOrNull { segment ->
-            position.toDouble() in segment.startTime..segment.endTime
-        }
-        if (currentSegment != null && !skippedSegments.contains(currentSegment.uuid)) {
-            // Only show manual skip button (automatic skipping is handled by PlaybackService)
-            if (SponsorBlockHelper.shouldShowSkipButton(currentSegment)) {
-                // Check if 5 seconds have passed since button was first shown
-                if (skipButtonShownTime == 0L || (System.currentTimeMillis() - skipButtonShownTime) < 5000) {
-                    if (skipButtonShownTime == 0L) {
-                        skipButtonShownTime = System.currentTimeMillis()
-                    }
-                    if (!showSkipButton) {
-                        currentSegmentToSkip = currentSegment
-                        showSkipButton = true
-                    }
-                } else {
-                    // 5 seconds elapsed, hide and don't show again for this segment
-                    showSkipButton = false
-                }
-            } else {
-                currentSegmentToSkip = null
-                showSkipButton = false
-                skipButtonJob?.cancel()
-            }
-        } else {
-            currentSegmentToSkip = null
-            showSkipButton = false
-            skipButtonJob?.cancel()
-            skipButtonShownTime = 0L
-        }
-    }
-
-    // Manual skip function
-    fun skipCurrentSegment() {
-        currentSegmentToSkip?.let { segment ->
-            skipButtonJob?.cancel()
-            skipButtonShownTime = 0L
-            val skipToMs = segment.endTime.toLong()
-            mediaController.seekTo(skipToMs)
-            skippedSegments = skippedSegments + segment.uuid
-            lastSkippedSegment = segment
-            showSkipButton = false
-            currentSegmentToSkip = null
-
-            // Show unskip button
-            showUnskipButton = true
-            unskipButtonJob?.cancel()
-            unskipButtonJob = gestureScope.launch {
-                delay(5000)
-                showUnskipButton = false
-            }
-
-            // Show notification
-            if (SponsorBlockHelper.isNotificationsEnabled()) {
-                val categoryName = segmentDisplayNames[segment.uuid] ?: ""
-                ToastManager.show(playerSkippedText.replace("%s", categoryName))
-            }
-        }
-    }
-
-    // Unskip function
-    fun unskipLastSegment() {
-        lastSkippedSegment?.let { segment ->
-            val returnToMs = segment.startTime.toLong()
-            mediaController.seekTo(returnToMs)
-            skippedSegments = skippedSegments - segment.uuid
-            lastSkippedSegment = null
-            showUnskipButton = false
-            unskipButtonJob?.cancel()
-
-            // Show notification
-            if (SponsorBlockHelper.isNotificationsEnabled()) {
-                ToastManager.show(playerUnskippedText)
-            }
-        }
-    }
-
-    // Apply default resolution when tracks change
-    LaunchedEffect(availableResolutions, defaultResolution) {
-        if (!hasVideoOverride() && defaultResolution != "auto" && availableResolutions.isNotEmpty()) {
-            mediaController.applyDefaultResolution(defaultResolution)
-        }
-    }
-
-    val audioMode by SharedContext.playbackMode.collectAsState()
-
     // Register playback event callback
     DisposableEffect(mediaController) {
         val callback = object : PlaybackEventCallback {
@@ -451,19 +334,6 @@ fun VideoPlayer(
 
             override fun onSeek() {
                 danmakuState.onSeek()
-                // User manual seek - clear skip button
-                showSkipButton = false
-                currentSegmentToSkip = null
-            }
-
-            override fun onAutoTransition() {
-                danmakuState.clear()
-                // Reset all SponsorBlock state on video transition
-                skippedSegments = emptySet()
-                lastSkippedSegment = null
-                showUnskipButton = false
-                showSkipButton = false
-                currentSegmentToSkip = null
             }
         }
 
@@ -476,8 +346,6 @@ fun VideoPlayer(
 
         onDispose {
             mediaController.removePlaybackEventCallback(callback)
-            skipButtonJob?.cancel()
-            unskipButtonJob?.cancel()
             platformActions.setKeepScreenOn(false)
             // Restore system brightness when player is disposed
             platformActions.setScreenBrightness(-1f)
@@ -489,13 +357,14 @@ fun VideoPlayer(
         platformActions.setKeepScreenOn(isPlaying)
     }
 
-    LaunchedEffect(mediaController, sponsorBlockSegments) {
-        while (true) {
-            // Check for SponsorBlock segments
-            checkCurrentSegment(currentPosition)
-            delay(500)  // Check more frequently for better responsiveness
+    // Apply default resolution when tracks change
+    LaunchedEffect(availableResolutions, defaultResolution) {
+        if (!hasVideoOverride() && defaultResolution != "auto" && availableResolutions.isNotEmpty()) {
+            mediaController.applyDefaultResolution(defaultResolution)
         }
     }
+
+    val audioMode by SharedContext.playbackMode.collectAsState()
 
     val colorScheme = MaterialTheme.colorScheme
     val isSystemDark = isSystemInDarkTheme()
@@ -742,11 +611,6 @@ fun VideoPlayer(
                         brightnessProgress = brightnessOverlayProgress,
                         doubleTapOverlayState = doubleTapOverlayState,
                         swipeSeekState = swipeSeekState,
-                        sponsorBlockSegments = sponsorBlockSegments,
-                        currentSegmentToSkip = currentSegmentToSkip,
-                        lastSkippedSegment = lastSkippedSegment,
-                        showSkipButton = showSkipButton,
-                        showUnskipButton = showUnskipButton
                     )
 
                     // Create player control callbacks
@@ -794,8 +658,6 @@ fun VideoPlayer(
                             mediaController.disableSubtitles()
                         },
                         onToggleDanmaku = onToggleDanmaku,
-                        onSkipSegment = ::skipCurrentSegment,
-                        onUnskipSegment = ::unskipLastSegment
                     )
 
                     // Use PlayerControl component

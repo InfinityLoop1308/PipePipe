@@ -12,6 +12,8 @@ import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -59,11 +61,6 @@ data class PlayerControlState(
     val brightnessProgress: Float,
     val doubleTapOverlayState: DoubleTapOverlayState?,
     val swipeSeekState: SwipeSeekUiState?,
-    val sponsorBlockSegments: List<SponsorBlockSegmentInfo>,
-    val currentSegmentToSkip: SponsorBlockSegmentInfo?,
-    val lastSkippedSegment: SponsorBlockSegmentInfo?,
-    val showSkipButton: Boolean,
-    val showUnskipButton: Boolean
 )
 
 /**
@@ -82,9 +79,7 @@ data class PlayerControlCallbacks(
     val onAudioLanguageSelected: (String) -> Unit,
     val onSubtitleSelected: (SubtitleInfo) -> Unit,
     val onSubtitleDisabled: () -> Unit,
-    val onToggleDanmaku: () -> Unit,
-    val onSkipSegment: () -> Unit,
-    val onUnskipSegment: () -> Unit
+    val onToggleDanmaku: () -> Unit
 )
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -126,8 +121,10 @@ fun PlayerControl(
         }
 
         // SponsorBlock Skip button (right side)
+        val showSkipButton by SharedContext.sponsorBlockManager.showSkipButton.collectAsState()
+        val currentSegment by SharedContext.sponsorBlockManager.currentSegment.collectAsState()
         AnimatedVisibility(
-            visible = state.showSkipButton && state.currentSegmentToSkip != null,
+            visible = showSkipButton && currentSegment != null,
             enter = fadeIn(),
             exit = fadeOut(),
             modifier = Modifier
@@ -135,7 +132,7 @@ fun PlayerControl(
                 .padding(end = 16.dp)
         ) {
             FloatingActionButton(
-                onClick = callbacks.onSkipSegment,
+                onClick = { currentSegment?.let { SharedContext.sponsorBlockManager.skipSegment(it, true) } },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ) {
@@ -157,8 +154,9 @@ fun PlayerControl(
         }
 
         // SponsorBlock Unskip button (left side)
+        val showUnskipButton by SharedContext.sponsorBlockManager.showUnskipButton.collectAsState()
         AnimatedVisibility(
-            visible = state.showUnskipButton && state.lastSkippedSegment != null,
+            visible = showUnskipButton,
             enter = fadeIn(),
             exit = fadeOut(),
             modifier = Modifier
@@ -166,7 +164,7 @@ fun PlayerControl(
                 .padding(start = 16.dp)
         ) {
             FloatingActionButton(
-                onClick = callbacks.onUnskipSegment,
+                onClick = { SharedContext.sponsorBlockManager.unskipLastSegment() },
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
             ) {
@@ -396,12 +394,14 @@ fun PlayerControl(
                         fontSize = 14.sp
                     )
 
+                    val currentSegments by SharedContext.sponsorBlockManager.currentSegments.collectAsState()
+
                     VideoProgressBar(
                         currentPosition = state.currentPosition,
                         duration = state.duration,
                         bufferedPosition = state.bufferedPosition,
                         onSeek = callbacks.onSeek,
-                        sponsorBlockSegments = state.sponsorBlockSegments,
+                        sponsorBlockSegments = currentSegments,
                         previewFrames = streamInfo.previewFrames,
                         onDraggingChange = onSeekBarDraggingChange,
                         modifier = Modifier

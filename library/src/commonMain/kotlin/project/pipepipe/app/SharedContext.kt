@@ -57,6 +57,10 @@ object SharedContext {
 
     var playingVideoUrlBeforeMinimizing: String? = null
 
+    // SponsorBlockManager for SponsorBlock segment detection and skipping
+   lateinit var sponsorBlockManager: SponsorBlockManager
+
+
     private val _playbackMode = MutableStateFlow(PlaybackMode.AUDIO_ONLY)
     val playbackMode: StateFlow<PlaybackMode> = _playbackMode.asStateFlow()
 
@@ -143,20 +147,6 @@ object SharedContext {
 
     suspend fun triggerDialogCheck() {
         _checkAndShowDialogs.emit(Unit)
-    }
-
-    // Stream Info Loaded Notification (for SponsorBlock and Autoplay)
-    data class StreamInfoLoadedEvent(
-        val mediaId: String,
-        val sponsorblockUrl: String?,
-        val relatedItemUrl: String?
-    )
-
-    private val _streamInfoLoaded = MutableSharedFlow<StreamInfoLoadedEvent>()
-    val streamInfoLoaded: SharedFlow<StreamInfoLoadedEvent> = _streamInfoLoaded.asSharedFlow()
-
-    suspend fun notifyStreamInfoLoaded(mediaId: String, sponsorblockUrl: String?, relatedItemUrl: String?) {
-        _streamInfoLoaded.emit(StreamInfoLoadedEvent(mediaId, sponsorblockUrl, relatedItemUrl))
     }
 
     // Decoder Error Event (for showing dialog in VideoDetailScreen)

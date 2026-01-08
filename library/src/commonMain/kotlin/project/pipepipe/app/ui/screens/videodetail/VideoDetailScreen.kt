@@ -372,7 +372,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     danmakuPool = uiState.currentDanmaku,
                     danmakuEnabled = uiState.danmakuEnabled,
                     onToggleDanmaku = { viewModel.toggleDanmaku() },
-                    sponsorBlockSegments = if (isSponsorBlockEnabled) uiState.currentSponsorBlock.segments else emptyList()
                 )
             }
         }
@@ -495,7 +494,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                         danmakuPool = uiState.currentDanmaku,
                                         danmakuEnabled = uiState.danmakuEnabled,
                                         onToggleDanmaku = { viewModel.toggleDanmaku() },
-                                        sponsorBlockSegments = if (isSponsorBlockEnabled) uiState.currentSponsorBlock.segments else emptyList()
                                     )
                                 }
                             }
