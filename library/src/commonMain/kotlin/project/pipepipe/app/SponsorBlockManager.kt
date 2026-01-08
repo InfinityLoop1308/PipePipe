@@ -79,7 +79,7 @@ class SponsorBlockManager(private val sponsorblockNames: List<String>, private v
     init {
         // Monitor media item changes
         GlobalScope.launch {
-            platformMediaController.currentMediaItem
+            SharedContext.queueManager.currentItem
                 .filterNotNull()
                 .distinctUntilChangedBy { it.mediaId }
                 .collect { item ->

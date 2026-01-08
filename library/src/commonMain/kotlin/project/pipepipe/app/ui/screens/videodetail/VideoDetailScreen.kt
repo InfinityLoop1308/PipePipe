@@ -87,7 +87,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             delay(100) // safe, only delay 200-300ms at beginning once in the app lifecycle
         }
 
-        SharedContext.platformMediaController!!.currentMediaItem
+        SharedContext.queueManager.currentItem
             .filterNotNull()
             .collect { item ->
                 // called 2 times for unknown reason, but anyway loadVideoDetails does nothing if same url so should be safe
@@ -143,7 +143,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                 kotlinx.coroutines.delay(500) // don't use a small value, this will interfere the animation
                 controller?.let {
                     controller.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
-                    if (controller.currentMediaItem.value?.mediaId == streamInfo.url && controller.isPlaying.value) {
+                    if (SharedContext.queueManager.currentItem.value?.mediaId == streamInfo.url && controller.isPlaying.value) {
                         controller.playFromStreamInfo(streamInfo)
                     }
                 }
@@ -161,7 +161,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                 if (shouldAutoPlay) {
                     controller?.let {
                         controller.setPlaybackMode(PlaybackMode.VIDEO_AUDIO)
-                        if (controller.currentMediaItem.value?.mediaId != streamInfo.url) {
+                        if (SharedContext.queueManager.currentItem.value?.mediaId != streamInfo.url) {
                             controller.playFromStreamInfo(streamInfo)
                         } else if (!controller.isPlaying.value) {
                             controller.play()
@@ -276,7 +276,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     CommentSection(
                         navController = navController,
                         onTimestampClick = { timestamp ->
-                            if (controller != null && controller.currentMediaItem.value?.mediaId == streamInfo.url) {
+                            if (controller != null && SharedContext.queueManager.currentItem.value?.mediaId == streamInfo.url) {
                                 controller.seekTo(timestamp * 1000)
                             }
                         })
@@ -313,7 +313,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                         onStart = { controller?.currentPosition?.value },
                         onEnd = { controller?.currentPosition?.value },
                         onTimestampClick = { timestamp ->
-                            if (controller?.currentMediaItem?.value?.mediaId == streamInfo!!.url) {
+                            if (SharedContext.queueManager.currentItem.value?.mediaId == streamInfo!!.url) {
                                 controller?.seekTo(timestamp * 1000)
                             }
                         }
@@ -332,8 +332,8 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                         streamInfo = it,
                         navController = navController,
                         onTimestampClick = { timestamp ->
-                            if (controller?.currentMediaItem?.value?.mediaId == streamInfo.url) {
-                                controller.seekTo(timestamp * 1000)
+                            if (SharedContext.queueManager.currentItem.value?.mediaId == streamInfo.url) {
+                                controller?.seekTo(timestamp * 1000)
                             }
                         }
                     )
@@ -523,7 +523,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                     ActionButtons(
                                         onPlayAudioClick = {
                                             controller.setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-                                            if (controller.currentMediaItem.value?.mediaId != streamInfo.url) {
+                                            if (SharedContext.queueManager.currentItem.value?.mediaId != streamInfo.url) {
                                                 controller.playFromStreamInfo(streamInfo)
                                             } else if (!controller.isPlaying.value) {
                                                 controller.play()

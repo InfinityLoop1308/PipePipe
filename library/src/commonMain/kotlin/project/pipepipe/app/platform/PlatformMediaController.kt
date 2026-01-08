@@ -123,8 +123,6 @@ interface PlatformMediaController {
     /** Current subtitle cues */
     val currentSubtitles: StateFlow<List<SubtitleCue>>
 
-    val currentMediaItem: StateFlow<PlatformMediaItem?>
-
     // ===== Playback Settings =====
 
     /** Current repeat mode */
@@ -194,9 +192,6 @@ interface PlatformMediaController {
 
     /** Load the current item from queue into the player */
     fun loadMediaQueueForCurrentItem(startPositionMs: Long? = null, shouldKeepPosition: Boolean = false)
-
-    /** Clear the player media items */
-    fun clearPlayer()
 
     // ===== Settings Controls =====
 

@@ -66,8 +66,6 @@ class AndroidMediaController(
     private val _playbackState = MutableStateFlow(mapPlaybackState(mediaController.playbackState))
     override val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
-    private val _currentMediaItem = MutableStateFlow(mediaController.currentMediaItem?.toPlatformMediaItem())
-    override val currentMediaItem: StateFlow<PlatformMediaItem?> = _currentMediaItem.asStateFlow()
 
     private val _repeatMode = MutableStateFlow(mapRepeatMode(mediaController.repeatMode))
     override val repeatMode: StateFlow<RepeatMode> = _repeatMode.asStateFlow()
@@ -117,7 +115,6 @@ class AndroidMediaController(
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            _currentMediaItem.value = mediaItem?.toPlatformMediaItem()
             // currentIndex comes from QueueManager, not Media3
             playbackEventCallbacks.forEach { it.onMediaItemTransition() }
         }
@@ -178,11 +175,6 @@ class AndroidMediaController(
         // Initialize tracks
         updateAvailableTracks(mediaController.currentTracks)
 
-        // Don't initialize QueueManager here - it's managed by higher-level code
-        // Just update currentMediaItem from Media3 if needed
-        val currentItem = mediaController.currentMediaItem?.toPlatformMediaItem()
-        _currentMediaItem.value = currentItem
-
         // Start position update loop
         scope.launch {
             while (isActive) {
@@ -227,11 +219,6 @@ class AndroidMediaController(
         if (item != null) {
             loadMediaQueueForItem(item, startPositionMs, shouldKeepPosition = shouldKeepPosition)
         }
-    }
-
-    override fun clearPlayer() {
-        mediaController.clearMediaItems()
-        _currentMediaItem.value = null
     }
 
     private fun indexOfMediaItem(mediaId: String): Int {
@@ -291,7 +278,6 @@ class AndroidMediaController(
                 mediaController.setMediaItems(itemsToLoad, currentMedia3Index.coerceAtLeast(0), startPositionMs)
             }
         }
-        _currentMediaItem.value = item
     }
 
     // ===== Settings Controls =====

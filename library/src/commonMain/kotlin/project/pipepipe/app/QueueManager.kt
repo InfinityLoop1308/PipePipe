@@ -33,6 +33,15 @@ class QueueManager {
     val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
     val isLastIndex: Boolean get() = currentIndex.value == queue.value.size - 1
 
+    /**
+     * Current media item derived from queue and currentIndex.
+     * This is the single source of truth for currentMediaItem in PlatformMediaController.
+     */
+    val currentItem: StateFlow<PlatformMediaItem?> =
+        combine(_queue, _currentIndex) { queue, index ->
+            queue.getOrNull(index)
+        }.stateIn(GlobalScope, SharingStarted.Eagerly, null)
+
     private var backup: MutableList<PlatformMediaItem>? = null
 
     /**

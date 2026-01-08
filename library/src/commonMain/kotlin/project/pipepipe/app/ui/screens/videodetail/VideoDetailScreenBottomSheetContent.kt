@@ -32,7 +32,7 @@ import project.pipepipe.app.SharedContext
 fun VideoDetailScreenBottomSheetContent() {
     val controller = SharedContext.platformMediaController!!
     val isPlaying by controller.isPlaying.collectAsState()
-    val currentMediaItem by controller.currentMediaItem.collectAsState()
+    val currentMediaItem by SharedContext.queueManager.currentItem.collectAsState()
 
     if (currentMediaItem == null) {
         SharedContext.sharedVideoDetailViewModel.hide()
