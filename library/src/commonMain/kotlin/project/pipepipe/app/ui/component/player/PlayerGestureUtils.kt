@@ -139,36 +139,3 @@ fun IntSize.portionForX(x: Float): DisplayPortion {
         else -> DisplayPortion.Middle
     }
 }
-
-/**
- * Read screen brightness using platform-specific implementation.
- * Delegates to SharedContext.platformActions.readScreenBrightness().
- */
-fun readScreenBrightness(): Float {
-    return SharedContext.platformActions.readScreenBrightness()
-}
-
-/**
- * Save screen brightness to preferences with timestamp.
- * The saved brightness will expire after 4 hours.
- */
-fun saveScreenBrightness(brightness: Float) {
-    SharedContext.settingsManager.putFloat("screen_brightness", brightness)
-    SharedContext.settingsManager.putLong("screen_brightness_timestamp", System.currentTimeMillis())
-}
-
-/**
- * Get saved screen brightness from preferences.
- * Returns -1 if no saved brightness or if it has expired (after 4 hours).
- */
-fun getSavedScreenBrightness(): Float {
-    val timestamp = SharedContext.settingsManager.getLong("screen_brightness_timestamp", 0)
-
-    // Check if saved brightness has expired (4 hours)
-    val fourHoursInMillis = 4 * 60 * 60 * 1000L
-    if (System.currentTimeMillis() - timestamp > fourHoursInMillis) {
-        return -1f
-    }
-
-    return SharedContext.settingsManager.getFloat("screen_brightness", -1f)
-}

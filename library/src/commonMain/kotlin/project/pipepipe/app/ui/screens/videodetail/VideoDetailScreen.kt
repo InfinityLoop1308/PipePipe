@@ -370,24 +370,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                     onFullScreenClicked = { viewModel.toggleFullscreenPlayer() },
                     modifier = Modifier.fillMaxSize(),
                     danmakuPool = uiState.currentDanmaku,
-                    gestureSettings = PlayerGestureSettings(
-                        swipeSeekEnabled = SharedContext.settingsManager.getBoolean(
-                            "swipe_seek_gesture_control_key",
-                            true
-                        ),
-                        volumeGestureEnabled = SharedContext.settingsManager.getBoolean(
-                            "volume_gesture_control_key",
-                            true
-                        ),
-                        brightnessGestureEnabled = SharedContext.settingsManager.getBoolean(
-                            "brightness_gesture_control_key",
-                            true
-                        ),
-                        fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean(
-                            "fullscreen_gesture_control_key",
-                            true
-                        )
-                    ),
                     danmakuEnabled = uiState.danmakuEnabled,
                     onToggleDanmaku = { viewModel.toggleDanmaku() },
                     sponsorBlockSegments = if (isSponsorBlockEnabled) uiState.currentSponsorBlock.segments else emptyList()
@@ -511,12 +493,6 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                         onFullScreenClicked = { viewModel.toggleFullscreenPlayer() },
                                         modifier = Modifier.fillMaxSize(),
                                         danmakuPool = uiState.currentDanmaku,
-                                        gestureSettings = PlayerGestureSettings(
-                                            swipeSeekEnabled = SharedContext.settingsManager.getBoolean("swipe_seek_gesture_control_key"),
-                                            volumeGestureEnabled = SharedContext.settingsManager.getBoolean("volume_gesture_control_key"),
-                                            brightnessGestureEnabled = SharedContext.settingsManager.getBoolean("brightness_gesture_control_key"),
-                                            fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean("fullscreen_gesture_control_key")
-                                        ),
                                         danmakuEnabled = uiState.danmakuEnabled,
                                         onToggleDanmaku = { viewModel.toggleDanmaku() },
                                         sponsorBlockSegments = if (isSponsorBlockEnabled) uiState.currentSponsorBlock.segments else emptyList()

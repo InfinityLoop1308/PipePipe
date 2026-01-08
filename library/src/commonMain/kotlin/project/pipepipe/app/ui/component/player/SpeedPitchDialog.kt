@@ -17,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -28,44 +29,36 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
+import project.pipepipe.app.platform.PlatformMediaController
 
 @Composable
 fun SpeedPitchDialog(
-    currentSpeed: Float,
-    currentPitch: Float,
     onDismiss: () -> Unit,
-    onApply: (speed: Float, pitch: Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var tempSpeed by remember { mutableFloatStateOf(currentSpeed) }
-    var tempPitch by remember { mutableFloatStateOf(currentPitch) }
+    val mediaController = SharedContext.platformMediaController!!
+    val playbackSpeed by mediaController.playbackSpeed.collectAsState()
+    val playbackPitch by mediaController.playbackPitch.collectAsState()
+
+    val onApply = { speed: Float, pitch: Float ->
+        mediaController.setPlaybackParameters(speed, pitch)
+        SharedContext.settingsManager.putFloat("playback_speed_key", speed)
+        SharedContext.settingsManager.putFloat("playback_pitch_key", pitch)
+    }
+    var tempSpeed by remember { mutableFloatStateOf(playbackSpeed) }
+    var tempPitch by remember { mutableFloatStateOf(playbackPitch) }
     var stepSize by remember { mutableFloatStateOf(0.25f) }
 
-    // Save initial values for cancel restoration
-    val initialSpeed = remember { currentSpeed }
-    val initialPitch = remember { currentPitch }
+    val initialSpeed = remember { playbackSpeed }
+    val initialPitch = remember { playbackPitch }
 
-    // Helper functions for non-linear slider mapping
-    // Maps speed (0.1-10) to slider position (0-1) with 1x at center
     fun speedToSlider(speed: Float): Float {
-        return if (speed < 1f) {
-            // Map 0.1-1 to 0-0.5
-            (speed - 0.1f) / 1.8f
-        } else {
-            // Map 1-10 to 0.5-1
-            0.5f + (speed - 1f) / 18f
-        }
+        return if (speed < 1f) (speed - 0.1f) / 1.8f else 0.5f + (speed - 1f) / 18f
     }
 
-    // Maps slider position (0-1) to speed (0.1-10)
     fun sliderToSpeed(slider: Float): Float {
-        return if (slider < 0.5f) {
-            // Map 0-0.5 to 0.1-1
-            0.1f + slider * 1.8f
-        } else {
-            // Map 0.5-1 to 1-10
-            1f + (slider - 0.5f) * 18f
-        }
+        return if (slider < 0.5f) 0.1f + slider * 1.8f else 1f + (slider - 0.5f) * 18f
     }
 
     Dialog(onDismissRequest = onDismiss) {
@@ -89,13 +82,11 @@ fun SpeedPitchDialog(
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
 
-                    // Slider with buttons
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // Minus button
                         OutlinedButton(
                             onClick = {
                                 tempSpeed = (tempSpeed - stepSize).coerceIn(0.1f, 10f)
@@ -117,7 +108,6 @@ fun SpeedPitchDialog(
                             modifier = Modifier.weight(1f)
                         )
 
-                        // Plus button
                         OutlinedButton(
                             onClick = {
                                 tempSpeed = (tempSpeed + stepSize).coerceIn(0.1f, 10f)
@@ -141,12 +131,10 @@ fun SpeedPitchDialog(
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
 
-                    // Slider with buttons
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // Minus button
                         OutlinedButton(
                             onClick = {
                                 tempPitch = (tempPitch - stepSize).coerceIn(0.1f, 10f)
@@ -168,7 +156,6 @@ fun SpeedPitchDialog(
                             modifier = Modifier.weight(1f)
                         )
 
-                        // Plus button
                         OutlinedButton(
                             onClick = {
                                 tempPitch = (tempPitch + stepSize).coerceIn(0.1f, 10f)
@@ -185,27 +172,20 @@ fun SpeedPitchDialog(
                 HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
                 // Step Size Selector
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        val stepOptions = listOf(0.01f, 0.05f, 0.25f, 1.00f)
-
-                        stepOptions.forEach { option ->
-                            FilterChip(
-                                selected = stepSize == option,
-                                onClick = { stepSize = option },
-                                label = {
-                                    Text(
-                                        "${(option * 100).toInt()}%",
-                                        fontSize = 12.sp
-                                    )
-                                },
-                                modifier = Modifier.weight(1f),
-                            )
-                        }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val stepOptions = listOf(0.01f, 0.05f, 0.25f, 1.00f)
+                    stepOptions.forEach { option ->
+                        FilterChip(
+                            selected = stepSize == option,
+                            onClick = { stepSize = option },
+                            label = {
+                                Text("${(option * 100).toInt()}%", fontSize = 12.sp)
+                            },
+                            modifier = Modifier.weight(1f),
+                        )
                     }
                 }
 
@@ -216,7 +196,6 @@ fun SpeedPitchDialog(
                         .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    // Reset button on the left
                     TextButton(
                         onClick = {
                             tempSpeed = 1.0f
@@ -227,7 +206,6 @@ fun SpeedPitchDialog(
                         Text(stringResource(MR.strings.playback_reset), fontSize = 14.sp)
                     }
 
-                    // Cancel and OK buttons on the right
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         TextButton(
                             onClick = {

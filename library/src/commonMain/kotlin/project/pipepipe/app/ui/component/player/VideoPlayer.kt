@@ -62,13 +62,19 @@ fun VideoPlayer(
     streamInfo: StreamInfo,
     onFullScreenClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    gestureSettings: PlayerGestureSettings = PlayerGestureSettings(),
     danmakuPool: List<DanmakuInfo>? = null,
     danmakuEnabled: Boolean = false,
     onToggleDanmaku: () -> Unit,
     sponsorBlockSegments: List<SponsorBlockSegmentInfo> = emptyList()
 ) {
     val platformActions = SharedContext.platformActions
+
+    val gestureSettings = PlayerGestureSettings(
+        swipeSeekEnabled = SharedContext.settingsManager.getBoolean("swipe_seek_gesture_control_key", true),
+        volumeGestureEnabled = SharedContext.settingsManager.getBoolean("volume_gesture_control_key", true),
+        brightnessGestureEnabled = SharedContext.settingsManager.getBoolean("brightness_gesture_control_key", true),
+        fullscreenGestureEnabled = SharedContext.settingsManager.getBoolean("fullscreen_gesture_control_key", true)
+    )
 
     var isControlsVisible by remember { mutableStateOf(false) }
     var showResolutionMenu by remember { mutableStateOf(false) }
@@ -821,26 +827,13 @@ fun VideoPlayer(
         }
         if (showSpeedPitchDialog) {
             SpeedPitchDialog(
-                currentSpeed = currentSpeed,
-                currentPitch = currentPitch,
                 onDismiss = { showSpeedPitchDialog = false },
-                onApply = { speed, pitch ->
-                    // Apply speed and pitch to the media controller
-                    mediaController.setPlaybackParameters(speed, pitch)
-
-                    // Save to preferences for persistence across app restarts
-                    SharedContext.settingsManager.putFloat("playback_speed_key", speed)
-                    SharedContext.settingsManager.putFloat("playback_pitch_key", pitch)
-                }
             )
         }
 
         if (showSleepTimerDialog) {
             SleepTimerDialog(
                 onDismiss = { showSleepTimerDialog = false },
-                onConfirm = { minutes ->
-                    platformActions.startSleepTimer(minutes)
-                }
             )
         }
     }

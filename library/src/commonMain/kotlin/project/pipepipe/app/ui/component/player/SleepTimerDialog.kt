@@ -17,12 +17,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
+import project.pipepipe.app.SharedContext
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun SleepTimerDialog(
     onDismiss: () -> Unit,
-    onConfirm: (minutes: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val quickOptions = remember { listOf(10, 15, 30, 45, 60, 90) }
@@ -123,7 +123,7 @@ fun SleepTimerDialog(
                         TextButton(
                             onClick = {
                                 val totalMinutes = minutesText.toIntOrNull()?.coerceAtLeast(1) ?: 15
-                                onConfirm(totalMinutes)
+                                SharedContext.platformActions.startSleepTimer(totalMinutes)
                                 onDismiss()
                             }
                         ) {

@@ -271,24 +271,12 @@ fun PlayQueueScreen() {
 		// Speed Pitch Dialog
 		if (showSpeedPitchDialog) {
 			SpeedPitchDialog(
-				currentSpeed = currentSpeed,
-				currentPitch = currentPitch,
 				onDismiss = { showSpeedPitchDialog = false },
-				onApply = { speed, pitch ->
-					mediaController.setPlaybackParameters(speed, pitch)
-
-					// Save to preferences for persistence across app restarts
-					SharedContext.settingsManager.putFloat("playback_speed_key", speed)
-					SharedContext.settingsManager.putFloat("playback_pitch_key", pitch)
-				}
 			)
 		}
         if (showSleepTimerDialog) {
             SleepTimerDialog(
                 onDismiss = { showSleepTimerDialog = false },
-                onConfirm = { minutes ->
-                    SharedContext.platformActions.startSleepTimer(minutes)
-                }
             )
         }
 	}
