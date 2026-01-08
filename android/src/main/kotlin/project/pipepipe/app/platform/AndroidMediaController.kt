@@ -480,7 +480,7 @@ class AndroidMediaController(
     }
 
     @OptIn(UnstableApi::class)
-    override fun selectResolution(resolution: ResolutionInfo) {
+    override fun selectResolution(resolution: ResolutionInfo, isManual: Boolean) {
         val tracks = mediaController.currentTracks
 
         for (trackGroup in tracks.groups) {
@@ -505,7 +505,9 @@ class AndroidMediaController(
                 break
             }
         }
-        loadMediaQueueForCurrentItem() // don't know why but after refactor this is required to make sure player can restore from mediaCodecError
+        if (isManual) {
+            loadMediaQueueForCurrentItem() // don't know why but after refactor this is required to make sure player can restore from mediaCodecError
+        }
     }
 
     @OptIn(UnstableApi::class)
@@ -546,7 +548,7 @@ class AndroidMediaController(
             else -> null
         }
 
-        targetResolution?.let { selectResolution(it) }
+        targetResolution?.let { selectResolution(it, isManual = false) }
     }
 
     @OptIn(UnstableApi::class)

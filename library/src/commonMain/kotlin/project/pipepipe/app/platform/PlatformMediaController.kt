@@ -275,7 +275,7 @@ interface PlatformMediaController {
      * Select a specific video resolution.
      * @param resolution The resolution option to select
      */
-    fun selectResolution(resolution: ResolutionInfo)
+    fun selectResolution(resolution: ResolutionInfo, isManual: Boolean = true)
 
     /**
      * Select a specific subtitle track.
