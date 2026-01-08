@@ -1,5 +1,6 @@
 package project.pipepipe.app.ui.component.player
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -45,6 +46,7 @@ import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.helper.SponsorBlockCategory
 import project.pipepipe.shared.infoitem.helper.stream.Frameset
 import androidx.compose.ui.Alignment as PopupAlignment
+import androidx.compose.ui.platform.LocalLayoutDirection
 
 @Composable
 fun rememberPlaybackTimeMs(controller: PlatformMediaController): State<Long> {
@@ -108,6 +110,7 @@ fun VideoSurface(
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun VideoProgressBar(
     currentPosition: Long,
@@ -164,22 +167,33 @@ fun VideoProgressBar(
     }.coerceIn(0f, 1f)
 
     val bufferedProgress = (bufferedPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+    val layoutDirection = LocalLayoutDirection.current
 
     BoxWithConstraints(
         modifier = modifier
             .height(40.dp)
-            .pointerInput(Unit) {
+            .pointerInput(layoutDirection) {
                 detectTapGestures { offset ->
-                    val newPosition = (offset.x / size.width * duration).toLong()
+                    val effectiveX = if (layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl) {
+                        size.width - offset.x
+                    } else {
+                        offset.x
+                    }
+                    val newPosition = (effectiveX / size.width * duration).toLong()
                     onSeek(newPosition.coerceIn(0L, duration))
                 }
             }
-            .pointerInput(Unit) {
+            .pointerInput(layoutDirection) {
                 detectDragGestures(
                     onDragStart = { offset ->
                         isDragging = true
                         onDraggingChange(true)
-                        dragPosition = (offset.x / size.width * duration).toLong()
+                        val effectiveX = if (layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl) {
+                            size.width - offset.x
+                        } else {
+                            offset.x
+                        }
+                        dragPosition = (effectiveX / size.width * duration).toLong()
                         dragOffsetX = offset.x
                     },
                     onDragEnd = {
@@ -189,7 +203,12 @@ fun VideoProgressBar(
                     }
                 ) { change, dragAmount ->
                     change.consume()  // Consume the event to prevent parent gesture detection
-                    val newPosition = dragPosition + (dragAmount.x / size.width * duration).toLong()
+                    val effectiveDragAmount = if (layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl) {
+                        -dragAmount.x
+                    } else {
+                        dragAmount.x
+                    }
+                    val newPosition = dragPosition + (effectiveDragAmount / size.width * duration).toLong()
                     dragPosition = newPosition.coerceIn(0L, duration)
                     dragOffsetX = change.position.x
                 }
