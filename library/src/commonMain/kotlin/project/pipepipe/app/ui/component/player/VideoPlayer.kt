@@ -391,6 +391,13 @@ fun VideoPlayer(
         }
     }
 
+    // Show controls when playback ends (and not continuing to next item)
+    LaunchedEffect(playbackState, isPlaying) {
+        if (playbackState == PlaybackState.ENDED && !isPlaying) {
+            isControlsVisible = true
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
