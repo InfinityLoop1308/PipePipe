@@ -327,17 +327,7 @@ fun VideoPlayer(
 
     // Register playback event callback
     DisposableEffect(mediaController) {
-        val callback = object : PlaybackEventCallback {
-            override fun onMediaItemTransition() {
-                danmakuState.clear()
-            }
 
-            override fun onSeek() {
-                danmakuState.onSeek()
-            }
-        }
-
-        mediaController.addPlaybackEventCallback(callback)
 
         // Keep screen on while playing
         if (isPlaying) {
@@ -345,7 +335,6 @@ fun VideoPlayer(
         }
 
         onDispose {
-            mediaController.removePlaybackEventCallback(callback)
             platformActions.setKeepScreenOn(false)
             // Restore system brightness when player is disposed
             platformActions.setScreenBrightness(-1f)

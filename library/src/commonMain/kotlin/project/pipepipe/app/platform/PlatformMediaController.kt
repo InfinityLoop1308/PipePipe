@@ -150,18 +150,6 @@ interface PlatformMediaController {
     fun disableSubtitles()
 
     fun stopService()
-
-    fun addPlaybackEventCallback(callback: PlaybackEventCallback)
-
-    fun removePlaybackEventCallback(callback: PlaybackEventCallback)
-}
-
-interface PlaybackEventCallback {
-    fun onMediaItemTransition() {}
-
-    fun onSeek() {}
-
-    fun onTracksChanged() {}
 }
 
 enum class PlaybackState {

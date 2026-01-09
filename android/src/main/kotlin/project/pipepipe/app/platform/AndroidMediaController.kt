@@ -97,8 +97,6 @@ class AndroidMediaController(
     private val _currentAudioLanguage = MutableStateFlow("Default")
     override val currentAudioLanguage: StateFlow<String> = _currentAudioLanguage.asStateFlow()
 
-    private val playbackEventCallbacks = mutableListOf<PlaybackEventCallback>()
-
     private val listener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             _isPlaying.value = isPlaying
@@ -110,13 +108,9 @@ class AndroidMediaController(
         }
 
         override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-            // Media3 timeline changes are ignored - QueueManager is single source of truth
-            // Media3 only plays the current item, doesn't manage queue
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            // currentIndex comes from QueueManager, not Media3
-            playbackEventCallbacks.forEach { it.onMediaItemTransition() }
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
@@ -146,7 +140,6 @@ class AndroidMediaController(
 
         override fun onTracksChanged(tracks: Tracks) {
             updateAvailableTracks(tracks)
-            playbackEventCallbacks.forEach { it.onTracksChanged() }
         }
 
         override fun onPositionDiscontinuity(
@@ -159,12 +152,6 @@ class AndroidMediaController(
                     GlobalScope.launch {
                         DatabaseOperations.updateStreamProgress(it.mediaId, oldPosition.positionMs)
                     }
-                }
-            }
-            when (reason) {
-                Player.DISCONTINUITY_REASON_SEEK,
-                Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT -> {
-                    playbackEventCallbacks.forEach { it.onSeek() }
                 }
             }
         }
@@ -563,14 +550,6 @@ class AndroidMediaController(
 
     override fun stopService() {
         mediaController.stopService()
-    }
-
-    override fun addPlaybackEventCallback(callback: PlaybackEventCallback) {
-        playbackEventCallbacks.add(callback)
-    }
-
-    override fun removePlaybackEventCallback(callback: PlaybackEventCallback) {
-        playbackEventCallbacks.remove(callback)
     }
 
     // ===== Helper Methods =====
