@@ -485,6 +485,11 @@ class MainActivity : ComponentActivity() {
         openPlayQueueFromIntent = false
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        (SharedContext.platformActions as AndroidActions).updateScreenOrientation()
+    }
+
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
