@@ -1,7 +1,8 @@
 package project.pipepipe.app.ui.component.player
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -16,9 +17,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,12 +31,11 @@ import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.ColorHelper
 import project.pipepipe.app.platform.ResolutionInfo
 import project.pipepipe.app.platform.SubtitleInfo
 import project.pipepipe.app.utils.toDurationString
-import project.pipepipe.shared.infoitem.SponsorBlockSegmentInfo
 import project.pipepipe.shared.infoitem.StreamInfo
-import java.util.*
 
 /**
  * Data class to hold all player control state
@@ -82,6 +84,24 @@ data class PlayerControlCallbacks(
     val onToggleDanmaku: () -> Unit
 )
 
+fun Modifier.alphaHitTestPassThrough(alpha: Float): Modifier {
+    // 1. 设置视觉透明度（处理 alpha 在 0~1 之间的情况）
+    return this.alpha(alpha)
+        .layout { measurable, constraints ->
+            // 2. 正常测量，获取子组件需要的大小
+            val placeable = measurable.measure(constraints)
+
+            // 3. 报告布局大小（从而保留占位）
+            layout(placeable.width, placeable.height) {
+                // 4. 关键点：只有当 alpha > 0 时才放置子组件
+                // 如果 alpha == 0，不调用 place，组件在布局树中存在但不可见、不可交互
+                if (alpha > 0f) {
+                    placeable.placeRelative(0, 0)
+                }
+            }
+        }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PlayerControl(
@@ -91,7 +111,7 @@ fun PlayerControl(
     isFullscreenMode: Boolean,
     danmakuEnabled: Boolean,
     danmakuState: DanmakuState,
-    controlsTransition: MutableTransitionState<Boolean>,
+    controlsVisible: Boolean,
     showResolutionMenu: Boolean,
     onResolutionMenuChange: (Boolean) -> Unit,
     showMoreMenu: Boolean,
@@ -105,223 +125,224 @@ fun PlayerControl(
     onSeekBarDraggingChange: (Boolean) -> Unit = {},
     playPauseFocusRequester: FocusRequester? = null
 ) {
+    // Animate alpha for background dim (100ms duration)
+    val backgroundAlpha by animateFloatAsState(
+        targetValue = if (controlsVisible) 0.3f else 0f,
+        animationSpec = tween(300),
+        label = "backgroundAlpha"
+    )
+
+    // Animate alpha for controls (300ms duration)
+    val controlsAlpha by animateFloatAsState(
+        targetValue = if (controlsVisible) 1f else 0f,
+        animationSpec = tween(300),
+        label = "controlsAlpha"
+    )
+
     Box(modifier = Modifier.fillMaxSize()) {
-        if (controlsTransition.targetState) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f))
-            )
-        }
+        // Background dim with alpha animation
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ColorHelper.parseHexColor("#64000000").copy(alpha = backgroundAlpha))
+        )
+
 
         Box(
             modifier = Modifier.windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility)
                 .windowInsetsPadding(WindowInsets.safeDrawing)
                 .fillMaxSize()
         ) {
-            // SponsorBlock Skip button (right side)
-            val showSkipButton by SharedContext.sponsorBlockManager.showSkipButton.collectAsState()
-            val currentSegment by SharedContext.sponsorBlockManager.currentSegment.collectAsState()
-            AnimatedVisibility(
-                visible = showSkipButton && currentSegment != null,
-                enter = fadeIn(),
-                exit = fadeOut(),
+            // Player Controls - use alpha animation instead of AnimatedVisibility
+            Box(
                 modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 16.dp)
+                    .fillMaxSize()
+                    .alphaHitTestPassThrough(controlsAlpha)
             ) {
-                FloatingActionButton(
-                    onClick = { currentSegment?.let { SharedContext.sponsorBlockManager.skipSegment(it, true) } },
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                // SponsorBlock Skip button (right side)
+                val showSkipButton by SharedContext.sponsorBlockManager.showSkipButton.collectAsState()
+                val currentSegment by SharedContext.sponsorBlockManager.currentSegment.collectAsState()
+                AnimatedVisibility(
+                    visible = showSkipButton && currentSegment != null,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    FloatingActionButton(
+                        onClick = { currentSegment?.let { SharedContext.sponsorBlockManager.skipSegment(it, true) } },
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ) {
-                        Text(
-                            text = stringResource(MR.strings.sponsor_block_manual_skip_button),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Icon(
-                            imageVector = Icons.Default.SkipNext,
-                            contentDescription = stringResource(MR.strings.player_skip_segment)
-                        )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(MR.strings.sponsor_block_manual_skip_button),
+                                fontWeight = FontWeight.Bold
+                            )
+                            Icon(
+                                imageVector = Icons.Default.SkipNext,
+                                contentDescription = stringResource(MR.strings.player_skip_segment)
+                            )
+                        }
                     }
                 }
-            }
 
-            // SponsorBlock Unskip button (left side)
-            val showUnskipButton by SharedContext.sponsorBlockManager.showUnskipButton.collectAsState()
-            AnimatedVisibility(
-                visible = showUnskipButton,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 16.dp)
-            ) {
-                FloatingActionButton(
-                    onClick = { SharedContext.sponsorBlockManager.unskipLastSegment() },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                // SponsorBlock Unskip button (left side)
+                val showUnskipButton by SharedContext.sponsorBlockManager.showUnskipButton.collectAsState()
+                AnimatedVisibility(
+                    visible = showUnskipButton,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(start = 16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    FloatingActionButton(
+                        onClick = { SharedContext.sponsorBlockManager.unskipLastSegment() },
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Undo,
-                            contentDescription = stringResource(MR.strings.player_unskip_segment)
-                        )
-                        Text(
-                            text = stringResource(MR.strings.player_unskip),
-                            fontWeight = FontWeight.Bold
-                        )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Undo,
+                                contentDescription = stringResource(MR.strings.player_unskip_segment)
+                            )
+                            Text(
+                                text = stringResource(MR.strings.player_unskip),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
-            }
 
-            // Player Controls
-            AnimatedVisibility(
-                visibleState = controlsTransition,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
+                // Player Controls
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .windowInsetsPadding(
-                            WindowInsets.systemBarsIgnoringVisibility
-                                .only(WindowInsetsSides.Horizontal)
-                        )
-                        .windowInsetsPadding(WindowInsets.safeDrawing)
                 ) {
                     // Top controls
-                    Column(
-                        modifier = Modifier.then(
-                            if (isFullscreenMode) {
-                                Modifier.statusBarsPadding()
-                            } else {
-                                Modifier
-                            }
-                        )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Top
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.weight(1f),
                             verticalAlignment = Alignment.Top
                         ) {
-                            Row(
-                                modifier = Modifier.weight(1f),
-                                verticalAlignment = Alignment.Top
-                            ) {
-                                if (!isFullscreenMode) {
-                                    IconButton(onClick = callbacks.onClose) {
-                                        Icon(
-                                            Icons.Default.Close,
-                                            contentDescription = stringResource(MR.strings.close),
-                                            tint = Color.White
-                                        )
-                                    }
+                            if (!isFullscreenMode) {
+                                IconButton(onClick = callbacks.onClose) {
+                                    Icon(
+                                        Icons.Default.Close,
+                                        contentDescription = stringResource(MR.strings.close),
+                                        tint = Color.White
+                                    )
                                 }
+                            }
 
-                                if (isFullscreenMode) {
-                                    Column(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(horizontal = 8.dp, vertical = 12.dp)
-                                    ) {
+                            if (isFullscreenMode) {
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 8.dp, vertical = 12.dp)
+                                ) {
+                                    Text(
+                                        text = streamInfo.name ?: "",
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        modifier = Modifier.basicMarquee(),
+                                        style = TextStyle(
+                                            platformStyle = PlatformTextStyle(
+                                                includeFontPadding = false
+                                            )
+                                        )
+                                    )
+                                    streamInfo.uploaderName?.let {
                                         Text(
-                                            text = streamInfo.name ?: "",
+                                            text = it,
                                             color = Color.White,
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 12.sp,
                                             maxLines = 1,
-                                            modifier = Modifier.basicMarquee(),
+                                            overflow = TextOverflow.Ellipsis,
                                             style = TextStyle(
                                                 platformStyle = PlatformTextStyle(
                                                     includeFontPadding = false
                                                 )
-                                            )
+                                            ),
+                                            modifier = Modifier.padding(top = 2.dp)
                                         )
-                                        streamInfo.uploaderName?.let {
-                                            Text(
-                                                text = it,
-                                                color = Color.White,
-                                                fontSize = 12.sp,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                                style = TextStyle(
-                                                    platformStyle = PlatformTextStyle(
-                                                        includeFontPadding = false
-                                                    )
-                                                ),
-                                                modifier = Modifier.padding(top = 2.dp)
-                                            )
-                                        }
                                     }
                                 }
                             }
+                        }
 
-                            // Right side buttons
-                            Row(
-                                verticalAlignment = Alignment.Top,
-                                horizontalArrangement = Arrangement.spacedBy((-6).dp)
-                            ) {
-                                // Resolution button
-                                if (state.availableResolutions.isNotEmpty()) {
-                                    ResolutionMenu(
-                                        availableResolutions = state.availableResolutions,
-                                        showMenu = showResolutionMenu,
-                                        onMenuChange = onResolutionMenuChange,
-                                        onResolutionSelected = callbacks.onResolutionSelected,
-                                        onResolutionAuto = callbacks.onResolutionAuto
-                                    )
-                                }
-
-                                // Speed button
-                                TextButton(onClick = callbacks.onSpeedPitchClick) {
-                                    Text(
-                                        text = if (state.currentSpeed == 1f) "1x" else String.format(
-                                            "%.1fx",
-                                            state.currentSpeed
-                                        ),
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-
-                                // More menu
-                                MoreMenu(
-                                    streamInfo = streamInfo,
-                                    danmakuEnabled = danmakuEnabled,
-                                    availableSubtitles = state.availableSubtitles,
-                                    availableLanguages = state.availableLanguages,
-                                    showMenu = showMoreMenu,
-                                    onMenuChange = onMoreMenuChange,
-                                    showAudioLanguageMenu = showAudioLanguageMenu,
-                                    onAudioLanguageMenuChange = onAudioLanguageMenuChange,
-                                    showSubtitleMenu = showSubtitleMenu,
-                                    onSubtitleMenuChange = onSubtitleMenuChange,
-                                    currentLanguage = state.currentLanguage,
-                                    onToggleDanmaku = {
-                                        callbacks.onToggleDanmaku()
-                                        if (!danmakuEnabled) {
-                                            danmakuState.clear()
-                                        }
-                                    },
-                                    onAudioLanguageSelected = callbacks.onAudioLanguageSelected,
-                                    onSubtitleSelected = callbacks.onSubtitleSelected,
-                                    onSubtitleDisabled = callbacks.onSubtitleDisabled,
-                                    onSleepTimerClick = {
-                                        onMoreMenuChange(false)
-                                        onSleepTimerDialogChange(true)
-                                    },
-                                    onPipClick = onPipClick
+                        // Right side buttons
+                        Row(
+                            verticalAlignment = Alignment.Top,
+                            horizontalArrangement = Arrangement.spacedBy((-6).dp)
+                        ) {
+                            // Resolution button
+                            if (state.availableResolutions.isNotEmpty()) {
+                                ResolutionMenu(
+                                    availableResolutions = state.availableResolutions,
+                                    showMenu = showResolutionMenu,
+                                    onMenuChange = onResolutionMenuChange,
+                                    onResolutionSelected = callbacks.onResolutionSelected,
+                                    onResolutionAuto = callbacks.onResolutionAuto
                                 )
                             }
+
+                            // Speed button
+                            TextButton(onClick = callbacks.onSpeedPitchClick) {
+                                Text(
+                                    text = if (state.currentSpeed == 1f) "1x" else String.format(
+                                        "%.1fx",
+                                        state.currentSpeed
+                                    ),
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            // More menu
+                            MoreMenu(
+                                streamInfo = streamInfo,
+                                danmakuEnabled = danmakuEnabled,
+                                availableSubtitles = state.availableSubtitles,
+                                availableLanguages = state.availableLanguages,
+                                showMenu = showMoreMenu,
+                                onMenuChange = onMoreMenuChange,
+                                showAudioLanguageMenu = showAudioLanguageMenu,
+                                onAudioLanguageMenuChange = onAudioLanguageMenuChange,
+                                showSubtitleMenu = showSubtitleMenu,
+                                onSubtitleMenuChange = onSubtitleMenuChange,
+                                currentLanguage = state.currentLanguage,
+                                onToggleDanmaku = {
+                                    callbacks.onToggleDanmaku()
+                                    if (!danmakuEnabled) {
+                                        danmakuState.clear()
+                                    }
+                                },
+                                onAudioLanguageSelected = callbacks.onAudioLanguageSelected,
+                                onSubtitleSelected = callbacks.onSubtitleSelected,
+                                onSubtitleDisabled = callbacks.onSubtitleDisabled,
+                                onSleepTimerClick = {
+                                    onMoreMenuChange(false)
+                                    onSleepTimerDialogChange(true)
+                                },
+                                onPipClick = onPipClick
+                            )
                         }
                     }
 

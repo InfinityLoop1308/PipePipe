@@ -1,6 +1,5 @@
 package project.pipepipe.app.ui.component.player
 
-import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -124,12 +123,6 @@ fun VideoPlayer(
 
 
     val danmakuState = rememberDanmakuState()
-
-    val controlsTransition = remember(isControlsVisible) {
-        MutableTransitionState(isControlsVisible)
-    }
-
-
 
     val density = LocalDensity.current
     val rotationThresholdPx = remember(density) { with(density) { 40.dp.toPx() } }
@@ -358,7 +351,7 @@ fun VideoPlayer(
     val colorScheme = MaterialTheme.colorScheme
     val isSystemDark = isSystemInDarkTheme()
 
-    LaunchedEffect(isControlsVisible, isFullscreenMode) {
+    LaunchedEffect(isControlsVisible) {
         platformActions.setSystemBarsVisible(
             visible = isControlsVisible,
             isFullscreen = isFullscreenMode,
@@ -461,6 +454,7 @@ fun VideoPlayer(
                                                 }
                                                 true
                                             }
+
                                             Key.DirectionLeft -> {
                                                 if (!isControlsVisible) {
                                                     applySeekDelta(-seekMs)
@@ -469,6 +463,7 @@ fun VideoPlayer(
                                                     false // Let focus move to other controls
                                                 }
                                             }
+
                                             Key.DirectionRight -> {
                                                 if (!isControlsVisible) {
                                                     applySeekDelta(seekMs)
@@ -477,6 +472,7 @@ fun VideoPlayer(
                                                     false // Let focus move to other controls
                                                 }
                                             }
+
                                             Key.MediaPlayPause -> {
                                                 if (isPlaying) mediaController.pause() else mediaController.play()
                                                 true
@@ -550,7 +546,10 @@ fun VideoPlayer(
                                     isLongPressing = true
                                     originalSpeed = mediaController.playbackSpeed.value
                                     val speedUpSpeed = originalSpeed * speedingPlaybackMultiplier
-                                    mediaController.setPlaybackParameters(speedUpSpeed, mediaController.playbackPitch.value)
+                                    mediaController.setPlaybackParameters(
+                                        speedUpSpeed,
+                                        mediaController.playbackPitch.value
+                                    )
                                 }
                             },
                             onPress = {
@@ -559,7 +558,10 @@ fun VideoPlayer(
                                 // 无论是否成功释放，如果正在长按加速状态，都恢复速度
                                 if (isLongPressing) {
                                     isLongPressing = false
-                                    mediaController.setPlaybackParameters(originalSpeed, mediaController.playbackPitch.value)
+                                    mediaController.setPlaybackParameters(
+                                        originalSpeed,
+                                        mediaController.playbackPitch.value
+                                    )
                                 }
                             }
                         )
@@ -657,7 +659,7 @@ fun VideoPlayer(
                         isFullscreenMode = isFullscreenMode,
                         danmakuEnabled = danmakuEnabled,
                         danmakuState = danmakuState,
-                        controlsTransition = controlsTransition,
+                        controlsVisible = isControlsVisible,
                         showResolutionMenu = showResolutionMenu,
                         onResolutionMenuChange = { showResolutionMenu = it },
                         showMoreMenu = showMoreMenu,

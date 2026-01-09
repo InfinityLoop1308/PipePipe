@@ -14,6 +14,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.Settings
+import android.view.View
 import android.view.WindowManager
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
@@ -32,7 +33,10 @@ import kotlinx.coroutines.launch
 import project.pipepipe.app.*
 import project.pipepipe.app.global.MediaControllerHolder
 import project.pipepipe.app.helper.ToastManager
-import project.pipepipe.app.service.*
+import project.pipepipe.app.service.PlaybackService
+import project.pipepipe.app.service.SleepTimerService
+import project.pipepipe.app.service.StreamsNotificationManager
+import project.pipepipe.app.service.UpdateCheckWorker
 import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.StreamInfo
 
@@ -173,12 +177,6 @@ class AndroidActions(
 
     override fun enterImmersiveVideoMode(isPortraitVideo: Boolean) {
         val activity = context as? Activity ?: return
-        val window = activity.window
-        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-
-        // Hide system bars with swipe-to-show behavior
-        insetsController.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
         // Set screen orientation based on video aspect ratio if auto-rotate is disabled
         val isAutoRotateDisabled = Settings.System.getInt(
@@ -304,27 +302,21 @@ class AndroidActions(
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
 
         if (isFullscreen) {
+            insetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             insetsController.isAppearanceLightStatusBars = false
             insetsController.isAppearanceLightNavigationBars = false
             if (visible) {
-                insetsController.show(
-                    WindowInsetsCompat.Type.statusBars() or
-                            WindowInsetsCompat.Type.navigationBars()
-                )
+                insetsController.show(WindowInsetsCompat.Type.systemBars())
             } else {
-                insetsController.hide(
-                    WindowInsetsCompat.Type.statusBars() or
-                            WindowInsetsCompat.Type.navigationBars()
-                )
+                insetsController.hide(WindowInsetsCompat.Type.systemBars())
             }
         } else {
             applySystemBarColors(colorScheme, isSystemDark)
-            insetsController.show(
-                WindowInsetsCompat.Type.statusBars() or
-                        WindowInsetsCompat.Type.navigationBars()
-            )
+            insetsController.show(WindowInsetsCompat.Type.systemBars())
         }
     }
+
 
     override fun applySystemBarColors(colorScheme: ColorScheme, isSystemDark: Boolean) {
         val activity = context as? Activity ?: return
