@@ -97,7 +97,7 @@ suspend fun PointerInputScope.detectPlayerDragGestures(
                                 onVolume(delta.y)
                             }
                             DisplayPortion.Middle -> {
-                                if (!isFullscreenGestureEnabled()) break
+                                if (!isFullscreen() || !isFullscreenGestureEnabled()) break
                                 activeGesture = DragGestureType.Rotation
                                 change.consume()
                                 rotationDistance += delta.y
