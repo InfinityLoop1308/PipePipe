@@ -251,6 +251,29 @@ class QueueManager {
         removeItem(getIndexOfItemUUID(uuid))
     }
 
+
+    fun updateItemExtras(uuid: String, newExtras: Map<String, Any?>) {
+        val currentQueue = _queue.value
+        val index = currentQueue.indexOfFirst { it.uuid == uuid }
+        if (index < 0) return
+
+        val item = currentQueue[index]
+        val mergedExtras = (item.extras ?: emptyMap()) + newExtras
+        val updatedItem = item.copy(extras = mergedExtras.takeIf { it.isNotEmpty() })
+
+        val newQueue = currentQueue.toMutableList()
+        newQueue[index] = updatedItem
+        _queue.value = newQueue
+
+        // Also update backup queue if it exists and the item is there
+        if (backup != null) {
+            val backupIndex = backup!!.indexOfFirst { it.uuid == uuid }
+            if (backupIndex >= 0) {
+                backup!![backupIndex] = updatedItem
+            }
+        }
+    }
+
     /**
      * Move an item from one position to another.
      * Note: This only affects the current play queue, not the backup queue.

@@ -77,11 +77,11 @@ class SponsorBlockManager(private val sponsorblockNames: List<String>, private v
 
 
     init {
-        // Monitor media item changes
+        // Monitor media item changes (including extras updates like SponsorBlock URL)
         GlobalScope.launch {
             SharedContext.queueManager.currentItem
                 .filterNotNull()
-                .distinctUntilChangedBy { it.mediaId }
+                .distinctUntilChangedBy { it.mediaId to it.extras?.get("KEY_SPONSORBLOCK_URL") }
                 .collect { item ->
                     onMediaItemChanged(item)
                 }

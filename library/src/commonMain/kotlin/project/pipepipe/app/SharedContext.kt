@@ -60,6 +60,8 @@ object SharedContext {
     // SponsorBlockManager for SponsorBlock segment detection and skipping
    lateinit var sponsorBlockManager: SponsorBlockManager
 
+    // AutoplayNextManager for automatic queuing of next media item
+   lateinit var autoplayNextManager: AutoplayNextManager
 
     private val _playbackMode = MutableStateFlow(PlaybackMode.AUDIO_ONLY)
     val playbackMode: StateFlow<PlaybackMode> = _playbackMode.asStateFlow()

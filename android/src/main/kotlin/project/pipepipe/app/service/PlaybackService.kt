@@ -27,7 +27,6 @@ import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
 import project.pipepipe.app.platform.toMedia3MediaItem
 import project.pipepipe.app.platform.toPlatformMediaItem
-import project.pipepipe.shared.infoitem.RelatedItemInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import java.util.concurrent.ExecutorService
@@ -50,11 +49,6 @@ class PlaybackService : MediaLibraryService() {
     // Search result cache for Android Auto
     private var lastSearchQuery: String? = null
     private var lastSearchResults: List<MediaItem> = emptyList()
-
-    // Autoplay next deduplication
-    private var autoplayNextJob: Job? = null
-    private var autoplayNextMediaId: String? = null
-
 
     // Skip silence setting listener
     private var skipSilenceListener: SettingsListener? = null
@@ -550,77 +544,6 @@ class PlaybackService : MediaLibraryService() {
         )
     }
 
-    // Autoplay next related methods
-    private fun loadAutoplayNextForMedia(mediaItem: MediaItem) {
-        val mediaId = mediaItem.mediaId
-        val relatedItemUrl = mediaItem.mediaMetadata.extras?.getString("KEY_RELATED_ITEM_URL")
-        val serviceId = mediaItem.mediaMetadata.extras?.getInt("KEY_SERVICE_ID")
-        loadAutoplayNext(mediaId, relatedItemUrl, serviceId)
-    }
-
-    private fun loadAutoplayNext(mediaId: String, relatedItemUrl: String?, serviceId: Int?) {
-        if (!SharedContext.settingsManager.getBoolean("auto_queue_key", false)) return
-
-        val currentIndex = player.currentMediaItemIndex
-        val isLastItem = currentIndex == player.mediaItemCount - 1
-
-        // Only load for the last item
-        if (!isLastItem) return
-
-        if (relatedItemUrl == null) return
-
-        // Deduplicate: skip if already loading for the same mediaId
-        if (autoplayNextMediaId == mediaId && autoplayNextJob?.isActive == true) return
-
-        autoplayNextJob?.cancel()
-        autoplayNextMediaId = mediaId
-
-        autoplayNextJob = serviceScope.launch {
-            try {
-                val result = withContext(Dispatchers.IO) {
-                    executeJobFlow(
-                        SupportedJobType.FETCH_INFO,
-                        relatedItemUrl,
-                        serviceId
-                    )
-                }
-                val relatedItemInfo = result.info as? RelatedItemInfo
-                val partitions = relatedItemInfo?.partitions
-
-                // Check if we have partitions and can find next item
-                if (!partitions.isNullOrEmpty()) {
-                    // Find current partition index by mediaId (url)
-                    val currentIndex = partitions.indexOfFirst { it.url == mediaId }
-                    if (currentIndex != -1 && currentIndex < partitions.size - 1) {
-                        // Get next partition item
-                        val nextItem = partitions[currentIndex + 1]
-
-                        if (SharedContext.queueManager.isLastIndex) {
-                            SharedContext.queueManager.addItem(nextItem.toPlatformMediaItem())
-                        }
-                        return@launch
-                    }
-                }
-
-                // Fallback to relatedItems logic if no partition match
-                val relatedItems = result.pagedData?.itemList as? List<StreamInfo> ?: return@launch
-                if (relatedItems.isEmpty()) return@launch
-
-                // Pick a random related item
-                val randomItem = relatedItems.filter {
-                    if (SharedContext.settingsManager.getBoolean("dont_auto_queue_long_key", true)) {
-                        runCatching { it.duration!! <= 360 }.getOrDefault(true)
-                    } else true
-                }.random()
-                if (SharedContext.queueManager.isLastIndex) {
-                    SharedContext.queueManager.addItem(randomItem.toPlatformMediaItem())
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     private fun refreshStreamAndRetry() {
         val currentIndex = player.currentMediaItemIndex
         val savedPosition = player.currentPosition
@@ -665,7 +588,6 @@ class PlaybackService : MediaLibraryService() {
                     SharedContext.platformMediaController?.loadMediaQueueForItem(mediaItem.toPlatformMediaItem())
                 }
                 mediaItem?.let {
-                    loadAutoplayNextForMedia(it)
                     // Reset retry state when successfully transitioning to a new item
                     retryStates.remove(it.mediaId)
                 }
@@ -700,7 +622,7 @@ class PlaybackService : MediaLibraryService() {
                 val mediaId = player.currentMediaItem?.mediaId ?: return
 
                 // Log the error
-                MainScope().launch {
+                GlobalScope.launch {
                     DatabaseOperations.insertErrorLog(
                         stacktrace = error.stackTraceToString(),
                         request = mediaId,

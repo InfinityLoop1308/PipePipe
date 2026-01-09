@@ -236,6 +236,18 @@ class LazyUrlMediaSource(
                     ).info as StreamInfo
                 }
                 DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
+                val extraMap = HashMap<String, String>().apply {
+                    streamInfo.sponsorblockUrl?.let { put("KEY_SPONSORBLOCK_URL", it)}
+                    streamInfo.relatedItemUrl?.let { put("KEY_RELATED_ITEM_URL", it)}
+                }
+
+                if (extraMap.isNotEmpty()) {
+                    SharedContext.queueManager.updateItemExtras(
+                        mediaItem.uuid,
+                        extraMap
+                    )
+                }
+
                 actualMediaSource = mediaSourceFactory.createActualMediaSource(
                     mediaItem,
                     streamInfo.dashManifest,

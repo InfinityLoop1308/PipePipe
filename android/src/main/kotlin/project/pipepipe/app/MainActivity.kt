@@ -115,6 +115,7 @@ class MainActivity : ComponentActivity() {
                 // Initialize platformMediaController
                 SharedContext.platformMediaController = AndroidMediaController.getInstance(this@MainActivity)
                 SharedContext.sponsorBlockManager = SponsorBlockManager(sponsorBlockNames, sponsorBlockSkipMsg)
+                SharedContext.autoplayNextManager = AutoplayNextManager()
             }
 
             // Listen for dialog check trigger (e.g., after backup import)
