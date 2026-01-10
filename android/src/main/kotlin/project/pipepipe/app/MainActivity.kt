@@ -440,7 +440,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleExitPip() {
         SharedContext.exitPipMode()
-        val currentMediaId = SharedContext.queueManager.currentItem.value?.mediaId
+        val currentMediaId = SharedContext.platformMediaController?.currentMediaItem?.value?.mediaId
         if (SharedContext.sharedVideoDetailViewModel.uiState.value.currentStreamInfo?.url == currentMediaId) {
             SharedContext.sharedVideoDetailViewModel.showAsDetailPage()
         } else {

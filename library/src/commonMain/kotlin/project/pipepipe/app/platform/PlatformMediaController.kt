@@ -64,6 +64,7 @@ interface PlatformMediaController {
     val playbackState: StateFlow<PlaybackState>
 
     val currentSubtitles: StateFlow<List<SubtitleCue>>
+    val currentMediaItem: StateFlow<PlatformMediaItem?>
 
     val repeatMode: StateFlow<RepeatMode>
 

@@ -16,11 +16,6 @@ class QueueManager {
     val currentIndex: StateFlow<Int> = _currentIndex.asStateFlow()
     val isLastIndex: Boolean get() = currentIndex.value == queue.value.size - 1
 
-    val currentItem: StateFlow<PlatformMediaItem?> =
-        combine(_queue, _currentIndex) { queue, index ->
-            queue.getOrNull(index)
-        }.stateIn(GlobalScope, SharingStarted.Eagerly, null)
-
     private var backup: MutableList<PlatformMediaItem>? = null
 
     fun getCurrentQueue(): List<PlatformMediaItem> = _queue.value
