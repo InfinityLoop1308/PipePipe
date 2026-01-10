@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.flow.distinctUntilChanged
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.onCustomTopBarColor
@@ -176,39 +178,63 @@ fun PlayQueueScreen() {
                 items = playQueue,
                 key = { index, item -> item.uuid}
             ) { index, platformMediaItem ->
-                ReorderableItem(reorderableLazyListState, key = platformMediaItem.uuid) { isDragging ->
-                    val interactionSource = remember { MutableInteractionSource() }
-                    PlayQueueItem(
-                        mediaItem = platformMediaItem,
-                        isCurrentItem = index == currentMediaItemIndex,
-                        onItemClick = {
-                            mediaController.seekToItem(index)
-                            mediaController.play()
-                        },
-                        onItemLongClick = {
-                            val streamInfo = StreamInfo(
-                                serviceId = platformMediaItem.serviceId ?: 0,
-                                url = platformMediaItem.mediaId,
-                                name = platformMediaItem.title ?: "",
-                                thumbnailUrl = platformMediaItem.artworkUrl,
-                                uploaderName = platformMediaItem.artist,
-                                duration = platformMediaItem.durationMs ?: 0
-                            )
-                            SharedContext.bottomSheetMenuViewModel.show(
-                                StreamInfoWithCallback(streamInfo,
-                                    onNavigateTo = null,
-                                    onDelete = {
-                                        SharedContext.queueManager.removeItemByUuid(platformMediaItem.uuid)
-                                    },
-                                    disablePlayOperations = true,
-                                    showProvideDetailButton = true
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = {
+                        it == SwipeToDismissBoxValue.StartToEnd
+                    }
+                )
+
+                LaunchedEffect(Unit) {
+                    snapshotFlow {
+                        dismissState.currentValue to dismissState.progress
+                    }.distinctUntilChanged().collect { (value, progress) ->
+                        if (value == SwipeToDismissBoxValue.StartToEnd && progress == 1f) {
+                            SharedContext.queueManager.removeItemByUuid(platformMediaItem.uuid)
+                        }
+                    }
+                }
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    backgroundContent = {
+                    },
+                    enableDismissFromStartToEnd = true,
+                    enableDismissFromEndToStart = false
+                ) {
+                    ReorderableItem(reorderableLazyListState, key = platformMediaItem.uuid) { isDragging ->
+                        val interactionSource = remember { MutableInteractionSource() }
+                        PlayQueueItem(
+                            mediaItem = platformMediaItem,
+                            isCurrentItem = index == currentMediaItemIndex,
+                            onItemClick = {
+                                mediaController.seekToItem(index)
+                                mediaController.play()
+                            },
+                            onItemLongClick = {
+                                val streamInfo = StreamInfo(
+                                    serviceId = platformMediaItem.serviceId ?: 0,
+                                    url = platformMediaItem.mediaId,
+                                    name = platformMediaItem.title ?: "",
+                                    thumbnailUrl = platformMediaItem.artworkUrl,
+                                    uploaderName = platformMediaItem.artist,
+                                    duration = platformMediaItem.durationMs ?: 0
                                 )
+                                SharedContext.bottomSheetMenuViewModel.show(
+                                    StreamInfoWithCallback(streamInfo,
+                                        onNavigateTo = null,
+                                        onDelete = {
+                                            SharedContext.queueManager.removeItemByUuid(platformMediaItem.uuid)
+                                        },
+                                        disablePlayOperations = true,
+                                        showProvideDetailButton = true
+                                    )
+                                )
+                            },
+                            dragHandleModifier = Modifier.draggableHandle(
+                                interactionSource = interactionSource
                             )
-                        },
-                        dragHandleModifier = Modifier.draggableHandle(
-                            interactionSource = interactionSource
                         )
-                    )
+                    }
                 }
             }
         }
