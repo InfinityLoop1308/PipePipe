@@ -164,7 +164,7 @@ class VideoDetailViewModel()
         val controller = SharedContext.platformMediaController
         val streamInfo = uiState.value.currentStreamInfo
         if (SharedContext.playbackMode.value == PlaybackMode.VIDEO_AUDIO
-            && controller?.currentMediaItem?.value?.mediaId == streamInfo?.url) {
+            && controller?.currentMediaItem?.value?.mediaId == streamInfo?.url && controller?.isPlaying?.value == true) {
             SharedContext.playingVideoUrlBeforeMinimizing = streamInfo?.url
         }
         SharedContext.updatePlaybackMode(PlaybackMode.AUDIO_ONLY)
