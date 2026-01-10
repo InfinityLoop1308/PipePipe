@@ -313,10 +313,6 @@ class AndroidMediaController(
             }
             mediaController.prepare()
             mediaController.play()
-
-            if (SharedContext.settingsManager.getString("watch_history_mode", "on_play") == "on_play") {
-                DatabaseOperations.updateOrInsertStreamHistory(streamInfo)
-            }
         }
 
         if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
