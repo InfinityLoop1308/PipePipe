@@ -302,16 +302,34 @@ class AndroidActions(
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
 
         if (isFullscreen) {
-            insetsController.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            insetsController.isAppearanceLightStatusBars = false
-            insetsController.isAppearanceLightNavigationBars = false
             if (visible) {
-                insetsController.show(WindowInsetsCompat.Type.systemBars())
+                insetsController.isAppearanceLightStatusBars = false
+                insetsController.isAppearanceLightNavigationBars = false
+                activity.getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT)
+                activity.getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT)
+                val visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
+                activity.getWindow().getDecorView().setSystemUiVisibility(visibility)
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             } else {
-                insetsController.hide(WindowInsetsCompat.Type.systemBars())
+                var visibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+
+                val isInMultiWindow: Boolean = activity.isInMultiWindowMode()
+                if (!isInMultiWindow) {
+                    visibility = visibility or View.SYSTEM_UI_FLAG_FULLSCREEN
+                }
+                activity.getWindow().getDecorView().setSystemUiVisibility(visibility)
+
+                activity.getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT)
+                activity.getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT)
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             }
-        } else {
+        }  else {
             applySystemBarColors(colorScheme, isSystemDark)
             insetsController.show(WindowInsetsCompat.Type.systemBars())
         }
