@@ -174,7 +174,7 @@ interface PlatformMediaController {
 
     fun getAvailableSubtitles(): List<SubtitleInfo>
 
-    fun selectResolution(resolution: ResolutionInfo, isManual: Boolean = true)
+    fun selectResolution(resolution: ResolutionInfo)
 
     fun selectSubtitle(subtitle: SubtitleInfo)
 

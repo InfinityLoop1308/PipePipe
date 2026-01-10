@@ -384,9 +384,8 @@ class AndroidMediaController(
     }
 
     @OptIn(UnstableApi::class)
-    override fun selectResolution(resolution: ResolutionInfo, isManual: Boolean) {
+    override fun selectResolution(resolution: ResolutionInfo) {
         val tracks = mediaController.currentTracks
-
         for (trackGroup in tracks.groups) {
             if (trackGroup.type == C.TRACK_TYPE_VIDEO) {
                 trackGroup.find { format ->
@@ -405,8 +404,8 @@ class AndroidMediaController(
                             .build()
                         mediaController.trackSelectionParameters = params
                     }
+                    break
                 }
-                break
             }
         }
     }
@@ -449,7 +448,7 @@ class AndroidMediaController(
             else -> null
         }
 
-        targetResolution?.let { selectResolution(it, isManual = false) }
+        targetResolution?.let { selectResolution(it) }
     }
 
     @OptIn(UnstableApi::class)
