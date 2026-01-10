@@ -139,10 +139,10 @@ interface PlatformMediaController {
 
     fun enqueue(streamInfo: StreamInfo) {
         MainScope().launch {
-            val item = streamInfo.toPlatformMediaItem()
-            SharedContext.queueManager.addItem(item)
-            if (SharedContext.queueManager.getCurrentQueue().size == 1) {
-                play()
+            if (SharedContext.queueManager.mediaItemCount.value == 0) {
+                playFromStreamInfo(streamInfo)
+            } else {
+                SharedContext.queueManager.addItem(streamInfo.toPlatformMediaItem())
             }
         }
     }
@@ -164,11 +164,8 @@ interface PlatformMediaController {
             prepare()
             play()
 
-            GlobalScope.launch {
-                if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
-                    kotlinx.coroutines.delay(500)
-                    SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
-                }
+            if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
+                SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
             }
         }
     }
