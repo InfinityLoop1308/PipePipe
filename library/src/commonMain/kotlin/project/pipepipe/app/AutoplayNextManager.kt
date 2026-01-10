@@ -30,16 +30,13 @@ class AutoplayNextManager {
     /** MediaId of the item being loaded (for deduplication) */
     private var autoplayNextMediaId: String? = null
 
-    /** Last processed media item index (for detecting changes) */
-    private var lastProcessedIndex: Int = -1
-
     /** Last processed media item ID (for detecting changes) */
     private var lastProcessedMediaId: String? = null
 
     init {
         // Monitor current media item changes
         GlobalScope.launch {
-            SharedContext.queueManager.currentItem
+            SharedContext.platformMediaController!!.currentMediaItem
                 .filterNotNull()
                 .distinctUntilChangedBy { it.mediaId to it.extras?.get("KEY_RELATED_ITEM_URL") }
                 .collect { item ->
@@ -51,8 +48,6 @@ class AutoplayNextManager {
     // ========== Internal Logic ==========
 
     private fun onMediaItemChanged(item: PlatformMediaItem) {
-        val queueSize = SharedContext.queueManager.mediaItemCount.value
-        val currentIndex = SharedContext.queueManager.currentIndex.value
 
         // Check if auto-queue is enabled
         if (!SharedContext.settingsManager.getBoolean("auto_queue_key", false)) {
@@ -60,7 +55,7 @@ class AutoplayNextManager {
         }
 
         // Only load for the last item
-        if (currentIndex != queueSize - 1) {
+        if (!SharedContext.platformMediaController!!.isLastMediaItem()) {
             return
         }
 
@@ -73,7 +68,7 @@ class AutoplayNextManager {
         }
 
         // Check if already processed this item
-        if (lastProcessedMediaId == item.mediaId && lastProcessedIndex == currentIndex) {
+        if (lastProcessedMediaId == item.mediaId) {
             return
         }
 
@@ -84,7 +79,6 @@ class AutoplayNextManager {
 
         // Update last processed state
         lastProcessedMediaId = item.mediaId
-        lastProcessedIndex = currentIndex
 
         // Load the next item
         loadAutoplayNext(item.mediaId, relatedItemUrl, serviceId)
@@ -115,7 +109,7 @@ class AutoplayNextManager {
                         // Get next partition item
                         val nextItem = partitions[currentIndex + 1]
 
-                        if (SharedContext.queueManager.isLastIndex) {
+                        if (SharedContext.platformMediaController!!.isLastMediaItem()) {
                             MainScope().launch{ SharedContext.queueManager.addItem(nextItem.toPlatformMediaItem()) }
                         }
                         return@launch
@@ -139,7 +133,7 @@ class AutoplayNextManager {
                 // Pick a random related item
                 val randomItem = filteredItems.random()
 
-                if (SharedContext.queueManager.isLastIndex) {
+                if (SharedContext.platformMediaController!!.isLastMediaItem()) {
                     MainScope().launch{ SharedContext.queueManager.addItem(randomItem.toPlatformMediaItem()) }
                 }
             } catch (e: Exception) {

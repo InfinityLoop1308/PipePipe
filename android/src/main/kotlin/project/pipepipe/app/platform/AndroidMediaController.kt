@@ -66,6 +66,9 @@ class AndroidMediaController(
     private val _playbackState = MutableStateFlow(mapPlaybackState(mediaController.playbackState))
     override val playbackState: StateFlow<PlaybackState> = _playbackState.asStateFlow()
 
+    private val _currentItemIndex = MutableStateFlow(mediaController.currentMediaItemIndex)
+    override val currentItemIndex: StateFlow<Int> = _currentItemIndex.asStateFlow()
+
     private val _currentMediaItem = MutableStateFlow(mediaController.currentMediaItem?.toPlatformMediaItem())
     override val currentMediaItem: StateFlow<PlatformMediaItem?> = _currentMediaItem.asStateFlow()
 
@@ -114,6 +117,7 @@ class AndroidMediaController(
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             _currentMediaItem.value = mediaItem?.toPlatformMediaItem()
+            _currentItemIndex.value = mediaController.currentMediaItemIndex
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
@@ -169,6 +173,7 @@ class AndroidMediaController(
         // Just update currentMediaItem from Media3 if needed
         val currentItem = mediaController.currentMediaItem?.toPlatformMediaItem()
         _currentMediaItem.value = currentItem
+        _currentItemIndex.value = mediaController.currentMediaItemIndex
 
         // Start position update loop
         scope.launch {
@@ -199,6 +204,10 @@ class AndroidMediaController(
         mediaController.seekTo(positionMs)
     }
 
+    override fun seekToItem(index: Int, positionMs: Long) {
+        mediaController.seekTo(index, getPlaybackStartPosition(mediaController.getMediaItemAt(index).toPlatformMediaItem()))
+    }
+
     override fun seekToPrevious() {
         mediaController.seekToPrevious()
     }
@@ -207,78 +216,41 @@ class AndroidMediaController(
         mediaController.seekToNext()
     }
 
-    // ===== Queue Navigation (Platform-specific implementations) =====
-
-    override fun loadMediaQueueForCurrentItem(startPositionMs: Long?, shouldKeepPosition: Boolean) {
-        val item = SharedContext.queueManager.getCurrentItem()
-        if (item != null) {
-            loadMediaQueueForItem(item, startPositionMs, shouldKeepPosition = shouldKeepPosition)
-        }
+    fun syncCurrentItemIndex() {
+        _currentItemIndex.value = mediaController.currentMediaItemIndex
     }
 
-    override fun clearPlayer() {
-        mediaController.clearMediaItems()
-        _currentMediaItem.value = null
+    override fun setQueue(items: List<PlatformMediaItem>, startIndex: Int) {
+        val mediaItems = items.map { it.toMedia3MediaItem() }
+        mediaController.setMediaItems(mediaItems, startIndex, getPlaybackStartPosition(items[0]))
     }
 
-    private fun indexOfMediaItem(mediaId: String): Int {
-        for (i in 0 until mediaController.mediaItemCount) {
-            if (mediaController.getMediaItemAt(i).mediaId == mediaId) {
-                return i
-            }
-        }
-        return C.INDEX_UNSET
-    }
-    override fun loadMediaQueueForItem(
-        item: PlatformMediaItem,
-        startPositionMs: Long?,
-        shouldKeepPosition: Boolean
-    ) {
-        // Find the item's index in the queue
+    override fun syncQueueShuffle() {
         val currentQueue = SharedContext.queueManager.getCurrentQueue()
-        val index = currentQueue.indexOfFirst { it.uuid == item.uuid }
-        if (index < 0) return
-        SharedContext.queueManager.setIndex(index)
-        val itemsToLoad = SharedContext.queueManager.getCurrentThreeElementQueue().map {
-            // Find existing MediaItem or create new one from PlatformMediaItem
-            val existingIndex = indexOfMediaItem(it.mediaId)
-            if (existingIndex != C.INDEX_UNSET) {
-                mediaController.getMediaItemAt(existingIndex)
-            } else {
-                it.toMedia3MediaItem()
-            }
-        }
-        val currentMedia3Index = itemsToLoad.indexOfFirst { it.uuid == item.uuid }
+        mediaController.removeMediaItems(0, mediaController.currentMediaItemIndex)
+        mediaController.removeMediaItems(1, mediaController.mediaItemCount)
+        val indexInQueueManger: Int = currentQueue.indexOfFirst { it.uuid == mediaController.currentMediaItem!!.uuid }
+        mediaController.addMediaItems(1, currentQueue.subList(indexInQueueManger + 1, currentQueue.size).map { it.toMedia3MediaItem() })
+        mediaController.addMediaItems(0, currentQueue.subList(0, indexInQueueManger).map { it.toMedia3MediaItem() })
+        syncCurrentItemIndex()
+    }
 
-        if (itemsToLoad.isNotEmpty()) {
-            if (shouldKeepPosition && mediaController.currentMediaItem?.mediaId == item.mediaId) {
-                repeat(mediaController.currentMediaItemIndex) { mediaController.removeMediaItem(0) }
-                while (mediaController.mediaItemCount > 1) { mediaController.removeMediaItem(1) }
-                if (currentMedia3Index == 1) {
-                    mediaController.addMediaItem(0, itemsToLoad[0])
-                }
-                if (currentMedia3Index != itemsToLoad.lastIndex) {
-                    mediaController.addMediaItem(currentMedia3Index + 1, itemsToLoad.last())
-                }
-            } else {
-                val startPositionMs = startPositionMs ?: runBlocking {
-                    if (SharedContext.playbackMode.value == PlaybackMode.AUDIO_ONLY) {
-                        return@runBlocking 0
-                    }
-                    val progress = DatabaseOperations.getStreamProgress(item.mediaId)
-                    if (progress != null && item.durationMs != null &&
-                        item.durationMs!! - progress > 5000
-                    ) {
-                        progress
-                    } else {
-                        0L
-                    }
-                }
+    override fun syncQueueClear() {
+        mediaController.clearMediaItems()
+    }
 
-                mediaController.setMediaItems(itemsToLoad, currentMedia3Index.coerceAtLeast(0), startPositionMs)
-            }
-        }
-        _currentMediaItem.value = item
+    override fun syncQueueRemove(index: Int) {
+        mediaController.removeMediaItem(index)
+        syncCurrentItemIndex()
+    }
+
+    override fun syncQueueAppend(item: PlatformMediaItem) {
+        mediaController.addMediaItem(item.toMedia3MediaItem())
+    }
+
+    override fun syncQueueMove(from: Int, to: Int) {
+        mediaController.moveMediaItem(from, to)
+        syncCurrentItemIndex()
     }
 
     // ===== Settings Controls =====
@@ -334,11 +306,10 @@ class AndroidMediaController(
                 // already current, pass
             } else if (queueIndex >= 0) {
                 // Item is in queue, just navigate to it
-                SharedContext.queueManager.setIndex(queueIndex)
-                loadMediaQueueForCurrentItem()
+                mediaController.seekTo(queueIndex, getPlaybackStartPosition(item))
             } else {
                 // Item is not in queue, set it as single item
-                SharedContext.queueManager.setMediaItem(item)
+                SharedContext.queueManager.setQueue(listOf(item))
             }
             mediaController.prepare()
             mediaController.play()
@@ -355,8 +326,7 @@ class AndroidMediaController(
 
     override fun setStreamInfoAsOnlyMediaItem(streamInfo: StreamInfo) {
         val item = streamInfo.toPlatformMediaItem()
-        SharedContext.queueManager.setMediaItem(item)
-        loadMediaQueueForItem(item)
+        SharedContext.queueManager.setQueue(listOf(item))
     }
 
     override fun backgroundPlay(streamInfo: StreamInfo) {
@@ -488,9 +458,6 @@ class AndroidMediaController(
                 }
                 break
             }
-        }
-        if (isManual) {
-            loadMediaQueueForCurrentItem() // don't know why but after refactor this is required to make sure player can restore from mediaCodecError
         }
     }
 

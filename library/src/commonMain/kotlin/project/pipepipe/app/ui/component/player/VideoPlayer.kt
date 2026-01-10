@@ -91,7 +91,7 @@ fun VideoPlayer(
     val currentPosition by mediaController.currentPosition.collectAsState()
     val duration by mediaController.duration.collectAsState()
     val bufferedPosition by mediaController.bufferedPosition.collectAsState()
-    val currentItemIndex by SharedContext.queueManager.currentIndex.collectAsState()
+    val currentItemIndex by mediaController.currentItemIndex.collectAsState()
     val mediaItemCount by SharedContext.queueManager.mediaItemCount.collectAsState()
     val playbackState by mediaController.playbackState.collectAsState()
     val playbackSpeed by mediaController.playbackSpeed.collectAsState()

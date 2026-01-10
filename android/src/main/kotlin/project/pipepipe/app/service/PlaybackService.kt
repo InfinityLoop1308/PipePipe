@@ -27,6 +27,7 @@ import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
 import project.pipepipe.app.platform.toMedia3MediaItem
 import project.pipepipe.app.platform.toPlatformMediaItem
+import project.pipepipe.app.platform.uuid
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.job.SupportedJobType
 import java.util.concurrent.ExecutorService
@@ -584,9 +585,6 @@ class PlaybackService : MediaLibraryService() {
     private fun createPlayerListener(): Player.Listener {
         return object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                if (reason in listOf(Player.MEDIA_ITEM_TRANSITION_REASON_AUTO, Player.MEDIA_ITEM_TRANSITION_REASON_SEEK) && mediaItem != null) {
-                    SharedContext.platformMediaController?.loadMediaQueueForItem(mediaItem.toPlatformMediaItem())
-                }
                 mediaItem?.let {
                     // Reset retry state when successfully transitioning to a new item
                     retryStates.remove(it.mediaId)
@@ -671,7 +669,7 @@ class PlaybackService : MediaLibraryService() {
                     // Final phase: all retries exhausted, give up and skip to next
                     ToastManager.show("Failed after all retries, skipping to next...")
                     retryStates.remove(mediaId)
-                    SharedContext.queueManager.removeItem(SharedContext.queueManager.currentIndex.value)
+                    SharedContext.queueManager.removeItemByUuid(player.currentMediaItem!!.uuid)
                     if (player.mediaItemCount > 0) {
                         player.prepare()
                         player.play()
@@ -703,7 +701,7 @@ class PlaybackService : MediaLibraryService() {
                 // For non-403 errors, show error and remove current item
                 ToastManager.show(MR.strings.playback_error.desc().toString(this@PlaybackService))
                 retryStates.remove(mediaId)
-                SharedContext.queueManager.removeItem(SharedContext.queueManager.currentIndex.value)
+                SharedContext.queueManager.removeItemByUuid(player.currentMediaItem!!.uuid)
                 if (player.mediaItemCount > 0) {
                     player.prepare()
                     player.play()

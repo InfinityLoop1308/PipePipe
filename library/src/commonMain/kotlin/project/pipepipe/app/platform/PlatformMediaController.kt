@@ -2,8 +2,10 @@ package project.pipepipe.app.platform
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.runBlocking
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.FormatHelper
 import project.pipepipe.shared.infoitem.StreamInfo
 import kotlin.math.min
@@ -65,6 +67,11 @@ interface PlatformMediaController {
 
     val currentSubtitles: StateFlow<List<SubtitleCue>>
     val currentMediaItem: StateFlow<PlatformMediaItem?>
+    val currentItemIndex: StateFlow<Int>
+
+
+    fun isLastMediaItem(): Boolean = currentMediaItem.value?.uuid == SharedContext.queueManager.getCurrentQueue().last().uuid
+    fun isFirstMediaItem(): Boolean = currentMediaItem.value?.uuid == SharedContext.queueManager.getCurrentQueue().first().uuid
 
     val repeatMode: StateFlow<RepeatMode>
 
@@ -92,23 +99,13 @@ interface PlatformMediaController {
 
     fun seekTo(positionMs: Long)
 
-    fun seekToItem(index: Int, positionMs: Long? = null) {
-        val item = SharedContext.queueManager.getCurrentQueue().getOrNull(index)
-        if (item != null) {
-            SharedContext.queueManager.setIndex(index)
-            loadMediaQueueForItem(item, positionMs)
-        }
-    }
+    fun seekToItem(index: Int, positionMs: Long = 0)
 
     fun seekToPrevious()
 
     fun seekToNext()
 
-
-    fun loadMediaQueueForItem(item: PlatformMediaItem, startPositionMs: Long? = null, shouldKeepPosition: Boolean = false)
-
-
-    fun loadMediaQueueForCurrentItem(startPositionMs: Long? = null, shouldKeepPosition: Boolean = false)
+    fun setQueue(items: List<PlatformMediaItem>, startIndex: Int)
 
     fun setRepeatMode(mode: RepeatMode)
 
@@ -151,6 +148,16 @@ interface PlatformMediaController {
     fun disableSubtitles()
 
     fun stopService()
+
+    fun syncQueueShuffle()
+
+    fun syncQueueClear()
+
+    fun syncQueueRemove(index: Int)
+
+    fun syncQueueAppend(item: PlatformMediaItem)
+
+    fun syncQueueMove(from: Int, to: Int)
 }
 
 enum class PlaybackState {
@@ -164,4 +171,18 @@ enum class RepeatMode {
     OFF,
     ONE,
     ALL
+}
+
+fun getPlaybackStartPosition(item: PlatformMediaItem): Long = runBlocking {
+    if (SharedContext.playbackMode.value == PlaybackMode.AUDIO_ONLY) {
+        return@runBlocking 0
+    }
+    val progress = DatabaseOperations.getStreamProgress(item.mediaId)
+    if (progress != null && item.durationMs != null &&
+        item.durationMs - progress > 5000
+    ) {
+        progress
+    } else {
+        0L
+    }
 }
