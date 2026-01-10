@@ -1,12 +1,16 @@
 package project.pipepipe.app.platform
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import project.pipepipe.app.PlaybackMode
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.FormatHelper
+import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.shared.infoitem.StreamInfo
 import kotlin.math.min
 
@@ -123,13 +127,51 @@ interface PlatformMediaController {
 
     fun playFromStreamInfo(streamInfo: StreamInfo)
 
-    fun setStreamInfoAsOnlyMediaItem(streamInfo: StreamInfo)
+    fun setStreamInfoAsOnlyMediaItem(streamInfo: StreamInfo) {
+        val item = streamInfo.toPlatformMediaItem()
+        SharedContext.queueManager.setQueue(listOf(item))
+    }
 
-    fun backgroundPlay(streamInfo: StreamInfo)
+    fun backgroundPlay(streamInfo: StreamInfo) {
+        setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+        playFromStreamInfo(streamInfo)
+    }
 
-    fun enqueue(streamInfo: StreamInfo)
+    fun enqueue(streamInfo: StreamInfo) {
+        MainScope().launch {
+            val item = streamInfo.toPlatformMediaItem()
+            SharedContext.queueManager.addItem(item)
+            if (SharedContext.queueManager.getCurrentQueue().size == 1) {
+                play()
+            }
+        }
+    }
 
-    fun playAll(items: List<StreamInfo>, startIndex: Int = 0, shuffle: Boolean = false)
+    fun playAll(items: List<StreamInfo>, startIndex: Int, shuffle: Boolean) {
+        MainScope().launch {
+            setPlaybackMode(PlaybackMode.AUDIO_ONLY)
+            // Save items to database
+            GlobalScope.launch {
+                items.forEach { item ->
+                    DatabaseOperations.insertOrUpdateStream(item)
+                }
+            }
+            val platformMediaItems = items.map { it.toPlatformMediaItem() }
+            SharedContext.queueManager.setQueue(platformMediaItems, startIndex)
+            if (shuffle) {
+                setShuffleModeEnabled(true)
+            }
+            prepare()
+            play()
+
+            GlobalScope.launch {
+                if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
+                    kotlinx.coroutines.delay(500)
+                    SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
+                }
+            }
+        }
+    }
 
     fun getAvailableResolutions(): List<ResolutionInfo>
 

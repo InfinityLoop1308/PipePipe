@@ -324,52 +324,6 @@ class AndroidMediaController(
         }
     }
 
-    override fun setStreamInfoAsOnlyMediaItem(streamInfo: StreamInfo) {
-        val item = streamInfo.toPlatformMediaItem()
-        SharedContext.queueManager.setQueue(listOf(item))
-    }
-
-    override fun backgroundPlay(streamInfo: StreamInfo) {
-        setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-        playFromStreamInfo(streamInfo)
-    }
-
-    override fun enqueue(streamInfo: StreamInfo) {
-        MainScope().launch {
-            val item = streamInfo.toPlatformMediaItem()
-            SharedContext.queueManager.addItem(item)
-            // Play if queue was empty
-            if (SharedContext.queueManager.getCurrentQueue().size == 1) {
-                mediaController.play()
-            }
-        }
-    }
-
-    override fun playAll(items: List<StreamInfo>, startIndex: Int, shuffle: Boolean) {
-        MainScope().launch {
-            setPlaybackMode(PlaybackMode.AUDIO_ONLY)
-            // Save items to database
-            GlobalScope.launch {
-                items.forEach { item ->
-                    DatabaseOperations.insertOrUpdateStream(item)
-                }
-            }
-            val platformMediaItems = items.map { it.toPlatformMediaItem() }
-            SharedContext.queueManager.setQueue(platformMediaItems, startIndex)
-            if (shuffle) {
-                setShuffleModeEnabled(true)
-            }
-            prepare()
-            play()
-
-            GlobalScope.launch {
-                if (SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.HIDDEN) {
-                    kotlinx.coroutines.delay(500)
-                    SharedContext.sharedVideoDetailViewModel.showAsBottomPlayer()
-                }
-            }
-        }
-    }
 
     // ===== Track Selection =====
 
