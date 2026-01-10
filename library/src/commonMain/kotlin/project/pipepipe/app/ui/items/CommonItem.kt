@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.flow.distinctUntilChanged
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.helper.ColorHelper
@@ -546,14 +548,15 @@ private fun StreamOrPlaylistListItem(
         val dismissState = rememberSwipeToDismissBoxState(
             initialValue = SwipeToDismissBoxValue.Settled,
             positionalThreshold = { totalDistance -> totalDistance * 0.6f },
-            confirmValueChange = { newValue ->
-                if (newValue == SwipeToDismissBoxValue.StartToEnd) {
-                    SharedContext.platformMediaController?.enqueue(item)
-                    ToastManager.show(msg)
-                }
-                false
-            }
+            confirmValueChange = { false }
         )
+
+        LaunchedEffect(dismissState.targetValue) {
+            if (dismissState.targetValue == SwipeToDismissBoxValue.StartToEnd) {
+                SharedContext.platformMediaController?.enqueue(item)
+                ToastManager.show(msg)
+            }
+        }
         SwipeToDismissBox(
             state = dismissState,
             enableDismissFromStartToEnd = true,
