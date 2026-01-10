@@ -8,19 +8,32 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -102,6 +115,23 @@ fun Modifier.alphaHitTestPassThrough(alpha: Float): Modifier {
         }
 }
 
+fun Modifier.focusedTVBackground(
+    focusedColor: Color = Color.White.copy(alpha = 0.5f),
+    shape: Shape = CircleShape
+): Modifier = composed {
+    if (!SharedContext.isTv) return@composed this
+    var isFocused by remember { mutableStateOf(false) }
+
+    this
+        .onFocusChanged { isFocused = it.isFocused }
+        .background(
+            color = if (isFocused) focusedColor else Color.Transparent,
+            shape = shape
+        )
+}
+
+
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PlayerControl(
@@ -139,7 +169,14 @@ fun PlayerControl(
         label = "controlsAlpha"
     )
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier =
+        Modifier.fillMaxSize().then(
+        if (playPauseFocusRequester != null) {
+            Modifier.focusRequester(playPauseFocusRequester)
+        } else {
+            Modifier
+        }
+    )) {
         // Background dim with alpha animation
         Box(
             modifier = Modifier
@@ -240,7 +277,10 @@ fun PlayerControl(
                             verticalAlignment = Alignment.Top
                         ) {
                             if (!isFullscreenMode) {
-                                IconButton(onClick = callbacks.onClose) {
+                                IconButton(
+                                    onClick = callbacks.onClose,
+                                    modifier = Modifier.focusedTVBackground()
+                                ) {
                                     Icon(
                                         Icons.Default.Close,
                                         contentDescription = stringResource(MR.strings.close),
@@ -304,7 +344,7 @@ fun PlayerControl(
                             }
 
                             // Speed button
-                            TextButton(onClick = callbacks.onSpeedPitchClick) {
+                            TextButton(onClick = callbacks.onSpeedPitchClick, modifier = Modifier.focusedTVBackground()) {
                                 Text(
                                     text = if (state.currentSpeed == 1f) "1x" else String.format(
                                         "%.1fx",
@@ -355,7 +395,7 @@ fun PlayerControl(
                         if (state.timelineSize > 1 && state.currentTimelineIndex < state.timelineSize - 1) {
                             IconButton(
                                 onClick = callbacks.onSeekToPrevious,
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(40.dp).focusedTVBackground(),
                             ) {
                                 Icon(
                                     Icons.Default.SkipPrevious,
@@ -368,14 +408,7 @@ fun PlayerControl(
                         IconButton(
                             onClick = callbacks.onPlayPauseClick,
                             modifier = Modifier
-                                .size(60.dp)
-                                .then(
-                                    if (playPauseFocusRequester != null) {
-                                        Modifier.focusRequester(playPauseFocusRequester)
-                                    } else {
-                                        Modifier
-                                    }
-                                )
+                                .size(60.dp).focusedTVBackground(),
                         ) {
                             Icon(
                                 if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -389,7 +422,7 @@ fun PlayerControl(
                         if (state.timelineSize > 1 && state.currentTimelineIndex < state.timelineSize - 1) {
                             IconButton(
                                 onClick = callbacks.onSeekToNext,
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(40.dp).focusedTVBackground(),
                             ) {
                                 Icon(
                                     Icons.Default.SkipNext,
@@ -434,7 +467,10 @@ fun PlayerControl(
                             color = Color.White,
                             fontSize = 14.sp
                         )
-                        IconButton(onClick = callbacks.onFullScreenClick) {
+                        IconButton(
+                            onClick = callbacks.onFullScreenClick,
+                            modifier = Modifier.focusedTVBackground()
+                        ) {
                             Icon(
                                 Icons.Default.Fullscreen,
                                 contentDescription = stringResource(MR.strings.player_rotate_screen),

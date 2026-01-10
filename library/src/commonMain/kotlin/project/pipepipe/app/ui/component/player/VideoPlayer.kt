@@ -135,6 +135,17 @@ fun VideoPlayer(
     val isFullscreenMode =
         SharedContext.sharedVideoDetailViewModel.uiState.value.pageState == VideoDetailPageState.FULLSCREEN_PLAYER
 
+    // TV support - Request focus to play/pause button when controls become visible
+    LaunchedEffect(isControlsVisible) {
+        if (!SharedContext.isTv ) return@LaunchedEffect
+        if (isControlsVisible) {
+            delay(400) // Wait for alpha animation to start and component to be placed
+            playPauseFocusRequester.requestFocus()
+        } else {
+            playerFocusRequester.requestFocus()
+        }
+    }
+
     // Volume state from PlatformActions
     val maxSystemVolume = remember { platformActions.getMaxVolume() }
     var volumeOverlayProgress by remember {
@@ -415,12 +426,6 @@ fun VideoPlayer(
                         if (SharedContext.settingsManager.getBoolean("start_main_player_fullscreen_key")) {
                             SharedContext.sharedVideoDetailViewModel.toggleFullscreenPlayer()
                         }
-                        if (SharedContext.isTv) {
-                            gestureScope.launch {
-                                delay(100)
-                                runCatching { playerFocusRequester.requestFocus() }
-                            }
-                        }
                     }
             )
             Icon(
@@ -451,10 +456,6 @@ fun VideoPlayer(
                                             Key.DirectionCenter, Key.Enter -> {
                                                 if (!isControlsVisible) {
                                                     isControlsVisible = true
-                                                    gestureScope.launch {
-                                                        delay(100)
-                                                        runCatching { playPauseFocusRequester.requestFocus() }
-                                                    }
                                                 } else {
                                                     // Toggle play/pause when controls visible
                                                     if (isPlaying) mediaController.pause() else mediaController.play()

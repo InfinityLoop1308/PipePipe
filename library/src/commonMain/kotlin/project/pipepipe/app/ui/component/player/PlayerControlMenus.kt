@@ -46,7 +46,10 @@ fun ResolutionMenu(
     fun hasVideoOverride(): Boolean = availableResolutions.count { it.isSelected } == 1
 
     Box {
-        TextButton(onClick = { onMenuChange(true) }) {
+        TextButton(
+            onClick = { onMenuChange(true) },
+            modifier = Modifier.focusedTVBackground()
+        ) {
             Text(
                 text = if (hasVideoOverride()) availableResolutions.first { it.isSelected }.displayLabel else stringResource(
                     MR.strings.auto
@@ -116,7 +119,10 @@ fun MoreMenu(
     onPipClick: () -> Unit
 ) {
     Box {
-        TextButton(onClick = { onMenuChange(true) }) {
+        TextButton(
+            onClick = { onMenuChange(true) },
+            modifier = Modifier.focusedTVBackground()
+        ) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "More options",
