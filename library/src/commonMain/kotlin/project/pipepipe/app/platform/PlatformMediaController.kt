@@ -170,10 +170,6 @@ interface PlatformMediaController {
         }
     }
 
-    fun getAvailableResolutions(): List<ResolutionInfo>
-
-    fun getAvailableSubtitles(): List<SubtitleInfo>
-
     fun selectResolution(resolution: ResolutionInfo)
 
     fun selectSubtitle(subtitle: SubtitleInfo)
