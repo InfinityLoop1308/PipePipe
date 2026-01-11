@@ -50,11 +50,11 @@ class DownloadViewModel : BaseViewModel<DownloadUiState>(DownloadUiState()) {
     /**
      * Get downloads filtered by status
      */
-    suspend fun getDownloadsByStatus(status: DownloadStatus): List<DownloadItemState> {
+    suspend fun getDownloadsByStatus(statusList: List<DownloadStatus>): List<DownloadItemState> {
         return try {
             val downloads = DatabaseOperations.getAllDownloads()
             downloads
-                .filter { it.status == status.name }
+                .filter { DownloadStatus.valueOf(it.status) in statusList }
                 .map { it.toDownloadItemState() }
         } catch (e: Exception) {
             emptyList()

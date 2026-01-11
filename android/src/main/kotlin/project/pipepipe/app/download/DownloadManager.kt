@@ -29,14 +29,13 @@ class DownloadManager(private val context: Context) {
     private val TAG = "DownloadManager"
 
     init {
-        // Resume any active downloads on initialization
+        // Pause all active downloads on initialization
         scope.launch {
             val activeDownloads = DatabaseOperations.getActiveDownloads()
-            Log.d(TAG, "Found ${activeDownloads.size} active downloads to resume")
+            Log.d(TAG, "Pausing ${activeDownloads.size} active downloads")
 
-            // Start up to maxConcurrent downloads
-            activeDownloads.take(maxConcurrent).forEach { download ->
-                startWorker(download.id)
+            activeDownloads.forEach { download ->
+                DatabaseOperations.updateDownloadStatus(download.id, DownloadStatus.PAUSED.name, null)
             }
         }
     }

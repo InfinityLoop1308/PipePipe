@@ -7,6 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -24,6 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext.navController
+import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.download.DownloadManagerHolder
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.ui.component.CustomTopBar
@@ -40,6 +43,8 @@ fun DownloadScreen(
     val viewModel: DownloadViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+    var showCancelAllDialog by remember { mutableStateOf(false) }
 
     // Auto-refresh downloads periodically
     LaunchedEffect(Unit) {
@@ -65,7 +70,48 @@ fun DownloadScreen(
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(MR.strings.back)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            GlobalScope.launch(Dispatchers.IO) {
+                                viewModel.getDownloadsByStatus(listOf(DownloadStatus.PAUSED)).forEach { download ->
+                                    DownloadManagerHolder.instance.resumeDownload(download.id)
+                                }
+                                viewModel.refreshDownloads()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = stringResource(MR.strings.start_all)
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            GlobalScope.launch(Dispatchers.IO) {
+                                viewModel.getActiveDownloads()
+                                    .forEach { download ->
+                                        DownloadManagerHolder.instance.pauseDownload(download.id)
+                                    }
+                                viewModel.refreshDownloads()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Pause,
+                            contentDescription = stringResource(MR.strings.pause_all)
+                        )
+                    }
+                    IconButton(
+                        onClick = { showCancelAllDialog = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(MR.strings.cancel_all)
                         )
                     }
                 }
@@ -116,6 +162,7 @@ fun DownloadScreen(
                     CircularProgressIndicator()
                 }
             }
+
             filteredDownloads.isEmpty() -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -145,6 +192,7 @@ fun DownloadScreen(
                     }
                 }
             }
+
             else -> {
                 LazyColumn(
                     modifier = Modifier
@@ -225,6 +273,50 @@ fun DownloadScreen(
                     }
                 }
             }
+        }
+
+        if (showCancelAllDialog) {
+            AlertDialog(
+                onDismissRequest = { showCancelAllDialog = false },
+                title = {
+                    Text(stringResource(MR.strings.cancel_all))
+                },
+                text = {
+                    Text(stringResource(MR.strings.cancel_all_confirmation))
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showCancelAllDialog = false
+                            GlobalScope.launch(Dispatchers.IO) {
+                                viewModel.getDownloadsByStatus(
+                                    listOf(
+                                        DownloadStatus.QUEUED,
+                                        DownloadStatus.FETCHING_INFO,
+                                        DownloadStatus.PREPROCESSING,
+                                        DownloadStatus.DOWNLOADING,
+                                        DownloadStatus.POSTPROCESSING,
+                                        DownloadStatus.PAUSED,
+                                    )
+                                )
+                                    .forEach { download ->
+                                        DownloadManagerHolder.instance.cancelDownload(download.id)
+                                    }
+                                viewModel.refreshDownloads()
+                            }
+                        }
+                    ) {
+                        Text(stringResource(MR.strings.confirm))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showCancelAllDialog = false }
+                    ) {
+                        Text(stringResource(MR.strings.cancel))
+                    }
+                }
+            )
         }
     }
 }

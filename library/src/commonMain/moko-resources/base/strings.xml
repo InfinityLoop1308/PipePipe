@@ -688,4 +688,9 @@
 <string name="playlist_remove_partially_watched">Remove partially watched</string>
 <string name="playlist_remove_fully_watched">Remove fully watched</string>
 <string name="playlist_menu_share_url_list">Share URL List</string>
+<!-- Download actions -->
+<string name="start_all">Start All</string>
+<string name="pause_all">Pause All</string>
+<string name="cancel_all">Cancel All</string>
+<string name="cancel_all_confirmation">Are you sure you want to cancel all active downloads?</string>
 </resources>

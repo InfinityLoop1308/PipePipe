@@ -659,7 +659,7 @@ selectDownloadsByStatus:
 SELECT * FROM downloads WHERE status = ? ORDER BY created_at DESC;
 
 selectActiveDownloads:
-SELECT * FROM downloads WHERE status IN ('QUEUED', 'FETCHING_INFO', 'DOWNLOADING') ORDER BY created_at ASC;
+SELECT * FROM downloads WHERE status IN ('QUEUED', 'FETCHING_INFO', 'DOWNLOADING', 'PREPROCESSING', 'POSTPROCESSING') ORDER BY created_at ASC;
 
 insertDownload:
 INSERT OR REPLACE INTO downloads(url, title, image_url, duration, download_type, quality, codec, format_id, status, created_at)
