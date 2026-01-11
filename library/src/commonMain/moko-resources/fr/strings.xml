@@ -559,7 +559,6 @@
 <string name="bullet_comments_opacity_title">Opacité</string>
 <string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les danmaku</string>
 <string name="start_main_player_fullscreen_title">Démarrer en plein écran</string>
-<string name="content_language_title">Langue des sous-titres préférée</string>
 <string name="app_language_title">Langue de l\'application</string>
 <string name="start_main_player_fullscreen_summary">Démarrer la lecture directement en plein écran</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
@@ -588,4 +587,5 @@
 <string name="clear_all_logs_title">Effacer tous les journaux</string>
 <string name="pin_video_to_top_summary">Garder le lecteur vidéo épinglé en haut lors du défilement. S\'applique uniquement en mode portrait.</string>
 <string name="pin_video_to_top_title">Épingler la vidéo en haut</string>
+<string name="preferred_caption_language_title">Langue de sous-titres préférée</string>
 </resources>

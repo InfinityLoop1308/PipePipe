@@ -559,7 +559,6 @@
 <string name="bullet_comments_opacity_title">不透明度</string>
 <string name="enable_max_rows_customization_summary">弾幕の最大行数をカスタマイズできるようにする</string>
 <string name="start_main_player_fullscreen_title">フルスクリーンで開始</string>
-<string name="content_language_title">優先する字幕言語</string>
 <string name="app_language_title">アプリの言語</string>
 <string name="start_main_player_fullscreen_summary">再生を直接フルスクリーンで開始する</string>
 <string name="preferred_audio_language_title">優先する音声言語</string>
@@ -588,4 +587,5 @@
 <string name="clear_all_logs_title">すべてのログをクリア</string>
 <string name="pin_video_to_top_summary">スクロール時に動画プレーヤーを上部に固定します。ポートレートモードでのみ適用されます。</string>
 <string name="pin_video_to_top_title">動画を上部に固定</string>
+<string name="preferred_caption_language_title">希望する字幕言語</string>
 </resources>

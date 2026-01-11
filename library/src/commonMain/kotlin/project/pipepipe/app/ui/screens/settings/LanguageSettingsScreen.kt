@@ -5,15 +5,17 @@ import androidx.compose.ui.Modifier
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.StringDesc
 import project.pipepipe.app.MR
+import project.pipepipe.app.helper.LanguageHelper.sharedLanguageEntries
+import project.pipepipe.app.helper.LanguageHelper.sharedLanguageValues
 
 @Composable
 fun LanguageSettingsScreen(
     modifier: Modifier = Modifier
 ) {
     val appLanguageTitle = stringResource(MR.strings.app_language_title)
-    val contentLanguageTitle = stringResource(MR.strings.content_language_title)
     val contentCountryTitle = stringResource(MR.strings.default_content_country_title)
     val preferredAudioLanguageTitle = stringResource(MR.strings.preferred_audio_language_title)
+    val preferredCaptionLanguageTitle = stringResource(MR.strings.preferred_caption_language_title)
     val systemDefault = stringResource(MR.strings.systems_language)
 
     val appLanguageEntries = listOf(
@@ -175,164 +177,6 @@ fun LanguageSettingsScreen(
         "zh-tw"
     )
 
-    val contentLanguageEntries = listOf(
-        systemDefault,
-        "Afrikaans",
-        "Azərbaycan",
-        "Bahasa Indonesia",
-        "Bahasa Malaysia",
-        "Català",
-        "Čeština",
-        "Dansk",
-        "Deutsch",
-        "Eesti",
-        "English (UK)",
-        "English (US)",
-        "Español (España)",
-        "Español (Latinoamérica)",
-        "Euskara",
-        "Filipino",
-        "Français",
-        "Français (Canada)",
-        "Galego",
-        "Hrvatski",
-        "IsiZulu",
-        "Íslenska",
-        "Italiano",
-        "Kiswahili",
-        "Lietuvių",
-        "Magyar",
-        "Nederlands",
-        "Norsk",
-        "O'zbek",
-        "Polski",
-        "Português",
-        "Português (Brasil)",
-        "Română",
-        "Shqip",
-        "Slovenčina",
-        "Slovenščina",
-        "Suomi",
-        "Svenska",
-        "Tibetan བོད་སྐད།",
-        "Tiếng Việt",
-        "Türkçe",
-        "Български",
-        "Кыргызча",
-        "Қазақ Тілі",
-        "Македонски",
-        "Монгол",
-        "Русский",
-        "Српски",
-        "Українська",
-        "Ελληνικά",
-        "Հայերեն",
-        "עברית",
-        "اردو",
-        "العربية",
-        "فارسی",
-        "नेपाली",
-        "मराठी",
-        "हिन्दी",
-        "বাংলা",
-        "ਪੰਜਾਬੀ",
-        "ગુજરાતી",
-        "தமிழ்",
-        "తెలుగు",
-        "ಕನ್ನಡ",
-        "മലയാളം",
-        "සිංහල",
-        "ภาษาไทย",
-        "ລາວ",
-        "ဗမာ",
-        "ქართული",
-        "አማርኛ",
-        "ខ្មែរ",
-        "中文 (简体)",
-        "中文 (繁體)",
-        "中文 (香港)",
-        "日本語",
-        "한국어"
-    )
-    val contentLanguageValues = listOf(
-        "system",
-        "af",
-        "az",
-        "id",
-        "ms",
-        "ca",
-        "cs",
-        "da",
-        "de",
-        "et",
-        "en-GB",
-        "en",
-        "es",
-        "es-419",
-        "eu",
-        "fil",
-        "fr",
-        "fr-CA",
-        "gl",
-        "hr",
-        "zu",
-        "is",
-        "it",
-        "sw",
-        "lt",
-        "hu",
-        "nl",
-        "no",
-        "uz",
-        "pl",
-        "pt-PT",
-        "pt",
-        "ro",
-        "sq",
-        "sk",
-        "sl",
-        "fi",
-        "sv",
-        "bo",
-        "vi",
-        "tr",
-        "bg",
-        "ky",
-        "kk",
-        "mk",
-        "mn",
-        "ru",
-        "sr",
-        "uk",
-        "el",
-        "hy",
-        "iw",
-        "ur",
-        "ar",
-        "fa",
-        "ne",
-        "mr",
-        "hi",
-        "bn",
-        "pa",
-        "gu",
-        "ta",
-        "te",
-        "kn",
-        "ml",
-        "si",
-        "th",
-        "lo",
-        "my",
-        "ka",
-        "am",
-        "km",
-        "zh-CN",
-        "zh-TW",
-        "zh-HK",
-        "ja",
-        "ko"
-    )
     val contentCountryEntries = listOf(
         systemDefault,
         "Afghanistan",
@@ -603,45 +447,17 @@ fun LanguageSettingsScreen(
         "VN", "VI", "WF", "EH", "YE", "ZM", "ZW"
     )
 
+
+
+
     // Preferred audio language entries (from settings_keys.xml)
     val audioLanguageEntries = listOf(
         stringResource(MR.strings.original),
-        "English",
-        "Français",
-        "Deutsch",
-        "Español",
-        "Português",
-        "Русский",
-        "Türkçe",
-        "简体中文",
-        "日本語",
-        "हिन्दी",
-        "한국어",
-        "ไทย",
-        "Tiếng Việt",
-        "বাংলা",
-        "Bahasa Indonesia",
-        "العربية"
-    )
+    ) + sharedLanguageEntries
+
     val audioLanguageValues = listOf(
         "original",
-        "en",
-        "fr",
-        "de",
-        "es",
-        "pt",
-        "ru",
-        "tr",
-        "zh",
-        "ja",
-        "hi",
-        "ko",
-        "th",
-        "vi",
-        "bn",
-        "id",
-        "ar"
-    )
+    ) + sharedLanguageValues
 
     val preferenceItems = listOf(
         PreferenceItem.ListPref(
@@ -658,19 +474,19 @@ fun LanguageSettingsScreen(
                 }
             }
         ),
-//        PreferenceItem.ListPref(
-//            key = "content_language",
-//            title = contentLanguageTitle,
-//            entries = contentLanguageEntries,
-//            entryValues = contentLanguageValues,
-//            defaultValue = "system"
-//        ),
         PreferenceItem.ListPref(
             key = "preferred_audio_language_key",
             title = preferredAudioLanguageTitle,
             entries = audioLanguageEntries,
             entryValues = audioLanguageValues,
             defaultValue = "original"
+        ),
+        PreferenceItem.ListPref(
+            key = "preferred_subtitle_language_key",
+            title = preferredCaptionLanguageTitle,
+            entries = sharedLanguageEntries,
+            entryValues = sharedLanguageValues,
+            defaultValue = "en"
         ),
         PreferenceItem.ListPref(
             key = "content_country",

@@ -3,14 +3,18 @@ package project.pipepipe.app.download
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.type.TypeReference
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.w3c.dom.Element
 import project.pipepipe.app.SharedContext
+import project.pipepipe.app.helper.CookieManager
 import project.pipepipe.app.helper.FormatHelper
+import project.pipepipe.app.helper.isLoggedInCookie
 import project.pipepipe.app.ui.component.Format
+import project.pipepipe.shared.utils.json.requireString
 import java.io.ByteArrayInputStream
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.math.min
@@ -85,20 +89,12 @@ object YtDlpFormatHelper {
         fun getFileSize(): Long? = filesize ?: filesizeApprox
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class YtDlpVideoInfo(
-        @JsonProperty("id") val id: String = "",
-        @JsonProperty("title") val title: String = "",
-        @JsonProperty("formats") val formats: List<YtDlpFormat>? = null,
-        @JsonProperty("requested_formats") val requestedFormats: List<YtDlpFormat>? = null,
-        @JsonProperty("duration") val duration: Float? = null,
-        @JsonProperty("thumbnail") val thumbnail: String? = null
-    )
-
     data class FormatsResult(
         val videoFormats: List<YtDlpFormat>,
         val audioFormats: List<YtDlpFormat>,
-        val combinedFormats: List<YtDlpFormat>
+        val combinedFormats: List<YtDlpFormat>,
+        val subtitles: List<String>,
+        val autoCaption: String? = null  // Preferred language that only exists in auto_captions
     )
 
     /**
@@ -124,10 +120,47 @@ object YtDlpFormatHelper {
                 return@withContext Result.failure(Exception("Failed to fetch formats: ${response.err}"))
             }
 
-            val videoInfo = objectMapper.readValue(response.out, YtDlpVideoInfo::class.java)
-            val allFormats = videoInfo.formats ?: emptyList()
+            // Parse JSON once
+            val jsonNode = objectMapper.readTree(response.out)
+
+            // Get formats list
+            val formatsNode = jsonNode.get("formats")
+            val allFormats = if (formatsNode != null && formatsNode.isArray) {
+                objectMapper.convertValue(formatsNode, object : TypeReference<List<YtDlpFormat>>() {})
+            } else {
+                emptyList()
+            }
 
             Log.d(TAG, "Found ${allFormats.size} total formats")
+
+            // Get preferred subtitle language
+            val preferredLang = SharedContext.settingsManager.getString("preferred_subtitle_language_key", "en")
+
+            // Get subtitles keys (only read field names, not full content)
+            val subtitlesKeys = jsonNode.get("subtitles")
+                ?.fieldNames()
+                ?.asSequence()
+                ?.toList() ?: emptyList()
+
+            // Determine autoCaption based on preference
+            var autoCaption = if (preferredLang !in subtitlesKeys) {
+                // Preferred language not in manual subtitles, check auto captions
+                jsonNode.get("automatic_captions")
+                    ?.fieldNames()
+                    ?.asSequence()
+                    ?.toList()
+                    ?.find { it == preferredLang }
+            } else {
+                // Preferred language exists in manual subtitles, no need for auto caption
+                null
+            }
+
+            if (jsonNode.requireString("webpage_url_domain").contains("youtube", ignoreCase = true) &&
+                CookieManager.getCookie(0)?.isLoggedInCookie() == null) {
+                autoCaption = null
+            }
+
+            Log.d(TAG, "Preferred subtitle: $preferredLang, autoCaption: $autoCaption")
 
             // Separate formats by type
             val videoOnly = allFormats.filter { it.isVideoOnly() }
@@ -161,7 +194,9 @@ object YtDlpFormatHelper {
                 FormatsResult(
                     videoFormats = videoOnly,
                     audioFormats = audioOnly,
-                    combinedFormats = combined
+                    combinedFormats = combined,
+                    subtitles = subtitlesKeys,
+                    autoCaption = autoCaption
                 )
             )
         } catch (e: Exception) {
@@ -172,10 +207,12 @@ object YtDlpFormatHelper {
 
     /**
      * Parse formats from DASH manifest XML
+     * Returns: Pair of (videoFormats, audioFormats, subtitleIds)
      */
-    fun parseFormatsFromDashManifest(dashManifest: String, url: String): Pair<List<Format>, List<Format>> {
+    fun parseFormatsFromDashManifest(dashManifest: String, url: String): Triple<List<Format>, List<Format>, List<String>> {
         val videoFormats = mutableListOf<Format>()
         val audioFormats = mutableListOf<Format>()
+        val subtitleIds = mutableListOf<String>()
 
         try {
             val factory = DocumentBuilderFactory.newInstance()
@@ -234,6 +271,12 @@ object YtDlpFormatHelper {
                                 )
                             )
                         }
+                        "text" -> {
+                            // Extract subtitle id
+                            if (repId.isNotEmpty()) {
+                                subtitleIds.add(repId)
+                            }
+                        }
                     }
                 }
             }
@@ -258,6 +301,6 @@ object YtDlpFormatHelper {
             )
             .distinctBy { "${it.codec}_${it.bitrate}" }
 
-        return sortedVideos to sortedAudios
+        return Triple(sortedVideos, sortedAudios, subtitleIds)
     }
 }

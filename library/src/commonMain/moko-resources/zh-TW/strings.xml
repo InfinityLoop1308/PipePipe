@@ -559,7 +559,6 @@
 <string name="bullet_comments_opacity_title">不透明度</string>
 <string name="enable_max_rows_customization_summary">啟用以自訂彈幕的最大行數</string>
 <string name="start_main_player_fullscreen_title">以全螢幕啟動</string>
-<string name="content_language_title">偏好字幕語言</string>
 <string name="app_language_title">應用程式語言</string>
 <string name="start_main_player_fullscreen_summary">直接以全螢幕啟動播放</string>
 <string name="preferred_audio_language_title">偏好音訊語言</string>
@@ -588,4 +587,5 @@
 <string name="clear_all_logs_title">清除所有日誌</string>
 <string name="pin_video_to_top_summary">捲動時將影片播放器固定在頂部。僅適用於直向模式。</string>
 <string name="pin_video_to_top_title">將影片固定在頂部</string>
+<string name="preferred_caption_language_title">偏好字幕語言</string>
 </resources>

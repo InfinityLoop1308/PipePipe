@@ -559,7 +559,6 @@
 <string name="bullet_comments_opacity_title">Opacità</string>
 <string name="enable_max_rows_customization_summary">Abilita per personalizzare il numero massimo di righe per i danmaku</string>
 <string name="start_main_player_fullscreen_title">Avvia a schermo intero</string>
-<string name="content_language_title">Lingua preferita dei sottotitoli</string>
 <string name="app_language_title">Lingua dell\'app</string>
 <string name="start_main_player_fullscreen_summary">Avvia la riproduzione direttamente a schermo intero</string>
 <string name="preferred_audio_language_title">Lingua audio preferita</string>
@@ -588,4 +587,5 @@
 <string name="clear_all_logs_title">Cancella tutti i log</string>
 <string name="pin_video_to_top_summary">Mantieni il riproduttore video bloccato in alto durante lo scorrimento. Si applica solo in modalità verticale.</string>
 <string name="pin_video_to_top_title">Blocca video in alto</string>
+<string name="preferred_caption_language_title">Lingua dei sottotitoli preferita</string>
 </resources>

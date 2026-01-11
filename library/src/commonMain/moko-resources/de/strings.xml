@@ -559,7 +559,6 @@
 <string name="bullet_comments_opacity_title">Deckkraft</string>
 <string name="enable_max_rows_customization_summary">Aktivieren, um die maximalen Zeilen für Danmaku anzupassen</string>
 <string name="start_main_player_fullscreen_title">Im Vollbild starten</string>
-<string name="content_language_title">Bevorzugte Untertitelsprache</string>
 <string name="app_language_title">App-Sprache</string>
 <string name="start_main_player_fullscreen_summary">Wiedergabe direkt im Vollbild starten</string>
 <string name="preferred_audio_language_title">Bevorzugte Audiosprache</string>
@@ -588,4 +587,5 @@
 <string name="clear_all_logs_title">Alle Protokolle löschen</string>
 <string name="pin_video_to_top_summary">Den Videoplayer beim Scrollen oben anheften. Gilt nur im Hochformat.</string>
 <string name="pin_video_to_top_title">Video oben anheften</string>
+<string name="preferred_caption_language_title">Bevorzugte Untertitelsprache</string>
 </resources>

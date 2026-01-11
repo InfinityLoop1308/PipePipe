@@ -24,6 +24,7 @@ import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.download.DownloadManagerHolder
 import project.pipepipe.app.helper.FormatHelper
 import project.pipepipe.app.download.YtDlpFormatHelper
+import project.pipepipe.app.helper.LanguageHelper.getLocalizedLanguageName
 import project.pipepipe.app.uistate.DownloadType
 import project.pipepipe.shared.infoitem.StreamInfo
 
@@ -69,6 +70,9 @@ fun DownloadFormatDialog(
     var loadError by remember { mutableStateOf<String?>(null) }
     var videoFormats by remember { mutableStateOf<List<Format>>(emptyList()) }
     var audioFormats by remember { mutableStateOf<List<Format>>(emptyList()) }
+    var subtitleFormats by remember { mutableStateOf<List<Format>>(emptyList()) }
+
+    val autoCaptionMsg = stringResource(MR.strings.player_subtitle_auto_generated)
 
     // State for permission handling
     var showPermissionDialog by remember { mutableStateOf(false) }
@@ -101,9 +105,22 @@ fun DownloadFormatDialog(
         try {
             if (!streamInfo.dashManifest.isNullOrEmpty()) {
                 // Parse from dashManifest
-                val (videos, audios) = YtDlpFormatHelper.parseFormatsFromDashManifest(streamInfo.dashManifest!!, streamInfo.url)
+                val (videos, audios, subtitleIds) = YtDlpFormatHelper.parseFormatsFromDashManifest(streamInfo.dashManifest!!, streamInfo.url)
                 videoFormats = videos
                 audioFormats = audios
+                // Build subtitle formats from subtitleIds
+                subtitleFormats = subtitleIds
+                    .map { it.substringAfterLast('.') }
+                    .distinct()
+                    .map { lang ->
+                        Format(
+                            id = lang,
+                            url = "",
+                            displayLabel = getLocalizedLanguageName(lang),
+                            codec = "vtt",
+                            filesize = null
+                        )
+                    }
                 isLoadingFormats = false
             } else {
                 // Fetch from yt-dlp
@@ -138,6 +155,31 @@ fun DownloadFormatDialog(
                         )
                     }.distinctBy { it.displayLabel }
 
+                    // Build subtitle formats from subtitles list and autoCaption
+                    val subtitleList = formatsResult.subtitles.map { lang ->
+                        Format(
+                            id = lang,
+                            url = "",
+                            displayLabel = getLocalizedLanguageName(lang),
+                            codec = "srt",
+                            filesize = null
+                        )
+                    }
+                    val autoCaptionFormat = formatsResult.autoCaption?.let { lang ->
+                        Format(
+                            id = lang,
+                            url = "",
+                            displayLabel = "${getLocalizedLanguageName(lang)} ($autoCaptionMsg)",
+                            codec = "srt",
+                            filesize = null
+                        )
+                    }
+                    subtitleFormats = if (autoCaptionFormat != null) {
+                        subtitleList + autoCaptionFormat
+                    } else {
+                        subtitleList
+                    }
+
                     isLoadingFormats = false
                 }.onFailure { e ->
                     loadError = "Failed to load formats: ${e.message}"
@@ -154,8 +196,10 @@ fun DownloadFormatDialog(
     var selectedType by remember { mutableStateOf(DownloadType.VIDEO) }
     var selectedVideoFormat by remember { mutableStateOf<Format?>(null) }
     var selectedAudioFormat by remember { mutableStateOf<Format?>(null) }
+    var selectedSubtitleFormat by remember { mutableStateOf<Format?>(null) }
     var videoDropdownExpanded by remember { mutableStateOf(false) }
     var audioDropdownExpanded by remember { mutableStateOf(false) }
+    var subtitleDropdownExpanded by remember { mutableStateOf(false) }
 
     // Get best audio format for calculating total video download size
     val bestAudioFormat = remember(audioFormats) {
@@ -175,6 +219,12 @@ fun DownloadFormatDialog(
         }
     }
 
+    LaunchedEffect(subtitleFormats) {
+        if (subtitleFormats.isNotEmpty() && selectedSubtitleFormat == null) {
+            selectedSubtitleFormat = subtitleFormats.first()
+        }
+    }
+
     // Perform download with selected format
     val performDownload: (Format, DownloadType) -> Unit = { format, type ->
         val finalFormatId = if (type == DownloadType.VIDEO && format.isVideoOnly) {
@@ -187,10 +237,10 @@ fun DownloadFormatDialog(
                 url = streamInfo.url,
                 title = streamInfo.name ?: "Unknown",
                 imageUrl = streamInfo.thumbnailUrl,
-                duration = streamInfo.duration?.toInt() ?: 0,
+                duration = if (type == DownloadType.SUBTITLE) 0 else streamInfo.duration?.toInt() ?: 0,
                 downloadType = type,
                 quality = format.displayLabel,
-                codec = FormatHelper.parseCodecName(format.codec),
+                codec = if (type == DownloadType.SUBTITLE) "srt" else FormatHelper.parseCodecName(format.codec),
                 formatId = finalFormatId
             )
         }
@@ -214,7 +264,7 @@ fun DownloadFormatDialog(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // Download Type Selection (Video/Audio)
+                // Download Type Selection (Video/Audio/Subtitle)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -235,6 +285,14 @@ fun DownloadFormatDialog(
                         label = { Text(stringResource(MR.strings.download_audio_format)) },
                         modifier = Modifier.weight(1f),
                         enabled = !isLoadingFormats && loadError == null && audioFormats.isNotEmpty()
+                    )
+
+                    FilterChip(
+                        selected = selectedType == DownloadType.SUBTITLE,
+                        onClick = { selectedType = DownloadType.SUBTITLE },
+                        label = { Text(stringResource(MR.strings.download_subtitles)) },
+                        modifier = Modifier.weight(1f),
+                        enabled = !isLoadingFormats && loadError == null && subtitleFormats.isNotEmpty()
                     )
                 }
 
@@ -382,6 +440,43 @@ fun DownloadFormatDialog(
                                 }
                             }
                         }
+
+                        DownloadType.SUBTITLE -> {
+                            if (subtitleFormats.isNotEmpty()) {
+                                ExposedDropdownMenuBox(
+                                    expanded = subtitleDropdownExpanded,
+                                    onExpandedChange = { subtitleDropdownExpanded = it }
+                                ) {
+                                    OutlinedTextField(
+                                        value = selectedSubtitleFormat?.displayLabel
+                                            ?: "Select subtitle",
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        label = { Text(stringResource(MR.strings.download_subtitles)) },
+                                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = subtitleDropdownExpanded) },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .menuAnchor()
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = subtitleDropdownExpanded,
+                                        onDismissRequest = { subtitleDropdownExpanded = false }
+                                    ) {
+                                        subtitleFormats.forEach { format ->
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(format.displayLabel)
+                                                },
+                                                onClick = {
+                                                    selectedSubtitleFormat = format
+                                                    subtitleDropdownExpanded = false
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -393,6 +488,7 @@ fun DownloadFormatDialog(
                     val selectedFormat = when (selectedType) {
                         DownloadType.VIDEO -> selectedVideoFormat
                         DownloadType.AUDIO -> selectedAudioFormat
+                        DownloadType.SUBTITLE -> selectedSubtitleFormat
                     }
 
                     selectedFormat?.let { format ->
@@ -444,6 +540,7 @@ fun DownloadFormatDialog(
                 enabled = when (selectedType) {
                     DownloadType.VIDEO -> selectedVideoFormat != null
                     DownloadType.AUDIO -> selectedAudioFormat != null
+                    DownloadType.SUBTITLE -> selectedSubtitleFormat != null
                 }
             ) {
                 Text(stringResource(MR.strings.download))
@@ -477,6 +574,7 @@ fun DownloadFormatDialog(
         val selectedFormat = when (selectedType) {
             DownloadType.VIDEO -> selectedVideoFormat
             DownloadType.AUDIO -> selectedAudioFormat
+            DownloadType.SUBTITLE -> selectedSubtitleFormat
         }
 
         AlertDialog(

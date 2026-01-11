@@ -130,7 +130,11 @@ private fun ThumbnailSection(state: DownloadItemState) {
             modifier = Modifier.align(Alignment.TopEnd)
         ) {
             Icon(
-                imageVector = if (state.downloadType == DownloadType.VIDEO) Icons.Default.Movie else Icons.Default.Audiotrack,
+                imageVector = when (state.downloadType) {
+                    DownloadType.VIDEO -> Icons.Default.Movie
+                    DownloadType.AUDIO -> Icons.Default.Audiotrack
+                    DownloadType.SUBTITLE -> Icons.Default.Subtitles
+                },
                 contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier
@@ -138,20 +142,21 @@ private fun ThumbnailSection(state: DownloadItemState) {
                     .size(14.dp)
             )
         }
-
-        Surface(
-            color = Color.Black.copy(alpha = 0.7f),
-            shape = RoundedCornerShape(topStart = 6.dp),
-            modifier = Modifier.align(Alignment.BottomEnd)
-        ) {
-            Text(
-                text = state.duration.toLong().toDurationString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White,
-                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium
-            )
+        if (state.duration > 0) {
+            Surface(
+                color = Color.Black.copy(alpha = 0.7f),
+                shape = RoundedCornerShape(topStart = 6.dp),
+                modifier = Modifier.align(Alignment.BottomEnd)
+            ) {
+                Text(
+                    text = state.duration.toLong().toDurationString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }
@@ -218,6 +223,7 @@ private fun TitleRow(
                             }
                         )
                     }
+
                     DownloadStatus.PAUSED -> {
                         DropdownMenuItem(
                             text = { Text(stringResource(MR.strings.start)) },
@@ -236,6 +242,7 @@ private fun TitleRow(
                             }
                         )
                     }
+
                     DownloadStatus.DOWNLOADING, DownloadStatus.QUEUED, DownloadStatus.FETCHING_INFO, DownloadStatus.PREPROCESSING, DownloadStatus.POSTPROCESSING -> {
                         DropdownMenuItem(
                             text = { Text(stringResource(MR.strings.pause)) },
@@ -254,6 +261,7 @@ private fun TitleRow(
                             }
                         )
                     }
+
                     DownloadStatus.FAILED, DownloadStatus.CANCELED -> {
                         DropdownMenuItem(
                             text = { Text(stringResource(MR.strings.retry)) },
@@ -308,7 +316,7 @@ private fun TagsRow(state: DownloadItemState) {
         // Status badge
         if (state.status == DownloadStatus.FAILED) {
             TagBadge(
-                text = "Failed",
+                text = stringResource(MR.strings.download_failed),
                 color = MaterialTheme.colorScheme.errorContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
             )
@@ -382,7 +390,9 @@ private fun BottomStatusSection(state: DownloadItemState) {
                         DownloadStatus.POSTPROCESSING -> stringResource(MR.strings.download_post_processing)
                         DownloadStatus.FAILED -> "Failed: ${state.errorMessage?.take(30) ?: "Unknown error"}"
                         DownloadStatus.CANCELED -> "Canceled"
-                        DownloadStatus.DOWNLOADING -> state.downloadSpeed ?: stringResource(MR.strings.download_pre_processing)
+                        DownloadStatus.DOWNLOADING -> state.downloadSpeed
+                            ?: stringResource(MR.strings.download_pre_processing)
+
                         else -> "Downloading..."
                     },
                     style = MaterialTheme.typography.bodySmall,

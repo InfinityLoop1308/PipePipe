@@ -559,7 +559,6 @@
 <string name="bullet_comments_opacity_title">Opacidad</string>
 <string name="enable_max_rows_customization_summary">Habilitar para personalizar el número máximo de filas para danmaku</string>
 <string name="start_main_player_fullscreen_title">Iniciar en pantalla completa</string>
-<string name="content_language_title">Idioma de subtítulos preferido</string>
 <string name="app_language_title">Idioma de la aplicación</string>
 <string name="start_main_player_fullscreen_summary">Iniciar la reproducción directamente en pantalla completa</string>
 <string name="preferred_audio_language_title">Idioma de audio preferido</string>
@@ -588,4 +587,5 @@
 <string name="clear_all_logs_title">Borrar todos los registros</string>
 <string name="pin_video_to_top_summary">Mantener el reproductor de video anclado en la parte superior al desplazarse. Solo se aplica en modo vertical.</string>
 <string name="pin_video_to_top_title">Anclar video en la parte superior</string>
+<string name="preferred_caption_language_title">Idioma de subtítulos preferido</string>
 </resources>

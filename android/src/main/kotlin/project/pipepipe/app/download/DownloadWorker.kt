@@ -136,13 +136,18 @@ class DownloadWorker(
 
         val request = YoutubeDLRequest(download.url).apply {
             // Format selection
-            addOption("-f", download.format_id)
-
-            println(download.codec)
-            if (download.download_type == "AUDIO") {
-                addOption("--remux-video", "webm>opus")
+            if (download.download_type == "SUBTITLE") {
+                addOption("--skip-download")
+                addOption("--write-sub")
+                addOption("--write-auto-sub")
+                addOption("--sub-lang", download.format_id)
+            } else {
+                addOption("-f", download.format_id)
+                addOption("--embed-thumbnail")
+                if (download.download_type == "AUDIO") {
+                    addOption("--remux-video", "webm>opus")
+                }
             }
-
             // Output configuration
             addOption("-P", cacheDir.absolutePath)
             addOption("-o", "%(title).200B.%(ext)s")
@@ -158,10 +163,6 @@ class DownloadWorker(
 
             // Quiet mode to reduce output noise
             addOption("--no-warnings")
-
-            addOption("--embed-thumbnail")
-            addOption("--embed-subs")
-            addOption("--compat-options", "no-live-chat")
         }
 
         Log.d(TAG, "Download request built for format: ${download.format_id}")
@@ -253,7 +254,7 @@ class DownloadWorker(
         // Determine final destination based on download type
         val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val appSubDir = when (DownloadType.valueOf(download.download_type)) {
-            DownloadType.VIDEO -> "PipePipe/Videos"
+            DownloadType.VIDEO, DownloadType.SUBTITLE -> "PipePipe/Videos"
             DownloadType.AUDIO -> "PipePipe/Audio"
         }
 

@@ -179,7 +179,8 @@ enum class DownloadStatus {
 
 enum class DownloadType {
     VIDEO,
-    AUDIO
+    AUDIO,
+    SUBTITLE
 }
 
 // Download item state for UI
