@@ -20,6 +20,7 @@ import project.pipepipe.app.viewmodel.SearchViewModel
 import project.pipepipe.shared.infoitem.PlaylistInfo
 import project.pipepipe.shared.infoitem.StreamInfo
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
+import kotlin.collections.take
 
 /**
  * Helper class for Android Auto media browser functionality.
@@ -90,7 +91,7 @@ object MediaBrowserHelper {
      * Loads history items as MediaItems.
      */
     suspend fun loadHistoryItems(): List<MediaItem> = withContext(Dispatchers.IO) {
-        val historyItems = DatabaseOperations.loadStreamHistoryItems()
+        val historyItems = DatabaseOperations.loadStreamHistoryItems().take(1000)
         historyItems.map { streamInfo ->
             createPlayableMediaItem(streamInfo)
         }
@@ -110,9 +111,9 @@ object MediaBrowserHelper {
      * Loads streams from a local playlist.
      */
     suspend fun loadLocalPlaylistStreams(playlistId: Long): List<MediaItem> = withContext(Dispatchers.IO) {
-        val streams = DatabaseOperations.loadPlaylistsItemsFromDatabase(playlistId)
-        streams.map { streamInfo ->
-            createPlayableMediaItem(streamInfo)
+        val streams = DatabaseOperations.loadPlaylistsItemsFromDatabase(playlistId).take(1000)
+        streams.mapIndexed { index, streamInfo ->
+            createPlayableMediaItem(streamInfo, playlistId, index)
         }
     }
 
@@ -127,7 +128,7 @@ object MediaBrowserHelper {
 
         // Load remote playlist using ViewModel
         playlistVm.loadPlaylist(playlistInfo.url, playlistInfo.serviceId)
-        val streams = playlistVm.uiState.value.list.itemList
+        val streams = playlistVm.uiState.value.list.itemList.take(1000)
         streams.map { streamInfo ->
             createPlayableMediaItem(streamInfo)
         }
@@ -290,7 +291,7 @@ object MediaBrowserHelper {
      * Encodes all metadata in the mediaId since extras are lost during IPC.
      * Format: auto://{serviceId}/{realUrl}?name=...&artist=...&thumb=...&duration=...
      */
-    private fun createPlayableMediaItem(streamInfo: StreamInfo): MediaItem {
+    private fun createPlayableMediaItem(streamInfo: StreamInfo, playlistId: Long? = null, index: Int? = null): MediaItem {
         val duration = (streamInfo.duration ?: 0) * 1000
 
         // Build URL with query parameters to preserve metadata across IPC
@@ -303,6 +304,8 @@ object MediaBrowserHelper {
         streamInfo.uploaderName?.let { uriBuilder.appendQueryParameter("artist", it) }
         streamInfo.thumbnailUrl?.let { uriBuilder.appendQueryParameter("thumb", it) }
         if (duration > 0) uriBuilder.appendQueryParameter("duration", duration.toString())
+        playlistId?.let { uriBuilder.appendQueryParameter("playlistId", it.toString()) }
+        index?.let { uriBuilder.appendQueryParameter("index", it.toString()) }
 
         val autoMediaId = uriBuilder.build().toString()
 

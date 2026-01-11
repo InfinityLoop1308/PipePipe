@@ -25,6 +25,7 @@ import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.helper.executeJobFlow
 import project.pipepipe.app.mediasource.CustomMediaSourceFactory
+import project.pipepipe.app.platform.getPlaybackStartPosition
 import project.pipepipe.app.platform.toMedia3MediaItem
 import project.pipepipe.app.platform.toPlatformMediaItem
 import project.pipepipe.app.platform.uuid
@@ -240,6 +241,7 @@ class PlaybackService : MediaLibraryService() {
                 controller: MediaSession.ControllerInfo,
                 mediaItems: MutableList<MediaItem>
             ): ListenableFuture<List<MediaItem>> {
+                // seems never called so don't need to sync queue. remove?
                 return Futures.immediateFuture(mediaItems.toList())
             }
 
@@ -250,12 +252,30 @@ class PlaybackService : MediaLibraryService() {
                 startIndex: Int,
                 startPositionMs: Long
             ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
-                val result = MediaSession.MediaItemsWithStartPosition(
+                if (mediaItems.size == 1) {
+                    val item = mediaItems.first()
+                    val playlistId = item.mediaId.substringAfter("playlistId=").substringBefore('&').toLongOrNull()
+                    val index = item.mediaId.substringAfter("index=").substringBefore('&').toIntOrNull()
+                    if (playlistId != null && index != null) {
+                        val items = runBlocking{ MediaBrowserHelper.loadLocalPlaylistStreams(playlistId) }
+                        GlobalScope.launch {
+                            SharedContext.queueManager.setQueue(items.map { it.toPlatformMediaItem() }, notifyOnly = true)
+                        }
+                        return Futures.immediateFuture(MediaSession.MediaItemsWithStartPosition(
+                            items,
+                            index,
+                            getPlaybackStartPosition(item.toPlatformMediaItem())
+                        ))
+                    }
+                }
+                GlobalScope.launch {
+                    SharedContext.queueManager.setQueue(mediaItems.map { it.toPlatformMediaItem() }, notifyOnly = true)
+                }
+                return Futures.immediateFuture( MediaSession.MediaItemsWithStartPosition(
                     mediaItems.toList(),
                     startIndex,
                     startPositionMs
-                )
-                return Futures.immediateFuture(result)
+                ))
             }
 
             // Android Auto / Media Browser callbacks
@@ -309,6 +329,9 @@ class PlaybackService : MediaLibraryService() {
                 return serviceScope.future {
                     val historyItems = MediaBrowserHelper.loadHistoryItems()
                     if (historyItems.isNotEmpty()) {
+                        GlobalScope.launch {
+                            SharedContext.queueManager.setQueue(historyItems.map { it.toPlatformMediaItem() }, notifyOnly = true)
+                        }
                         MediaSession.MediaItemsWithStartPosition(
                             historyItems,
                             0,

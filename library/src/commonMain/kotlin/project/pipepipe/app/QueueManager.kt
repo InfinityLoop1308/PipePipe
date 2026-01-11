@@ -22,10 +22,12 @@ class QueueManager {
 
     fun isShuffled(): Boolean = backup != null
 
-    fun setQueue(items: List<PlatformMediaItem>, startIndex: Int = 0) {
+    fun setQueue(items: List<PlatformMediaItem>, startIndex: Int = 0, notifyOnly: Boolean = false) {
         _queue.value = items.toList()
         backup = null
-        SharedContext.platformMediaController!!.setQueue(items, startIndex)
+        if (!notifyOnly) {
+            SharedContext.platformMediaController!!.setQueue(items, startIndex)
+        }
     }
 
     fun addItem(item: PlatformMediaItem) {
