@@ -745,4 +745,8 @@ object DatabaseOperations {
     suspend fun findDownloadByUrlAndType(url: String, downloadType: String) = withContext(Dispatchers.IO) {
         database.appDatabaseQueries.findDownloadByUrlAndType(url, downloadType).executeAsOneOrNull()
     }
+
+    suspend fun deleteAllCancelledDownloads() = withContext(Dispatchers.IO) {
+        database.appDatabaseQueries.deleteAllCancelledDownloads()
+    }
 }

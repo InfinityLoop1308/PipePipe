@@ -232,7 +232,7 @@ class DownloadManager(private val context: Context) {
     }
 
     /**
-     * Cancel a download
+     * Cancel a download (delete directly)
      */
     fun cancelDownload(downloadId: Long) {
         Log.d(TAG, "Canceling download: $downloadId")
@@ -241,8 +241,12 @@ class DownloadManager(private val context: Context) {
         activeWorkers.remove(downloadId)
         updateActiveDownloadIds()
 
+        // Cancel progress notification
+        DownloadService.cancelProgressNotification(context, downloadId)
+
         scope.launch {
-            DatabaseOperations.updateDownloadStatus(downloadId, DownloadStatus.CANCELED.name, null)
+            // Delete from database
+            DatabaseOperations.deleteDownload(downloadId)
 
             // Start next queued download
             startNextInQueue()

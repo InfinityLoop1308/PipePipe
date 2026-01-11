@@ -166,5 +166,10 @@ class DownloadService : Service() {
                 notificationManager.notify(PROGRESS_NOTIFICATION_BASE_ID + downloadId.toInt(), notification)
             }
         }
+
+        fun cancelProgressNotification(context: Context, downloadId: Long) {
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(PROGRESS_NOTIFICATION_BASE_ID + downloadId.toInt())
+        }
     }
 }

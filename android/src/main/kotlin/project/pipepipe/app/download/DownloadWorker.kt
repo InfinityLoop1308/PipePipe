@@ -119,7 +119,6 @@ class DownloadWorker(
                 onStateChange(DownloadStatus.PAUSED, null)
             } else {
                 Log.d(TAG, "Download canceled by user")
-                onStateChange(DownloadStatus.CANCELED, null)
             }
         } catch (e: Exception) {
             Log.e(TAG, "Download error", e)

@@ -23,19 +23,13 @@ class DownloadViewModel : BaseViewModel<DownloadUiState>(DownloadUiState()) {
      */
     private fun observeDownloads() {
         viewModelScope.launch {
-            try {
-                // Get all downloads and observe changes
-                val downloads = DatabaseOperations.getAllDownloads()
-                val downloadItems = downloads.map { it.toDownloadItemState() }
-
-                setState { state ->
-                    state.copy(
-                        downloads = downloadItems,
-                        activeDownloadCount = downloadItems.count { it.status.isActive() }
-                    )
-                }
-            } catch (e: Exception) {
-                // Handle error silently or log
+            val downloads = DatabaseOperations.getAllDownloads()
+            val downloadItems = downloads.map { it.toDownloadItemState() }
+            setState { state ->
+                state.copy(
+                    downloads = downloadItems,
+                    activeDownloadCount = downloadItems.count { it.status.isActive() }
+                )
             }
         }
     }

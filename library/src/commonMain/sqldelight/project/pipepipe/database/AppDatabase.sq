@@ -695,3 +695,6 @@ SELECT * FROM downloads WHERE url = ? AND quality = ? AND download_type = ? LIMI
 
 findDownloadByUrlAndType:
 SELECT * FROM downloads WHERE url = ? AND download_type = ? LIMIT 1;
+
+deleteAllCancelledDownloads:
+DELETE FROM downloads WHERE status = 'CANCELED';

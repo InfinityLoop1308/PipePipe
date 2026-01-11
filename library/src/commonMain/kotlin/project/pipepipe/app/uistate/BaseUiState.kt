@@ -170,10 +170,9 @@ enum class DownloadStatus {
     POSTPROCESSING,
     PAUSED,
     COMPLETED,
-    FAILED,
-    CANCELED;
+    FAILED;
 
-    fun isTerminal() = this in listOf(COMPLETED, FAILED, CANCELED)
+    fun isTerminal() = this in listOf(COMPLETED, FAILED)
     fun isActive() = this in listOf(QUEUED, FETCHING_INFO, PREPROCESSING, DOWNLOADING, POSTPROCESSING)
 }
 

@@ -262,7 +262,7 @@ private fun TitleRow(
                         )
                     }
 
-                    DownloadStatus.FAILED, DownloadStatus.CANCELED -> {
+                    DownloadStatus.FAILED -> {
                         DropdownMenuItem(
                             text = { Text(stringResource(MR.strings.retry)) },
                             leadingIcon = { Icon(Icons.Default.Refresh, contentDescription = null) },
@@ -389,7 +389,6 @@ private fun BottomStatusSection(state: DownloadItemState) {
                         DownloadStatus.PREPROCESSING -> stringResource(MR.strings.download_pre_processing)
                         DownloadStatus.POSTPROCESSING -> stringResource(MR.strings.download_post_processing)
                         DownloadStatus.FAILED -> "Failed: ${state.errorMessage?.take(30) ?: "Unknown error"}"
-                        DownloadStatus.CANCELED -> "Canceled"
                         DownloadStatus.DOWNLOADING -> state.downloadSpeed
                             ?: stringResource(MR.strings.download_pre_processing)
 

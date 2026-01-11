@@ -63,6 +63,11 @@ class PipePipeApplication : Application() {
         SharedContext.platformDatabaseActions = AndroidPlatformDatabaseActions(this)
         SharedContext.platformDatabaseActions.initializeDatabase()
 
+        // Clean up cancelled downloads (legacy status)
+        GlobalScope.launch {
+            runCatching { DatabaseOperations.deleteAllCancelledDownloads() }
+        }
+
         // Initialize youtubedl-android and FFmpeg
         try {
             YoutubeDL.getInstance().init(this)
