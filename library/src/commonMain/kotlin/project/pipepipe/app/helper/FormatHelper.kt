@@ -64,7 +64,7 @@ object FormatHelper {
      * Format video display label with codec, resolution, and optional frame rate
      */
     fun formatVideoLabel(codecName: String, resolution: String, frameRate: Float? = null): String {
-        return if (frameRate != null && frameRate.toInt() != 30) {
+        return if (frameRate != null && frameRate.toInt() > 30) {
             "$codecName $resolution${frameRate.toInt()}"
         } else {
             "$codecName $resolution"
