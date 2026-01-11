@@ -56,7 +56,6 @@ fun DownloadScreen(
 
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf(
-        "All" to null,
         "Downloading" to DownloadStatus.DOWNLOADING,
         "Completed" to DownloadStatus.COMPLETED,
         "Failed" to DownloadStatus.FAILED
@@ -174,9 +173,9 @@ fun DownloadScreen(
                     ) {
                         Text(
                             text = when (selectedTab) {
-                                1 -> "No active downloads"
-                                2 -> "No completed downloads"
-                                3 -> "No failed downloads"
+                                0 -> "No active downloads"
+                                1 -> "No completed downloads"
+                                2 -> "No failed downloads"
                                 else -> "No downloads yet"
                             },
                             fontSize = 16.sp,
