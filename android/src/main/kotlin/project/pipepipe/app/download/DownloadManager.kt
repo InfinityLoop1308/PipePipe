@@ -68,11 +68,10 @@ class DownloadManager(private val context: Context) {
             formatId = formatId
         )
 
-        // Start download service to keep app alive
-        DownloadService.start(context)
-
         // Check if we can start this download immediately
         if (activeWorkers.size < maxConcurrent) {
+            // Start download service to keep app alive
+            DownloadService.start(context)
             startWorker(downloadId)
         } else {
             Log.d(TAG, "Download queued (${activeWorkers.size}/$maxConcurrent active)")

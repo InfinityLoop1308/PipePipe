@@ -303,4 +303,27 @@ object YtDlpFormatHelper {
 
         return Triple(sortedVideos, sortedAudios, subtitleIds)
     }
+    private const val DEFAULT_RESOLUTION_KEY = "default_resolution_key"
+
+    fun getFormatIdForVideo(): String {
+        val defaultResolution = SharedContext.settingsManager.getString(DEFAULT_RESOLUTION_KEY, "auto")
+
+        return when (defaultResolution) {
+            "best" -> "bv+ba"        // Best video + best audio
+            "worst", "lowest" -> "wv+ba"  // Worst video + best audio
+            "auto" -> "res:720"       // 720p as default
+            else -> {
+                // Parse resolution like "1080p", "720p" etc.
+                if (defaultResolution.endsWith("p")) {
+                    "res:${defaultResolution.replace("p","")}"
+                } else {
+                    "res:720"  // Fallback to 720p
+                }
+            }
+        }
+    }
+
+    fun getFormatIdForAudio(): String {
+        return "ba[ext=m4a]/ba"
+    }
 }

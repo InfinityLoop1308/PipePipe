@@ -273,6 +273,8 @@ fun PlaylistDetailScreen(
         )
     }
 
+    SharedContext.platformMenuItems.localPlaylistDialogs(uiState.playlistInfo?.url?.substringAfterLast("/")?.toLongOrNull())
+
     if (isSearchActive) {
         BackHandler {
             focusManager.clearFocus()

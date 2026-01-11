@@ -142,7 +142,11 @@ class DownloadWorker(
                 addOption("--write-auto-sub")
                 addOption("--sub-lang", download.format_id)
             } else {
-                addOption("-f", download.format_id)
+                if (download.format_id.startsWith("res")) {
+                    addOption("-S", download.format_id)
+                } else {
+                    addOption("-f", download.format_id)
+                }
                 addOption("--embed-thumbnail")
                 if (download.download_type == "AUDIO") {
                     addOption("--remux-video", "webm>opus")

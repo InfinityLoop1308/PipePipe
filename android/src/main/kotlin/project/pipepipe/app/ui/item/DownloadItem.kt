@@ -308,7 +308,7 @@ private fun TagsRow(state: DownloadItemState) {
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         TagBadge(
-            text = state.quality,
+            text = if (state.quality == "auto") stringResource(MR.strings.auto)else state.quality,
             color = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
         )

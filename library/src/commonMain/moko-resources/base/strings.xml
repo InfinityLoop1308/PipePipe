@@ -617,6 +617,7 @@
         want to replace it?
     </string>
 <string name="download_duplicate_replace">Replace</string>
+<string name="download_dialog_message">Download all videos from this playlist?</string>
 <!-- Account settings -->
 <string name="settings_section_account">Account</string>
 <string name="account_login">Login</string>

@@ -27,6 +27,7 @@ import project.pipepipe.app.platform.PlatformActions
 import project.pipepipe.app.platform.PlatformMediaController
 import project.pipepipe.app.platform.PlatformRouteHandler
 import project.pipepipe.app.platform.PlatformMediaItem
+import project.pipepipe.app.platform.PlatformMenuItems
 import project.pipepipe.shared.infoitem.SupportedServiceInfo
 import project.pipepipe.shared.job.SupportedJobType
 import project.pipepipe.shared.state.SessionManager
@@ -52,6 +53,7 @@ object SharedContext {
     lateinit var platformDatabaseActions: PlatformDatabaseActions
     var platformMediaController: PlatformMediaController? = null
     lateinit var platformRouteHandler: PlatformRouteHandler
+    lateinit var platformMenuItems: PlatformMenuItems
 //    Safe in single-activity architecture where Activity lifecycle matches application lifecycle
     lateinit var navController: NavHostController
 

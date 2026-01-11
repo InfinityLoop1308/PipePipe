@@ -174,6 +174,7 @@ fun PlaylistMoreMenu(
                         },
                         leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
                     )
+                    SharedContext.platformMenuItems.localPlaylistMenuItems()
                 }
 
                 PlaylistType.FEED -> {

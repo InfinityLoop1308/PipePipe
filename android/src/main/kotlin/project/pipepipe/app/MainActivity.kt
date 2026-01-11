@@ -39,6 +39,7 @@ import project.pipepipe.app.helper.SponsorBlockHelper
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.platform.AndroidActions
 import project.pipepipe.app.platform.AndroidMediaController
+import project.pipepipe.app.platform.AndroidMenuItems
 import project.pipepipe.app.platform.AndroidRouteHandler
 import project.pipepipe.app.service.FeedUpdateManager
 import project.pipepipe.app.ui.component.*
@@ -89,6 +90,7 @@ class MainActivity : ComponentActivity() {
             onResetFeedState = { FeedUpdateManager.resetState() },
         )
         SharedContext.platformRouteHandler = AndroidRouteHandler()
+        SharedContext.platformMenuItems = AndroidMenuItems()
 
 
         composeView.setContent {
