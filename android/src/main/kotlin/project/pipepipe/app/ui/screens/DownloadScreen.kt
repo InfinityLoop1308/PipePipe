@@ -23,6 +23,8 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext.navController
@@ -46,13 +48,6 @@ fun DownloadScreen(
 
     var showCancelAllDialog by remember { mutableStateOf(false) }
 
-    // Auto-refresh downloads periodically
-    LaunchedEffect(Unit) {
-        while (true) {
-            viewModel.refreshDownloads()
-            delay(1000) // Refresh every second
-        }
-    }
 
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf(
@@ -60,6 +55,32 @@ fun DownloadScreen(
         "Completed" to DownloadStatus.COMPLETED,
         "Failed" to DownloadStatus.FAILED
     )
+// 监听 selectedTab 的变化
+    LaunchedEffect(Unit) {
+        snapshotFlow { selectedTab }
+            .collectLatest { tab ->
+                // collectLatest 特性：当 selectedTab 变化时，取消上一个 block 的协程
+                if (tab == 0) {
+                    while (isActive) { // 使用 isActive 检查协程状态
+                        val activeDownloads = viewModel.getActiveDownloads()
+
+                        // 只有当真的有东西在下载时，才频繁刷新
+                        if (activeDownloads.isNotEmpty()) {
+                            viewModel.refreshDownloads()
+                            delay(1000) // 1秒刷新一次
+                        } else {
+                            // 关键修改：如果为空，不要 break！而是进入"低功耗"轮询
+                            // 或者更好的方式是：在这里挂起，直到 ViewModel 发送"有新任务"的事件
+                            delay(3000) // 列表为空时，3秒检查一次，节省性能
+                        }
+                    }
+                } else {
+                    // 刚切到其他 Tab 时刷一次即可
+                    viewModel.refreshDownloads()
+                }
+            }
+    }
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (!useAsTab) {
