@@ -76,7 +76,6 @@ fun DownloadFormatDialog(
 
     // State for duplicate download confirmation
     var showDuplicateDialog by remember { mutableStateOf(false) }
-    var duplicateDownloadAction by remember { mutableStateOf<(() -> Unit)?>(null) }
 
     // Permission launcher for Android 8-9 (API 26-28)
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -173,6 +172,27 @@ fun DownloadFormatDialog(
     LaunchedEffect(audioFormats) {
         if (audioFormats.isNotEmpty() && selectedAudioFormat == null) {
             selectedAudioFormat = audioFormats.first()
+        }
+    }
+
+    // Perform download with selected format
+    val performDownload: (Format, DownloadType) -> Unit = { format, type ->
+        val finalFormatId = if (type == DownloadType.VIDEO && format.isVideoOnly) {
+            "${format.id}+bestaudio"
+        } else {
+            format.id
+        }
+        GlobalScope.launch(Dispatchers.IO) {
+            DownloadManagerHolder.instance.addDownload(
+                url = streamInfo.url,
+                title = streamInfo.name ?: "Unknown",
+                imageUrl = streamInfo.thumbnailUrl,
+                duration = streamInfo.duration?.toInt() ?: 0,
+                downloadType = type,
+                quality = format.displayLabel,
+                codec = FormatHelper.parseCodecName(format.codec),
+                formatId = finalFormatId
+            )
         }
     }
 
@@ -379,13 +399,6 @@ fun DownloadFormatDialog(
                         // Define the download action
                         val downloadAction: () -> Unit = {
                             GlobalScope.launch(Dispatchers.IO) {
-                                // For video-only formats, append +bestaudio to ensure audio is merged
-                                val finalFormatId = if (selectedType == DownloadType.VIDEO && format.isVideoOnly) {
-                                    "${format.id}+bestaudio"
-                                } else {
-                                    format.id
-                                }
-
                                 // Check for duplicate downloads (same url and download type)
                                 val existingDownload = DatabaseOperations.findDownloadByUrlAndType(
                                     url = streamInfo.url,
@@ -395,34 +408,11 @@ fun DownloadFormatDialog(
                                 if (existingDownload != null) {
                                     // Show duplicate confirmation dialog on main thread
                                     withContext(Dispatchers.Main) {
-                                        duplicateDownloadAction = {
-                                            GlobalScope.launch(Dispatchers.IO) {
-                                                DownloadManagerHolder.instance.addDownload(
-                                                    url = streamInfo.url,
-                                                    title = streamInfo.name ?: "Unknown",
-                                                    imageUrl = streamInfo.thumbnailUrl,
-                                                    duration = streamInfo.duration?.toInt() ?: 0,
-                                                    downloadType = selectedType,
-                                                    quality = format.displayLabel,
-                                                    codec = FormatHelper.parseCodecName(format.codec),
-                                                    formatId = finalFormatId
-                                                )
-                                            }
-                                        }
                                         showDuplicateDialog = true
                                     }
                                 } else {
                                     // No duplicate, proceed with download
-                                    DownloadManagerHolder.instance.addDownload(
-                                        url = streamInfo.url,
-                                        title = streamInfo.name ?: "Unknown",
-                                        imageUrl = streamInfo.thumbnailUrl,
-                                        duration = streamInfo.duration?.toInt() ?: 0,
-                                        downloadType = selectedType,
-                                        quality = format.displayLabel,
-                                        codec = FormatHelper.parseCodecName(format.codec),
-                                        formatId = finalFormatId
-                                    )
+                                    performDownload(format, selectedType)
                                     // Close dialog on main thread
                                     withContext(Dispatchers.Main) {
                                         onDismiss()
@@ -484,11 +474,13 @@ fun DownloadFormatDialog(
 
     // Duplicate download confirmation dialog
     if (showDuplicateDialog) {
+        val selectedFormat = when (selectedType) {
+            DownloadType.VIDEO -> selectedVideoFormat
+            DownloadType.AUDIO -> selectedAudioFormat
+        }
+
         AlertDialog(
-            onDismissRequest = {
-                showDuplicateDialog = false
-                duplicateDownloadAction = null
-            },
+            onDismissRequest = { showDuplicateDialog = false },
             title = { Text(stringResource(MR.strings.download_duplicate_title)) },
             text = {
                 Text(stringResource(MR.strings.download_duplicate_message))
@@ -496,9 +488,10 @@ fun DownloadFormatDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        duplicateDownloadAction?.invoke()
+                        selectedFormat?.let { format ->
+                            performDownload(format, selectedType)
+                        }
                         showDuplicateDialog = false
-                        duplicateDownloadAction = null
                         onDismiss()
                     }
                 ) {
@@ -506,12 +499,7 @@ fun DownloadFormatDialog(
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        showDuplicateDialog = false
-                        duplicateDownloadAction = null
-                    }
-                ) {
+                TextButton(onClick = { showDuplicateDialog = false }) {
                     Text(stringResource(MR.strings.cancel))
                 }
             }
