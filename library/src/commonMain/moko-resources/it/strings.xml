@@ -586,4 +586,6 @@
 <string name="clear_all">Cancella tutto</string>
 <string name="clear_all_logs_message">Sei sicuro di voler cancellare tutti i log di errore?</string>
 <string name="clear_all_logs_title">Cancella tutti i log</string>
+<string name="pin_video_to_top_summary">Mantieni il riproduttore video bloccato in alto durante lo scorrimento. Si applica solo in modalità verticale.</string>
+<string name="pin_video_to_top_title">Blocca video in alto</string>
 </resources>

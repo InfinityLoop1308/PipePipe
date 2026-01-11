@@ -586,4 +586,6 @@
 <string name="clear_all">Tout effacer</string>
 <string name="clear_all_logs_message">Êtes-vous sûr de vouloir effacer tous les journaux d\'erreurs ?</string>
 <string name="clear_all_logs_title">Effacer tous les journaux</string>
+<string name="pin_video_to_top_summary">Garder le lecteur vidéo épinglé en haut lors du défilement. S\'applique uniquement en mode portrait.</string>
+<string name="pin_video_to_top_title">Épingler la vidéo en haut</string>
 </resources>

@@ -586,4 +586,6 @@
 <string name="clear_all">すべてクリア</string>
 <string name="clear_all_logs_message">すべてのエラーログをクリアしてもよろしいですか？</string>
 <string name="clear_all_logs_title">すべてのログをクリア</string>
+<string name="pin_video_to_top_summary">スクロール時に動画プレーヤーを上部に固定します。ポートレートモードでのみ適用されます。</string>
+<string name="pin_video_to_top_title">動画を上部に固定</string>
 </resources>

@@ -586,4 +586,6 @@
 <string name="clear_all">Xóa tất cả</string>
 <string name="clear_all_logs_message">Bạn có chắc chắn muốn xóa tất cả nhật ký lỗi không?</string>
 <string name="clear_all_logs_title">Xóa tất cả nhật ký</string>
+<string name="pin_video_to_top_summary">Giữ trình phát video được ghim ở trên cùng khi cuộn. Chỉ áp dụng ở chế độ dọc.</string>
+<string name="pin_video_to_top_title">Ghim video lên đầu</string>
 </resources>

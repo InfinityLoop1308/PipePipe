@@ -46,7 +46,6 @@ import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.helper.NetworkStateHelper
 import project.pipepipe.app.platform.ScreenOrientation
 import project.pipepipe.app.ui.component.*
-import project.pipepipe.app.ui.component.player.PlayerGestureSettings
 import project.pipepipe.app.ui.component.player.VideoPlayer
 import project.pipepipe.app.uistate.VideoDetailPageState
 import kotlin.math.min
@@ -243,6 +242,23 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
             true
         ) { newValue ->
             isSponsorBlockEnabled = newValue
+        }
+        onDispose {
+            listener?.deactivate()
+        }
+    }
+
+    // Monitor comments inner scroll enabled state
+    var commentsInnerScrollEnabled by remember {
+        mutableStateOf(SharedContext.settingsManager.getBoolean("pin_video_to_top_key", true))
+    }
+
+    DisposableEffect(Unit) {
+        val listener = SharedContext.settingsManager.addBooleanListener(
+            "pin_video_to_top_key",
+            true
+        ) { newValue ->
+            commentsInnerScrollEnabled = newValue
         }
         onDispose {
             listener?.deactivate()
@@ -453,14 +469,14 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                             }
                         } else if (controller != null) {
                             // Normal state: show full video detail UI
-                            val isPortrait = screenOrientation == ScreenOrientation.PORTRAIT
+                            val shouldPlayerSticky = screenOrientation == ScreenOrientation.PORTRAIT && commentsInnerScrollEnabled
 
                             // Player composable content
                             val playerContent: @Composable () -> Unit = {
                                 Box(
                                     modifier = Modifier
                                         .then(
-                                            if (isPortrait) Modifier.aspectRatio(16f / 9f)
+                                            if (shouldPlayerSticky) Modifier.aspectRatio(16f / 9f)
                                             else Modifier
                                                 .height(200.dp)
                                         )
@@ -498,7 +514,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                 }
                             }
 
-                            if (isPortrait) {
+                            if (shouldPlayerSticky) {
                                 // Portrait mode: Player is sticky (outside LazyColumn)
                                 playerContent()
                             }
@@ -508,7 +524,7 @@ fun VideoDetailScreen(modifier: Modifier, navController: NavHostController) {
                                     .weight(1f),
                                 state = listState
                             ) {
-                                if (!isPortrait) {
+                                if (!shouldPlayerSticky) {
                                     // Landscape mode: Player participates in scrolling (inside LazyColumn)
                                     item { playerContent() }
                                 }

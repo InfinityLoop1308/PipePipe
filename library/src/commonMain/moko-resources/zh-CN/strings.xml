@@ -586,4 +586,6 @@
 <string name="clear_all">清除所有</string>
 <string name="clear_all_logs_message">您确定要清除所有错误日志吗？</string>
 <string name="clear_all_logs_title">清除所有日志</string>
+<string name="pin_video_to_top_summary">滚动时将视频播放器固定在顶部。仅适用于竖屏模式。</string>
+<string name="pin_video_to_top_title">将视频置顶</string>
 </resources>

@@ -200,6 +200,12 @@ fun PlayerSettingScreen(
             summary = stringResource(MR.strings.start_main_player_fullscreen_summary),
             defaultValue = false
         ),
+        PreferenceItem.SwitchPref(
+            key = "pin_video_to_top_key",
+            title = stringResource(MR.strings.pin_video_to_top_title),
+            summary = stringResource(MR.strings.pin_video_to_top_summary),
+            defaultValue = true
+        ),
         PreferenceItem.ListPref(
             key = "autoplay_key",
             title = stringResource(MR.strings.autoplay_title),

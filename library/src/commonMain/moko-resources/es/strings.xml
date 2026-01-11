@@ -586,4 +586,6 @@
 <string name="clear_all">Borrar todo</string>
 <string name="clear_all_logs_message">¿Estás seguro de que quieres borrar todos los registros de errores?</string>
 <string name="clear_all_logs_title">Borrar todos los registros</string>
+<string name="pin_video_to_top_summary">Mantener el reproductor de video anclado en la parte superior al desplazarse. Solo se aplica en modo vertical.</string>
+<string name="pin_video_to_top_title">Anclar video en la parte superior</string>
 </resources>

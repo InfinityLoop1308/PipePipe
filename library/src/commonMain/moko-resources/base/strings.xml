@@ -543,6 +543,8 @@
 <string name="playback_skip_silence_summary">Automatically skip silent parts during playback</string>
 <string name="start_main_player_fullscreen_title">Start in fullscreen</string>
 <string name="start_main_player_fullscreen_summary">Start playback in fullscreen directly</string>
+<string name="pin_video_to_top_title">Pin video to top</string>
+<string name="pin_video_to_top_summary">Keep the video player pinned to the top when scrolling. Only applies in portrait mode.</string>
 <string name="advanced_formats_title">Enable advanced formats</string>
 <string name="advanced_formats_summary">If your device has support, enabling advanced formats can reduce data
         consumption and provide higher resolutions. You may not be able to watch high resolution videos without enabling

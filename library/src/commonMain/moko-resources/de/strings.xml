@@ -586,4 +586,6 @@
 <string name="clear_all">Alles löschen</string>
 <string name="clear_all_logs_message">Möchten Sie wirklich alle Fehlerprotokolle löschen?</string>
 <string name="clear_all_logs_title">Alle Protokolle löschen</string>
+<string name="pin_video_to_top_summary">Den Videoplayer beim Scrollen oben anheften. Gilt nur im Hochformat.</string>
+<string name="pin_video_to_top_title">Video oben anheften</string>
 </resources>
