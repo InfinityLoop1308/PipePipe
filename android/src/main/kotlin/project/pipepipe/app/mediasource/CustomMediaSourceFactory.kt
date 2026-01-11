@@ -273,7 +273,7 @@ class LazyUrlMediaSource(
             } catch (e: Exception) { // can be cancelled if service get destroyed
                 if (e !is CancellationException) {
                     e.printStackTrace()
-                    SharedContext.queueManager.removeItemByUuid(mediaItem.uuid)
+                    MainScope().launch{ SharedContext.queueManager.removeItemByUuid(mediaItem.uuid) }
                 }
             }
         }
@@ -286,7 +286,7 @@ class LazyUrlMediaSource(
         } catch (e: IOException) {
             throw e
         } catch (e: Exception) {
-            SharedContext.queueManager.removeItemByUuid(mediaItem.uuid)
+            MainScope().launch{ SharedContext.queueManager.removeItemByUuid(mediaItem.uuid) }
         }
     }
 
