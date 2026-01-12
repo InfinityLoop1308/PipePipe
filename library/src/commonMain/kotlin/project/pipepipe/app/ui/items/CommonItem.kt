@@ -481,12 +481,14 @@ private fun StreamOrPlaylistListItem(
                             contentDescription = null,
                             tint = Color.White
                         )
-                        Text(
-                            text = "$streamCount",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                        if (streamCount.toInt() != -1) {
+                            Text(
+                                text = "$streamCount",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
                 }
             }

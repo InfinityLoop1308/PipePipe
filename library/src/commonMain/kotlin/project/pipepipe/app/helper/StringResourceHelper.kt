@@ -12,6 +12,9 @@ object StringResourceHelper {
             // Search Types
             "video" -> stringResource(MR.strings.videos_string)
             "videos" -> stringResource(MR.strings.videos_string)
+            "songs" -> stringResource(MR.strings.songs)
+            "albums" -> stringResource(MR.strings.albums)
+            "artists" -> stringResource(MR.strings.artists)
             "playlist" -> stringResource(MR.strings.playlists)
             "playlists" -> stringResource(MR.strings.playlists)
             "channel" -> stringResource(MR.strings.channels)

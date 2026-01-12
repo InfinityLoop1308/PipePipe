@@ -35,7 +35,7 @@ suspend fun executeJobFlow(
         val response = executeJobFlow(
             SupportedJobType.REFRESH_COOKIE, null, serviceId
         )
-        CookieManager.setCookieInfo(serviceId, response.info as CookieInfo, false)
+        response.info?.let { CookieManager.setCookieInfo(serviceId, it as CookieInfo, false) }
     }
     val cookie = if (serviceId != null)CookieManager.getCookie(serviceId) else null
     val state = if (url?.contains("cacheId=") == true) {
