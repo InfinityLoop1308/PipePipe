@@ -27,6 +27,7 @@ import project.pipepipe.app.download.YtDlpFormatHelper
 import project.pipepipe.app.helper.LanguageHelper.getLocalizedLanguageName
 import project.pipepipe.app.uistate.DownloadType
 import project.pipepipe.shared.infoitem.StreamInfo
+import dev.icerock.moko.resources.desc.desc
 
 // Helper function to format file size
 private fun formatFileSize(bytes: Long?): String {
@@ -182,13 +183,13 @@ fun DownloadFormatDialog(
 
                     isLoadingFormats = false
                 }.onFailure { e ->
-                    loadError = "Failed to load formats: ${e.message}"
+                    loadError = MR.strings.download_load_formats_failed.desc().toString(context) + ": ${e.message}"
                     isLoadingFormats = false
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            loadError = "Failed to load formats: ${e.message}"
+            loadError = MR.strings.download_load_formats_failed.desc().toString(context) + ": ${e.message}"
             isLoadingFormats = false
         }
     }
@@ -310,7 +311,7 @@ fun DownloadFormatDialog(
                         ) {
                             CircularProgressIndicator()
                             Text(
-                                text = "Loading formats...",
+                                text = stringResource(MR.strings.download_loading_formats),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

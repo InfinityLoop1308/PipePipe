@@ -100,9 +100,6 @@ class DownloadManager(private val context: Context) {
                         totalBytes = total,
                         speed = speed
                     )
-
-                    // Update notification
-                    DownloadService.updateNotification(context, downloadId, progress, total)
                 }
             },
             onStateChange = { status, error ->
@@ -136,6 +133,8 @@ class DownloadManager(private val context: Context) {
                     if (status.isTerminal()) {
                         Log.d(TAG, "Download $downloadId finished with status: $status")
 
+                        val download = DatabaseOperations.getDownloadById(downloadId)
+
                         // Remove from active workers
                         activeWorkers.remove(downloadId)
                         updateActiveDownloadIds()
@@ -145,14 +144,18 @@ class DownloadManager(private val context: Context) {
 
                         // Stop service if no more active downloads
                         if (activeWorkers.isEmpty()) {
-                            DownloadService.stop(context)
+                            DownloadService.updateForegroundState(context, false)
                         }
 
                         // Show completion notification
                         if (status == DownloadStatus.COMPLETED) {
-                            DownloadService.showCompletionNotification(context, downloadId)
+                            download?.title?.let { title ->
+                                DownloadService.showCompletionNotification(context, title)
+                            }
                         } else if (status == DownloadStatus.FAILED) {
-                            DownloadService.showErrorNotification(context, downloadId, error)
+                            download?.title?.let { title ->
+                                DownloadService.showErrorNotification(context, title, error)
+                            }
                         }
                     }
                 }
@@ -161,6 +164,9 @@ class DownloadManager(private val context: Context) {
 
         activeWorkers[downloadId] = worker
         updateActiveDownloadIds()
+
+        // Update foreground state
+        DownloadService.updateForegroundState(context, true)
 
         // Start the worker
         scope.launch {
@@ -204,9 +210,9 @@ class DownloadManager(private val context: Context) {
             // Start next queued download
             startNextInQueue()
 
-            // Stop service if no more active downloads
+            // Update foreground state
             if (activeWorkers.isEmpty()) {
-                DownloadService.stop(context)
+                DownloadService.updateForegroundState(context, false)
             }
         }
     }
@@ -241,9 +247,6 @@ class DownloadManager(private val context: Context) {
         activeWorkers.remove(downloadId)
         updateActiveDownloadIds()
 
-        // Cancel progress notification
-        DownloadService.cancelProgressNotification(context, downloadId)
-
         scope.launch {
             // Delete from database
             DatabaseOperations.deleteDownload(downloadId)
@@ -251,9 +254,9 @@ class DownloadManager(private val context: Context) {
             // Start next queued download
             startNextInQueue()
 
-            // Stop service if no more active downloads
+            // Update foreground state
             if (activeWorkers.isEmpty()) {
-                DownloadService.stop(context)
+                DownloadService.updateForegroundState(context, false)
             }
         }
     }

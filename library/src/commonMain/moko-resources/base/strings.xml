@@ -693,4 +693,30 @@
 <string name="pause_all">Pause All</string>
 <string name="cancel_all">Cancel All</string>
 <string name="cancel_all_confirmation">Are you sure you want to cancel all active downloads?</string>
+<!-- Download tabs -->
+<string name="download_tab_downloading">Downloading</string>
+<string name="download_tab_completed">Completed</string>
+<string name="download_tab_failed">Failed</string>
+<!-- Download empty states -->
+<string name="download_empty_active">No active downloads</string>
+<string name="download_empty_completed">No completed downloads</string>
+<string name="download_empty_failed">No failed downloads</string>
+<string name="download_empty">No downloads yet</string>
+<string name="download_hint_appear">Downloads will appear here</string>
+<!-- Download status messages -->
+<string name="download_status_queued">Queued</string>
+<string name="download_status_fetching_info">Fetching info...</string>
+<string name="download_status_downloading">Downloading...</string>
+<string name="download_unknown_error">Unknown error</string>
+<!-- Download error messages -->
+<string name="download_load_formats_failed">Failed to load formats</string>
+<string name="download_loading_formats">Loading formats...</string>
+<string name="download_file_not_found">File not found</string>
+<string name="download_open_with">Open with</string>
+<string name="download_no_app_found">No app found to open this file</string>
+<string name="download_open_failed">Failed to open file</string>
+
+    <string name="download_completion_channel_name">Download Completion</string>
+    <string name="notification_downloads_in_progress">Download in progress…</string>
+    <string name="notification_download_count">%d download complete</string>
 </resources>

@@ -384,15 +384,15 @@ private fun BottomStatusSection(state: DownloadItemState) {
                 Text(
                     text = when (state.status) {
                         DownloadStatus.PAUSED -> stringResource(MR.strings.download_paused_status)
-                        DownloadStatus.QUEUED -> "Queued"
-                        DownloadStatus.FETCHING_INFO -> "Fetching info..."
+                        DownloadStatus.QUEUED -> stringResource(MR.strings.download_status_queued)
+                        DownloadStatus.FETCHING_INFO -> stringResource(MR.strings.download_status_fetching_info)
                         DownloadStatus.PREPROCESSING -> stringResource(MR.strings.download_pre_processing)
                         DownloadStatus.POSTPROCESSING -> stringResource(MR.strings.download_post_processing)
-                        DownloadStatus.FAILED -> "Failed: ${state.errorMessage?.take(30) ?: "Unknown error"}"
+                        DownloadStatus.FAILED -> "Failed: ${state.errorMessage?.take(30) ?: stringResource(MR.strings.download_unknown_error)}"
                         DownloadStatus.DOWNLOADING -> state.downloadSpeed
                             ?: stringResource(MR.strings.download_pre_processing)
 
-                        else -> "Downloading..."
+                        else -> stringResource(MR.strings.download_status_downloading)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = when (state.status) {

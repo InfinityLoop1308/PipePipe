@@ -20,15 +20,11 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
+import dev.icerock.moko.resources.desc.desc
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext.navController
-import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.download.DownloadManagerHolder
 import project.pipepipe.app.helper.ToastManager
 import project.pipepipe.app.ui.component.CustomTopBar
@@ -48,12 +44,11 @@ fun DownloadScreen(
 
     var showCancelAllDialog by remember { mutableStateOf(false) }
 
-
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf(
-        "Downloading" to DownloadStatus.DOWNLOADING,
-        "Completed" to DownloadStatus.COMPLETED,
-        "Failed" to DownloadStatus.FAILED
+        stringResource(MR.strings.download_tab_downloading) to DownloadStatus.DOWNLOADING,
+        stringResource(MR.strings.download_tab_completed) to DownloadStatus.COMPLETED,
+        stringResource(MR.strings.download_tab_failed) to DownloadStatus.FAILED
     )
 // 监听 selectedTab 的变化
     LaunchedEffect(Unit) {
@@ -69,6 +64,9 @@ fun DownloadScreen(
                             viewModel.refreshDownloads()
                             delay(1000) // 1秒刷新一次
                         } else {
+                            if (uiState.activeDownloadCount != 0) {
+                                viewModel.refreshDownloads()
+                            }
                             // 关键修改：如果为空，不要 break！而是进入"低功耗"轮询
                             // 或者更好的方式是：在这里挂起，直到 ViewModel 发送"有新任务"的事件
                             delay(3000) // 列表为空时，3秒检查一次，节省性能
@@ -166,7 +164,7 @@ fun DownloadScreen(
             } else {
                 uiState.downloads.filter {
                     when (status) {
-                        DownloadStatus.DOWNLOADING -> it.status.isActive()
+                        DownloadStatus.DOWNLOADING -> it.status.isActive() || it.status == DownloadStatus.PAUSED
                         else -> it.status == status
                     }
                 }
@@ -194,17 +192,17 @@ fun DownloadScreen(
                     ) {
                         Text(
                             text = when (selectedTab) {
-                                0 -> "No active downloads"
-                                1 -> "No completed downloads"
-                                2 -> "No failed downloads"
-                                else -> "No downloads yet"
+                                0 -> stringResource(MR.strings.download_empty_active)
+                                1 -> stringResource(MR.strings.download_empty_completed)
+                                2 -> stringResource(MR.strings.download_empty_failed)
+                                else -> stringResource(MR.strings.download_empty)
                             },
                             fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         if (selectedTab == 0) {
                             Text(
-                                text = "Downloads will appear here",
+                                text = stringResource(MR.strings.download_hint_appear),
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             )
@@ -256,7 +254,7 @@ fun DownloadScreen(
                                 try {
                                     val file = File(filePath)
                                     if (!file.exists()) {
-                                        ToastManager.show("File not found")
+                                        ToastManager.show(MR.strings.download_file_not_found.desc().toString(context))
                                         return@DownloadItem
                                     }
 
@@ -281,9 +279,9 @@ fun DownloadScreen(
                                     }
 
                                     try {
-                                        context.startActivity(Intent.createChooser(intent, "Open with"))
+                                        context.startActivity(Intent.createChooser(intent, MR.strings.download_open_with.desc().toString(context)))
                                     } catch (e: Exception) {
-                                        ToastManager.show("No app found to open this file")
+                                        ToastManager.show(MR.strings.download_no_app_found.desc().toString(context))
                                     }
                                 } catch (e: Exception) {
                                     ToastManager.show("Failed to open file: ${e.message}")
