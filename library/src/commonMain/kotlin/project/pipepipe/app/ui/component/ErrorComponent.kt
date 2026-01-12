@@ -18,11 +18,13 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import project.pipepipe.app.MR
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.database.DatabaseOperations
 import project.pipepipe.app.ui.screens.settings.buildLogJson
 import project.pipepipe.app.uistate.ErrorInfo
+import project.pipepipe.shared.infoitem.SupportedServiceInfo
 
 @Composable
 fun ErrorComponent(
@@ -33,6 +35,10 @@ fun ErrorComponent(
 ) {
     var showDetailsDialog by remember { mutableStateOf(false) }
     var stackTrace by remember { mutableStateOf<String>("") }
+    val serviceList = remember {
+        val jsonString = SharedContext.settingsManager.getString("supported_services", "[]")
+        runCatching{ Json.decodeFromString<List<SupportedServiceInfo>>(jsonString) }.getOrDefault(emptyList())
+    }
 
     // Map error codes to specific messages (for GEO_001 onwards)
     val titleText = when (error.errorCode) {
@@ -46,7 +52,8 @@ fun ErrorComponent(
         "TIME_002" -> stringResource(MR.strings.error_code_time_002)
         else -> {
             if (error.errorCode.startsWith("RISK")) {
-                stringResource(MR.strings.error_code_risk).format(error.serviceId)
+                val serviceName = serviceList.first { it.serviceId == error.serviceId }.serviceName
+                stringResource(MR.strings.error_code_risk).format(serviceName)
             } else {
                 stringResource(MR.strings.error_snackbar_message)
             }
