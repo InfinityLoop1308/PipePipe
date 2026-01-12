@@ -55,6 +55,9 @@ class PlaybackService : MediaLibraryService() {
     // Skip silence setting listener
     private var skipSilenceListener: SettingsListener? = null
 
+    // Audio language setting listener
+    private var audioLanguageListener: SettingsListener? = null
+
     // Retry mechanism for 403 errors
     private data class RetryState(
         var retryCount: Int = 0,
@@ -173,14 +176,23 @@ class PlaybackService : MediaLibraryService() {
                 // Restore saved playback speed and pitch
                 playbackParameters = PlaybackParameters(savedSpeed, savedPitch)
 
-                // Apply saved caption preference
+                // Apply saved caption and audio language preferences
                 val savedLanguage = SharedContext.settingsManager.getString("caption_user_set_key", "")
+                val savedAudioLanguage = SharedContext.settingsManager.getString("preferred_audio_language_key", "original")
+                val builder = trackSelectionParameters.buildUpon()
+
                 if (savedLanguage.isNotEmpty()) {
-                    trackSelectionParameters = trackSelectionParameters.buildUpon()
-                        .setPreferredTextLanguages(savedLanguage)
+                    builder.setPreferredTextLanguages(savedLanguage)
                         .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
-                        .build()
                 }
+
+                // Always set ROLE_FLAG_MAIN as default, then override if specific language is set
+                builder.setPreferredAudioRoleFlags(C.ROLE_FLAG_MAIN)
+                if (savedAudioLanguage != "original" && savedAudioLanguage.isNotEmpty()) {
+                    builder.setPreferredAudioLanguage(savedAudioLanguage)
+                }
+
+                trackSelectionParameters = builder.build()
 
                 addListener(createPlayerListener())
             }
@@ -434,6 +446,23 @@ class PlaybackService : MediaLibraryService() {
             }
         }
 
+        // Monitor audio language preference changes
+        audioLanguageListener = SharedContext.settingsManager.addStringListener(
+            "preferred_audio_language_key",
+            "original"
+        ) { language ->
+            val builder = player.trackSelectionParameters.buildUpon()
+            // Always set ROLE_FLAG_MAIN as default
+            builder.setPreferredAudioRoleFlags(C.ROLE_FLAG_MAIN)
+            // Override with specific language if set, otherwise clear it
+            if (language != "original" && language.isNotEmpty()) {
+                builder.setPreferredAudioLanguage(language)
+            } else {
+                builder.setPreferredAudioLanguage(null)
+            }
+            player.trackSelectionParameters = builder.build()
+        }
+
         // Monitor history changes for Android Auto
         serviceScope.launch {
             SharedContext.historyChanged.collect {
@@ -479,6 +508,10 @@ class PlaybackService : MediaLibraryService() {
         // Clean up skip silence listener
         skipSilenceListener?.deactivate()
         skipSilenceListener = null
+
+        // Clean up audio language listener
+        audioLanguageListener?.deactivate()
+        audioLanguageListener = null
 
         super.onDestroy()
         session?.release()
