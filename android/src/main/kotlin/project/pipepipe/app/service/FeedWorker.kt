@@ -119,10 +119,39 @@ class FeedWorker(
 
                         DatabaseOperations.insertOrUpdateSubscription(result.info!! as ChannelInfo, true)
 
+                        var streamInfoList = mutableListOf<StreamInfo>()
+
                         if (result.pagedData != null) {
+                            streamInfoList.addAll(result.pagedData!!.itemList as List<StreamInfo>)
+                        }
+
+                        val channelInfo = result.info as ChannelInfo
+                        val fetchChannelTabs = SharedContext.settingsManager.getStringSet("feed_fetch_channel_tabs_key", setOf("fetch_channel_tabs_videos"))
+                        if (!fetchChannelTabs.contains("fetch_channel_tabs_videos")) {
+                            streamInfoList.clear()
+                        }
+                        val fetchLiveTabs = fetchChannelTabs.contains("fetch_channel_tabs_live")
+
+                        if (fetchLiveTabs) {
+                            val liveTab = channelInfo.tabs.find { it.type.name == "LIVE" }
+                            if (liveTab != null) {
+                                val liveResult = withContext(Dispatchers.IO) {
+                                    executeJobFlow(
+                                        SupportedJobType.FETCH_FIRST_PAGE,
+                                        liveTab.url,
+                                        subscription.service_id
+                                    )
+                                }
+                                if (liveResult.pagedData != null) {
+                                    streamInfoList.addAll(liveResult.pagedData!!.itemList as List<StreamInfo>)
+                                }
+                            }
+                        }
+
+                        if (streamInfoList.isNotEmpty()) {
                             DatabaseOperations.updateSubscriptionFeed(
                                 subscription.url!!,
-                                result.pagedData!!.itemList as List<StreamInfo>
+                                streamInfoList
                             )
                         } else {
                             failedCount.incrementAndGet()

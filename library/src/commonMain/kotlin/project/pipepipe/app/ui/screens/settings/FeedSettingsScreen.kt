@@ -177,7 +177,7 @@ fun FeedSettingsScreen(
             summary = stringResource(MR.strings.feed_fetch_channel_tabs_summary),
             entries = feedFetchChannelTabsEntries,
             entryValues = feedFetchChannelTabsValues,
-            defaultValues = feedFetchChannelTabsValues.toSet(),
+            defaultValues = setOf("fetch_channel_tabs_videos"),
             onValuesChange = { values ->
                 feedFetchChannelTabsValue = values
             }
