@@ -351,26 +351,15 @@ class AndroidMediaController(
 
     @OptIn(UnstableApi::class)
     override fun selectSubtitle(subtitle: SubtitleInfo) {
-        val tracks = mediaController.currentTracks
+        val params = mediaController.trackSelectionParameters
+            .buildUpon()
+            .setPreferredTextLanguages(subtitle.language)
+            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+            .build()
+        mediaController.trackSelectionParameters = params
 
-        for (trackGroup in tracks.groups) {
-            trackGroup.find { format ->
-                format.language == subtitle.language && trackGroup.type == C.TRACK_TYPE_TEXT
-            }?.let { format ->
-                val trackIndex = trackGroup.indexOfFirst { it == format }
-                if (trackIndex >= 0) {
-                    val params = mediaController.trackSelectionParameters
-                        .buildUpon()
-                        .setOverrideForType(
-                            TrackSelectionOverride(trackGroup.mediaTrackGroup, trackIndex)
-                        )
-                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
-                        .build()
-                    mediaController.trackSelectionParameters = params
-                }
-                break
-            }
-        }
+        // Save user preference
+        SharedContext.settingsManager.putString("caption_user_set_key", subtitle.language)
     }
 
     @OptIn(UnstableApi::class)
@@ -415,6 +404,9 @@ class AndroidMediaController(
             .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
             .build()
         mediaController.trackSelectionParameters = params
+
+        // Clear user preference
+        SharedContext.settingsManager.remove("caption_user_set_key")
     }
 
     override fun stopService() {

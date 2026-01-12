@@ -172,6 +172,16 @@ class PlaybackService : MediaLibraryService() {
                 skipSilenceEnabled = SharedContext.settingsManager.getBoolean("playback_skip_silence_key", false)
                 // Restore saved playback speed and pitch
                 playbackParameters = PlaybackParameters(savedSpeed, savedPitch)
+
+                // Apply saved caption preference
+                val savedLanguage = SharedContext.settingsManager.getString("caption_user_set_key", "")
+                if (savedLanguage.isNotEmpty()) {
+                    trackSelectionParameters = trackSelectionParameters.buildUpon()
+                        .setPreferredTextLanguages(savedLanguage)
+                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+                        .build()
+                }
+
                 addListener(createPlayerListener())
             }
 
