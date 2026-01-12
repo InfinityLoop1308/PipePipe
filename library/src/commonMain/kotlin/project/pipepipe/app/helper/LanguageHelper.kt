@@ -126,7 +126,7 @@ object LanguageHelper {
         "繁體中文"            // zh-Hant
     )
     fun getLocalizedLanguageName(code: String): String {
-        val index = sharedLanguageValues.indexOfFirst { it == code }
+        val index = sharedLanguageValues.indexOfFirst { it.equals(code, ignoreCase = true) }
         if (index == -1) return code
         return sharedLanguageEntries[index]
     }
