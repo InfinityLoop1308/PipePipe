@@ -142,25 +142,25 @@ object YtDlpFormatHelper {
                 ?.asSequence()
                 ?.toList() ?: emptyList()
 
-            // Determine autoCaption based on preference
-            var autoCaption = if (preferredLang !in subtitlesKeys) {
-                // Preferred language not in manual subtitles, check auto captions
-                jsonNode.get("automatic_captions")
-                    ?.fieldNames()
-                    ?.asSequence()
-                    ?.toList()
-                    ?.find { it == preferredLang }
-            } else {
-                // Preferred language exists in manual subtitles, no need for auto caption
-                null
-            }
-
-            if (jsonNode.requireString("webpage_url_domain").contains("youtube", ignoreCase = true) &&
-                CookieManager.getCookie(0)?.isLoggedInCookie() == null) {
-                autoCaption = null
-            }
-
-            Log.d(TAG, "Preferred subtitle: $preferredLang, autoCaption: $autoCaption")
+//            // Determine autoCaption based on preference
+//            var autoCaption = if (preferredLang !in subtitlesKeys) {
+//                // Preferred language not in manual subtitles, check auto captions
+//                jsonNode.get("automatic_captions")
+//                    ?.fieldNames()
+//                    ?.asSequence()
+//                    ?.toList()
+//                    ?.find { it == preferredLang }
+//            } else {
+//                // Preferred language exists in manual subtitles, no need for auto caption
+//                null
+//            }
+//
+//            if (jsonNode.requireString("webpage_url_domain").contains("youtube", ignoreCase = true) &&
+//                CookieManager.getCookie(0)?.isLoggedInCookie() == null) {
+//                autoCaption = null
+//            }
+//
+//            Log.d(TAG, "Preferred subtitle: $preferredLang, autoCaption: $autoCaption")
 
             // Separate formats by type
             val videoOnly = allFormats.filter { it.isVideoOnly() }
@@ -196,7 +196,7 @@ object YtDlpFormatHelper {
                     audioFormats = audioOnly,
                     combinedFormats = combined,
                     subtitles = subtitlesKeys,
-                    autoCaption = autoCaption
+                    autoCaption = null
                 )
             )
         } catch (e: Exception) {

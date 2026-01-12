@@ -481,13 +481,13 @@ fun LanguageSettingsScreen(
             entryValues = audioLanguageValues,
             defaultValue = "original"
         ),
-        PreferenceItem.ListPref(
-            key = "preferred_subtitle_language_key",
-            title = preferredCaptionLanguageTitle,
-            entries = sharedLanguageEntries,
-            entryValues = sharedLanguageValues,
-            defaultValue = "en"
-        ),
+//        PreferenceItem.ListPref(
+//            key = "preferred_subtitle_language_key",
+//            title = preferredCaptionLanguageTitle,
+//            entries = sharedLanguageEntries,
+//            entryValues = sharedLanguageValues,
+//            defaultValue = "en"
+//        ),
         PreferenceItem.ListPref(
             key = "content_country",
             title = contentCountryTitle,
