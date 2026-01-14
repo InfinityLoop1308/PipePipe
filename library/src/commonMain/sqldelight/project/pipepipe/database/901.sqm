@@ -7,17 +7,17 @@
 
 -- Delete subscriptions for services other than YOUTUBE(0), BILIBILI(5), NICONICO(6)
 -- This will cascade to feed_group_subscription_join if foreign keys are set up
-DELETE FROM subscriptions WHERE service_id NOT IN (0, 5, 6);
-
--- Delete remote_playlists for non-target services
-DELETE FROM remote_playlists WHERE service_id NOT IN (0, 5, 6);
-
--- Delete streams for non-target services
--- This will cascade to:
--- - playlist_stream_join (if foreign keys are set up)
--- - stream_history (if foreign keys are set up)
--- - stream_state (if foreign keys are set up)
-DELETE FROM streams WHERE service_id NOT IN (0, 5, 6);
+-- DELETE FROM subscriptions WHERE service_id NOT IN (0, 5, 6);
+--
+-- -- Delete remote_playlists for non-target services
+-- DELETE FROM remote_playlists WHERE service_id NOT IN (0, 5, 6);
+--
+-- -- Delete streams for non-target services
+-- -- This will cascade to:
+-- -- - playlist_stream_join (if foreign keys are set up)
+-- -- - stream_history (if foreign keys are set up)
+-- -- - stream_state (if foreign keys are set up)
+-- DELETE FROM streams WHERE service_id NOT IN (0, 5, 6);
 
 -- ============================================================
 -- Part 0.2: Service ID Mapping (excluding search_history)
