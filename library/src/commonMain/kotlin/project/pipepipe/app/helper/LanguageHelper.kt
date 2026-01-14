@@ -125,9 +125,41 @@ object LanguageHelper {
         "简体中文",           // zh-Hans
         "繁體中文"            // zh-Hant
     )
+    private val languageAliases = mapOf(
+        "pt-br" to "pt",
+        "zh-cn" to "zh-Hans",
+        "zh-tw" to "zh-Hant",
+        "zh-hk" to "zh-Hant",
+        "he" to "iw",
+        "in" to "id",
+        "nb-no" to "no",
+        "nb" to "no"
+    )
+
     fun getLocalizedLanguageName(code: String): String {
+        val normalizedCode = code.lowercase()
+
+        // 先尝试精确匹配
         val index = sharedLanguageValues.indexOfFirst { it.equals(code, ignoreCase = true) }
-        if (index == -1) return code
-        return sharedLanguageEntries[index]
+        if (index != -1) return sharedLanguageEntries[index]
+
+        // 尝试别名映射
+        val aliasCode = languageAliases[normalizedCode]
+        if (aliasCode != null) {
+            val aliasIndex = sharedLanguageValues.indexOfFirst { it.equals(aliasCode, ignoreCase = true) }
+            if (aliasIndex != -1) return sharedLanguageEntries[aliasIndex]
+        }
+
+        // 尝试主语言代码 fallback
+        val primaryCode = normalizedCode.split("-", "_").firstOrNull()
+        if (primaryCode != null && primaryCode != normalizedCode) {
+            val fallbackIndex = sharedLanguageValues.indexOfFirst {
+                it.equals(primaryCode, ignoreCase = true)
+            }
+            if (fallbackIndex != -1) return sharedLanguageEntries[fallbackIndex]
+        }
+
+        return code
     }
+
 }
