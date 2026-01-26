@@ -77,10 +77,6 @@ Issues and PRs are welcomed. Please note that I will **NOT** accept service requ
 
 Anyone interested in creating their own service is encouraged to fork this repository.
 
-## Getting Nightly Builds
-
-Visit https://nightly.pipepipe.dev to download the latest nightly builds. These give you access to the most recent updates and fixes before they're included in the next official release.
-
 ## Donation
 
 If you find PipePipe useful, please consider becoming a supporter on Ko-Fi. Your support is important to me and helps me add more exciting new features. Every bit counts! 😇
