@@ -85,6 +85,10 @@ Liberapay: https://liberapay.com/PipePipe
 
 Ko-fi: https://ko-fi.com/pipepipe
 
+## Community
+
+[PipePipe Wiki](https://priveetee.github.io/Docs-PipePipe) User wiki maintained by @Priveetee
+
 ## Special Thanks
 
 [SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) for providing some BiliBili API lists.
