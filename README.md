@@ -87,7 +87,7 @@ Ko-fi: https://ko-fi.com/pipepipe
 
 ## Community
 
-[PipePipe Wiki](https://priveetee.github.io/Docs-PipePipe) User wiki maintained by @Priveetee
+[PipePipe Wiki](https://priveetee.github.io/Docs-PipePipe) User wiki maintained by [@Priveetee](https://github.com/Priveetee)
 
 ## Special Thanks
 
