@@ -1,0 +1,5 @@
+### Bug Fixes
+
+- Livestreams not working (YouTube)
+- "Sign in to confirm you are not a bot" is wrong marked as content unavailable (YouTube)
+
