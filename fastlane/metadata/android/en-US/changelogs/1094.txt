@@ -1,0 +1,9 @@
+### Bug Fixes
+
+- Preferred audio language is not set to Original by default as expected
+- Advanced formats are not preferred by the player
+- Some live streams can't be played (YouTube) 
+- Some age-restricted videos are wrongly marked as ip blocked (YouTube)
+- Switching to background play sometimes changing the playback to wrong audio track (YouTube) 
+- Download sometimes not using the preferred audio language (YouTube)
+
