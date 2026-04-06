@@ -1,0 +1,18 @@
+After some work, we found a new reliable method to get YouTube login working again.
+
+### New Features
+
+- Re-support login(YouTube)
+- Use new method to make sure titles never get auto-translated (YouTube)
+
+### Bug Fixes
+
+- Randomly "Content Unavailable" error due to SABR encryption (YouTube)
+- Related Items have no view counts and duration (YouTube)
+- Increase feed fetch interval to avoid ip ban (BiliBili) 
+- Some links are wrongly recognized as PeerTube URL
+
+### Others
+
+- Update translations (French)
+- Improve stability
