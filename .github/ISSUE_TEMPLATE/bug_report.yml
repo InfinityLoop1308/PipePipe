@@ -33,6 +33,15 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The app version you are currently using
+      placeholder: e.g. 4.1.3
+    validations:
+      required: true
+
   - type: dropdown
     id: frequency
     attributes:
