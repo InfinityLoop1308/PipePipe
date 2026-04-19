@@ -1,0 +1,9 @@
+### Bug Fixes
+
+- Randomly playback failed if logged in (YouTube)
+- Sometimes lives cannot be played with account logged in (YouTube)
+- AVC1 Video playback stutters on some devices
+
+### Others
+
+- Improve stability
