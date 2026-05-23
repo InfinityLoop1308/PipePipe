@@ -53,6 +53,7 @@ body:
         - Sometimes (40-60% of the time)
         - Rarely (10-30% of the time)
         - Only once (single occurrence)
+      default: 4
     validations:
       required: true
 
