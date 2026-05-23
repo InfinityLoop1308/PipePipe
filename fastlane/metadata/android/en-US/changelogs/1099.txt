@@ -1,0 +1,23 @@
+### New Features
+
+- Support the Podcasts tab on YouTube channels
+- Support pinning the video player to the top, replacing the old "Comment Inner Scroll" preference
+- Make the new experimental UI opt-in, configurable in Advanced Settings
+- Update the layout of the new experimental UI
+- Rearrange settings for better readability and move less commonly used options to Advanced Settings
+- Add a preference to force the use of the old search filter UI
+- Add a "Force End on Overtime" preference to fix YouTube streams not ending correctly when logged in on certain devices
+
+### Bug Fixes
+
+- Fix the "Content Not Supported" error caused by YouTube SABR encryption (YouTube)
+- Fix the Feed returning empty results (YouTube)
+- Fix the Live tab returning no results (YouTube)
+- Fix some playlists containing no items (YouTube)
+- Fix some videos not being correctly identified as unreleased or paid content (YouTube)
+- Fix video loading failures not showing the actual reason (YouTube)
+- Fix deleted and private videos not being parsed correctly in playlists (YouTube)
+- Fix view counts and upload dates not being parsed correctly for some videos (YouTube)
+- Fix the new search filter not respecting the dark/black theme
+- Fix the List view mode preference not being correctly migrated in 5.0.0
+
