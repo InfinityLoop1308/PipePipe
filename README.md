@@ -91,6 +91,6 @@ Ko-fi: https://ko-fi.com/pipepipe
 
 ## Special Thanks
 
-[SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) for providing some BiliBili API lists.
+[Priveetee](https://github.com/Priveetee) for [researching SABR](https://priveetee.github.io/Docs-PipePipe/developer-guide/introduction.html) and implementing support for it.
 
 [AioiLight](https://github.com/AioiLight) for providing some code of NicoNico service.
