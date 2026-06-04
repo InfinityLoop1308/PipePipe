@@ -65,7 +65,7 @@ jobs:
               },
               spam: {
                 color: 'b60205',
-                description: 'Spam, ads, personal attacks, insults, or irrelevant content',
+                description: 'Spam, ads, nonsense, personal attacks, insults, or irrelevant content',
               },
               'topic: others': {
                 color: '6a737d',
@@ -125,7 +125,7 @@ jobs:
               '- topic: filter => local blocking.',
               '- topic: Download => downloads, offline saving, download queue, download files, storage of downloaded media.',
               '- topic: gesture => swipe, tap, long press, touch gestures, gesture controls.',
-              '- spam => spam, ads, personal attacks, insults, harassment, hate speech, trolling, completely irrelevant content.',
+              '- spam => spam, ads, nonsense/gibberish, personal attacks, insults, harassment, hate speech, trolling, completely irrelevant content.',
               '- topic: others => unclear or not covered above.',
               'Return only the exact label text and nothing else.',
             ].join('\n')
