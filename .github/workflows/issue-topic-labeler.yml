@@ -30,6 +30,7 @@ jobs:
               'topic: filter',
               'topic: Download',
               'topic: gesture',
+              'spam',
               'topic: others',
             ]
 
@@ -61,6 +62,10 @@ jobs:
               'topic: gesture': {
                 color: 'c5def5',
                 description: 'Touch gestures such as swipe, tap, and long-press',
+              },
+              spam: {
+                color: 'b60205',
+                description: 'Spam, ads, personal attacks, insults, or irrelevant content',
               },
               'topic: others': {
                 color: '6a737d',
@@ -120,6 +125,7 @@ jobs:
               '- topic: filter => local blocking.',
               '- topic: Download => downloads, offline saving, download queue, download files, storage of downloaded media.',
               '- topic: gesture => swipe, tap, long press, touch gestures, gesture controls.',
+              '- spam => spam, ads, personal attacks, insults, harassment, hate speech, trolling, completely irrelevant content.',
               '- topic: others => unclear or not covered above.',
               'Return only the exact label text and nothing else.',
             ].join('\n')
@@ -192,6 +198,10 @@ jobs:
 
             const fallbackLabel = (value) => {
               const text = value.toLowerCase()
+
+              if (/(\bcasino\b|\bpoker\b|\bgamble|\bcrypto\b|\bSEO\b|\bbuy \b|\bfree money\b|\bclick here\b|\bpromotion\b|\badvertisement\b|\btelegram\b|\bwhatsapp\b|\bstupid\b|\bidiot\b|\bmoron\b|\bfuck\b|\bshit\b|\bdumb\b|\basshole\b|\bbastard\b|\bretard\b|\bkill yourself\b|\bkys\b|\bscrew you\b)/.test(text)) {
+                return 'spam'
+              }
 
               if (/(swipe|gesture|double tap|long press|touch control|touch gesture|pinch)/.test(text)) {
                 return 'topic: gesture'
