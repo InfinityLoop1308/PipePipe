@@ -264,6 +264,23 @@ jobs:
               labels: [selectedLabel],
             })
 
+            if (selectedLabel === 'spam') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: 'This issue has been identified as spam and will be closed.',
+              })
+
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+                state_reason: 'not_planned',
+              })
+            }
+
             core.info(`Model output: ${content}`)
             core.info(`Applied label: ${selectedLabel}`)
             core.setOutput('label', selectedLabel)
