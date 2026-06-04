@@ -1,0 +1,261 @@
+name: Issue Topic Labeler
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  label-topic:
+    if: ${{ !github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Classify and label issue
+        uses: actions/github-script@v7
+        env:
+          ISSUE_LABELER_API_KEY: ${{ secrets.ISSUE_LABELER_API_KEY }}
+          ISSUE_LABELER_BASE_URL: ${{ vars.ISSUE_LABELER_BASE_URL }}
+          ISSUE_LABELER_MODEL: ${{ vars.ISSUE_LABELER_MODEL }}
+          ISSUE_LABELER_PROVIDER: ${{ vars.ISSUE_LABELER_PROVIDER }}
+        with:
+          script: |
+            const allowedLabels = [
+              'topic: UI',
+              'topic:app',
+              'topic: player',
+              'topic: Extractor',
+              'topic: filter',
+              'topic: Download',
+              'topic: gesture',
+              'topic: others',
+            ]
+
+            const labelConfig = {
+              'topic: UI': {
+                color: '1d76db',
+                description: 'User interface and visual behavior issues',
+              },
+              'topic:app': {
+                color: '5319e7',
+                description: 'General app-level behavior and settings',
+              },
+              'topic: player': {
+                color: '0052cc',
+                description: 'Playback, controls, subtitles, and media behavior',
+              },
+              'topic: Extractor': {
+                color: 'fbca04',
+                description: 'Service extraction, parsing, and metadata retrieval',
+              },
+              'topic: filter': {
+                color: '0e8a16',
+                description: 'Filtering, sorting, and feed/search refinement',
+              },
+              'topic: Download': {
+                color: '006b75',
+                description: 'Downloads, offline saving, and file fetching',
+              },
+              'topic: gesture': {
+                color: 'c5def5',
+                description: 'Touch gestures such as swipe, tap, and long-press',
+              },
+              'topic: others': {
+                color: '6a737d',
+                description: 'Issues that do not clearly fit another topic',
+              },
+            }
+
+            const issue = context.payload.issue
+            const existingTopicLabel = issue.labels
+              .map((label) => typeof label === 'string' ? label : label.name)
+              .find((label) => allowedLabels.includes(label))
+
+            if (existingTopicLabel) {
+              core.info(`Issue already has topic label: ${existingTopicLabel}`)
+              return
+            }
+
+            const providerInput = (process.env.ISSUE_LABELER_PROVIDER || '').trim().toLowerCase()
+            const baseUrlInput = (process.env.ISSUE_LABELER_BASE_URL || '').trim()
+            const apiKey = (process.env.ISSUE_LABELER_API_KEY || '').trim()
+
+            if (!apiKey) {
+              throw new Error('Missing ISSUE_LABELER_API_KEY secret.')
+            }
+
+            const provider = providerInput || (baseUrlInput ? 'openai-compatible' : 'github-models')
+
+            if (!['github-models', 'openai-compatible'].includes(provider)) {
+              throw new Error(`Unsupported ISSUE_LABELER_PROVIDER: ${provider}`)
+            }
+
+            const model = (process.env.ISSUE_LABELER_MODEL || '').trim()
+              || (provider === 'github-models' ? 'openai/gpt-5-mini' : 'gpt-5-mini')
+
+            const clip = (value, limit) => {
+              if (!value || value.length <= limit) {
+                return value
+              }
+
+              return `${value.slice(0, limit)}\n\n[truncated]`
+            }
+
+            const issueText = [
+              `Title: ${issue.title || ''}`,
+              `Body:\n${issue.body || ''}`,
+            ].join('\n\n')
+
+            const systemPrompt = [
+              'You classify GitHub issues for an Android media app project.',
+              'Choose exactly one label from this list:',
+              allowedLabels.join(', '),
+              'Guidelines:',
+              '- topic: UI => layout, theme, rendering, icons, screens, navigation, visual glitches.',
+              '- topic:app => crashes, startup, settings, notifications, intents, backup, import/export, app-level behavior.',
+              '- topic: player => playback, subtitles, queue, controls, audio/video, fullscreen, speed, PiP.',
+              '- topic: Extractor => site/service parsing, metadata, stream URLs, login/captcha extraction, service-specific fetching.',
+              '- topic: filter => local blocking.',
+              '- topic: Download => downloads, offline saving, download queue, download files, storage of downloaded media.',
+              '- topic: gesture => swipe, tap, long press, touch gestures, gesture controls.',
+              '- topic: others => unclear or not covered above.',
+              'Return only the exact label text and nothing else.',
+            ].join('\n')
+
+            const requestBody = {
+              model,
+              temperature: 0,
+              max_tokens: 24,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: clip(issueText, 6000) },
+              ],
+            }
+
+            const request = provider === 'github-models'
+              ? {
+                  url: 'https://models.github.ai/inference/chat/completions',
+                  headers: {
+                    Authorization: `Bearer ${apiKey}`,
+                    Accept: 'application/vnd.github+json',
+                    'Content-Type': 'application/json',
+                    'X-GitHub-Api-Version': '2026-03-10',
+                  },
+                }
+              : {
+                  url: `${baseUrlInput.replace(/\/$/, '')}/chat/completions`,
+                  headers: {
+                    Authorization: `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json',
+                  },
+                }
+
+            if (provider === 'openai-compatible' && !baseUrlInput) {
+              throw new Error('ISSUE_LABELER_BASE_URL is required for openai-compatible provider.')
+            }
+
+            const response = await fetch(request.url, {
+              method: 'POST',
+              headers: request.headers,
+              body: JSON.stringify(requestBody),
+            })
+
+            const rawResponse = await response.text()
+
+            if (!response.ok) {
+              throw new Error(`Model request failed (${response.status}): ${rawResponse}`)
+            }
+
+            let responseData
+            try {
+              responseData = JSON.parse(rawResponse)
+            } catch (error) {
+              throw new Error(`Could not parse model response JSON: ${rawResponse}`)
+            }
+
+            const messageContent = responseData?.choices?.[0]?.message?.content
+            const content = Array.isArray(messageContent)
+              ? messageContent.map((part) => part?.text || '').join('')
+              : String(messageContent || '')
+
+            const normalizeLabel = (value) => {
+              const trimmed = value.trim()
+              if (allowedLabels.includes(trimmed)) {
+                return trimmed
+              }
+
+              const lowered = trimmed.toLowerCase().replace('topic: app', 'topic:app')
+              return allowedLabels.find((label) => label.toLowerCase() === lowered)
+                || allowedLabels.find((label) => lowered.includes(label.toLowerCase()))
+                || null
+            }
+
+            const fallbackLabel = (value) => {
+              const text = value.toLowerCase()
+
+              if (/(swipe|gesture|double tap|long press|touch control|touch gesture|pinch)/.test(text)) {
+                return 'topic: gesture'
+              }
+
+              if (/(download|offline|save file|save video|save audio|storage permission|download queue)/.test(text)) {
+                return 'topic: Download'
+              }
+
+              if (/(player|playback|subtitle|captions|fullscreen|picture-in-picture|pip|seek|pause|resume|play video|play audio|speed control)/.test(text)) {
+                return 'topic: player'
+              }
+
+              if (/(extractor|parsing|parser|metadata|stream url|video url|audio url|service-specific|youtube|bilibili|soundcloud|bandcamp)/.test(text)) {
+                return 'topic: Extractor'
+              }
+
+              if (/(filter)/.test(text)) {
+                return 'topic: filter'
+              }
+
+              if (/(theme|layout|screen|button|icon|font|toolbar|bottom bar|navigation|visual|ui | ux |dark mode|light mode)/.test(text)) {
+                return 'topic: UI'
+              }
+
+              if (/(crash|startup|settings|notification|intent|share menu|backup|restore|import|export|database|login|account)/.test(text)) {
+                return 'topic:app'
+              }
+
+              return 'topic: others'
+            }
+
+            const selectedLabel = normalizeLabel(content) || fallbackLabel(issueText)
+            const { color, description } = labelConfig[selectedLabel]
+
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: selectedLabel,
+              })
+            } catch (error) {
+              if (error.status !== 404) {
+                throw error
+              }
+
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: selectedLabel,
+                color,
+                description,
+              })
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: [selectedLabel],
+            })
+
+            core.info(`Model output: ${content}`)
+            core.info(`Applied label: ${selectedLabel}`)
+            core.setOutput('label', selectedLabel)
