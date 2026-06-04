@@ -127,7 +127,7 @@ jobs:
             const requestBody = {
               model,
               temperature: 0,
-              max_tokens: 24,
+              max_completion_tokens: 24,
               messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: clip(issueText, 6000) },
