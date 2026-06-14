@@ -38,7 +38,7 @@ jobs:
           cd ffmpeg-kit
           
           # 构建 LTS 版本，并启用 gmp 和 gnutls 外部库
-          BUILD_OPTIONS="--lts --enable-gmp --enable-openssl --enable-android-media-codec --enable-android-zlib --disable-x86 --disable-arm-v7a --disable-arm-v7a-neon"
+          BUILD_OPTIONS="--lts --enable-gmp --enable-openssl --enable-android-media-codec --enable-android-zlib --disable-arm-v7a "
           
           # 添加额外的构建选项
           if [[ -n "${{ github.event.inputs.extra_options }}" ]]; then
