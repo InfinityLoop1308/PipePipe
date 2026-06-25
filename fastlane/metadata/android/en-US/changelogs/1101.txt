@@ -1,0 +1,40 @@
+### New Features
+
+- Added experimental support for the YouTube SABR protocol, with an option to force enable it in Advanced Settings (YouTube)
+- Support downloading videos while logged into an account (YouTube)
+- Re-added support for auto-translated captions (works only when logged into an account) (YouTube)
+- Support searching for videos within a specific channel (YouTube)
+- Support sorting videos within a channel (YouTube)
+- Persist the last selected search filters
+- Support custom aspect ratio in the video player
+- Support positioning the tab bar at the bottom of the home page
+- Support themed icon
+
+### Bug Fixes
+
+- Fix some videos failing to parse and showing content unavailable errors (YouTube)
+- Fix all playlists showing as empty(YouTube)
+- Fix "Related videos" missing upload dates on the video page (YouTube)
+- Fix the app incorrectly auto-selecting the highest resolution when the video's lowest available resolution is lower than the default setting
+- Fix SponsorBlock segment markers not updating correctly when switching videos in the same queue
+- Fix the "Send Email" function failing to correctly identify email apps on the device
+- Fix an issue where all videos in a playlist incorrectly showed the playlist creator as their uploader (YouTube)
+- Fix playback errors causing some videos to stop unexpectedly (Bilibili)
+- Fix downloading not working on armv7 and x86 architectures (Bilibili, Niconico)
+- Fix `b23.tv` short links not being parsed correctly (Bilibili)
+- Fix timestamps in links being ignored (Niconico)
+- Fix comments not displaying correctly when enabling the experimental new UI
+- Fix crashes occurring in specific scenarios
+
+### UI
+
+- Remove the recommendation to enable the dedicated feed and move the related setting to Advanced Settings
+- Update the display of the search history button on the main tab to avoid duplicate icons
+- Update Russian translations
+- Update Polish translations
+
+### Others
+
+- Fully support 16KB page size, slightly improving performance on Android 16+
+- Upgrade target SDK to 36
+- Improve stability
