@@ -11,9 +11,114 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
+      contents: read
       issues: write
     steps:
+      - name: Close outdated bug reports
+        id: version-check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue
+            const body = issue.body || ''
+
+            if (!issue.title.startsWith('[Bug]')) {
+              core.setOutput('outdated', 'false')
+              return
+            }
+
+            // Prefer the version from the app-generated error report. Fall back
+            // to the version entered in the issue form when no report is present.
+            const reportMatch = body.match(/^\*\s+__Version:__\s+([^\r\n]+)$/m)
+            const formMatch = body.match(/^### Version\s*\r?\n+\s*([^\r\n]+)$/m)
+            const reportedRaw = (reportMatch?.[1] || formMatch?.[1] || '').trim()
+
+            const parseVersion = (value) => {
+              const match = value.trim().match(
+                /^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/
+              )
+
+              if (!match) {
+                return null
+              }
+
+              return {
+                major: Number(match[1]),
+                minor: Number(match[2]),
+                patch: Number(match[3]),
+                prerelease: match[4] || null,
+              }
+            }
+
+            const compareToRelease = (reported, latest) => {
+              for (const part of ['major', 'minor', 'patch']) {
+                if (reported[part] < latest[part]) {
+                  return -1
+                }
+                if (reported[part] > latest[part]) {
+                  return 1
+                }
+              }
+
+              // A prerelease is older than the stable release with the same
+              // major, minor, and patch numbers.
+              if (reported.prerelease && !latest.prerelease) {
+                return -1
+              }
+
+              return 0
+            }
+
+            if (!reportedRaw) {
+              core.warning('No version was found; skipping the version check.')
+              core.setOutput('outdated', 'false')
+              return
+            }
+
+            const { owner, repo } = context.repo
+            const { data: latestRelease } = await github.rest.repos.getLatestRelease({
+              owner,
+              repo,
+            })
+            const reportedVersion = parseVersion(reportedRaw)
+            const latestVersion = parseVersion(latestRelease.tag_name)
+
+            if (!reportedVersion || !latestVersion) {
+              core.warning(`Could not parse version "${reportedRaw}"; skipping the version check.`)
+              core.setOutput('outdated', 'false')
+              return
+            }
+
+            const outdated = compareToRelease(reportedVersion, latestVersion) < 0
+            core.setOutput('outdated', String(outdated))
+
+            if (!outdated) {
+              return
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issue.number,
+              body: [
+                `This report was submitted using PipePipe **${reportedRaw}**, which is older than the latest release, **${latestRelease.tag_name}**.`,
+                '',
+                `Please [update to the latest release](${latestRelease.html_url}), verify that the issue still occurs, and submit a new bug report if necessary.`,
+                '',
+                'This issue has been closed automatically.',
+              ].join('\n'),
+            })
+
+            await github.rest.issues.update({
+              owner,
+              repo,
+              issue_number: issue.number,
+              state: 'closed',
+              state_reason: 'not_planned',
+            })
+
       - name: Classify and label issue
+        if: steps.version-check.outputs.outdated != 'true'
         uses: actions/github-script@v7
         env:
           ISSUE_LABELER_API_KEY: ${{ secrets.ISSUE_LABELER_API_KEY }}
