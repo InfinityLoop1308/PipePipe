@@ -1,0 +1,7 @@
+This release fixes an issue that prevented YouTube videos from playing properly.
+
+YouTube recently shut down all of the methods we previously used to fetch video streams, which caused both videos and live streams to stop working for nearly all users, including those signed into YouTube in settings. After urgent fixes, we have now migrated to YouTube's new SABR protocol to restore playback.
+
+New in 5.2.2: We've added several fallback extraction endpoints as a temporary workaround for users who experience instability with SABR. If videos aren't playing reliably for you, go to Settings → Advanced Settings → YouTube extraction endpoints and try switching to a different endpoint to see if it resolves the issue.
+
+YouTube changes frequently, so make sure to check for updates regularly to make sure everything keeps working smoothly.
