@@ -1,0 +1,4 @@
+- Fixed SABR playback issues that caused frequent buffering, network errors, infinite loading, and unexpected crashes under certain conditions.
+
+- Significantly improved SABR playback performance across the board, including much faster loading and seeking, as well as substantially reduced data usage.
+
