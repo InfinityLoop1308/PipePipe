@@ -1,0 +1,8 @@
+### What's New
+
+- Further improved YouTube video information loading and playback startup speed
+- Fixed several issues that could cause SABR playback errors under certain conditions
+- Fixed WebView being incorrectly reported as unavailable in some cases
+- Fixed IP addresses being incorrectly reported as blocked by YouTube in some cases
+- Improved overall app stability
+
