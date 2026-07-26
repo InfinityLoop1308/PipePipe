@@ -31,11 +31,17 @@ jobs:
       - name: 设置 Android SDK
         uses: android-actions/setup-android@v2
 
+      - name: 安装 Android NDK
+        run: sdkmanager "ndk;28.2.13676358"
+
       - name: 构建 FFmpeg-Kit LTS
         run: |
           
           git clone https://github.com/InfinityLoop1308/ffmpeg-kit.git
           cd ffmpeg-kit
+
+          export ANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/28.2.13676358"
+          export ANDROID_NDK_HOME="$ANDROID_NDK_ROOT"
           
           # 构建 LTS 版本，并启用 gmp 和 gnutls 外部库
           BUILD_OPTIONS="--lts --enable-gmp --enable-openssl --enable-android-media-codec --enable-android-zlib --disable-arm-v7a "
