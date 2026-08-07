@@ -1,0 +1,15 @@
+### What's New
+
+- Temporarily disable the SABR extraction endpoint and reset all users' extraction endpoints to Dash (YouTube)
+- Use a workaround to fetch 360p video streams for YouTube Kids videos instead of throwing an error (YouTube)
+- Fix: Like and view counts were not parsed correctly for some videos (YouTube)
+- Fix: "Channel unavailable" error was displayed in Zulu (YouTube)
+- Fix: Playlist uploader username was parsed incorrectly (YouTube)
+- Fix: Some channel links could not be opened directly (YouTube)
+- Fix: Channel video lists failed to load correctly (NicoNico)
+- Fix: App crashes under specific circumstances
+- Fix: Some dialogs/menus ignore dark theme if the system is not dark 
+- Fix: SoundCloud tracks failed to load
+- Fix: Manual SponsorBlock modes are not correctly respected if the setting language is not English
+- Fix: Background subscription refresh might be killed by the system if the subscription list is too long
+- Remove the DNS over HTTPS option that was not working as expected
