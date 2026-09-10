@@ -1,0 +1,16 @@
+### New Features
+
+- Optimized fullscreen and screen rotation logic, and added related configuration settings
+- Restored support for watching and searching live streams (NicoNico)
+- Tapping anywhere on the video title row now expands/collapses the title details
+
+### Bug Fixes
+
+- Fixed an issue where fullscreen swipe gestures were unreliable and could accidentally minimize the video
+- Fixed an issue where search history entries were randomly not saved or moved to the top
+- Fixed an issue where bold/italic/strikethrough styling was not correctly applied in comments
+- Fixed a crash on startup on certain TVs.
+- Fixed an error that occurred when refreshing subscriptions for channels with no videos (YouTube)
+- Fixed a blank screen issue during login (NicoNico)
+- Fixed an issue where videos failed to play (BiliBili)
+- Fixed an issue where SponsorBlock was not working properly (BiliBili)
