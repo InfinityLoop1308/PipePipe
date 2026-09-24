@@ -1,0 +1,23 @@
+### New Features
+
+- Greatly optimized TV controls
+- Added support for video quality selection in live streams
+- The "Swipe down to minimize" gesture is now configurable in Settings
+- Optimized the deletion interaction for content filters
+- Added support for Recommended/Popular live streams (NicoNico)
+- Added support for the Live tab on channels (NicoNico)
+
+### Bug Fixes
+
+- Fixed the "Start in fullscreen" setting not working
+- Fixed split-screen mode being unavailable
+- Fixed an issue where subtitles would disappear when entering fullscreen mode
+- Fixed content blocking not applying to public playlists
+- Fixed an issue where live streams continued to fetch data while paused
+- Fixed an issue where terminated videos using the SABR protocol could not be resumed
+- Fixed a crash that could occur when starting playback under specific conditions
+- Fixed an issue where the total playlist duration would increase infinitely in certain scenarios
+- Fixed a crash caused by deleting watch history under specific conditions
+- Fixed the dislike counter not being disabled by default on fresh installations
+- Fixed download failures occurring under specific conditions (BiliBili)
+- Fixed recommended live streams appearing empty (BiliBili)
