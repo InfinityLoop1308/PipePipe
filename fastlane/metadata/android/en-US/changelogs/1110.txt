@@ -1,0 +1,35 @@
+### New Features
+
+- Added multi-select functionality to list pages
+- Added a screen lock button during fullscreen playback
+- Optimized pinch-to-zoom logic and enabled it by default
+- Added support for changing the previous/next track control buttons to fast-forward/rewind
+- Added support for YouTube-style live chat, toggleable with danmaku
+- Added support for more sorting options
+- Added an option to configure whether to show the playback UI on list pages
+- Regular expressions (Regex) are now supported for all keyword filters
+- Added support for comment filtering by keywords, usernames, or like counts
+- Added support for selecting preferred audio quality
+- Added DeArrow support
+
+### Bug Fixes
+
+- Fixed an issue where playback failed to start under certain circumstances (YouTube)
+- Fixed an issue where playback unexpectedly stopped under certain circumstances (YouTube)
+- Fixed an issue where search results were fewer than expected under certain circumstances (YouTube)
+- Fixed an issue where some tracks could not be played (SoundCloud)
+- Fixed an issue where video details did not refresh when returning to the foreground from background playback
+- Fixed UI layout errors under certain circumstances
+- Fixed crashes that occurred under certain circumstances
+- Fixed an issue where importing a playlist via URL failed after leaving the page
+- Fixed an issue where SponsorBlock was incorrectly disabled globally under certain circumstances
+- Fixed an issue where WebView failed to load under certain circumstances
+
+### Others
+
+- Optimized the UI display for content filtering
+- Optimized the in-list search function and unified the icon to a funnel
+- Channels can now be blocked by channel ID
+- SponsorBlock now supports manually entering start/end times
+- Added support for the "Releases" tab on YouTube
+- Name sorting can now be switched based on preference (EN/C/J/K)
