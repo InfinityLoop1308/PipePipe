@@ -34,6 +34,10 @@ NewPipe, reimagined: faster, more stable, and packed with more features.</h4>
 * Download full playlists at once 
 * Search and sort within local playlists and histories
 
+#### Plugins
+* Add new services through plugins (available from 5.6.0)
+* Browse community plugins in [awesome-pipepipe-plugins](https://github.com/InfinityLoop1308/awesome-pipepipe-plugins)
+
 ... and many more improvements!
 
 
@@ -73,9 +77,9 @@ For YouTube, the cookie will only be used when retrieving playback streams.
 
 ## Contribute
 
-Issues and PRs are welcomed. Please note that I will **NOT** accept service requests. 
+Issues and PRs are welcomed.
 
-Anyone interested in creating their own service is encouraged to fork this repository.
+Want support for a new service? Write a plugin (available from 5.6.0). Start from the [plugin template](https://github.com/InfinityLoop1308/PipePipePluginTemplate), then submit it to [awesome-pipepipe-plugins](https://github.com/InfinityLoop1308/awesome-pipepipe-plugins) so users can install it from the app.
 
 ## Donation
 
