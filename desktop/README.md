@@ -12,7 +12,7 @@ PipePipe의 데스크톱(PC) 클라이언트입니다. 안드로이드 앱과 �
 ## 실행
 
 ### 설치 파일 (Java 불필요)
-[Actions](../../actions/workflows/desktop.yml) 또는 Releases에서 OS별 `PipePipe-*.zip / .tar.gz`를 받아 압축을 풀고 `PipePipe`를 실행합니다.
+[Actions](https://github.com/ssiloh/PipePipe/actions/workflows/desktop.yml) 또는 Releases에서 OS별 `PipePipe-*.zip / .tar.gz`를 받아 압축을 풀고 `PipePipe`를 실행합니다.
 설치된 Chrome / Edge / Chromium / Brave가 있으면 독립된 앱 창으로 열리고, 창을 닫으면 앱도 종료됩니다. (없으면 기본 브라우저 + 트레이 아이콘)
 
 ### 소스에서
