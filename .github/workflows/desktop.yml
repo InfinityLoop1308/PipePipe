@@ -1,0 +1,104 @@
+name: Desktop
+
+on:
+  push:
+    paths:
+      - 'desktop/**'
+      - 'PipePipeExtractor'
+      - '.github/workflows/desktop.yml'
+    tags:
+      - 'desktop-v*'
+  pull_request:
+    paths:
+      - 'desktop/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: linux-x64
+          - os: windows-latest
+            name: windows-x64
+          - os: macos-latest
+            name: macos-arm64
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      # only the extractor is needed (the other submodules use SSH URLs)
+      - name: Checkout PipePipeExtractor submodule
+        run: git submodule update --init --depth 1 PipePipeExtractor
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+
+      - name: Build fat jar
+        working-directory: desktop
+        run: ./gradlew --no-daemon fatJar
+
+      - name: Package self-contained app (bundled JRE)
+        working-directory: desktop
+        run: |
+          VERSION=$(grep "^version" build.gradle | sed "s/.*'\(.*\)'.*/\1/")
+          mkdir -p dist
+          ICON=""
+          if [ "${{ runner.os }}" = "Linux" ]; then ICON="--icon src/main/resources/web/icon.png"; fi
+          jpackage --type app-image \
+            --name PipePipe \
+            --app-version "$VERSION" \
+            --vendor "PipePipe Desktop" \
+            --input build/libs \
+            --main-jar "pipepipe-desktop-${VERSION}-all.jar" \
+            --java-options "-XX:+UseSerialGC -Xss512k" \
+            --add-modules java.base,java.desktop,java.naming,java.net.http,java.sql,jdk.httpserver,jdk.unsupported,jdk.crypto.ec,java.management,java.logging,jdk.localedata,java.xml \
+            --jlink-options "--strip-debug --no-man-pages --no-header-files --compress=zip-6" \
+            $ICON \
+            --dest dist
+          find dist -name "*.debuginfo" -delete
+          cd dist
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            7z a "../PipePipe-${{ matrix.name }}.zip" PipePipe > /dev/null
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            ditto -c -k --keepParent PipePipe.app "../PipePipe-${{ matrix.name }}.zip"
+          else
+            tar czf "../PipePipe-${{ matrix.name }}.tar.gz" PipePipe
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PipePipe-${{ matrix.name }}
+          path: |
+            desktop/PipePipe-${{ matrix.name }}.*
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.name == 'linux-x64'
+        with:
+          name: pipepipe-desktop-jar
+          path: desktop/build/libs/*-all.jar
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/desktop-v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" out/* --repo "${GITHUB_REPOSITORY}" --title "PipePipe Desktop ${GITHUB_REF_NAME#desktop-v}" --generate-notes

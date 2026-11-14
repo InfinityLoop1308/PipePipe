@@ -12,7 +12,7 @@
     branch = main
 [submodule "PipePipeClient"]
 	path = PipePipeClient
-	url = git@github.com:InfinityLoop1308/PipePipeClient.git
+	url = https://github.com/InfinityLoop1308/PipePipeClient.git
 [submodule "PipePipeExtractor"]
 	path = PipePipeExtractor
-	url = git@github.com:InfinityLoop1308/PipePipeExtractor.git
+	url = https://github.com/InfinityLoop1308/PipePipeExtractor.git

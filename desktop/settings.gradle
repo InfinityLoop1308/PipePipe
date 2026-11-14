@@ -1,0 +1,3 @@
+rootProject.name = 'pipepipe-desktop'
+// Build directly against the PipePipeExtractor submodule of this fork.
+includeBuild('../PipePipeExtractor')

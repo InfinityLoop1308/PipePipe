@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'dev.pipepipe.desktop'
+version = '0.1.0'
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(25) }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // Substituted by the included build in ../PipePipeExtractor
+    implementation 'com.github.InfinityLoop1308.PipePipeExtractor:extractor'
+    implementation 'com.squareup.okhttp3:okhttp:5.4.0'
+    implementation 'org.json:json:20260522' // provided by Android at runtime, needed on desktop
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.10.2'
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = "UTF-8" }
+
+
+application {
+    mainClass = 'dev.pipepipe.desktop.Main'
+    applicationDefaultJvmArgs = ['-XX:+UseSerialGC', '-Xss512k', '-Xshare:auto']
+}
+
+jar {
+    manifest { attributes 'Main-Class': application.mainClass.get() }
+}
+
+// Single runnable fat jar: build/libs/pipepipe-desktop-all.jar
+tasks.register('fatJar', Jar) {
+    archiveClassifier = 'all'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest { attributes 'Main-Class': application.mainClass.get() }
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from { configurations.runtimeClasspath.findAll { it.name.endsWith('.jar') }.collect { zipTree(it) } } {
+        exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/versions/*/module-info.class', 'module-info.class'
+    }
+}
