@@ -1,0 +1,44 @@
+### New Features
+
+- Support casting videos to another device running PipePipe with remote control capabilities
+- Added scheduled backups to periodically export the entire database to a specified folder
+- Added support for importing, exporting, and resetting settings individually
+- Improved the login system to automatically log out and notify the user when a session expires
+- Improved UI prompts when rate-limited or blocked by service risk control
+- Support sorting watch history by name, earliest played, and least played
+- Support filtering watch history by date range
+- Added support for the "Courses" tab on channels (YouTube)
+- Support displaying attached images in comments (YouTube)
+- Added support for displaying the current video's collection/season (BiliBili)
+
+### Bug Fixes
+
+- Fixed recent playback instability issues with the mweb (SABR) endpoint (YouTube)
+- Fixed an issue where playback stopped after one minute under certain network environments when using the mweb (SABR) endpoint (YouTube)
+- Fixed an issue where some recently ended livestreams could not be played or downloaded properly under the mweb (SABR) endpoint (YouTube)
+- Fixed an issue where Shorts were not properly blocked (YouTube)
+- Fixed an issue where paid upcoming livestreams were not parsed as paid and failed to extract the start time (YouTube)
+- Fixed an issue where certain errors were displayed in Zulu (YouTube)
+- Fixed an issue where videos failed to load for non-Chinese IPs under certain conditions (BiliBili)
+- Fixed a crash that occurred when updating Feeds under certain conditions
+- Fixed a crash during background video playback on specific devices
+- Fixed an issue where the mini-player occasionally became abnormally tall
+- Fixed an issue where DeArrow did not work in local playlists
+- Fixed unexpected behavior during long-distance drag-and-drop in the play queue
+- Fixed abnormal scroll position jumps when performing multiple searches
+- Fixed an issue where the keyboard did not pop up automatically for in-page search
+- Fixed an issue on TV devices where an abnormal white rectangle appeared under certain conditions
+- Fixed crashes on TV devices under certain conditions
+- Fixed navigation/control issues on TV devices under certain conditions
+
+### Performance
+
+- Slightly improved the loading speed of YouTube livestreams
+- Optimized memory usage during Feed updates
+- Added a "Buffer less after starting playback or seeking" player option in Advanced Settings
+
+### Behavior Changes
+
+- Legacy built-in NewPipe services (SoundCloud, Bandcamp, PeerTube, media.ccc.de) are now provided as plugins
+- The blocked items count is now only displayed when there are no more results or when all results have been filtered out
+- The channel name for Shorts in search results is now displayed as "YouTube Shorts" (YouTube)
